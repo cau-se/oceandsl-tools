@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.oceandsl.log.rewriter;
+package org.oceandsl.analysis;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -110,7 +110,7 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
 		}
 	}
 
-	public OutputPort getOutputPort() {
+	public OutputPort<IMonitoringRecord> getOutputPort() {
 		return this.outputPort;
 	}
 

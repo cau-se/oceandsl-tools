@@ -10,23 +10,26 @@ plugins {
 }
 
 repositories {
-    // Use jcenter for resolving dependencies.
-    // You can declare any Maven/Ivy/file repository here.
     jcenter()
     mavenCentral()
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-    maven {url "https://oss.sonatype.org/content/repositories/releases/" }
-}
-
-dependencies {
-    implementation 'net.kieker-monitoring:kieker:1.15-SNAPSHOT'
-    implementation 'net.sourceforge.teetime:teetime:3.0'
-    implementation 'com.beust:jcommander:1.78'
-
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.13'
 }
 
 subprojects {
+	apply plugin: 'java'
 
+	repositories {
+	    jcenter()
+	    mavenCentral()
+	    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+	    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+	}
+	
+	dependencies {
+	    implementation 'net.kieker-monitoring:kieker:1.15-SNAPSHOT'
+	    implementation 'net.sourceforge.teetime:teetime:3.0'
+	    implementation 'com.beust:jcommander:1.78'
+	
+	    // Use JUnit test framework
+	    testImplementation 'junit:junit:4.13'
+	}
 }

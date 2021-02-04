@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.oceandsl.log.rewriter;
+package org.oceandsl.architecture.model;
 
 import java.io.File;
 
@@ -12,7 +12,7 @@ import com.beust.jcommander.converters.FileConverter;
  * @author reiner
  *
  */
-public class LogRewriterSettings {
+public class ArchitectureModelSettings {
 
 	@Parameter(names = { "-i", "--input" }, required = true, converter = FileConverter.class, description = "Input Kieker log directory")
 	private File inputFile;
