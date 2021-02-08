@@ -17,13 +17,13 @@ public class ArchitectureModelSettings {
 	@Parameter(names = { "-i", "--input" }, required = true, converter = FileConverter.class, description = "Input Kieker log directory")
 	private File inputFile;
 
-	@Parameter(names = { "-o", "--output" }, required = true, converter = FileConverter.class, description = "Output directory where to put the Kieker log directory")
+	@Parameter(names = { "-o", "--output" }, required = true, converter = FileConverter.class, description = "Output directory where to put the graphics")
 	private File outputFile;
 	
 	@Parameter(names = { "-a", "--addrline" }, required = true, converter = FileConverter.class, description = "Location of the addrline tool")
 	private File addrlineExecutable;
 
-	@Parameter(names = { "-m", "--model" }, required = true, converter = FileConverter.class, description = "Location of the model executable")
+	@Parameter(names = { "-e", "--executable" }, required = true, converter = FileConverter.class, description = "Location of the executable")
 	private File modelExecutable;
 	
 	public File getInputFile() {

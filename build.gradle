@@ -25,9 +25,12 @@ subprojects {
 	}
 	
 	dependencies {
-	    implementation 'net.kieker-monitoring:kieker:1.15-SNAPSHOT'
+	    implementation 'net.kieker-monitoring:kieker:1.15-SNAPSHOT:jar'
 	    implementation 'net.sourceforge.teetime:teetime:3.0'
 	    implementation 'com.beust:jcommander:1.78'
+        implementation 'ch.qos.logback:logback-classic:1.1.7'
+        implementation 'org.slf4j:slf4j-api:1.7.30'
+        implementation 'org.codehaus.groovy:groovy-all:3.0.2'
 	
 	    // Use JUnit test framework
 	    testImplementation 'junit:junit:4.13'

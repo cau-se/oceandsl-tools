@@ -13,6 +13,8 @@ plugins {
 
 dependencies {
     implementation project(':analysis')
+    // https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore
+    implementation 'org.eclipse.emf:org.eclipse.emf.ecore:2.23.0'
 }
 
 application {
