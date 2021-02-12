@@ -12,9 +12,14 @@ plugins {
 }
 
 dependencies {
+    implementation project(':common')
     implementation project(':analysis')
     // https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore
     implementation 'org.eclipse.emf:org.eclipse.emf.ecore:2.23.0'
+    runtime 'org.eclipse.emf:org.eclipse.emf.ecore:2.23.0'
+    
+    runtime 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'
+    runtime 'com.sun.xml.bind:jaxb-impl:2.3.3'    
 }
 
 application {

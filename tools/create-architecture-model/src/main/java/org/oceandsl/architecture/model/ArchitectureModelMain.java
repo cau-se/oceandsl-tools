@@ -8,61 +8,80 @@ import java.io.IOException;
 
 import com.beust.jcommander.JCommander;
 
+import kieker.analysis.statistics.StatisticsModel;
+import kieker.analysisteetime.model.analysismodel.assembly.AssemblyFactory;
+import kieker.analysisteetime.model.analysismodel.assembly.AssemblyModel;
+import kieker.analysisteetime.model.analysismodel.deployment.DeploymentFactory;
+import kieker.analysisteetime.model.analysismodel.deployment.DeploymentModel;
+import kieker.analysisteetime.model.analysismodel.execution.ExecutionFactory;
+import kieker.analysisteetime.model.analysismodel.execution.ExecutionModel;
+import kieker.analysisteetime.model.analysismodel.type.TypeFactory;
+import kieker.analysisteetime.model.analysismodel.type.TypeModel;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
 
-public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,ArchitectureModelSettings>{
-   
-    public static void main(String[] args) {
-    	 java.lang.System.exit(new ArchitectureModelMain().run("Kieker Log ELF Rewriter",
-    		        "log-rewriter", args, new ArchitectureModelSettings()));
+public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration, ArchitectureModelSettings> {
+
+    private final TypeModel typeModel = TypeFactory.eINSTANCE.createTypeModel();
+    private final AssemblyModel assemblyModel = AssemblyFactory.eINSTANCE.createAssemblyModel();
+    private final DeploymentModel deploymentModel = DeploymentFactory.eINSTANCE.createDeploymentModel();
+    private final ExecutionModel executionModel = ExecutionFactory.eINSTANCE.createExecutionModel();
+    private final StatisticsModel statisticsModel = new StatisticsModel();
+
+    public static void main(final String[] args) {
+        final ArchitectureModelMain main = new ArchitectureModelMain();
+        final int exitCode = main.run("Kieker Log ELF Rewriter", "log-rewriter", args, new ArchitectureModelSettings());
+
+        java.lang.System.exit(exitCode);
     }
 
-	@Override
-	protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
-		try {
-			return new TeetimeConfiguration(this.parameterConfiguration);
-		} catch (IOException e) {
-			throw new ConfigurationException(e);
-		}
-	}
+    @Override
+    protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
+        try {
+            return new TeetimeConfiguration(this.parameterConfiguration, this.typeModel, this.assemblyModel,
+                    this.deploymentModel, this.executionModel, this.statisticsModel);
+        } catch (final IOException e) {
+            throw new ConfigurationException(e);
+        }
+    }
 
-	@Override
-	protected File getConfigurationFile() {
-		// we do not use a configuration file
-		return null;
-	}
+    @Override
+    protected File getConfigurationFile() {
+        // we do not use a configuration file
+        return null;
+    }
 
-	@Override
-	protected boolean checkConfiguration(Configuration configuration, JCommander commander) {
-		return true;
-	}
+    @Override
+    protected boolean checkConfiguration(final Configuration configuration, final JCommander commander) {
+        return true;
+    }
 
-	@Override
-	protected boolean checkParameters(JCommander commander) throws ConfigurationException {
-		if (!this.parameterConfiguration.getAddrlineExecutable().canExecute()) {
-			this.logger.error("Addr2line file {} is not executable", this.parameterConfiguration.getAddrlineExecutable());
-			return false;
-		}
-		if (!this.parameterConfiguration.getModelExecutable().canExecute()) {
-			this.logger.error("Model file {} is not executable", this.parameterConfiguration.getModelExecutable());
-			return false;
-		}
-		if (!this.parameterConfiguration.getInputFile().isDirectory()) {
-			this.logger.error("Input directory {} is not directory", this.parameterConfiguration.getInputFile());
-			return false;
-		}
-		if (!this.parameterConfiguration.getOutputFile().isDirectory()) {
-			this.logger.error("Output directory {} is not directory", this.parameterConfiguration.getOutputFile());
-			return false;
-		}
-		return true;
-	}
+    @Override
+    protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
+        if (!this.parameterConfiguration.getAddrlineExecutable().canExecute()) {
+            this.logger.error("Addr2line file {} is not executable",
+                    this.parameterConfiguration.getAddrlineExecutable());
+            return false;
+        }
+        if (!this.parameterConfiguration.getModelExecutable().canExecute()) {
+            this.logger.error("Model file {} is not executable", this.parameterConfiguration.getModelExecutable());
+            return false;
+        }
+        if (!this.parameterConfiguration.getInputFile().isDirectory()) {
+            this.logger.error("Input directory {} is not directory", this.parameterConfiguration.getInputFile());
+            return false;
+        }
+        if (!this.parameterConfiguration.getOutputFile().isDirectory()) {
+            this.logger.error("Output directory {} is not directory", this.parameterConfiguration.getOutputFile());
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	protected void shutdownService() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    protected void shutdownService() {
+        // TODO Auto-generated method stub
+
+    }
 }
