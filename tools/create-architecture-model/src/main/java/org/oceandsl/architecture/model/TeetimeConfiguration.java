@@ -110,6 +110,10 @@ public class TeetimeConfiguration extends Configuration {
 
         final Distributor<Trigger> distributor = new Distributor<>(new CopyByReferenceStrategy());
 
+        final ModelSerializerStage executionModelSerializerStage = new ModelSerializerStage(typeModel, assemblyModel,
+                deploymentModel, executionModel, statisticsModel, parameterConfiguration.getPrefix(),
+                parameterConfiguration.getOutputFile());
+
         final DependencyGraphCreatorStage operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage(
                 executionModel, statisticsModel, new AssemblyLevelOperationDependencyGraphBuilderFactory());
         final DotFileWriterStage dotFileOperationDependencyWriterStage = new DotFileWriterStage(
@@ -146,6 +150,7 @@ public class TeetimeConfiguration extends Configuration {
 
         this.connectPorts(distributor.getNewOutputPort(), operationDependencyGraphCreatorStage.getInputPort());
         this.connectPorts(distributor.getNewOutputPort(), componentDependencyGraphCreatorStage.getInputPort());
+        this.connectPorts(distributor.getNewOutputPort(), executionModelSerializerStage.getInputPort());
 
         this.connectPorts(operationDependencyGraphCreatorStage.getOutputPort(), distributorGraphs.getInputPort());
         this.connectPorts(distributorGraphs.getNewOutputPort(), dotFileOperationDependencyWriterStage.getInputPort());

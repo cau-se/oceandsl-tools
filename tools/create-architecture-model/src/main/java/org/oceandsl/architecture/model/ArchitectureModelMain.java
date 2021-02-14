@@ -76,6 +76,9 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
             this.logger.error("Output directory {} is not directory", this.parameterConfiguration.getOutputFile());
             return false;
         }
+        if (this.parameterConfiguration.getPrefix() == null) {
+            this.parameterConfiguration.setPrefix("");
+        }
         return true;
     }
 

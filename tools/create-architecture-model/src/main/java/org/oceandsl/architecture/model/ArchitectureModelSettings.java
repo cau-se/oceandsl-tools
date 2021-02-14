@@ -53,4 +53,8 @@ public class ArchitectureModelSettings {
     public String getPrefix() {
         return this.prefix;
     }
+
+    public void setPrefix(final String prefix) {
+        this.prefix = prefix;
+    }
 }
