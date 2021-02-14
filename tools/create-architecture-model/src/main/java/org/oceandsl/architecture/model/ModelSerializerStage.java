@@ -46,8 +46,10 @@ import kieker.analysisteetime.model.analysismodel.type.TypeModel;
 import teetime.framework.AbstractConsumerStage;
 
 /**
- * @author reiner
+ * Store the in memory model in a slightly simplified model on disc.
  *
+ * @author Reiner Jung
+ * @since 1.0
  */
 public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
 
@@ -57,18 +59,15 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
     private final DeploymentModel deploymentModel;
     private final ExecutionModel executionModel;
     private final StatisticsModel statisticsModel;
-    private final String prefix;
 
     public ModelSerializerStage(final TypeModel typeModel, final AssemblyModel assemblyModel,
             final DeploymentModel deploymentModel, final ExecutionModel executionModel,
-            final StatisticsModel statisticsModel, final String prefix, final File outputDirectoryPath)
-            throws IOException {
+            final StatisticsModel statisticsModel, final File outputDirectoryPath) throws IOException {
         this.typeModel = typeModel;
         this.assemblyModel = assemblyModel;
         this.deploymentModel = deploymentModel;
         this.executionModel = executionModel;
         this.statisticsModel = statisticsModel;
-        this.prefix = prefix;
         this.outputFile = new File(outputDirectoryPath.getAbsolutePath() + File.separator + "model.json");
     }
 
@@ -94,7 +93,7 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
 
             componentMap.put("name", componentType.getName());
             componentMap.put("package", componentType.getPackage());
-            componentMap.put("signature", this.fixSignature(componentType.getSignature()));
+            componentMap.put("signature", componentType.getSignature());
 
             final Map<String, Object> operationsMap = new HashMap<>();
             for (final Entry<String, OperationType> operationEntry : componentType.getProvidedOperations()) {
@@ -108,18 +107,10 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
                 operationsMap.put(operation.getName(), operationMap);
             }
             componentMap.put("operations", operationsMap);
-            typeModelMap.put(this.fixSignature(componentTypeEntry.getKey()), componentMap);
+            typeModelMap.put(componentTypeEntry.getKey(), componentMap);
         }
 
         return typeModelMap;
-    }
-
-    private String fixSignature(final String signature) {
-        if (signature.startsWith(this.prefix)) {
-            return signature.substring(this.prefix.length());
-        } else {
-            return signature;
-        }
     }
 
     private Map<String, Object> createAssemblyModel() {
@@ -130,8 +121,7 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
             final AssemblyComponent assemblyComponent = assemblyComponentEntry.getValue();
             final Map<String, Object> assemblyComponentMap = new HashMap<>();
 
-            assemblyComponentMap.put("component-type",
-                    this.fixSignature(assemblyComponent.getComponentType().getSignature()));
+            assemblyComponentMap.put("component-type", assemblyComponent.getComponentType().getSignature());
 
             final Map<String, Object> assemblyOperationsMap = new HashMap<>();
             for (final Entry<String, AssemblyOperation> assemblyOperationEntry : assemblyComponent
@@ -144,7 +134,7 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
             }
             assemblyComponentMap.put("assembly-operations", assemblyOperationsMap);
 
-            assemblyModelMap.put(this.fixSignature(assemblyComponentEntry.getKey()), assemblyComponentMap);
+            assemblyModelMap.put(assemblyComponentEntry.getKey(), assemblyComponentMap);
         }
 
         return assemblyModelMap;
@@ -165,7 +155,7 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
                 final Map<String, Object> deployedComponentMap = new HashMap<>();
 
                 deployedComponentMap.put("assembly-component",
-                        this.fixSignature(deployedComponent.getAssemblyComponent().getComponentType().getSignature()));
+                        deployedComponent.getAssemblyComponent().getComponentType().getSignature());
                 final Map<String, Object> containedOperationsMap = new HashMap<>();
                 for (final Entry<String, DeployedOperation> containedOperationEntry : deployedComponent
                         .getContainedOperations()) {
@@ -177,10 +167,10 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
                     containedOperationsMap.put(containedOperationEntry.getKey(), containedOperationMap);
                 }
                 deployedComponentMap.put("contained-operations", containedOperationsMap);
-                deployedComponentsMap.put(this.fixSignature(deployedComponentEntry.getKey()), deployedComponentMap);
+                deployedComponentsMap.put(deployedComponentEntry.getKey(), deployedComponentMap);
             }
             deploymentContextMap.put("deployed-components", deployedComponentsMap);
-            deploymentModelMap.put(this.fixSignature(deploymentContextEntry.getKey()), deploymentContextMap);
+            deploymentModelMap.put(deploymentContextEntry.getKey(), deploymentContextMap);
         }
 
         return deploymentModelMap;

@@ -1,6 +1,18 @@
-/**
+/***************************************************************************
+ * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
  *
- */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package org.oceandsl.architecture.model;
 
 import java.io.IOException;
@@ -40,8 +52,10 @@ import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
 /**
- * @author reiner
+ * Pipe and Filter configuration for the architecture creation tool.
  *
+ * @author Reiner Jung
+ * @since 1.0
  */
 public class TeetimeConfiguration extends Configuration {
 
@@ -56,7 +70,8 @@ public class TeetimeConfiguration extends Configuration {
         final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(configuration);
 
         final RewriteBeforeAndAfterEventsStage processor = new RewriteBeforeAndAfterEventsStage(
-                parameterConfiguration.getAddrlineExecutable(), parameterConfiguration.getModelExecutable());
+                parameterConfiguration.getAddrlineExecutable(), parameterConfiguration.getModelExecutable(),
+                parameterConfiguration.getPrefix());
 
         final ProduceBeforeAndAfterEventsFromOperationCalls produceEvents = new ProduceBeforeAndAfterEventsFromOperationCalls(
                 "localhost");
@@ -64,18 +79,15 @@ public class TeetimeConfiguration extends Configuration {
         final InstanceOfFilter<IMonitoringRecord, IFlowRecord> instanceOfFilter = new InstanceOfFilter<>(
                 IFlowRecord.class);
 
-        final CountEvents<IFlowRecord> counter = new CountEvents<>(1000000);
+        final CountEventsStage<IFlowRecord> counter = new CountEventsStage<>(1000000);
 
         final IComponentSignatureExtractor componentSignatureExtractor = new IComponentSignatureExtractor() {
 
             @Override
             public void extract(final ComponentType componentType) {
                 String signature = componentType.getSignature();
-                final String prefix = parameterConfiguration.getPrefix();
                 if (signature == null) {
                     signature = "-- none --";
-                } else if (signature.startsWith(prefix)) {
-                    signature = signature.substring(prefix.length());
                 }
                 final Path path = Paths.get(signature);
                 final String name = path.getName(path.getNameCount() - 1).toString();
@@ -111,8 +123,7 @@ public class TeetimeConfiguration extends Configuration {
         final Distributor<Trigger> distributor = new Distributor<>(new CopyByReferenceStrategy());
 
         final ModelSerializerStage executionModelSerializerStage = new ModelSerializerStage(typeModel, assemblyModel,
-                deploymentModel, executionModel, statisticsModel, parameterConfiguration.getPrefix(),
-                parameterConfiguration.getOutputFile());
+                deploymentModel, executionModel, statisticsModel, parameterConfiguration.getOutputFile());
 
         final DependencyGraphCreatorStage operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage(
                 executionModel, statisticsModel, new AssemblyLevelOperationDependencyGraphBuilderFactory());

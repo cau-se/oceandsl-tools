@@ -25,8 +25,11 @@ import kieker.common.record.flow.trace.operation.BeforeOperationEvent;
 import teetime.stage.basic.AbstractTransformation;
 
 /**
- * @author reiner
+ * This filter processes @{link OperationCallEvent} events and transforms them to mini traces which
+ * are send out.
  *
+ * @author Reiner Jung
+ * @since 1.0
  */
 public class ProduceBeforeAndAfterEventsFromOperationCalls
         extends AbstractTransformation<IMonitoringRecord, IFlowRecord> {
