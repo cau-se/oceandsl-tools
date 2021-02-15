@@ -17,9 +17,9 @@ dependencies {
 
 sourceSets {
   main {
-    java { }
-  }
-  gen {
-    java { }
+    java {
+       srcDirs= [ 'src/main/java', 'src/gen/java' ]
+    }
   }
 }
+
