@@ -11,7 +11,7 @@ rootProject.name = 'oceandsl-java-tools'
 
 include 'common'
 include 'analysis'
-// include 'tools:rewrite-log-entries'
-// include 'tools:create-architecture-model'
+include 'tools:rewrite-log-entries'
+include 'tools:create-architecture-model'
 
 
