@@ -2,42 +2,43 @@ image: prefec2/jdk11-maven-363-gradle671
 
 variables:
   GIT_CLEAN_FLAGS: none
-  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 cache:
   paths:
 
 stages:
-- build
+- compile
+- check
 - test
 - package
-- check
-- eclipse-deploy
-- cmd-deploy
-- vi-deploy
-- emacs-deploy
-- jupyter-deploy
 
-build:
+compile:
   tags:
     - exec-docker
-  stage: build
+  stage: compile
   script:
-    - ./gradlew build
+    - ./gradlew compileJava
 
 check:
   tags:
     - exec-docker
   stage: check
   script:
-    - ./gradlew checl
+    - ./gradlew -x test check
+
+test:
+  tags:
+    - exec-docker
+  stage: test
+  script:
+    - ./gradlew test
 
 package:
   tags:
     - exec-docker
   stage: package
   script:
-    - ./gradlew distribute
+    - ./gradlew build
   artifacts:
     paths:
      - ./tools/create-architecture-model/build/distributions/
