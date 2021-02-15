@@ -41,4 +41,4 @@ package:
     - ./gradlew build
   artifacts:
     paths:
-     - ./tools/create-architecture-model/build/distributions/
+     - ./tools/create-architecture-model/build/distributions/create-architecture-model.zip
