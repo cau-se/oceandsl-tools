@@ -19,7 +19,17 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.oceandsl.analysis.CSVReaderStage;
 import org.oceandsl.analysis.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.architecture.model.stages.CSVMapperStage;
+import org.oceandsl.architecture.model.stages.CountEventsStage;
+import org.oceandsl.architecture.model.stages.CountUniqueCallsStage;
+import org.oceandsl.architecture.model.stages.CreateCallsStage;
+import org.oceandsl.architecture.model.stages.ExecutionModelGenerationStage;
+import org.oceandsl.architecture.model.stages.ModelSerializerStage;
+import org.oceandsl.architecture.model.stages.ProduceBeforeAndAfterEventsFromOperationCallsStage;
+import org.oceandsl.architecture.model.stages.utils.DedicatedFileNameMapper;
+import org.oceandsl.architecture.model.stages.utils.DotExportConfigurationFactory;
 
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.graph.dependency.AssemblyLevelComponentDependencyGraphBuilderFactory;
@@ -34,19 +44,21 @@ import kieker.analysis.model.TypeModelAssemblerStage;
 import kieker.analysis.signature.IComponentSignatureExtractor;
 import kieker.analysis.signature.IOperationSignatureExtractor;
 import kieker.analysis.signature.NameBuilder;
-import kieker.analysis.statistics.StatisticsModel;
 import kieker.analysis.util.stage.trigger.Trigger;
 import kieker.analysis.util.stage.trigger.TriggerOnTerminationStage;
-import kieker.analysisteetime.model.analysismodel.assembly.AssemblyModel;
-import kieker.analysisteetime.model.analysismodel.deployment.DeploymentModel;
-import kieker.analysisteetime.model.analysismodel.execution.ExecutionModel;
-import kieker.analysisteetime.model.analysismodel.type.ComponentType;
-import kieker.analysisteetime.model.analysismodel.type.OperationType;
-import kieker.analysisteetime.model.analysismodel.type.TypeModel;
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.flow.IFlowRecord;
+import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.type.ComponentType;
+import kieker.model.analysismodel.type.OperationType;
+import kieker.model.analysismodel.type.TypeModel;
 import kieker.tools.source.LogsReaderCompositeStage;
 import teetime.framework.Configuration;
+import teetime.framework.OutputPort;
 import teetime.stage.InstanceOfFilter;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
@@ -61,19 +73,39 @@ public class TeetimeConfiguration extends Configuration {
 
     public TeetimeConfiguration(final ArchitectureModelSettings parameterConfiguration, final TypeModel typeModel,
             final AssemblyModel assemblyModel, final DeploymentModel deploymentModel,
-            final ExecutionModel executionModel, final StatisticsModel statisticsModel) throws IOException {
+            final ExecutionModel executionModel, final StatisticsModel statisticsModel, final SourceModel sourceModel)
+            throws IOException {
 
-        final kieker.common.configuration.Configuration configuration = new kieker.common.configuration.Configuration();
-        configuration.setProperty(LogsReaderCompositeStage.LOG_DIRECTORIES,
-                parameterConfiguration.getInputFile().getCanonicalPath());
+        final OutputPort<? extends IMonitoringRecord> readerPort;
+        switch (parameterConfiguration.getInputType()) {
+        case KIEKER:
+            final kieker.common.configuration.Configuration configuration = new kieker.common.configuration.Configuration();
+            configuration.setProperty(LogsReaderCompositeStage.LOG_DIRECTORIES,
+                    parameterConfiguration.getInputFile().getCanonicalPath());
 
-        final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(configuration);
+            final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(configuration);
+            readerPort = reader.getOutputPort();
+            break;
+        case CSV:
+            final CSVReaderStage readCsvStage = new CSVReaderStage(parameterConfiguration.getInputFile().toPath());
+            final CSVMapperStage mapperStage = new CSVMapperStage(parameterConfiguration.getPrefix());
+            this.connectPorts(readCsvStage.getOutputPort(), mapperStage.getInputPort());
+            readerPort = mapperStage.getOutputPort();
+            break;
+        default:
+            readerPort = null;
+            break;
+        }
 
-        final RewriteBeforeAndAfterEventsStage processor = new RewriteBeforeAndAfterEventsStage(
-                parameterConfiguration.getAddrlineExecutable(), parameterConfiguration.getModelExecutable(),
-                parameterConfiguration.getPrefix());
+        final RewriteBeforeAndAfterEventsStage processor;
+        if (parameterConfiguration.getModelExecutable() != null) {
+            processor = new RewriteBeforeAndAfterEventsStage(parameterConfiguration.getAddrlineExecutable(),
+                    parameterConfiguration.getModelExecutable(), parameterConfiguration.getPrefix());
+        } else {
+            processor = null;
+        }
 
-        final ProduceBeforeAndAfterEventsFromOperationCalls produceEvents = new ProduceBeforeAndAfterEventsFromOperationCalls(
+        final ProduceBeforeAndAfterEventsFromOperationCallsStage produceEvents = new ProduceBeforeAndAfterEventsFromOperationCallsStage(
                 "localhost");
 
         final InstanceOfFilter<IMonitoringRecord, IFlowRecord> instanceOfFilter = new InstanceOfFilter<>(
@@ -106,24 +138,24 @@ public class TeetimeConfiguration extends Configuration {
             }
 
         };
-        final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(typeModel,
-                componentSignatureExtractor, operationSignatureExtractor);
+        final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(typeModel, sourceModel,
+                parameterConfiguration.getSourceLabel(), componentSignatureExtractor, operationSignatureExtractor);
         final AssemblyModelAssemblerStage assemblyModelAssemblerStage = new AssemblyModelAssemblerStage(typeModel,
-                assemblyModel);
+                assemblyModel, sourceModel, parameterConfiguration.getSourceLabel());
         final DeploymentModelAssemblerStage deploymentModelAssemblerStage = new DeploymentModelAssemblerStage(
-                assemblyModel, deploymentModel);
+                assemblyModel, deploymentModel, sourceModel, parameterConfiguration.getSourceLabel());
 
         final CreateCallsStage callsStage = new CreateCallsStage(deploymentModel);
         final ExecutionModelGenerationStage executionModelGenerationStage = new ExecutionModelGenerationStage(
                 executionModel);
-        final CountUniqueCalls countUniqueCalls = new CountUniqueCalls(statisticsModel, executionModel);
+        final CountUniqueCallsStage countUniqueCalls = new CountUniqueCallsStage(statisticsModel, executionModel);
 
         final TriggerOnTerminationStage triggerOnTerminationStage = new TriggerOnTerminationStage();
 
         final Distributor<Trigger> distributor = new Distributor<>(new CopyByReferenceStrategy());
 
         final ModelSerializerStage executionModelSerializerStage = new ModelSerializerStage(typeModel, assemblyModel,
-                deploymentModel, executionModel, statisticsModel, parameterConfiguration.getOutputFile());
+                deploymentModel, executionModel, statisticsModel, sourceModel, parameterConfiguration.getOutputFile());
 
         final DependencyGraphCreatorStage operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage(
                 executionModel, statisticsModel, new AssemblyLevelOperationDependencyGraphBuilderFactory());
@@ -146,8 +178,12 @@ public class TeetimeConfiguration extends Configuration {
         final GraphMLFileWriterStage graphMLFileWriterStage = new GraphMLFileWriterStage(
                 parameterConfiguration.getOutputFile().getPath());
 
-        this.connectPorts(reader.getOutputPort(), processor.getInputPort());
-        this.connectPorts(processor.getOutputPort(), produceEvents.getInputPort());
+        if (processor != null) {
+            this.connectPorts(readerPort, processor.getInputPort());
+            this.connectPorts(processor.getOutputPort(), produceEvents.getInputPort());
+        } else {
+            this.connectPorts(readerPort, produceEvents.getInputPort());
+        }
         this.connectPorts(produceEvents.getOutputPort(), instanceOfFilter.getInputPort());
         this.connectPorts(instanceOfFilter.getMatchedOutputPort(), counter.getInputPort());
         this.connectPorts(counter.getOutputPort(), typeModelAssemblerStage.getInputPort());

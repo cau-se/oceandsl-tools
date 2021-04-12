@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model;
+package org.oceandsl.architecture.model.stages;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,23 +26,24 @@ import java.util.Map.Entry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import kieker.analysis.statistics.Properties;
-import kieker.analysis.statistics.StatisticsModel;
-import kieker.analysis.statistics.Units;
-import kieker.analysis.util.ComposedKey;
 import kieker.analysis.util.stage.trigger.Trigger;
-import kieker.analysisteetime.model.analysismodel.assembly.AssemblyComponent;
-import kieker.analysisteetime.model.analysismodel.assembly.AssemblyModel;
-import kieker.analysisteetime.model.analysismodel.assembly.AssemblyOperation;
-import kieker.analysisteetime.model.analysismodel.deployment.DeployedComponent;
-import kieker.analysisteetime.model.analysismodel.deployment.DeployedOperation;
-import kieker.analysisteetime.model.analysismodel.deployment.DeploymentContext;
-import kieker.analysisteetime.model.analysismodel.deployment.DeploymentModel;
-import kieker.analysisteetime.model.analysismodel.execution.AggregatedInvocation;
-import kieker.analysisteetime.model.analysismodel.execution.ExecutionModel;
-import kieker.analysisteetime.model.analysismodel.type.ComponentType;
-import kieker.analysisteetime.model.analysismodel.type.OperationType;
-import kieker.analysisteetime.model.analysismodel.type.TypeModel;
+import kieker.model.analysismodel.assembly.AssemblyComponent;
+import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.assembly.AssemblyOperation;
+import kieker.model.analysismodel.deployment.DeployedComponent;
+import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeploymentContext;
+import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.execution.AggregatedInvocation;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.Tuple;
+import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.statistics.EPredefinedUnits;
+import kieker.model.analysismodel.statistics.EPropertyType;
+import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.type.ComponentType;
+import kieker.model.analysismodel.type.OperationType;
+import kieker.model.analysismodel.type.TypeModel;
 import teetime.framework.AbstractConsumerStage;
 
 /**
@@ -59,15 +60,18 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
     private final DeploymentModel deploymentModel;
     private final ExecutionModel executionModel;
     private final StatisticsModel statisticsModel;
+    private final SourceModel sourceModel;
 
     public ModelSerializerStage(final TypeModel typeModel, final AssemblyModel assemblyModel,
             final DeploymentModel deploymentModel, final ExecutionModel executionModel,
-            final StatisticsModel statisticsModel, final File outputDirectoryPath) throws IOException {
+            final StatisticsModel statisticsModel, final SourceModel sourceModel, final File outputDirectoryPath)
+            throws IOException {
         this.typeModel = typeModel;
         this.assemblyModel = assemblyModel;
         this.deploymentModel = deploymentModel;
         this.executionModel = executionModel;
         this.statisticsModel = statisticsModel;
+        this.sourceModel = sourceModel;
         this.outputFile = new File(outputDirectoryPath.getAbsolutePath() + File.separator + "model.json");
     }
 
@@ -179,11 +183,11 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
     private List<Object> createExecutionAggregateModel() {
         final List<Object> executionAggregateModels = new ArrayList<>();
 
-        for (final Entry<ComposedKey<DeployedOperation, DeployedOperation>, AggregatedInvocation> aggregatedInvocationEntry : this.executionModel
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> aggregatedInvocationEntry : this.executionModel
                 .getAggregatedInvocations()) {
             final AggregatedInvocation aggregatedInvocation = aggregatedInvocationEntry.getValue();
-            final long numberOfcalls = this.statisticsModel.get(aggregatedInvocation).getStatistic(Units.RESPONSE_TIME)
-                    .getProperty(Properties.COUNT);
+            final long numberOfcalls = (Long) this.statisticsModel.getStatistics().get(aggregatedInvocation)
+                    .getStatistics().get(EPredefinedUnits.RESPONSE_TIME).getProperties().get(EPropertyType.COUNT);
 
             final Map<String, Object> aggregatedLinkMap = new HashMap<>();
 

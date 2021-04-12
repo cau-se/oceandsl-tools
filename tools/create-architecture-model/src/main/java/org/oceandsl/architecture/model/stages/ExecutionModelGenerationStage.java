@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model;
+package org.oceandsl.architecture.model.stages;
 
-import kieker.analysis.util.ComposedKey;
-import kieker.analysisteetime.model.analysismodel.deployment.DeployedOperation;
-import kieker.analysisteetime.model.analysismodel.execution.AggregatedInvocation;
-import kieker.analysisteetime.model.analysismodel.execution.ExecutionFactory;
-import kieker.analysisteetime.model.analysismodel.execution.ExecutionModel;
+import org.oceandsl.architecture.model.stages.data.OperationCall;
+
+import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.execution.AggregatedInvocation;
+import kieker.model.analysismodel.execution.ExecutionFactory;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.Tuple;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
@@ -48,7 +50,9 @@ public class ExecutionModelGenerationStage extends AbstractConsumerStage<Operati
     }
 
     protected void addExecution(final DeployedOperation source, final DeployedOperation target) {
-        final ComposedKey<DeployedOperation, DeployedOperation> key = ComposedKey.of(source, target);
+        final Tuple<DeployedOperation, DeployedOperation> key = this.factory.createTuple();
+        key.setFirst(source);
+        key.setSecond(target);
         if (!this.executionModel.getAggregatedInvocations().containsKey(key)) {
             final AggregatedInvocation invocation = this.factory.createAggregatedInvocation();
             invocation.setSource(source);

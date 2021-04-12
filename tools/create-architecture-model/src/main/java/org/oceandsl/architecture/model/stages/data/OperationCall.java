@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model;
+package org.oceandsl.architecture.model.stages.data;
 
-import kieker.analysisteetime.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeployedOperation;
 
 /**
  * A Single operation call. Data class.

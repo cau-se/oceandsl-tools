@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model;
+package org.oceandsl.architecture.model.stages.utils;
 
+import java.io.File;
 import java.util.function.Function;
 
 import kieker.analysis.graph.IGraph;
@@ -49,6 +50,7 @@ public class DedicatedFileNameMapper implements Function<IGraph, String> {
 
     @Override
     public String apply(final IGraph graph) {
-        return this.outputDirectory + '/' + this.outputFilename + "-" + graph.getName() + '.' + this.fileExtension;
+        return this.outputDirectory + File.separator + this.outputFilename + "-" + graph.getName() + '.'
+                + this.fileExtension;
     }
 }

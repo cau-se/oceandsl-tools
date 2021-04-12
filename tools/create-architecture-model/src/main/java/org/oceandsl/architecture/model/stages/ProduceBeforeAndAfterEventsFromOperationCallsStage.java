@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model;
+package org.oceandsl.architecture.model.stages;
 
 import org.oceandsl.common.OperationCallEvent;
 
@@ -31,14 +31,14 @@ import teetime.stage.basic.AbstractTransformation;
  * @author Reiner Jung
  * @since 1.0
  */
-public class ProduceBeforeAndAfterEventsFromOperationCalls
+public class ProduceBeforeAndAfterEventsFromOperationCallsStage
         extends AbstractTransformation<IMonitoringRecord, IFlowRecord> {
 
     private long traceId = 1;
     private long now = 0;
     private final String hostname;
 
-    public ProduceBeforeAndAfterEventsFromOperationCalls(final String hostname) {
+    public ProduceBeforeAndAfterEventsFromOperationCallsStage(final String hostname) {
         this.hostname = hostname;
     }
 

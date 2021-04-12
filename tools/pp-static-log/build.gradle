@@ -28,5 +28,5 @@ dependencies {
 }
 
 application {
-    mainClassName = 'org.oceandsl.architecture.model.ArchitectureModelMain'
+    mainClassName = 'org.oceandsl.pp.log.FixStaticLogMain'
 }

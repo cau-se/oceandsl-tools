@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model;
+package org.oceandsl.architecture.model.stages;
 
 import java.util.function.Function;
 
+import org.eclipse.emf.ecore.EObject;
+import org.oceandsl.architecture.model.stages.data.OperationCall;
+
 import kieker.analysis.statistics.StatisticsDecoratorStage;
-import kieker.analysis.statistics.StatisticsModel;
-import kieker.analysis.statistics.Units;
 import kieker.analysis.statistics.calculating.CountCalculator;
-import kieker.analysis.util.ComposedKey;
-import kieker.analysisteetime.model.analysismodel.deployment.DeployedOperation;
-import kieker.analysisteetime.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.execution.ExecutionFactory;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.Tuple;
+import kieker.model.analysismodel.statistics.EPredefinedUnits;
+import kieker.model.analysismodel.statistics.StatisticsModel;
 
 /**
  * Counts the number of unique operation calles and stores that information in the statistics model.
@@ -32,18 +36,19 @@ import kieker.analysisteetime.model.analysismodel.execution.ExecutionModel;
  * @author Reiner Jung
  * @since 1.0
  */
-public class CountUniqueCalls extends StatisticsDecoratorStage<OperationCall> {
+public class CountUniqueCallsStage extends StatisticsDecoratorStage<OperationCall> {
 
-    public CountUniqueCalls(final StatisticsModel statisticsModel, final ExecutionModel executionModel) {
-        super(statisticsModel, Units.RESPONSE_TIME, new CountCalculator<>(),
-                CountUniqueCalls.createForAggregatedInvocation(executionModel));
+    public CountUniqueCallsStage(final StatisticsModel statisticsModel, final ExecutionModel executionModel) {
+        super(statisticsModel, EPredefinedUnits.RESPONSE_TIME, new CountCalculator<>(),
+                CountUniqueCallsStage.createForAggregatedInvocation(executionModel));
     }
 
-    public static final Function<OperationCall, Object> createForAggregatedInvocation(
+    public static final Function<OperationCall, EObject> createForAggregatedInvocation(
             final ExecutionModel executionModel) {
         return operationCall -> {
-            final ComposedKey<DeployedOperation, DeployedOperation> key = ComposedKey
-                    .of(operationCall.getSourceOperation(), operationCall.getTargetOperation());
+            final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
+            key.setFirst(operationCall.getSourceOperation());
+            key.setSecond(operationCall.getTargetOperation());
             return executionModel.getAggregatedInvocations().get(key);
         };
     }

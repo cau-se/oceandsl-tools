@@ -37,16 +37,31 @@ public class ArchitectureModelSettings {
     private File outputFile;
 
     @Parameter(names = { "-a",
-            "--addrline" }, required = true, converter = FileConverter.class, description = "Location of the addrline tool")
+            "--addrline" }, required = false, converter = FileConverter.class, description = "Location of the addrline tool")
     private File addrlineExecutable;
 
     @Parameter(names = { "-e",
-            "--executable" }, required = true, converter = FileConverter.class, description = "Location of the executable")
+            "--executable" }, required = false, converter = FileConverter.class, description = "Location of the executable")
     private File modelExecutable;
 
     @Parameter(names = { "-p",
             "--prefix" }, required = false, description = "Path prefix to be removed from filenames in the visualization")
     private String prefix;
+
+    @Parameter(names = { "-m",
+            "--mode" }, required = false, converter = InputTypeConverter.class, description = "Different input read modes, default is kieker; other option is csv")
+    protected EInputType inputType = EInputType.KIEKER;
+
+    @Parameter(names = { "-ia",
+            "--input-architecture-model" }, required = false, converter = FileConverter.class, description = "Directory for an input architecture model")
+    private File inputArchitectureModelDirectory;
+
+    @Parameter(names = { "-oa",
+            "--output-architecture-model" }, required = false, converter = FileConverter.class, description = "Directory for an output architecture model")
+    private File outputArchitectureModelDirectory;
+
+    @Parameter(names = { "-l", "--source-label" }, required = true, description = "Set source label for the read data")
+    private String sourceLabel;
 
     public File getInputFile() {
         return this.inputFile;
@@ -70,5 +85,21 @@ public class ArchitectureModelSettings {
 
     public void setPrefix(final String prefix) {
         this.prefix = prefix;
+    }
+
+    public EInputType getInputType() {
+        return this.inputType;
+    }
+
+    public File getInputArchitectureModelDirectory() {
+        return this.inputArchitectureModelDirectory;
+    }
+
+    public File getOutputArchitectureModelDirectory() {
+        return this.outputArchitectureModelDirectory;
+    }
+
+    public String getSourceLabel() {
+        return this.sourceLabel;
     }
 }

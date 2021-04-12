@@ -13,5 +13,6 @@ include 'common'
 include 'analysis'
 include 'tools:rewrite-log-entries'
 include 'tools:create-architecture-model'
+include 'tools:pp-static-log'
 
 
