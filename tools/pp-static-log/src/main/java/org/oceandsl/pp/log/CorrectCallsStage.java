@@ -56,7 +56,7 @@ public class CorrectCallsStage extends AbstractStage {
         }
         if (this.unprocessedInvocation != null) {
             this.learnedFileMap.put(this.unprocessedInvocation.getCaller(), this.unprocessedInvocation.getSourcePath());
-            final String calleeFile = this.functionFileMap.get(this.unprocessedInvocation.getCallee());
+            final String calleeFile = this.functionFileMap.get(this.unprocessedInvocation.getCallee().toLowerCase());
             if (calleeFile != null) {
                 this.unprocessedInvocation.setTargetPath(calleeFile);
                 this.outputPort.send(this.unprocessedInvocation);
