@@ -17,6 +17,7 @@ package org.oceandsl.pp.log;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -30,7 +31,7 @@ import kieker.tools.common.AbstractService;
  * @author Reiner Jung
  * @since 1.0
  */
-public class FixStaticLogMain extends AbstractService<TeetimeConfiguration, Settings> {
+public class FixStaticLogMain extends AbstractService<FixStaticLogTeetimeConfiguration, Settings> {
 
     public static void main(final String[] args) {
         final FixStaticLogMain main = new FixStaticLogMain();
@@ -40,9 +41,9 @@ public class FixStaticLogMain extends AbstractService<TeetimeConfiguration, Sett
     }
 
     @Override
-    protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
+    protected FixStaticLogTeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            return new TeetimeConfiguration(this.parameterConfiguration);
+            return new FixStaticLogTeetimeConfiguration(this.parameterConfiguration);
         } catch (final IOException e) {
             this.logger.error("IO error. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
@@ -62,8 +63,19 @@ public class FixStaticLogMain extends AbstractService<TeetimeConfiguration, Sett
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (!this.parameterConfiguration.getInputFile().isFile()) {
-            this.logger.error("Input file {} is not file", this.parameterConfiguration.getInputFile());
+        if (!this.parameterConfiguration.getInputPath().toFile().isFile()) {
+            this.logger.error("Input file {} is not file", this.parameterConfiguration.getInputPath());
+            return false;
+        }
+        for (final Path path : this.parameterConfiguration.getMapPaths()) {
+            if (!path.toFile().isFile()) {
+                this.logger.error("Map file {} is not file", path);
+                return false;
+            }
+        }
+        if (!this.parameterConfiguration.getOutputFile().getParentFile().isDirectory()) {
+            this.logger.error("Directory for output file {} does not exists",
+                    this.parameterConfiguration.getOutputFile());
             return false;
         }
 

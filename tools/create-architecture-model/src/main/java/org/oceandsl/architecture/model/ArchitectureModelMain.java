@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.oceandsl.architecture.model.stages.data.ValueConversionErrorException;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
@@ -118,7 +119,7 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
             return new TeetimeConfiguration(this.parameterConfiguration, this.typeModel, this.assemblyModel,
                     this.deploymentModel, this.executionModel, this.statisticsModel, this.sourcesModel);
 
-        } catch (final IOException e) {
+        } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
         }
@@ -159,8 +160,8 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
                 return false;
             }
         }
-        if (!this.parameterConfiguration.getOutputFile().isDirectory()) {
-            this.logger.error("Output directory {} is not directory", this.parameterConfiguration.getOutputFile());
+        if (!this.parameterConfiguration.getOutputDirectory().toFile().isDirectory()) {
+            this.logger.error("Output directory {} is not directory", this.parameterConfiguration.getOutputDirectory());
             return false;
         }
         if (this.parameterConfiguration.getPrefix() == null) {

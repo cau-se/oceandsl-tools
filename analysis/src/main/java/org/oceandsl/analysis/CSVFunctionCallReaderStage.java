@@ -23,13 +23,13 @@ import java.nio.file.Path;
 import teetime.framework.AbstractProducerStage;
 
 /**
- * Reads an 3 column CSV file.
+ * Reads an 3 or 4 column CSV file containing calls.
  *
  * @author Reiner Jung
  * @since 1.0
  *
  */
-public class CSVReaderStage extends AbstractProducerStage<CallerCallee> {
+public class CSVFunctionCallReaderStage extends AbstractProducerStage<CallerCallee> {
 
     private final BufferedReader reader;
 
@@ -41,7 +41,7 @@ public class CSVReaderStage extends AbstractProducerStage<CallerCallee> {
      * @throws IOException
      *             when a stream could not be opened.
      */
-    public CSVReaderStage(final Path path) throws IOException {
+    public CSVFunctionCallReaderStage(final Path path) throws IOException {
         this.reader = Files.newBufferedReader(path);
     }
 
@@ -52,8 +52,14 @@ public class CSVReaderStage extends AbstractProducerStage<CallerCallee> {
         String line;
         while ((line = this.reader.readLine()) != null) {
             final String[] values = line.split(",");
-            final CallerCallee result = new CallerCallee(values[0].trim(), values[1].trim(), "", values[2].trim());
-            this.outputPort.send(result);
+            if (values.length == 4) {
+                this.outputPort
+                        .send(new CallerCallee(values[0].trim(), values[1].trim(), values[2].trim(), values[3].trim()));
+            } else if (values.length == 3) {
+                this.outputPort.send(new CallerCallee(values[0].trim(), values[1].trim(), "", values[2].trim()));
+            } else {
+                this.logger.error("Line needs at least 3 better 4 values. :{}:", line);
+            }
         }
         this.reader.close();
         this.workCompleted();

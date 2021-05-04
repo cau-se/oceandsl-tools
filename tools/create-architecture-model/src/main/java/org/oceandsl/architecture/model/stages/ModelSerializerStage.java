@@ -17,6 +17,7 @@ package org.oceandsl.architecture.model.stages;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,10 @@ import java.util.Map.Entry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
+
+import kieker.analysis.model.ModelRepository;
 import kieker.analysis.util.stage.trigger.Trigger;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
@@ -62,17 +67,14 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
     private final StatisticsModel statisticsModel;
     private final SourceModel sourceModel;
 
-    public ModelSerializerStage(final TypeModel typeModel, final AssemblyModel assemblyModel,
-            final DeploymentModel deploymentModel, final ExecutionModel executionModel,
-            final StatisticsModel statisticsModel, final SourceModel sourceModel, final File outputDirectoryPath)
-            throws IOException {
-        this.typeModel = typeModel;
-        this.assemblyModel = assemblyModel;
-        this.deploymentModel = deploymentModel;
-        this.executionModel = executionModel;
-        this.statisticsModel = statisticsModel;
-        this.sourceModel = sourceModel;
-        this.outputFile = new File(outputDirectoryPath.getAbsolutePath() + File.separator + "model.json");
+    public ModelSerializerStage(final ModelRepository repository, final Path outputDirectoryPath) throws IOException {
+        this.typeModel = repository.getModel(TypeModel.class);
+        this.assemblyModel = repository.getModel(AssemblyModel.class);
+        this.deploymentModel = repository.getModel(DeploymentModel.class);
+        this.executionModel = repository.getModel(ExecutionModel.class);
+        this.statisticsModel = repository.getModel(StatisticsModel.class);
+        this.sourceModel = repository.getModel(SourceModel.class);
+        this.outputFile = outputDirectoryPath.resolve(String.format("%s-model.json", repository.getName())).toFile();
     }
 
     @Override
@@ -85,6 +87,7 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
         modelMap.put("assembly-model", this.createAssemblyModel());
         modelMap.put("deployment-model", this.createDeplyomentModel());
         modelMap.put("execution-aggregate-model", this.createExecutionAggregateModel());
+        modelMap.put("source-model", this.createSourceModel());
 
         objectMapper.writeValue(this.outputFile, modelMap);
     }
@@ -178,6 +181,50 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
         }
 
         return deploymentModelMap;
+    }
+
+    private List<Object> createSourceModel() {
+        final List<Object> sourceElementModels = new ArrayList<>();
+
+        for (final Entry<EObject, EList<String>> entry : this.sourceModel.getSources().entrySet()) {
+            final Map<String, Object> entryMap = new HashMap<>();
+            entryMap.put("reference", this.createReference(entry.getKey()));
+            entryMap.put("sources", this.createSourcesList(entry.getValue()));
+        }
+
+        return sourceElementModels;
+    }
+
+    private String createReference(final EObject key) {
+        if (key instanceof DeployedComponent) {
+            final DeployedComponent component = (DeployedComponent) key;
+            return String.format("%s::%s", component.getDeploymentContext().getName(),
+                    this.createReference(component.getAssemblyComponent()));
+        } else if (key instanceof DeployedOperation) {
+            final DeployedOperation operation = (DeployedOperation) key;
+            return String.format("%s/%s", this.createReference(operation.getComponent()),
+                    this.createReference(operation.getAssemblyOperation()));
+        } else if (key instanceof AssemblyComponent) {
+            final AssemblyComponent component = (AssemblyComponent) key;
+            return String.format("assembly:%s", this.createReference(component.getComponentType()));
+        } else if (key instanceof AssemblyOperation) {
+            final AssemblyOperation operation = (AssemblyOperation) key;
+            return String.format("assembly:%s", this.createReference(operation.getOperationType()));
+        } else if (key instanceof ComponentType) {
+            return ((ComponentType) key).getSignature();
+        } else if (key instanceof OperationType) {
+            return ((OperationType) key).getSignature();
+        } else {
+            return String.format("-- error -- %s not supported", key.getClass().getCanonicalName());
+        }
+    }
+
+    private List<String> createSourcesList(final EList<String> list) {
+        final List<String> result = new ArrayList<>();
+        for (final String element : list) {
+            result.add(element);
+        }
+        return result;
     }
 
     private List<Object> createExecutionAggregateModel() {

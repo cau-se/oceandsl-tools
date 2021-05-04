@@ -17,9 +17,9 @@ package org.oceandsl.pp.log;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 
 import org.oceandsl.analysis.CallerCallee;
 
@@ -35,7 +35,7 @@ public class CSVWriterStage extends AbstractConsumerStage<CallerCallee> {
     final BufferedWriter writer;
 
     public CSVWriterStage(final Path outputPath) throws IOException {
-        this.writer = Files.newBufferedWriter(outputPath, StandardOpenOption.CREATE);
+        this.writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);
     }
 
     @Override

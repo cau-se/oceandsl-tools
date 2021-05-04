@@ -16,9 +16,11 @@
 package org.oceandsl.architecture.model;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
+import com.beust.jcommander.converters.PathConverter;
 
 /**
  * All settings including command line parameters for the analysis.
@@ -29,12 +31,16 @@ import com.beust.jcommander.converters.FileConverter;
 public class ArchitectureModelSettings {
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, converter = FileConverter.class, description = "Input Kieker log directory")
+            "--input" }, required = true, converter = FileConverter.class, description = "Input Kieker log directory or CSV file location")
     private File inputFile;
 
     @Parameter(names = { "-o",
-            "--output" }, required = true, converter = FileConverter.class, description = "Output directory where to put the graphics")
-    private File outputFile;
+            "--output" }, required = true, converter = PathConverter.class, description = "Output directory to store graphics and statistics")
+    private Path outputDirectory;
+
+    @Parameter(names = { "-M",
+            "--component-map" }, required = false, converter = PathConverter.class, description = "Component, file and function map file")
+    private Path componentMapFile;
 
     @Parameter(names = { "-a",
             "--addrline" }, required = false, converter = FileConverter.class, description = "Location of the addrline tool")
@@ -63,12 +69,23 @@ public class ArchitectureModelSettings {
     @Parameter(names = { "-l", "--source-label" }, required = true, description = "Set source label for the read data")
     private String sourceLabel;
 
+    @Parameter(names = { "-c",
+            "--case-insensitive" }, required = false, description = "Handle function names in CSV case insensitive")
+    private boolean caseInsensitive;
+
+    @Parameter(names = { "-H",
+            "--hostname" }, required = false, description = "Hostname to be used in CSV reconstruction")
+    private String hostname;
+
+    @Parameter(names = { "-E", "--experiment-name" }, required = true, description = "Name of the experiment")
+    private String experimentName;
+
     public File getInputFile() {
         return this.inputFile;
     }
 
-    public File getOutputFile() {
-        return this.outputFile;
+    public Path getOutputDirectory() {
+        return this.outputDirectory;
     }
 
     public File getAddrlineExecutable() {
@@ -101,5 +118,21 @@ public class ArchitectureModelSettings {
 
     public String getSourceLabel() {
         return this.sourceLabel;
+    }
+
+    public boolean getCaseInsensitive() {
+        return this.caseInsensitive;
+    }
+
+    public String getHostname() {
+        return this.hostname == null ? "<static>" : this.hostname;
+    }
+
+    public String getExperimentName() {
+        return this.experimentName;
+    }
+
+    public Path getComponentMapFile() {
+        return this.componentMapFile;
     }
 }

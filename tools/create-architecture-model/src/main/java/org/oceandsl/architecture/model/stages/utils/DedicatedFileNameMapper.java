@@ -15,7 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.architecture.model.stages.utils;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.function.Function;
 
 import kieker.analysis.graph.IGraph;
@@ -25,9 +25,9 @@ import kieker.analysis.graph.util.FileExtension;
  * @author Reiner Jung
  * @since 1.0
  */
-public class DedicatedFileNameMapper implements Function<IGraph, String> {
+public class DedicatedFileNameMapper implements Function<IGraph, Path> {
 
-    private final String outputDirectory;
+    private final Path outputDirectory;
     private final FileExtension fileExtension;
     private final String outputFilename;
 
@@ -41,7 +41,7 @@ public class DedicatedFileNameMapper implements Function<IGraph, String> {
      * @param fileExtension
      *            file extension for the graph
      */
-    public DedicatedFileNameMapper(final String outputDirectory, final String outputFilename,
+    public DedicatedFileNameMapper(final Path outputDirectory, final String outputFilename,
             final FileExtension fileExtension) {
         this.outputDirectory = outputDirectory;
         this.outputFilename = outputFilename;
@@ -49,8 +49,8 @@ public class DedicatedFileNameMapper implements Function<IGraph, String> {
     }
 
     @Override
-    public String apply(final IGraph graph) {
-        return this.outputDirectory + File.separator + this.outputFilename + "-" + graph.getName() + '.'
-                + this.fileExtension;
+    public Path apply(final IGraph graph) {
+        return this.outputDirectory
+                .resolve(String.format("%s-%s.%s", graph.getName(), this.outputFilename, this.fileExtension));
     }
 }

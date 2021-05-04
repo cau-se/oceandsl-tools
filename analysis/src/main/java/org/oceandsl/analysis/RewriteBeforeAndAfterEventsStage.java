@@ -97,6 +97,12 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
                                 : Integer.parseInt(matcher.group(3));
                         RewriteBeforeAndAfterEventsStage.this.addressMap.put(address, new AddrOutput(matcher.group(1),
                                 RewriteBeforeAndAfterEventsStage.this.fixSignature(matcher.group(2)), linenumber));
+                    } else if ("?? ??:0".equals(string)) {
+                        RewriteBeforeAndAfterEventsStage.this.addressMap.put(address,
+                                new AddrOutput(address, "<<no-file>>", 0));
+                    } else {
+                        RewriteBeforeAndAfterEventsStage.this.logger.error("Cannot process result '{}' for address {}",
+                                string, address);
                     }
                 }
 
@@ -137,6 +143,11 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
 
         public Integer getLinenumber() {
             return this.linenumber;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s:%d -- %s", this.filename, this.linenumber, this.name);
         }
     }
 

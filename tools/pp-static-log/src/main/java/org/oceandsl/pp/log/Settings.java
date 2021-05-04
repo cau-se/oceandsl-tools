@@ -16,9 +16,12 @@
 package org.oceandsl.pp.log;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.List;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
+import com.beust.jcommander.converters.PathConverter;
 
 /**
  * All settings including command line parameters for the analysis.
@@ -29,15 +32,23 @@ import com.beust.jcommander.converters.FileConverter;
 public class Settings {
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, converter = FileConverter.class, description = "Input 3 column static log directory")
-    private File inputFile;
+            "--input" }, required = true, converter = PathConverter.class, description = "Input 3 column static log directory")
+    private Path inputPath;
+
+    @Parameter(names = { "-m",
+            "--map" }, required = true, variableArity = true, converter = PathConverter.class, description = "Function to file map")
+    private List<Path> mapPaths;
 
     @Parameter(names = { "-o",
             "--output" }, required = true, converter = FileConverter.class, description = "Output directory for 4 column log")
     private File outputFile;
 
-    public File getInputFile() {
-        return this.inputFile;
+    public Path getInputPath() {
+        return this.inputPath;
+    }
+
+    public List<Path> getMapPaths() {
+        return this.mapPaths;
     }
 
     public File getOutputFile() {
