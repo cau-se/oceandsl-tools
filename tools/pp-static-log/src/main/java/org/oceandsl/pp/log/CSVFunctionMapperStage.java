@@ -48,7 +48,7 @@ public class CSVFunctionMapperStage extends AbstractProducerStage<Map<String, St
             while ((line = reader.readLine()) != null) {
                 final String[] values = line.split(",");
                 if (values.length == 2) {
-                    functionMap.put(values[1].trim(), values[0].trim());
+                    functionMap.put(values[1].trim().toLowerCase(), values[0].trim().toLowerCase());
                 }
             }
             reader.close();
