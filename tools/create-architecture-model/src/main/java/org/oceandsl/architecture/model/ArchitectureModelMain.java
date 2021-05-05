@@ -44,8 +44,10 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.ExecutionPackage;
 import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.sources.SourcesFactory;
+import kieker.model.analysismodel.sources.SourcesPackage;
 import kieker.model.analysismodel.statistics.StatisticsFactory;
 import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
@@ -108,6 +110,8 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
                 packageRegistry.put(AssemblyPackage.eNS_URI, AssemblyPackage.eINSTANCE);
                 packageRegistry.put(DeploymentPackage.eNS_URI, DeploymentPackage.eINSTANCE);
                 packageRegistry.put(ExecutionPackage.eNS_URI, ExecutionPackage.eINSTANCE);
+                packageRegistry.put(StatisticsPackage.eNS_URI, ArchitectureModelMain.STATISTICS_MODEL_NAME);
+                packageRegistry.put(SourcesPackage.eNS_URI, ArchitectureModelMain.SOURCES_MODEL_NAME);
 
                 this.typeModel = this.readModel(resourceSet, ArchitectureModelMain.TYPE_MODEL_NAME);
                 this.assemblyModel = this.readModel(resourceSet, ArchitectureModelMain.ASSEMBLY_MODEL_NAME);
@@ -116,8 +120,9 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
                 this.statisticsModel = this.readModel(resourceSet, ArchitectureModelMain.STATISTICS_MODEL_NAME);
                 this.sourcesModel = this.readModel(resourceSet, ArchitectureModelMain.SOURCES_MODEL_NAME);
             }
-            return new TeetimeConfiguration(this.parameterConfiguration, this.typeModel, this.assemblyModel,
-                    this.deploymentModel, this.executionModel, this.statisticsModel, this.sourcesModel);
+            return new TeetimeConfiguration(this.logger, this.parameterConfiguration, this.typeModel,
+                    this.assemblyModel, this.deploymentModel, this.executionModel, this.statisticsModel,
+                    this.sourcesModel);
 
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
@@ -163,9 +168,6 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
         if (!this.parameterConfiguration.getOutputDirectory().toFile().isDirectory()) {
             this.logger.error("Output directory {} is not directory", this.parameterConfiguration.getOutputDirectory());
             return false;
-        }
-        if (this.parameterConfiguration.getPrefix() == null) {
-            this.parameterConfiguration.setPrefix("");
         }
         if (this.parameterConfiguration.getInputArchitectureModelDirectory() != null) {
             if (!this.parameterConfiguration.getInputArchitectureModelDirectory().exists()) {

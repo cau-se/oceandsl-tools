@@ -46,13 +46,13 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
     private final Map<String, AddrOutput> addressMap = new HashMap<>();
     private final File modelExecutable;
 
-    private final String prefix;
+    private final boolean caseInsensitive;
 
     public RewriteBeforeAndAfterEventsStage(final File addrLineExecutable, final File modelExecutable,
-            final String prefix) {
+            final boolean caseInsensitive) {
         this.addrlineExecutable = addrLineExecutable;
         this.modelExecutable = modelExecutable;
-        this.prefix = prefix;
+        this.caseInsensitive = caseInsensitive;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
             new BufferedReader(new InputStreamReader(process.getErrorStream())).lines().forEach(new Consumer<String>() {
                 @Override
                 public void accept(final String arg0) {
-                    System.err.println(arg0);
+                    RewriteBeforeAndAfterEventsStage.this.logger.error("Error output from addr2line {}", arg0);
                 }
             });
 
@@ -95,8 +95,11 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
                     if (matcher.find()) {
                         final Integer linenumber = matcher.group(3).equals("?") ? null
                                 : Integer.parseInt(matcher.group(3));
-                        RewriteBeforeAndAfterEventsStage.this.addressMap.put(address, new AddrOutput(matcher.group(1),
-                                RewriteBeforeAndAfterEventsStage.this.fixSignature(matcher.group(2)), linenumber));
+                        final AddrOutput addrOutput = RewriteBeforeAndAfterEventsStage.this.caseInsensitive
+                                ? new AddrOutput(matcher.group(1).toLowerCase(), matcher.group(2).toLowerCase(),
+                                        linenumber)
+                                : new AddrOutput(matcher.group(1), matcher.group(2), linenumber);
+                        RewriteBeforeAndAfterEventsStage.this.addressMap.put(address, addrOutput);
                     } else if ("?? ??:0".equals(string)) {
                         RewriteBeforeAndAfterEventsStage.this.addressMap.put(address,
                                 new AddrOutput(address, "<<no-file>>", 0));
@@ -110,14 +113,6 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
             return this.addressMap.get(address);
         } else {
             return addrOutput;
-        }
-    }
-
-    private String fixSignature(final String signature) {
-        if (signature.startsWith(this.prefix)) {
-            return signature.substring(this.prefix.length());
-        } else {
-            return signature;
         }
     }
 

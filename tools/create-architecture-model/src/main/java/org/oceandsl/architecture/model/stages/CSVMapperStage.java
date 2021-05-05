@@ -35,14 +35,12 @@ public class CSVMapperStage extends AbstractTransformation<CallerCallee, IFlowRe
 
     private long traceId = 0;
     private long time = 0;
-    private final String prefix;
-    private final boolean makeLowerCase;
+    private final boolean caseInsensitive;
     private final String hostname;
 
-    public CSVMapperStage(final String hostname, final String prefix, final boolean makeLowerCase) {
+    public CSVMapperStage(final String hostname, final boolean caseInsensitive) {
         this.hostname = hostname;
-        this.prefix = prefix;
-        this.makeLowerCase = makeLowerCase;
+        this.caseInsensitive = caseInsensitive;
     }
 
     @Override
@@ -50,33 +48,17 @@ public class CSVMapperStage extends AbstractTransformation<CallerCallee, IFlowRe
         this.outputPort.send(new TraceMetadata(++this.traceId, CSVMapperStage.THREAD_ID, CSVMapperStage.SESSION_ID,
                 this.hostname, -1, -1));
         this.outputPort.send(new BeforeOperationEvent(++this.time, this.traceId, 0,
-                this.convertToLowerCase(element.getCaller()), this.fixSignature(element.getSourcePath())));
+                this.convertToLowerCase(element.getCaller()), this.convertToLowerCase(element.getSourcePath())));
         this.outputPort.send(new BeforeOperationEvent(++this.time, this.traceId, 1,
-                this.convertToLowerCase(element.getCallee()), this.fixSignature(element.getTargetPath())));
+                this.convertToLowerCase(element.getCallee()), this.convertToLowerCase(element.getTargetPath())));
         this.outputPort.send(new AfterOperationEvent(++this.time, this.traceId, 2,
-                this.convertToLowerCase(element.getCallee()), this.fixSignature(element.getTargetPath())));
+                this.convertToLowerCase(element.getCallee()), this.convertToLowerCase(element.getTargetPath())));
         this.outputPort.send(new AfterOperationEvent(++this.time, this.traceId, 3,
-                this.convertToLowerCase(element.getCaller()), this.fixSignature(element.getSourcePath())));
+                this.convertToLowerCase(element.getCaller()), this.convertToLowerCase(element.getSourcePath())));
     }
 
-    private String convertToLowerCase(final String signature) {
-        return this.makeLowerCase ? signature.toLowerCase() + "_" : signature;
-    }
-
-    private String fixSignature(final String signature) {
-        if (signature.startsWith(this.prefix)) {
-            return this.fixCase(signature.substring(this.prefix.length()));
-        } else {
-            return this.fixCase(signature);
-        }
-    }
-
-    private String fixCase(final String signature) {
-        if (this.makeLowerCase) {
-            return signature.toLowerCase();
-        } else {
-            return signature;
-        }
+    private String convertToLowerCase(final String string) {
+        return this.caseInsensitive ? string.toLowerCase() + "_" : string;
     }
 
 }

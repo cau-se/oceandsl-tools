@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,12 +34,15 @@ import teetime.stage.basic.AbstractTransformation;
  * @author Reiner Jung
  * @since 1.1
  */
-public class CleanupComponentSignatureStage extends AbstractTransformation<IMonitoringRecord, IMonitoringRecord> {
+public class MapBasedCleanupComponentSignatureStage
+        extends AbstractTransformation<IMonitoringRecord, IMonitoringRecord> {
 
     private final Map<String, String> componentMap = new HashMap<>();
+    private final boolean caseInsensitive;
 
-    public CleanupComponentSignatureStage(final Path componentMapFile)
+    public MapBasedCleanupComponentSignatureStage(final Path componentMapFile, final boolean caseInsensitive)
             throws IOException, ValueConversionErrorException {
+        this.caseInsensitive = caseInsensitive;
         final BufferedReader reader = Files.newBufferedReader(componentMapFile);
         String line;
         while ((line = reader.readLine()) != null) {
@@ -47,7 +51,8 @@ public class CleanupComponentSignatureStage extends AbstractTransformation<IMoni
                 // 0 = component name
                 // 1 = file name
                 // 2 = function name
-                this.componentMap.put(values[1].trim().toLowerCase(), values[0].trim().toLowerCase());
+                this.componentMap.put(this.convertToLowerCase(values[1].trim()),
+                        this.convertToLowerCase(values[0].trim().toLowerCase()));
             } else {
                 this.logger.error("Entry incomplete '{}'", line.trim());
             }
@@ -72,14 +77,27 @@ public class CleanupComponentSignatureStage extends AbstractTransformation<IMoni
         }
     }
 
+    private String convertToLowerCase(final String string) {
+        String value;
+        if (string.endsWith("_")) {
+            value = string.substring(0, string.length() - 1);
+        } else {
+            value = string;
+        }
+        return this.caseInsensitive ? value.toLowerCase() : value;
+    }
+
     private String processComponentSignature(final String signature) {
         if ("<<no-file>>".equals(signature)) {
-            return signature.toLowerCase();
+            return signature;
         } else {
-            final String result = this.componentMap.get(signature.toLowerCase());
+            final Path path = Paths.get(signature);
+            final String filename = this.convertToLowerCase(path.getName(path.getNameCount() - 1).toString());
+            final String result = this.componentMap.get(filename);
             if (result != null) {
                 return result;
             } else {
+                this.logger.warn("File {} has no component mapping. Signature {}", filename, signature);
                 return "??" + signature.toLowerCase();
             }
         }

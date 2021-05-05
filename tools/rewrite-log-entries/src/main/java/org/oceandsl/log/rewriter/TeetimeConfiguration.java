@@ -63,7 +63,7 @@ public class TeetimeConfiguration extends Configuration {
         final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(configuration);
 
         final RewriteBeforeAndAfterEventsStage processor = new RewriteBeforeAndAfterEventsStage(
-                parameterConfiguration.getAddrlineExecutable(), parameterConfiguration.getModelExecutable(), "");
+                parameterConfiguration.getAddrlineExecutable(), parameterConfiguration.getModelExecutable(), false);
 
         final DataSinkStage writer = new DataSinkStage(configuration);
 

@@ -50,10 +50,6 @@ public class ArchitectureModelSettings {
             "--executable" }, required = false, converter = FileConverter.class, description = "Location of the executable")
     private File modelExecutable;
 
-    @Parameter(names = { "-p",
-            "--prefix" }, required = false, description = "Path prefix to be removed from filenames in the visualization")
-    private String prefix;
-
     @Parameter(names = { "-m",
             "--mode" }, required = false, converter = InputTypeConverter.class, description = "Different input read modes, default is kieker; other option is csv")
     protected EInputType inputType = EInputType.KIEKER;
@@ -94,14 +90,6 @@ public class ArchitectureModelSettings {
 
     public File getModelExecutable() {
         return this.modelExecutable;
-    }
-
-    public String getPrefix() {
-        return this.prefix;
-    }
-
-    public void setPrefix(final String prefix) {
-        this.prefix = prefix;
     }
 
     public EInputType getInputType() {

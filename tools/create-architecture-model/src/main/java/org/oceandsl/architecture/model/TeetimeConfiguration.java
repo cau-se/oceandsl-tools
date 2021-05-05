@@ -25,11 +25,12 @@ import org.oceandsl.architecture.model.graph.ColorAssemblyLevelComponentDependen
 import org.oceandsl.architecture.model.graph.ColorAssemblyLevelOperationDependencyGraphBuilderFactory;
 import org.oceandsl.architecture.model.graph.ColoredDotExportConfigurationFactory;
 import org.oceandsl.architecture.model.stages.CSVMapperStage;
-import org.oceandsl.architecture.model.stages.CleanupComponentSignatureStage;
 import org.oceandsl.architecture.model.stages.CountEventsStage;
 import org.oceandsl.architecture.model.stages.CountUniqueCallsStage;
 import org.oceandsl.architecture.model.stages.CreateCallsStage;
 import org.oceandsl.architecture.model.stages.ExecutionModelGenerationStage;
+import org.oceandsl.architecture.model.stages.FileBasedCleanupComponentSignatureStage;
+import org.oceandsl.architecture.model.stages.MapBasedCleanupComponentSignatureStage;
 import org.oceandsl.architecture.model.stages.ModelSerializerStage;
 import org.oceandsl.architecture.model.stages.ProduceBeforeAndAfterEventsFromOperationCallsStage;
 import org.oceandsl.architecture.model.stages.TriggerToModelSnapshotStage;
@@ -41,6 +42,7 @@ import org.oceandsl.architecture.model.stages.graph.ModuleCallGraphStage;
 import org.oceandsl.architecture.model.stages.graph.ModuleNodeCouplingStage;
 import org.oceandsl.architecture.model.stages.metrics.NumberOfCallsStage;
 import org.oceandsl.architecture.model.stages.utils.DedicatedFileNameMapper;
+import org.slf4j.Logger;
 
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.graph.dependency.DependencyGraphCreatorStage;
@@ -89,12 +91,14 @@ public class TeetimeConfiguration extends Configuration {
     private static final String DYNAMIC_EXTRA_EDGES_CSV = "dynamic-extra-edges.csv";
     private static final String STATIC_EXTRA_EDGES_CSV = "static-extra-edges.csv";
 
-    public TeetimeConfiguration(final ArchitectureModelSettings parameterConfiguration, final TypeModel typeModel,
-            final AssemblyModel assemblyModel, final DeploymentModel deploymentModel,
+    public TeetimeConfiguration(final Logger logger, final ArchitectureModelSettings parameterConfiguration,
+            final TypeModel typeModel, final AssemblyModel assemblyModel, final DeploymentModel deploymentModel,
             final ExecutionModel executionModel, final StatisticsModel statisticsModel, final SourceModel sourceModel)
             throws IOException, ValueConversionErrorException {
 
-        final ModelRepository repository = new ModelRepository(parameterConfiguration.getExperimentName());
+        final ModelRepository repository = new ModelRepository(
+                String.format("%s-%s", parameterConfiguration.getExperimentName(),
+                        parameterConfiguration.getComponentMapFile() != null ? "map" : "file"));
         repository.register(ExecutionModel.class, executionModel);
         repository.register(StatisticsModel.class, statisticsModel);
         repository.register(SourceModel.class, sourceModel);
@@ -105,6 +109,7 @@ public class TeetimeConfiguration extends Configuration {
         OutputPort<? extends IMonitoringRecord> readerPort;
         switch (parameterConfiguration.getInputType()) {
         case KIEKER:
+            logger.info("Processing Kieker log");
             final kieker.common.configuration.Configuration configuration = new kieker.common.configuration.Configuration();
             configuration.setProperty(LogsReaderCompositeStage.LOG_DIRECTORIES,
                     parameterConfiguration.getInputFile().getCanonicalPath());
@@ -114,7 +119,7 @@ public class TeetimeConfiguration extends Configuration {
             if (parameterConfiguration.getModelExecutable() != null) {
                 final RewriteBeforeAndAfterEventsStage rewriteBeforeAndAfterEventsStage = new RewriteBeforeAndAfterEventsStage(
                         parameterConfiguration.getAddrlineExecutable(), parameterConfiguration.getModelExecutable(),
-                        parameterConfiguration.getPrefix());
+                        parameterConfiguration.getCaseInsensitive());
                 this.connectPorts(reader.getOutputPort(), rewriteBeforeAndAfterEventsStage.getInputPort());
                 readerPort = rewriteBeforeAndAfterEventsStage.getOutputPort();
             } else {
@@ -123,10 +128,11 @@ public class TeetimeConfiguration extends Configuration {
 
             break;
         case CSV:
+            logger.info("Processing static call log");
             final CSVFunctionCallReaderStage readCsvStage = new CSVFunctionCallReaderStage(
                     parameterConfiguration.getInputFile().toPath());
             final CSVMapperStage mapperStage = new CSVMapperStage(parameterConfiguration.getHostname(),
-                    parameterConfiguration.getPrefix(), parameterConfiguration.getCaseInsensitive());
+                    parameterConfiguration.getCaseInsensitive());
             this.connectPorts(readCsvStage.getOutputPort(), mapperStage.getInputPort());
             readerPort = mapperStage.getOutputPort();
             break;
@@ -136,8 +142,16 @@ public class TeetimeConfiguration extends Configuration {
         }
 
         if (parameterConfiguration.getComponentMapFile() != null) {
-            final CleanupComponentSignatureStage cleanupComponentSignatureStage = new CleanupComponentSignatureStage(
-                    parameterConfiguration.getComponentMapFile());
+            logger.info("Map based component definition");
+            final MapBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new MapBasedCleanupComponentSignatureStage(
+                    parameterConfiguration.getComponentMapFile(), parameterConfiguration.getCaseInsensitive());
+
+            this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
+            readerPort = cleanupComponentSignatureStage.getOutputPort();
+        } else {
+            logger.info("File based component definition");
+            final FileBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new FileBasedCleanupComponentSignatureStage(
+                    parameterConfiguration.getCaseInsensitive());
 
             this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
             readerPort = cleanupComponentSignatureStage.getOutputPort();
