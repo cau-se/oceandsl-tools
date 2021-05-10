@@ -20,8 +20,8 @@ import java.util.Map.Entry;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 import org.oceandsl.architecture.model.stages.data.LongValueHandler;
-import org.oceandsl.architecture.model.stages.data.Table;
 import org.oceandsl.architecture.model.stages.data.StringValueHandler;
+import org.oceandsl.architecture.model.stages.data.Table;
 
 import kieker.analysis.model.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -55,8 +55,10 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> invocationEntry : executionModel
                 .getAggregatedInvocations().entrySet()) {
             final AggregatedInvocation value = invocationEntry.getValue();
-            final Statistics statistics = this.findStatistics(statisticsModel.getStatistics(),
-                    invocationEntry.getValue());
+            if (value == null) {
+                this.logger.error("Broken invocation entry. {}", invocationEntry.getKey().toString());
+            }
+            final Statistics statistics = this.findStatistics(statisticsModel.getStatistics(), value);
             if (statistics != null) {
                 final Long data = (Long) statistics.getStatistics().get(EPredefinedUnits.RESPONSE_TIME).getProperties()
                         .get(EPropertyType.COUNT);
