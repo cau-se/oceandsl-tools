@@ -1,4 +1,4 @@
-# OceanDSL Jvava Tools
+# OceanDSL Java Tools
 
 Project containing all Java-based tools developed in OceanDSL.
 
@@ -14,7 +14,7 @@ Each tool has its own set of parameters and can be found in
 Current tools:
 - rewrite-log-entries
 - create-architecture-model
-
+- pp-static-log
 
 
 

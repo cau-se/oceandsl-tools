@@ -32,7 +32,7 @@ import com.beust.jcommander.converters.PathConverter;
 public class Settings {
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, converter = PathConverter.class, description = "Input 3 column static log directory")
+            "--input" }, required = true, converter = PathConverter.class, description = "Input 3 column static log file")
     private Path inputPath;
 
     @Parameter(names = { "-m",
@@ -40,7 +40,7 @@ public class Settings {
     private List<Path> mapPaths;
 
     @Parameter(names = { "-o",
-            "--output" }, required = true, converter = FileConverter.class, description = "Output directory for 4 column log")
+            "--output" }, required = true, converter = FileConverter.class, description = "Output file for 4 column log")
     private File outputFile;
 
     public Path getInputPath() {

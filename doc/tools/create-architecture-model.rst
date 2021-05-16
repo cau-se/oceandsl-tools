@@ -8,12 +8,24 @@ The tool is intended to be used in conjunctions with kieker-lang-pack-c Kieker l
 `BeforeOperationEvent`s and `AfterOperationEvent`s do only contain pointer information for 
 operation calls which must be resolved using `addr2line`. 
 
-This tool has 5 parameters:
--i input kieker log directory>
--o path where the output kieker log is placed
--a the location of the addr2line executable to resolve the names
--m the executable (model) to be analyzed by addr2line
--p prefix path to be removed from path information
+Parameters:
+-i, --input (required) Input Kieker log directory or CSV file location
+-o, --output (required) Output directory to store graphics and statistics
+-M, --component-map Component, file and function map file
+-a, --addrline Location of the addrline tool
+-e, --executable Location of the executable
+-m, --mode Different input read modes, default is kieker; other option is csv
+-ia, --input-architecture-model Directory for an input architecture model
+-oa, --output-architecture-model Directory for an output architecture model
+-l, --source-label (required) Set source label for the read data
+-c, --case-insensitive Handle function names case insensitive
+    This is helpful with Fortran code as function names are handled
+    case insensitive.
+-H, --hostname Hostname to be used in CSV reconstruction, this can be
+    used with static analysis data to simulate a deployment host
+-E, --experiment-name (required) Name of the experiment
+-g, --graphs Specify which output graphs must be generated (dot-op, dot-component, graphml)
+
 
 Build
 -----
