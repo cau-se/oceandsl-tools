@@ -97,7 +97,7 @@ public class MapBasedCleanupComponentSignatureStage
             if (result != null) {
                 return result;
             } else {
-                this.logger.warn("File {} has no component mapping. Signature {}", filename, signature);
+                this.logger.warn("File '{}' has no component mapping. Signature '{}'", filename, signature);
                 return "??" + signature.toLowerCase();
             }
         }

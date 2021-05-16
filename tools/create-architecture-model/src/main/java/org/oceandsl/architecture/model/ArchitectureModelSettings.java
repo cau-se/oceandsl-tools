@@ -17,6 +17,7 @@ package org.oceandsl.architecture.model;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
@@ -76,6 +77,10 @@ public class ArchitectureModelSettings {
     @Parameter(names = { "-E", "--experiment-name" }, required = true, description = "Name of the experiment")
     private String experimentName;
 
+    @Parameter(names = { "-g",
+            "--graphs" }, required = false, variableArity = true, converter = GraphTypeConverter.class, description = "Specify which output graphs must be generated")
+    private List<EOutputGraph> outputGraphs;
+
     public File getInputFile() {
         return this.inputFile;
     }
@@ -122,5 +127,9 @@ public class ArchitectureModelSettings {
 
     public Path getComponentMapFile() {
         return this.componentMapFile;
+    }
+
+    public List<EOutputGraph> getOutputGraphs() {
+        return this.outputGraphs;
     }
 }

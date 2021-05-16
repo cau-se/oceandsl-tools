@@ -26,11 +26,13 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.oceandsl.architecture.model.stages.data.ValueConversionErrorException;
 
+import kieker.analysis.model.ModelRepository;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
@@ -74,12 +76,7 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
 
     private static final String SOURCES_MODEL_NAME = "sources-model.xmi";
 
-    private TypeModel typeModel;
-    private AssemblyModel assemblyModel;
-    private DeploymentModel deploymentModel;
-    private ExecutionModel executionModel;
-    private StatisticsModel statisticsModel;
-    private SourceModel sourcesModel;
+    private ModelRepository repository;
 
     public static void main(final String[] args) {
         final ArchitectureModelMain main = new ArchitectureModelMain();
@@ -91,13 +88,16 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
+            this.repository = new ModelRepository(
+                    String.format("%s-%s", this.parameterConfiguration.getExperimentName(),
+                            this.parameterConfiguration.getComponentMapFile() != null ? "map" : "file"));
             if (this.parameterConfiguration.getInputArchitectureModelDirectory() == null) {
-                this.typeModel = TypeFactory.eINSTANCE.createTypeModel();
-                this.assemblyModel = AssemblyFactory.eINSTANCE.createAssemblyModel();
-                this.deploymentModel = DeploymentFactory.eINSTANCE.createDeploymentModel();
-                this.executionModel = ExecutionFactory.eINSTANCE.createExecutionModel();
-                this.statisticsModel = StatisticsFactory.eINSTANCE.createStatisticsModel();
-                this.sourcesModel = SourcesFactory.eINSTANCE.createSourceModel();
+                this.repository.register(TypeModel.class, TypeFactory.eINSTANCE.createTypeModel());
+                this.repository.register(AssemblyModel.class, AssemblyFactory.eINSTANCE.createAssemblyModel());
+                this.repository.register(DeploymentModel.class, DeploymentFactory.eINSTANCE.createDeploymentModel());
+                this.repository.register(ExecutionModel.class, ExecutionFactory.eINSTANCE.createExecutionModel());
+                this.repository.register(StatisticsModel.class, StatisticsFactory.eINSTANCE.createStatisticsModel());
+                this.repository.register(SourceModel.class, SourcesFactory.eINSTANCE.createSourceModel());
             } else {
                 final Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
                 final Map<String, Object> m = reg.getExtensionToFactoryMap();
@@ -113,17 +113,19 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
                 packageRegistry.put(StatisticsPackage.eNS_URI, ArchitectureModelMain.STATISTICS_MODEL_NAME);
                 packageRegistry.put(SourcesPackage.eNS_URI, ArchitectureModelMain.SOURCES_MODEL_NAME);
 
-                this.typeModel = this.readModel(resourceSet, ArchitectureModelMain.TYPE_MODEL_NAME);
-                this.assemblyModel = this.readModel(resourceSet, ArchitectureModelMain.ASSEMBLY_MODEL_NAME);
-                this.deploymentModel = this.readModel(resourceSet, ArchitectureModelMain.DEPLOYMENT_MODEL_NAME);
-                this.executionModel = this.readModel(resourceSet, ArchitectureModelMain.EXECUTION_MODEL_NAME);
-                this.statisticsModel = this.readModel(resourceSet, ArchitectureModelMain.STATISTICS_MODEL_NAME);
-                this.sourcesModel = this.readModel(resourceSet, ArchitectureModelMain.SOURCES_MODEL_NAME);
+                this.readModel(resourceSet, this.repository, TypeModel.class, ArchitectureModelMain.TYPE_MODEL_NAME);
+                this.readModel(resourceSet, this.repository, AssemblyModel.class,
+                        ArchitectureModelMain.ASSEMBLY_MODEL_NAME);
+                this.readModel(resourceSet, this.repository, DeploymentModel.class,
+                        ArchitectureModelMain.DEPLOYMENT_MODEL_NAME);
+                this.readModel(resourceSet, this.repository, ExecutionModel.class,
+                        ArchitectureModelMain.EXECUTION_MODEL_NAME);
+                this.readModel(resourceSet, this.repository, StatisticsModel.class,
+                        ArchitectureModelMain.STATISTICS_MODEL_NAME);
+                this.readModel(resourceSet, this.repository, SourceModel.class,
+                        ArchitectureModelMain.SOURCES_MODEL_NAME);
             }
-            return new TeetimeConfiguration(this.logger, this.parameterConfiguration, this.typeModel,
-                    this.assemblyModel, this.deploymentModel, this.executionModel, this.statisticsModel,
-                    this.sourcesModel);
-
+            return new TeetimeConfiguration(this.logger, this.parameterConfiguration, this.repository);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
@@ -181,18 +183,19 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
                     return false;
                 } else {
                     if (!ParameterEvaluationUtils.isFileReadable(
-                            this.createReadModelFile(ArchitectureModelMain.TYPE_MODEL_NAME), "type model", commander)
+                            this.createReadModelFileHandle(ArchitectureModelMain.TYPE_MODEL_NAME), "type model",
+                            commander)
                             || !ParameterEvaluationUtils.isFileReadable(
-                                    this.createReadModelFile(ArchitectureModelMain.ASSEMBLY_MODEL_NAME),
+                                    this.createReadModelFileHandle(ArchitectureModelMain.ASSEMBLY_MODEL_NAME),
                                     "assembly model", commander)
                             || !ParameterEvaluationUtils.isFileReadable(
-                                    this.createReadModelFile(ArchitectureModelMain.DEPLOYMENT_MODEL_NAME),
+                                    this.createReadModelFileHandle(ArchitectureModelMain.DEPLOYMENT_MODEL_NAME),
                                     "deployment model", commander)
                             || !ParameterEvaluationUtils.isFileReadable(
-                                    this.createReadModelFile(ArchitectureModelMain.EXECUTION_MODEL_NAME),
+                                    this.createReadModelFileHandle(ArchitectureModelMain.EXECUTION_MODEL_NAME),
                                     "execution model", commander)
                             || !ParameterEvaluationUtils.isFileReadable(
-                                    this.createReadModelFile(ArchitectureModelMain.STATISTICS_MODEL_NAME),
+                                    this.createReadModelFileHandle(ArchitectureModelMain.STATISTICS_MODEL_NAME),
                                     "statistics model", commander)) {
                         return false;
                     }
@@ -215,32 +218,46 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
 
             this.parameterConfiguration.getOutputArchitectureModelDirectory().mkdirs();
 
-            this.writeModel(resourceSet, ArchitectureModelMain.TYPE_MODEL_NAME, this.typeModel);
-            this.writeModel(resourceSet, ArchitectureModelMain.ASSEMBLY_MODEL_NAME, this.assemblyModel);
-            this.writeModel(resourceSet, ArchitectureModelMain.DEPLOYMENT_MODEL_NAME, this.deploymentModel);
-            this.writeModel(resourceSet, ArchitectureModelMain.EXECUTION_MODEL_NAME, this.executionModel);
-            this.writeModel(resourceSet, ArchitectureModelMain.STATISTICS_MODEL_NAME, this.statisticsModel);
-            this.writeModel(resourceSet, ArchitectureModelMain.SOURCES_MODEL_NAME, this.sourcesModel);
+            this.writeModel(resourceSet, ArchitectureModelMain.TYPE_MODEL_NAME,
+                    this.repository.getModel(TypeModel.class));
+            this.writeModel(resourceSet, ArchitectureModelMain.ASSEMBLY_MODEL_NAME,
+                    this.repository.getModel(AssemblyModel.class));
+            this.writeModel(resourceSet, ArchitectureModelMain.DEPLOYMENT_MODEL_NAME,
+                    this.repository.getModel(DeploymentModel.class));
+            this.writeModel(resourceSet, ArchitectureModelMain.EXECUTION_MODEL_NAME,
+                    this.repository.getModel(ExecutionModel.class));
+            this.writeModel(resourceSet, ArchitectureModelMain.STATISTICS_MODEL_NAME,
+                    this.repository.getModel(StatisticsModel.class));
+            this.writeModel(resourceSet, ArchitectureModelMain.SOURCES_MODEL_NAME,
+                    this.repository.getModel(SourceModel.class));
         }
     }
 
-    private File createReadModelFile(final String filename) {
+    private File createReadModelFileHandle(final String filename) {
         return new File(this.parameterConfiguration.getInputArchitectureModelDirectory().getAbsolutePath()
                 + File.separator + filename);
     }
 
-    private File createWriteModelFile(final String filename) {
+    private File createWriteModelFileHandle(final String filename) {
         return new File(this.parameterConfiguration.getOutputArchitectureModelDirectory().getAbsolutePath()
                 + File.separator + filename);
     }
 
-    @SuppressWarnings("unchecked")
-    private <T extends EObject> T readModel(final ResourceSet resourceSet, final String filename)
-            throws ConfigurationException {
-        final File modelFile = this.createReadModelFile(filename);
+    private <T extends EObject> void readModel(final ResourceSet resourceSet, final ModelRepository repository,
+            final Class<T> type, final String filename) throws ConfigurationException {
+        this.logger.info("Loading model {}", filename);
+        final File modelFile = this.createReadModelFileHandle(filename);
         if (modelFile.exists()) {
-            final Resource typeResource = resourceSet.getResource(URI.createFileURI(modelFile.getAbsolutePath()), true);
-            return (T) typeResource.getContents().get(0);
+            final Resource resource = resourceSet.getResource(URI.createFileURI(modelFile.getAbsolutePath()), true);
+            for (final Diagnostic error : resource.getErrors()) {
+                this.logger.error("Error loading '{}' of {}:{}  {}", filename, error.getLocation(), error.getLine(),
+                        error.getMessage());
+            }
+            for (final Diagnostic error : resource.getWarnings()) {
+                this.logger.error("Warning loading '{}' of {}:{}  {}", filename, error.getLocation(), error.getLine(),
+                        error.getMessage());
+            }
+            repository.register(type, resource.getContents().get(0));
         } else {
             this.logger.error("Error reading model file {}. File does not exist.", modelFile.getAbsoluteFile());
             throw new ConfigurationException(
@@ -249,7 +266,9 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
     }
 
     private <T extends EObject> void writeModel(final ResourceSet resourceSet, final String filename, final T model) {
-        final File modelFile = this.createWriteModelFile(filename);
+        this.logger.info("Saving model {}", filename);
+
+        final File modelFile = this.createWriteModelFileHandle(filename);
 
         final Resource resource = resourceSet.createResource(URI.createURI(modelFile.getAbsolutePath()));
         resource.getContents().add(model);

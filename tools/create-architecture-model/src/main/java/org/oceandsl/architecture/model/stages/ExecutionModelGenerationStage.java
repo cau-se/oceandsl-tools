@@ -20,9 +20,7 @@ import java.util.Map.Entry;
 import org.eclipse.emf.common.util.EMap;
 import org.oceandsl.architecture.model.stages.data.OperationCall;
 
-import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
-import kieker.model.analysismodel.deployment.impl.EStringToDeployedOperationMapEntryImpl;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionFactory;
 import kieker.model.analysismodel.execution.ExecutionModel;
@@ -63,15 +61,6 @@ public class ExecutionModelGenerationStage extends AbstractConsumerStage<Operati
         // hashCode
         // if (!this.executionModel.getAggregatedInvocations().containsKey(key)) {
         if (!this.containsKey(this.executionModel.getAggregatedInvocations(), key)) {
-            final String keyString = this.printKey(key);
-            for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> ag : this.executionModel
-                    .getAggregatedInvocations()) {
-                final String valueString = this.printKey(ag.getKey());
-                if (valueString.equals(keyString)) {
-                    System.out.println(key.hashCode() + " " + ag.getKey().hashCode());
-                    System.out.println(">> " + valueString);
-                }
-            }
             final AggregatedInvocation invocation = this.factory.createAggregatedInvocation();
             invocation.setSource(source);
             invocation.setTarget(target);
@@ -90,21 +79,6 @@ public class ExecutionModelGenerationStage extends AbstractConsumerStage<Operati
             }
         }
         return false;
-    }
-
-    private String printKey(final Tuple<DeployedOperation, DeployedOperation> key) {
-        final DeployedOperation dos = key.getFirst();
-        final DeployedOperation dot = key.getSecond();
-        final DeployedComponent dcs = (DeployedComponent) ((EStringToDeployedOperationMapEntryImpl) dos.eContainer())
-                .eContainer();
-        final DeployedComponent dct = (DeployedComponent) ((EStringToDeployedOperationMapEntryImpl) dot.eContainer())
-                .eContainer();
-
-        return String.format("%s::%s.%s --> %s:%s.%s", dcs.getDeploymentContext().getName(),
-                dcs.getAssemblyComponent().getComponentType().getName(),
-                dos.getAssemblyOperation().getOperationType().getSignature(), dct.getDeploymentContext().getName(),
-                dct.getAssemblyComponent().getComponentType().getName(),
-                dot.getAssemblyOperation().getOperationType().getSignature());
     }
 
     public OutputPort<OperationCall> getOutputPort() {

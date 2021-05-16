@@ -15,14 +15,19 @@
  ***************************************************************************/
 package org.oceandsl.architecture.model.stages;
 
+import java.util.Map.Entry;
 import java.util.function.Function;
 
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 import org.oceandsl.architecture.model.stages.data.OperationCall;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import kieker.analysis.statistics.StatisticsDecoratorStage;
 import kieker.analysis.statistics.calculating.CountCalculator;
 import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionFactory;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Tuple;
@@ -49,8 +54,30 @@ public class CountUniqueCallsStage extends StatisticsDecoratorStage<OperationCal
             final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
             key.setFirst(operationCall.getSourceOperation());
             key.setSecond(operationCall.getTargetOperation());
-            return executionModel.getAggregatedInvocations().get(key);
+
+            final AggregatedInvocation result = CountUniqueCallsStage.getValue(executionModel,
+                    executionModel.getAggregatedInvocations(), key);
+
+            if (result == null) {
+                final Logger logger = LoggerFactory.getLogger(CountUniqueCallsStage.class);
+                logger.error("Fatal error: call not does not exist {}:{}",
+                        key.getFirst().getAssemblyOperation().getOperationType().getSignature(),
+                        key.getSecond().getAssemblyOperation().getOperationType().getSignature());
+            }
+
+            return result;
         };
     }
 
+    private static AggregatedInvocation getValue(final ExecutionModel executionModel,
+            final EMap<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> aggregatedInvocations,
+            final Tuple<DeployedOperation, DeployedOperation> key) {
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> ag : executionModel
+                .getAggregatedInvocations()) {
+            if (ag.getKey().hashCode() == key.hashCode()) {
+                return ag.getValue();
+            }
+        }
+        return null;
+    }
 }

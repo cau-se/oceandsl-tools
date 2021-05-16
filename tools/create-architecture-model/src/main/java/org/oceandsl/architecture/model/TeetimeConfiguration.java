@@ -92,19 +92,7 @@ public class TeetimeConfiguration extends Configuration {
     private static final String STATIC_EXTRA_EDGES_CSV = "static-extra-edges.csv";
 
     public TeetimeConfiguration(final Logger logger, final ArchitectureModelSettings parameterConfiguration,
-            final TypeModel typeModel, final AssemblyModel assemblyModel, final DeploymentModel deploymentModel,
-            final ExecutionModel executionModel, final StatisticsModel statisticsModel, final SourceModel sourceModel)
-            throws IOException, ValueConversionErrorException {
-
-        final ModelRepository repository = new ModelRepository(
-                String.format("%s-%s", parameterConfiguration.getExperimentName(),
-                        parameterConfiguration.getComponentMapFile() != null ? "map" : "file"));
-        repository.register(ExecutionModel.class, executionModel);
-        repository.register(StatisticsModel.class, statisticsModel);
-        repository.register(SourceModel.class, sourceModel);
-        repository.register(TypeModel.class, typeModel);
-        repository.register(AssemblyModel.class, assemblyModel);
-        repository.register(DeploymentModel.class, deploymentModel);
+            final ModelRepository repository) throws IOException, ValueConversionErrorException {
 
         OutputPort<? extends IMonitoringRecord> readerPort;
         switch (parameterConfiguration.getInputType()) {
@@ -192,17 +180,21 @@ public class TeetimeConfiguration extends Configuration {
             }
 
         };
-        final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(typeModel, sourceModel,
+        final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
+                repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
                 parameterConfiguration.getSourceLabel(), componentSignatureExtractor, operationSignatureExtractor);
-        final AssemblyModelAssemblerStage assemblyModelAssemblerStage = new AssemblyModelAssemblerStage(typeModel,
-                assemblyModel, sourceModel, parameterConfiguration.getSourceLabel());
+        final AssemblyModelAssemblerStage assemblyModelAssemblerStage = new AssemblyModelAssemblerStage(
+                repository.getModel(TypeModel.class), repository.getModel(AssemblyModel.class),
+                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
         final DeploymentModelAssemblerStage deploymentModelAssemblerStage = new DeploymentModelAssemblerStage(
-                assemblyModel, deploymentModel, sourceModel, parameterConfiguration.getSourceLabel());
+                repository.getModel(AssemblyModel.class), repository.getModel(DeploymentModel.class),
+                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
 
-        final CreateCallsStage callsStage = new CreateCallsStage(deploymentModel);
+        final CreateCallsStage callsStage = new CreateCallsStage(repository.getModel(DeploymentModel.class));
         final ExecutionModelGenerationStage executionModelGenerationStage = new ExecutionModelGenerationStage(
-                executionModel);
-        final CountUniqueCallsStage countUniqueCalls = new CountUniqueCallsStage(statisticsModel, executionModel);
+                repository.getModel(ExecutionModel.class));
+        final CountUniqueCallsStage countUniqueCalls = new CountUniqueCallsStage(
+                repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
 
         final TriggerOnTerminationStage triggerOnTerminationStage = new TriggerOnTerminationStage();
 
@@ -286,12 +278,32 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(countUniqueCalls.getOutputPort(), triggerOnTerminationStage.getInputPort());
         this.connectPorts(triggerOnTerminationStage.getOutputPort(), distributor.getInputPort());
 
-        this.connectPorts(distributor.getNewOutputPort(), operationDependencyGraphCreatorStage.getInputPort());
-        this.connectPorts(distributor.getNewOutputPort(), componentDependencyGraphCreatorStage.getInputPort());
+        /** operation graph. */
+        if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.DOT_OP)
+                || parameterConfiguration.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
+            this.connectPorts(distributor.getNewOutputPort(), operationDependencyGraphCreatorStage.getInputPort());
+            this.connectPorts(operationDependencyGraphCreatorStage.getOutputPort(), distributorGraphs.getInputPort());
+            if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.DOT_OP)) {
+                this.connectPorts(distributorGraphs.getNewOutputPort(),
+                        dotFileOperationDependencyWriterStage.getInputPort());
+            }
+            if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
+                this.connectPorts(distributorGraphs.getNewOutputPort(), graphMLFileWriterStage.getInputPort());
+            }
+        }
+
+        /** component graph. */
+        if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.DOT_COMPONENT)) {
+            this.connectPorts(componentDependencyGraphCreatorStage.getOutputPort(),
+                    dotFileComponentDependencyWriterStage.getInputPort());
+            this.connectPorts(distributor.getNewOutputPort(), componentDependencyGraphCreatorStage.getInputPort());
+        }
+
+        /** Serialize model. */
         this.connectPorts(distributor.getNewOutputPort(), modelSerializerStage.getInputPort());
-        this.connectPorts(distributor.getNewOutputPort(), triggerToModelSnapshotStage.getInputPort());
 
         /** Statistics trigger. */
+        this.connectPorts(distributor.getNewOutputPort(), triggerToModelSnapshotStage.getInputPort());
         this.connectPorts(triggerToModelSnapshotStage.getOutputPort(), statisticsDistributor.getInputPort());
 
         /** Statistics. */
@@ -327,14 +339,5 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(staticComputeExtraSubGraph.getOutputPort(),
                 staticFunctionExtraNodeCouplingStage.getInputPort());
         this.connectPorts(staticFunctionExtraNodeCouplingStage.getOutputPort(), staticExtraEdgesSink.getInputPort());
-
-        /** Graphics outputs. */
-        this.connectPorts(operationDependencyGraphCreatorStage.getOutputPort(), distributorGraphs.getInputPort());
-        this.connectPorts(distributorGraphs.getNewOutputPort(), dotFileOperationDependencyWriterStage.getInputPort());
-        this.connectPorts(distributorGraphs.getNewOutputPort(), graphMLFileWriterStage.getInputPort());
-
-        this.connectPorts(componentDependencyGraphCreatorStage.getOutputPort(),
-                dotFileComponentDependencyWriterStage.getInputPort());
-
     }
 }

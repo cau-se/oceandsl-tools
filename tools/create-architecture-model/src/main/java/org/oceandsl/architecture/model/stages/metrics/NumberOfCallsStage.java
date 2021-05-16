@@ -30,6 +30,7 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.statistics.EPredefinedUnits;
 import kieker.model.analysismodel.statistics.EPropertyType;
+import kieker.model.analysismodel.statistics.StatisticRecord;
 import kieker.model.analysismodel.statistics.Statistics;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 import teetime.stage.basic.AbstractTransformation;
@@ -82,8 +83,20 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
             final AggregatedInvocation invocation) {
         for (final Entry<EObject, Statistics> entry : statistics.entrySet()) {
             final AggregatedInvocation key = (AggregatedInvocation) entry.getKey();
-            if (invocation.getSource().equals(key.getSource()) && invocation.getTarget().equals(key.getTarget())) {
-                return entry.getValue();
+            if (key != null) {
+                if (invocation.getSource().equals(key.getSource()) && invocation.getTarget().equals(key.getTarget())) {
+                    return entry.getValue();
+                }
+            } else {
+                this.logger.error("Found statistics without a key value");
+                for (final Entry<EObject, Statistics> stats : statistics.entrySet()) {
+                    final String kex = stats.getKey() != null ? stats.getKey().toString() : "NO-KEY";
+                    this.logger.info("  Key {}", kex);
+                    for (final Entry<EPredefinedUnits, StatisticRecord> stat : stats.getValue().getStatistics()
+                            .entrySet()) {
+                        this.logger.info("    {} = {}", kex, stat.getValue().getProperties().toString());
+                    }
+                }
             }
         }
         return null;
