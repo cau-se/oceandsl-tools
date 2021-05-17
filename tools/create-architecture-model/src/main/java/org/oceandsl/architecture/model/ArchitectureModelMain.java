@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.oceandsl.architecture.model.stages.data.ValueConversionErrorException;
+import org.slf4j.LoggerFactory;
 
 import kieker.analysis.model.ModelRepository;
 import kieker.common.configuration.Configuration;
@@ -80,9 +81,14 @@ public class ArchitectureModelMain extends AbstractService<TeetimeConfiguration,
 
     public static void main(final String[] args) {
         final ArchitectureModelMain main = new ArchitectureModelMain();
-        final int exitCode = main.run("architecture modeler", "arch-mod", args, new ArchitectureModelSettings());
-
-        java.lang.System.exit(exitCode);
+        try {
+            final int exitCode = main.run("architecture modeler", "arch-mod", args, new ArchitectureModelSettings());
+            java.lang.System.exit(exitCode);
+        } catch (final IllegalArgumentException e) {
+            LoggerFactory.getLogger(ArchitectureModelMain.class).error("Configuration error: {}",
+                    e.getLocalizedMessage());
+            java.lang.System.exit(1);
+        }
     }
 
     @Override

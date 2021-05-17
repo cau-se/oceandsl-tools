@@ -30,7 +30,7 @@ public class InputTypeConverter implements IStringConverter<EInputType> {
                 return inputType;
             }
         }
-        return null;
+        throw new IllegalArgumentException(String.format("Input type %s is not supported.", value));
     }
 
 }

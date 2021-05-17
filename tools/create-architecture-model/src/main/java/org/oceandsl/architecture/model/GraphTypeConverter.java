@@ -31,7 +31,8 @@ public class GraphTypeConverter implements IStringConverter<EOutputGraph> {
                 return outputGraph;
             }
         }
-        return null;
+        throw new IllegalArgumentException(String.format("Graph output type %s is not supported.", value));
+
     }
 
 }

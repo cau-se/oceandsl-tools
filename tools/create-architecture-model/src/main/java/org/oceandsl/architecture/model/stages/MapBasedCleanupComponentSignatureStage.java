@@ -42,6 +42,7 @@ public class MapBasedCleanupComponentSignatureStage
 
     public MapBasedCleanupComponentSignatureStage(final Path componentMapFile, final boolean caseInsensitive)
             throws IOException, ValueConversionErrorException {
+        this.logger.info("Reading map file {}", componentMapFile.toString());
         this.caseInsensitive = caseInsensitive;
         final BufferedReader reader = Files.newBufferedReader(componentMapFile);
         String line;
