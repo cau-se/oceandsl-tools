@@ -37,9 +37,9 @@ import org.oceandsl.architecture.model.stages.TriggerToModelSnapshotStage;
 import org.oceandsl.architecture.model.stages.data.ValueConversionErrorException;
 import org.oceandsl.architecture.model.stages.graph.ComputeExtraSubGraph;
 import org.oceandsl.architecture.model.stages.graph.FunctionCallGraphStage;
-import org.oceandsl.architecture.model.stages.graph.FunctionNodeCouplingStage;
+import org.oceandsl.architecture.model.stages.graph.FunctionNodeCountCouplingStage;
 import org.oceandsl.architecture.model.stages.graph.ModuleCallGraphStage;
-import org.oceandsl.architecture.model.stages.graph.ModuleNodeCouplingStage;
+import org.oceandsl.architecture.model.stages.graph.ModuleNodeCountCouplingStage;
 import org.oceandsl.architecture.model.stages.metrics.NumberOfCallsStage;
 import org.oceandsl.architecture.model.stages.utils.DedicatedFileNameMapper;
 import org.slf4j.Logger;
@@ -229,20 +229,20 @@ public class TeetimeConfiguration extends Configuration {
         /** Stages for statistics. */
         final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
         final FunctionCallGraphStage dynamicFunctionCallGraphStage = new FunctionCallGraphStage("dynamic");
-        final FunctionNodeCouplingStage dynamicFunctionNodeCouplingStage = new FunctionNodeCouplingStage();
+        final FunctionNodeCountCouplingStage dynamicFunctionNodeCouplingStage = new FunctionNodeCountCouplingStage();
         final ModuleCallGraphStage dynamicModuleCallGraphStage = new ModuleCallGraphStage("dynamic");
-        final ModuleNodeCouplingStage dynamicModuleNodeCouplingStage = new ModuleNodeCouplingStage();
+        final ModuleNodeCountCouplingStage dynamicModuleNodeCouplingStage = new ModuleNodeCountCouplingStage();
 
         final FunctionCallGraphStage staticFunctionCallGraphStage = new FunctionCallGraphStage("static");
-        final FunctionNodeCouplingStage staticFunctionNodeCouplingStage = new FunctionNodeCouplingStage();
+        final FunctionNodeCountCouplingStage staticFunctionNodeCouplingStage = new FunctionNodeCountCouplingStage();
         final ModuleCallGraphStage staticModuleCallGraphStage = new ModuleCallGraphStage("static");
-        final ModuleNodeCouplingStage staticModuleNodeCouplingStage = new ModuleNodeCouplingStage();
+        final ModuleNodeCountCouplingStage staticModuleNodeCouplingStage = new ModuleNodeCountCouplingStage();
 
         final ComputeExtraSubGraph dynamicComputeExtraSubGraph = new ComputeExtraSubGraph("dynamic");
-        final FunctionNodeCouplingStage dynamicFunctionExtraNodeCouplingStage = new FunctionNodeCouplingStage();
+        final FunctionNodeCountCouplingStage dynamicFunctionExtraNodeCouplingStage = new FunctionNodeCountCouplingStage();
 
         final ComputeExtraSubGraph staticComputeExtraSubGraph = new ComputeExtraSubGraph("static");
-        final FunctionNodeCouplingStage staticFunctionExtraNodeCouplingStage = new FunctionNodeCouplingStage();
+        final FunctionNodeCountCouplingStage staticFunctionExtraNodeCouplingStage = new FunctionNodeCountCouplingStage();
 
         /** Sinks for metrics writing to CSV files. */
         final TableCSVSink dynamicFunctionCallSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),

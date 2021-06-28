@@ -25,24 +25,27 @@ import kieker.model.analysismodel.sources.SourceModel;
 import teetime.stage.basic.AbstractTransformation;
 
 /**
+ * Compute a graph based on the module structure of the architecture limited to nodes and modules
+ * which belong to a specific measurement source.
+ *
  * @author Reiner Jung
  * @since 1.1
  */
 public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository, IGraph> {
 
-    private final String subgraphName;
+    private final String measurementSourceName;
 
-    public ModuleCallGraphStage(final String subgraphName) {
-        this.subgraphName = subgraphName;
+    public ModuleCallGraphStage(final String measurementSourceName) {
+        this.measurementSourceName = measurementSourceName;
     }
 
     @Override
-    protected void execute(final ModelRepository element) throws Exception {
-        final ExecutionModel executionModel = (ExecutionModel) element.getModels().get(ExecutionModel.class);
-        final SourceModel sourcesModel = (SourceModel) element.getModels().get(SourceModel.class);
+    protected void execute(final ModelRepository repository) throws Exception {
+        final ExecutionModel executionModel = (ExecutionModel) repository.getModels().get(ExecutionModel.class);
+        final SourceModel sourcesModel = (SourceModel) repository.getModels().get(SourceModel.class);
 
         final IGraph graph = IGraph.create();
-        graph.setName(element.getName());
+        graph.setName(repository.getName());
 
         for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
             if (this.findInvocationInGraph(sourcesModel, invocation)) {
@@ -60,7 +63,7 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
         final EList<String> sources = sourcesModel.getSources().get(invocation.getSource());
         final EList<String> targets = sourcesModel.getSources().get(invocation.getTarget());
 
-        return (sources.contains(this.subgraphName) && targets.contains(this.subgraphName));
+        return (sources.contains(this.measurementSourceName) && targets.contains(this.measurementSourceName));
     }
 
 }
