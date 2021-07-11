@@ -30,10 +30,10 @@ import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.oceandsl.architecture.model.stages.data.ValueConversionErrorException;
+import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 import org.slf4j.LoggerFactory;
 
-import kieker.analysis.model.ModelRepository;
+import kieker.analysis.stage.model.ModelRepository;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.model.analysismodel.assembly.AssemblyFactory;

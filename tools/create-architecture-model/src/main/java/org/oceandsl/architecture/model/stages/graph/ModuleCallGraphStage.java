@@ -18,7 +18,7 @@ package org.oceandsl.architecture.model.stages.graph;
 import org.eclipse.emf.common.util.EList;
 
 import kieker.analysis.graph.IGraph;
-import kieker.analysis.model.ModelRepository;
+import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.sources.SourceModel;

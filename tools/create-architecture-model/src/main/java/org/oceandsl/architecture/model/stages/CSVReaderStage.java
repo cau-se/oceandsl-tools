@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.oceandsl.architecture.model.stages.data.StringValueHandler;
-import org.oceandsl.architecture.model.stages.data.Table;
+import org.oceandsl.architecture.model.data.table.StringValueHandler;
+import org.oceandsl.architecture.model.data.table.Table;
 
 import teetime.framework.AbstractProducerStage;
 

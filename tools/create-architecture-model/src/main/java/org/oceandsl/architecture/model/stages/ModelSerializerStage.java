@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
-import kieker.analysis.model.ModelRepository;
+import kieker.analysis.stage.model.ModelRepository;
 import kieker.analysis.util.stage.trigger.Trigger;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;

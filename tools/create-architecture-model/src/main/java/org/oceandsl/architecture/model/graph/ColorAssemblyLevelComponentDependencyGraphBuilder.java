@@ -20,7 +20,7 @@ import org.oceandsl.architecture.model.ExtraConstants;
 import kieker.analysis.graph.IVertex;
 import kieker.analysis.graph.dependency.PropertyConstants;
 import kieker.analysis.graph.dependency.vertextypes.VertexType;
-import kieker.analysis.model.ModelRepository;
+import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.deployment.DeployedOperation;

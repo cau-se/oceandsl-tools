@@ -20,49 +20,46 @@ import java.util.function.Function;
 
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.architecture.model.stages.data.OperationCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import kieker.analysis.stage.model.data.OperationCallDurationEvent;
 import kieker.analysis.statistics.StatisticsDecoratorStage;
 import kieker.analysis.statistics.calculating.CountCalculator;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.ExecutionFactory;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.statistics.EPredefinedUnits;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 
 /**
- * Counts the number of unique operation calles and stores that information in the statistics model.
+ * Counts the number of unique operation calls and stores that information in the statistics model.
  * See {@link StatisticsDecoratorStage} for detail.
  *
  * @author Reiner Jung
  * @since 1.0
  */
-public class CountUniqueCallsStage extends StatisticsDecoratorStage<OperationCall> {
+public class CountUniqueCallsStage extends StatisticsDecoratorStage<OperationCallDurationEvent> {
 
     public CountUniqueCallsStage(final StatisticsModel statisticsModel, final ExecutionModel executionModel) {
         super(statisticsModel, EPredefinedUnits.RESPONSE_TIME, new CountCalculator<>(),
                 CountUniqueCallsStage.createForAggregatedInvocation(executionModel));
     }
 
-    public static final Function<OperationCall, EObject> createForAggregatedInvocation(
+    public static final Function<OperationCallDurationEvent, EObject> createForAggregatedInvocation(
             final ExecutionModel executionModel) {
         return operationCall -> {
-            final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
-            key.setFirst(operationCall.getSourceOperation());
-            key.setSecond(operationCall.getTargetOperation());
-
             final AggregatedInvocation result = CountUniqueCallsStage.getValue(executionModel,
-                    executionModel.getAggregatedInvocations(), key);
+                    executionModel.getAggregatedInvocations(), operationCall.getOperationCall());
 
             if (result == null) {
                 final Logger logger = LoggerFactory.getLogger(CountUniqueCallsStage.class);
                 logger.error("Fatal error: call not does not exist {}:{}",
-                        key.getFirst().getAssemblyOperation().getOperationType().getSignature(),
-                        key.getSecond().getAssemblyOperation().getOperationType().getSignature());
+                        operationCall.getOperationCall().getFirst().getAssemblyOperation().getOperationType()
+                                .getSignature(),
+                        operationCall.getOperationCall().getSecond().getAssemblyOperation().getOperationType()
+                                .getSignature());
             }
 
             return result;

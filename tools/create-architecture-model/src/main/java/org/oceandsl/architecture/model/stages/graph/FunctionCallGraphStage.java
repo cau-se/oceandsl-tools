@@ -18,13 +18,15 @@ package org.oceandsl.architecture.model.stages.graph;
 import org.eclipse.emf.common.util.EList;
 
 import kieker.analysis.graph.IGraph;
-import kieker.analysis.model.ModelRepository;
+import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.sources.SourceModel;
 import teetime.stage.basic.AbstractTransformation;
 
 /**
+ * Create a graph based on function calls in the architecture model.
+ *
  * @author Reiner Jung
  * @since 1.1
  */

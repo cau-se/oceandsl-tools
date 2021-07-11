@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.oceandsl.architecture.model.stages.data.ValueConversionErrorException;
+import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.flow.trace.operation.AfterOperationEvent;

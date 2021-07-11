@@ -21,26 +21,25 @@ import java.nio.file.Paths;
 
 import org.oceandsl.analysis.CSVFunctionCallReaderStage;
 import org.oceandsl.analysis.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 import org.oceandsl.architecture.model.graph.ColorAssemblyLevelComponentDependencyGraphBuilderFactory;
 import org.oceandsl.architecture.model.graph.ColorAssemblyLevelOperationDependencyGraphBuilderFactory;
 import org.oceandsl.architecture.model.graph.ColoredDotExportConfigurationFactory;
 import org.oceandsl.architecture.model.stages.CSVMapperStage;
 import org.oceandsl.architecture.model.stages.CountEventsStage;
 import org.oceandsl.architecture.model.stages.CountUniqueCallsStage;
-import org.oceandsl.architecture.model.stages.CreateCallsStage;
-import org.oceandsl.architecture.model.stages.ExecutionModelGenerationStage;
 import org.oceandsl.architecture.model.stages.FileBasedCleanupComponentSignatureStage;
 import org.oceandsl.architecture.model.stages.MapBasedCleanupComponentSignatureStage;
 import org.oceandsl.architecture.model.stages.ModelSerializerStage;
 import org.oceandsl.architecture.model.stages.ProduceBeforeAndAfterEventsFromOperationCallsStage;
 import org.oceandsl.architecture.model.stages.TriggerToModelSnapshotStage;
-import org.oceandsl.architecture.model.stages.data.ValueConversionErrorException;
-import org.oceandsl.architecture.model.stages.graph.ComputeExtraSubGraph;
+import org.oceandsl.architecture.model.stages.graph.ComputeExtraSubGraphStage;
 import org.oceandsl.architecture.model.stages.graph.FunctionCallGraphStage;
-import org.oceandsl.architecture.model.stages.graph.FunctionNodeCountCouplingStage;
 import org.oceandsl.architecture.model.stages.graph.ModuleCallGraphStage;
-import org.oceandsl.architecture.model.stages.graph.ModuleNodeCountCouplingStage;
+import org.oceandsl.architecture.model.stages.metrics.FunctionNodeCountCouplingStage;
+import org.oceandsl.architecture.model.stages.metrics.ModuleNodeCountCouplingStage;
 import org.oceandsl.architecture.model.stages.metrics.NumberOfCallsStage;
+import org.oceandsl.architecture.model.stages.sinks.TableCSVSink;
 import org.oceandsl.architecture.model.stages.utils.DedicatedFileNameMapper;
 import org.slf4j.Logger;
 
@@ -49,13 +48,17 @@ import kieker.analysis.graph.dependency.DependencyGraphCreatorStage;
 import kieker.analysis.graph.export.dot.DotFileWriterStage;
 import kieker.analysis.graph.export.graphml.GraphMLFileWriterStage;
 import kieker.analysis.graph.util.FileExtension;
-import kieker.analysis.model.AssemblyModelAssemblerStage;
-import kieker.analysis.model.DeploymentModelAssemblerStage;
-import kieker.analysis.model.ModelRepository;
-import kieker.analysis.model.TypeModelAssemblerStage;
 import kieker.analysis.signature.IComponentSignatureExtractor;
 import kieker.analysis.signature.IOperationSignatureExtractor;
 import kieker.analysis.signature.NameBuilder;
+import kieker.analysis.stage.model.AssemblyModelAssemblerStage;
+import kieker.analysis.stage.model.CallEvent2OperationCallStage;
+import kieker.analysis.stage.model.DeploymentModelAssemblerStage;
+import kieker.analysis.stage.model.ExecutionModelAssembler;
+import kieker.analysis.stage.model.ExecutionModelAssemblerStage;
+import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.stage.model.OperationAndCallGeneratorStage;
+import kieker.analysis.stage.model.TypeModelAssemblerStage;
 import kieker.analysis.util.stage.trigger.Trigger;
 import kieker.analysis.util.stage.trigger.TriggerOnTerminationStage;
 import kieker.common.record.IMonitoringRecord;
@@ -190,9 +193,14 @@ public class TeetimeConfiguration extends Configuration {
                 repository.getModel(AssemblyModel.class), repository.getModel(DeploymentModel.class),
                 repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
 
-        final CreateCallsStage callsStage = new CreateCallsStage(repository.getModel(DeploymentModel.class));
-        final ExecutionModelGenerationStage executionModelGenerationStage = new ExecutionModelGenerationStage(
-                repository.getModel(ExecutionModel.class));
+        final OperationAndCallGeneratorStage operationAndCallStage = new OperationAndCallGeneratorStage(true);
+        final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
+                repository.getModel(DeploymentModel.class));
+
+        final ExecutionModelAssemblerStage executionModelGenerationStage = new ExecutionModelAssemblerStage(
+                new ExecutionModelAssembler(repository.getModel(ExecutionModel.class),
+                        repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel()));
+
         final CountUniqueCallsStage countUniqueCalls = new CountUniqueCallsStage(
                 repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
 
@@ -238,10 +246,10 @@ public class TeetimeConfiguration extends Configuration {
         final ModuleCallGraphStage staticModuleCallGraphStage = new ModuleCallGraphStage("static");
         final ModuleNodeCountCouplingStage staticModuleNodeCouplingStage = new ModuleNodeCountCouplingStage();
 
-        final ComputeExtraSubGraph dynamicComputeExtraSubGraph = new ComputeExtraSubGraph("dynamic");
+        final ComputeExtraSubGraphStage dynamicComputeExtraSubGraph = new ComputeExtraSubGraphStage("dynamic");
         final FunctionNodeCountCouplingStage dynamicFunctionExtraNodeCouplingStage = new FunctionNodeCountCouplingStage();
 
-        final ComputeExtraSubGraph staticComputeExtraSubGraph = new ComputeExtraSubGraph("static");
+        final ComputeExtraSubGraphStage staticComputeExtraSubGraph = new ComputeExtraSubGraphStage("static");
         final FunctionNodeCountCouplingStage staticFunctionExtraNodeCouplingStage = new FunctionNodeCountCouplingStage();
 
         /** Sinks for metrics writing to CSV files. */
@@ -269,11 +277,14 @@ public class TeetimeConfiguration extends Configuration {
 
         this.connectPorts(produceEvents.getOutputPort(), instanceOfFilter.getInputPort());
         this.connectPorts(instanceOfFilter.getMatchedOutputPort(), counter.getInputPort());
-        this.connectPorts(counter.getOutputPort(), typeModelAssemblerStage.getInputPort());
+        this.connectPorts(counter.getOutputPort(), operationAndCallStage.getInputPort());
+        this.connectPorts(operationAndCallStage.getOperationOutputPort(), typeModelAssemblerStage.getInputPort());
         this.connectPorts(typeModelAssemblerStage.getOutputPort(), assemblyModelAssemblerStage.getInputPort());
         this.connectPorts(assemblyModelAssemblerStage.getOutputPort(), deploymentModelAssemblerStage.getInputPort());
-        this.connectPorts(deploymentModelAssemblerStage.getOutputPort(), callsStage.getInputPort());
-        this.connectPorts(callsStage.getOutputPort(), executionModelGenerationStage.getInputPort());
+
+        this.connectPorts(operationAndCallStage.getCallOutputPort(), callEvent2OperationCallStage.getInputPort());
+        this.connectPorts(callEvent2OperationCallStage.getOutputPort(), executionModelGenerationStage.getInputPort());
+
         this.connectPorts(executionModelGenerationStage.getOutputPort(), countUniqueCalls.getInputPort());
         this.connectPorts(countUniqueCalls.getOutputPort(), triggerOnTerminationStage.getInputPort());
         this.connectPorts(triggerOnTerminationStage.getOutputPort(), distributor.getInputPort());

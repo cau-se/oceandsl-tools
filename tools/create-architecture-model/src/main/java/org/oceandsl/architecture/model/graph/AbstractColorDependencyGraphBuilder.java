@@ -19,7 +19,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.graph.dependency.AbstractDependencyGraphBuilder;
-import kieker.analysis.model.ModelRepository;
+import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.sources.SourceModel;
 
 /**

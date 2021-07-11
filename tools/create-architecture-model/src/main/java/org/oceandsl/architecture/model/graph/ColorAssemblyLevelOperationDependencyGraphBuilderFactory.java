@@ -17,7 +17,7 @@ package org.oceandsl.architecture.model.graph;
 
 import kieker.analysis.graph.dependency.IDependencyGraphBuilder;
 import kieker.analysis.graph.dependency.IDependencyGraphBuilderFactory;
-import kieker.analysis.model.ModelRepository;
+import kieker.analysis.stage.model.ModelRepository;
 
 /**
  * Factory for colored assembly level operation dependency graphs.
