@@ -22,7 +22,7 @@ package org.oceandsl.analysis;
  */
 public class CallerCallee {
 
-    private final String sourcePath;
+    private String sourcePath;
     private String targetPath;
     private final String caller;
     private final String callee;
@@ -44,6 +44,10 @@ public class CallerCallee {
 
     public String getSourcePath() {
         return this.sourcePath;
+    }
+
+    public void setSourcePath(final String sourcePath) {
+        this.sourcePath = sourcePath;
     }
 
     public String getTargetPath() {

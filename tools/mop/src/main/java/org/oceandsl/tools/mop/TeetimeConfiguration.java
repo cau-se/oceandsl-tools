@@ -17,6 +17,10 @@ package org.oceandsl.tools.mop;
 
 import java.io.IOException;
 
+import org.oceandsl.tools.mop.stages.ModelProcessor;
+import org.oceandsl.tools.mop.stages.ModelRepositoryReader;
+import org.oceandsl.tools.mop.stages.ModelSink;
+import org.oceandsl.tools.mop.stages.ModelSource;
 import org.slf4j.Logger;
 
 import kieker.analysis.stage.model.ModelRepository;
@@ -32,10 +36,11 @@ public class TeetimeConfiguration extends Configuration {
 
     public TeetimeConfiguration(final Logger logger, final Settings parameterConfiguration,
             final ModelRepository repository) throws IOException {
-        // read 2 repositories
 
-        // select diff or merge
-        // perform operation
-        // store result
+        final ModelSource modelSource = new ModelSource(parameterConfiguration.getInputModelPaths());
+        final ModelRepositoryReader modelReader = new ModelRepositoryReader();
+        final ModelProcessor modelProcessor = new ModelProcessor(parameterConfiguration.getOperations(),
+                parameterConfiguration.getStrategies());
+        final ModelSink modelSink = new ModelSink(parameterConfiguration.getOutputDirectory());
     }
 }

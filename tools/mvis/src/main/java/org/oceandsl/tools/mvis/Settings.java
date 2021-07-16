@@ -15,12 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
 import com.beust.jcommander.Parameter;
-import com.beust.jcommander.converters.FileConverter;
 import com.beust.jcommander.converters.PathConverter;
 
 import org.oceandsl.architecture.model.EOutputGraph;
@@ -35,8 +33,8 @@ import org.oceandsl.architecture.model.GraphTypeConverter;
 public class Settings {
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, converter = FileConverter.class, description = "Input Kieker log directory or CSV file location")
-    private File inputFile;
+            "--input" }, required = true, converter = PathConverter.class, description = "Input Kieker log directory")
+    private Path inputDirectory;
 
     @Parameter(names = { "-o",
             "--output" }, required = true, converter = PathConverter.class, description = "Output directory to store graphics and statistics")
@@ -46,78 +44,23 @@ public class Settings {
             "--component-map" }, required = false, converter = PathConverter.class, description = "Component, file and function map file")
     private Path componentMapFile;
 
-    @Parameter(names = { "-a",
-            "--addrline" }, required = false, converter = FileConverter.class, description = "Location of the addrline tool")
-    private File addrlineExecutable;
-
-    @Parameter(names = { "-e",
-            "--executable" }, required = false, converter = FileConverter.class, description = "Location of the executable")
-    private File modelExecutable;
-
-    @Parameter(names = { "-ia",
-            "--input-architecture-model" }, required = false, converter = FileConverter.class, description = "Directory for an input architecture model")
-    private File inputArchitectureModelDirectory;
-
-    @Parameter(names = { "-oa",
-            "--output-architecture-model" }, required = false, converter = FileConverter.class, description = "Directory for an output architecture model")
-    private File outputArchitectureModelDirectory;
-
     @Parameter(names = { "-l", "--source-label" }, required = true, description = "Set source label for the read data")
     private String sourceLabel;
-
-    @Parameter(names = { "-c",
-            "--case-insensitive" }, required = false, description = "Handle function names in CSV case insensitive")
-    private boolean caseInsensitive;
-
-    @Parameter(names = { "-H",
-            "--hostname" }, required = false, description = "Hostname to be used in CSV reconstruction")
-    private String hostname;
-
-    @Parameter(names = { "-E", "--experiment-name" }, required = true, description = "Name of the experiment")
-    private String experimentName;
 
     @Parameter(names = { "-g",
             "--graphs" }, required = false, variableArity = true, converter = GraphTypeConverter.class, description = "Specify which output graphs must be generated")
     private List<EOutputGraph> outputGraphs;
 
-    public File getInputFile() {
-        return this.inputFile;
+    public Path getInputDirectory() {
+        return this.inputDirectory;
     }
 
     public Path getOutputDirectory() {
         return this.outputDirectory;
     }
 
-    public File getAddrlineExecutable() {
-        return this.addrlineExecutable;
-    }
-
-    public File getModelExecutable() {
-        return this.modelExecutable;
-    }
-
-    public File getInputArchitectureModelDirectory() {
-        return this.inputArchitectureModelDirectory;
-    }
-
-    public File getOutputArchitectureModelDirectory() {
-        return this.outputArchitectureModelDirectory;
-    }
-
     public String getSourceLabel() {
         return this.sourceLabel;
-    }
-
-    public boolean getCaseInsensitive() {
-        return this.caseInsensitive;
-    }
-
-    public String getHostname() {
-        return this.hostname == null ? "<static>" : this.hostname;
-    }
-
-    public String getExperimentName() {
-        return this.experimentName;
     }
 
     public Path getComponentMapFile() {

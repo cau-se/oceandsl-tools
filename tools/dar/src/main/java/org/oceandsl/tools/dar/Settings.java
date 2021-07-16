@@ -31,8 +31,8 @@ import com.beust.jcommander.converters.PathConverter;
 public class Settings {
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, converter = FileConverter.class, description = "Input Kieker log directory location")
-    private File inputFile;
+            "--input" }, required = true, converter = PathConverter.class, description = "Input Kieker log directory location")
+    private Path inputFile;
 
     @Parameter(names = { "-o",
             "--output" }, required = true, converter = PathConverter.class, description = "Output directory to store the recovered models")
@@ -60,7 +60,7 @@ public class Settings {
     @Parameter(names = { "-E", "--experiment-name" }, required = true, description = "Name of the experiment")
     private String experimentName;
 
-    public File getInputFile() {
+    public Path getInputFile() {
         return this.inputFile;
     }
 

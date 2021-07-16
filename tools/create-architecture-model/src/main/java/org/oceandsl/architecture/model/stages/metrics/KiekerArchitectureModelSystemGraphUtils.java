@@ -23,17 +23,18 @@ import org.oceandsl.architecture.model.stages.graph.KiekerNode;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;
+import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 
 /**
  * @author Reiner Jung
  *
  */
-public class KiekerArchitectureModelSystemGraphUtils implements SystemGraphUtils<DeployedOperation> {
+public class KiekerArchitectureModelSystemGraphUtils implements SystemGraphUtils<DeployedComponent> {
 
     @Override
-    public MutableGraph<Node<DeployedOperation>> convertToSystemGraph(final Graph<Node<DeployedOperation>> graph) {
-        final MutableGraph<Node<DeployedOperation>> systemGraph = Graphs.copyOf(graph);
+    public MutableGraph<Node<DeployedComponent>> convertToSystemGraph(final Graph<Node<DeployedComponent>> graph) {
+        final MutableGraph<Node<DeployedComponent>> systemGraph = Graphs.copyOf(graph);
 
         final DeployedOperation method = null;
 

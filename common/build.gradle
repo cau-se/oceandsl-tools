@@ -9,7 +9,10 @@
 plugins {
     id 'java'
     id 'java-library'
+    id 'maven-publish'
+    id 'signing'
 }
+
 
 dependencies {
     implementation 'net.kieker-monitoring:kieker:1.15-SNAPSHOT:jar' 
@@ -23,3 +26,63 @@ sourceSets {
   }
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'org.oceandsl'
+            artifactId = 'common'
+            version = '1.1'
+            pom {
+                name = 'OceanDSL Common'
+                description = 'Common facilities of the OceanDSL tool chain'
+                url = 'http://oceandsl.uni-kiel.de'
+         //       properties = [
+         //           myProp: "value",
+         //           "prop.with.dots": "anotherValue"
+         //       ]
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'rju'
+                        name = 'Reiner Jung'
+                        email = 'reiner.jung@email.uni-kiel.de'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://git.se.informatik.uni-kiel.de/oceandsl/oceandsl-java-tools.git'
+                    developerConnection = 'scm:git:gitlab@git.se.informatik.uni-kiel.de:oceandsl/oceandsl-java-tools.git'
+                    url = 'https://git.se.informatik.uni-kiel.de/oceandsl/oceandsl-java-tools/'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
+            def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}

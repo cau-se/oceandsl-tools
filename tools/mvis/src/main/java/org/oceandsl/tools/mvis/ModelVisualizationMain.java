@@ -17,6 +17,7 @@ package org.oceandsl.tools.mvis;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import com.beust.jcommander.JCommander;
 
@@ -54,10 +55,8 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            this.repository = ArchitectureModelManagementFactory.loadModelRepository(
-                    this.parameterConfiguration.getInputArchitectureModelDirectory(),
-                    this.parameterConfiguration.getExperimentName(),
-                    this.parameterConfiguration.getComponentMapFile() != null);
+            this.repository = ArchitectureModelManagementFactory
+                    .loadModelRepository(this.parameterConfiguration.getInputDirectory());
             return new TeetimeConfiguration(this.logger, this.parameterConfiguration, this.repository);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
@@ -78,36 +77,13 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (this.parameterConfiguration.getModelExecutable() != null) {
-            if (!this.parameterConfiguration.getAddrlineExecutable().canExecute()) {
-                this.logger.error("Addr2line file {} is not executable",
-                        this.parameterConfiguration.getAddrlineExecutable());
-                return false;
-            }
-            if (!this.parameterConfiguration.getModelExecutable().canExecute()) {
-                this.logger.error("Model file {} is not executable", this.parameterConfiguration.getModelExecutable());
-                return false;
-            }
-        }
-
-        if (!this.parameterConfiguration.getOutputDirectory().toFile().isDirectory()) {
-            this.logger.error("Output directory {} is not directory", this.parameterConfiguration.getOutputDirectory());
+        if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory())) {
+            this.logger.error("Output path {} is not directory", this.parameterConfiguration.getOutputDirectory());
             return false;
         }
-        if (this.parameterConfiguration.getInputArchitectureModelDirectory() != null) {
-            if (!this.parameterConfiguration.getInputArchitectureModelDirectory().exists()) {
-                this.logger.error("Cannot find input architecture model directory {}",
-                        this.parameterConfiguration.getInputArchitectureModelDirectory().getAbsoluteFile());
-                return false;
-            } else {
-                if (!this.parameterConfiguration.getInputArchitectureModelDirectory().isDirectory()) {
-                    this.logger.error("Input architecture model directory path does not refer to a directory {}",
-                            this.parameterConfiguration.getInputArchitectureModelDirectory().getAbsoluteFile());
-                    return false;
-                } else {
-                    // check completeness of files
-                }
-            }
+        if (!Files.isDirectory(this.parameterConfiguration.getInputDirectory())) {
+            this.logger.error("Input path {} is not directory", this.parameterConfiguration.getInputDirectory());
+            return false;
         }
         return true;
     }

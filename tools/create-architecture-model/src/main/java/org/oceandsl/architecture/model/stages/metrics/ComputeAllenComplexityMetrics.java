@@ -32,22 +32,20 @@ import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.coupli
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.size.HyperGraphSizeCalculator;
-import kieker.model.analysismodel.deployment.DeployedOperation;
-import teetime.framework.AbstractConsumerStage;
-import teetime.framework.OutputPort;
+import kieker.model.analysismodel.deployment.DeployedComponent;
+import teetime.stage.basic.AbstractTransformation;
 
 /**
  * @author Reiner Jung
  * @since 1.1
  */
-public class ComputeAllenComplexityMetrics extends AbstractConsumerStage<Graph<Node<DeployedOperation>>> {
-
-    private final OutputPort<Map<Class<? extends CodeMetric>, CodeMetric>> outputPort = this.createOutputPort();
+public class ComputeAllenComplexityMetrics
+        extends AbstractTransformation<Graph<Node<DeployedComponent>>, Map<Class<? extends CodeMetric>, CodeMetric>> {
 
     @Override
-    protected void execute(final Graph<Node<DeployedOperation>> graph) throws Exception {
+    protected void execute(final Graph<Node<DeployedComponent>> graph) throws Exception {
         final CalculationMode mode = CalculationMode.REINER;
-        final SystemGraphUtils<DeployedOperation> systemGraphUtils = new KiekerArchitectureModelSystemGraphUtils();
+        final SystemGraphUtils<DeployedComponent> systemGraphUtils = new KiekerArchitectureModelSystemGraphUtils();
 
         final HyperGraphSize size = this.calculateHyperGraphSize(mode, systemGraphUtils, graph);
         final Complexity graphComplexity = new HyperGraphComplexityCalculator<>(mode, systemGraphUtils)
@@ -66,8 +64,8 @@ public class ComputeAllenComplexityMetrics extends AbstractConsumerStage<Graph<N
     }
 
     private HyperGraphSize calculateHyperGraphSize(final CalculationMode mode,
-            final SystemGraphUtils<DeployedOperation> systemGraphUtils, final Graph<Node<DeployedOperation>> graph) {
-        return new HyperGraphSize(new HyperGraphSizeCalculator<DeployedOperation>(mode)
+            final SystemGraphUtils<DeployedComponent> systemGraphUtils, final Graph<Node<DeployedComponent>> graph) {
+        return new HyperGraphSize(new HyperGraphSizeCalculator<DeployedComponent>(mode)
                 .calculate(systemGraphUtils.convertToSystemGraph(graph)));
     }
 

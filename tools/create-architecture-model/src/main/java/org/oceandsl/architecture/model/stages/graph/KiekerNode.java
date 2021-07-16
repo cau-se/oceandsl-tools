@@ -76,4 +76,8 @@ public class KiekerNode<T, R extends EObject> implements Node<T> {
             return null;
         }
     }
+
+    public R getMember() {
+        return this.member;
+    }
 }

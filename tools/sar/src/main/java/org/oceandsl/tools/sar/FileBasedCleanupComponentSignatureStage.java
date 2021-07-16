@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.stages;
+package org.oceandsl.tools.sar;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -21,42 +21,17 @@ import java.nio.file.Paths;
 
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 
-import kieker.common.record.IMonitoringRecord;
-import kieker.common.record.flow.trace.operation.AfterOperationEvent;
-import kieker.common.record.flow.trace.operation.BeforeOperationEvent;
-import teetime.stage.basic.AbstractTransformation;
-
 /**
  * Remove the directory name portion of class signatures.
  *
  * @author Reiner Jung
  * @since 1.1
  */
-public class FileBasedCleanupComponentSignatureStage
-        extends AbstractTransformation<IMonitoringRecord, IMonitoringRecord> {
-
-    private final boolean caseInsensitive;
+public class FileBasedCleanupComponentSignatureStage extends AbstractCleanupComponentSignatureStage {
 
     public FileBasedCleanupComponentSignatureStage(final boolean caseInsensitive)
             throws IOException, ValueConversionErrorException {
-        this.caseInsensitive = caseInsensitive;
-    }
-
-    @Override
-    protected void execute(final IMonitoringRecord event) throws Exception {
-        if (event instanceof BeforeOperationEvent) {
-            final BeforeOperationEvent before = (BeforeOperationEvent) event;
-            this.outputPort.send(new BeforeOperationEvent(before.getTimestamp(), before.getTraceId(),
-                    before.getOrderIndex(), before.getOperationSignature(),
-                    this.processComponentSignature(before.getClassSignature())));
-        } else if (event instanceof AfterOperationEvent) {
-            final AfterOperationEvent after = (AfterOperationEvent) event;
-            this.outputPort
-                    .send(new AfterOperationEvent(after.getTimestamp(), after.getTraceId(), after.getOrderIndex(),
-                            after.getOperationSignature(), this.processComponentSignature(after.getClassSignature())));
-        } else {
-            this.outputPort.send(event);
-        }
+        super(caseInsensitive);
     }
 
     private String convertToLowerCase(final String string) {
@@ -69,7 +44,8 @@ public class FileBasedCleanupComponentSignatureStage
         return this.caseInsensitive ? value.toLowerCase() : value;
     }
 
-    private String processComponentSignature(final String signature) {
+    @Override
+    protected String processComponentSignature(final String signature) {
         if ("<<no-file>>".equals(signature)) {
             return signature;
         } else {

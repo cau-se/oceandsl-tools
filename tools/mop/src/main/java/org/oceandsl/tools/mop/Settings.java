@@ -15,105 +15,50 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop;
 
-import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 
 import com.beust.jcommander.Parameter;
-import com.beust.jcommander.converters.FileConverter;
 import com.beust.jcommander.converters.PathConverter;
 
 /**
  * All settings including command line parameters for the analysis.
  *
  * @author Reiner Jung
- * @since 1.0
+ * @since 1.1
  */
 public class Settings {
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, converter = FileConverter.class, description = "Input Kieker log directory or CSV file location")
-    private File inputFile;
+            "--input" }, required = true, variableArity = true, converter = PathConverter.class, description = "Input architecture models")
+    private List<Path> inputModelPaths;
 
     @Parameter(names = { "-o",
-            "--output" }, required = true, converter = PathConverter.class, description = "Output directory to store graphics and statistics")
+            "--output" }, required = true, converter = PathConverter.class, description = "Output architecture model directory")
     private Path outputDirectory;
 
-    @Parameter(names = { "-M",
-            "--component-map" }, required = false, converter = PathConverter.class, description = "Component, file and function map file")
-    private Path componentMapFile;
+    @Parameter(names = { "-p",
+            "--operation" }, variableArity = true, required = true, converter = OperationConverter.class, description = "List of operation to be applied to the models.")
+    private List<EOperation> operations;
 
-    @Parameter(names = { "-a",
-            "--addrline" }, required = false, converter = FileConverter.class, description = "Location of the addrline tool")
-    private File addrlineExecutable;
+    @Parameter(names = { "-s",
+            "--strategy" }, variableArity = true, required = false, converter = StrategyConverter.class, description = "Operation strategies for each operation.")
+    private List<EStrategy> strategies;
 
-    @Parameter(names = { "-e",
-            "--executable" }, required = false, converter = FileConverter.class, description = "Location of the executable")
-    private File modelExecutable;
-
-    @Parameter(names = { "-ia",
-            "--input-architecture-model" }, required = false, converter = FileConverter.class, description = "Directory for an input architecture model")
-    private File inputArchitectureModelDirectory;
-
-    @Parameter(names = { "-oa",
-            "--output-architecture-model" }, required = false, converter = FileConverter.class, description = "Directory for an output architecture model")
-    private File outputArchitectureModelDirectory;
-
-    @Parameter(names = { "-l", "--source-label" }, required = true, description = "Set source label for the read data")
-    private String sourceLabel;
-
-    @Parameter(names = { "-c",
-            "--case-insensitive" }, required = false, description = "Handle function names in CSV case insensitive")
-    private boolean caseInsensitive;
-
-    @Parameter(names = { "-H",
-            "--hostname" }, required = false, description = "Hostname to be used in CSV reconstruction")
-    private String hostname;
-
-    @Parameter(names = { "-E", "--experiment-name" }, required = true, description = "Name of the experiment")
-    private String experimentName;
-
-    public File getInputFile() {
-        return this.inputFile;
+    public List<Path> getInputModelPaths() {
+        return this.inputModelPaths;
     }
 
     public Path getOutputDirectory() {
         return this.outputDirectory;
     }
 
-    public File getAddrlineExecutable() {
-        return this.addrlineExecutable;
+    public List<EOperation> getOperations() {
+        return this.operations;
     }
 
-    public File getModelExecutable() {
-        return this.modelExecutable;
-    }
-
-    public File getInputArchitectureModelDirectory() {
-        return this.inputArchitectureModelDirectory;
-    }
-
-    public File getOutputArchitectureModelDirectory() {
-        return this.outputArchitectureModelDirectory;
-    }
-
-    public String getSourceLabel() {
-        return this.sourceLabel;
-    }
-
-    public boolean getCaseInsensitive() {
-        return this.caseInsensitive;
-    }
-
-    public String getHostname() {
-        return this.hostname == null ? "<static>" : this.hostname;
-    }
-
-    public String getExperimentName() {
-        return this.experimentName;
-    }
-
-    public Path getComponentMapFile() {
-        return this.componentMapFile;
+    public List<EStrategy> getStrategies() {
+        return this.strategies;
     }
 
 }

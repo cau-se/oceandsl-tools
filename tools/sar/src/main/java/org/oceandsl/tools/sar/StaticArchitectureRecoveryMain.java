@@ -17,6 +17,8 @@ package org.oceandsl.tools.sar;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -42,7 +44,7 @@ public class StaticArchitectureRecoveryMain extends AbstractService<TeetimeConfi
     public static void main(final String[] args) {
         final StaticArchitectureRecoveryMain main = new StaticArchitectureRecoveryMain();
         try {
-            final int exitCode = main.run("architecture modeler", "arch-mod", args, new Settings());
+            final int exitCode = main.run("static architecture recovery", "sar", args, new Settings());
             java.lang.System.exit(exitCode);
         } catch (final IllegalArgumentException e) {
             LoggerFactory.getLogger(StaticArchitectureRecoveryMain.class).error("Configuration error: {}",
@@ -77,25 +79,22 @@ public class StaticArchitectureRecoveryMain extends AbstractService<TeetimeConfi
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (this.parameterConfiguration.getModelExecutable() != null) {
-            if (!this.parameterConfiguration.getAddrlineExecutable().canExecute()) {
-                this.logger.error("Addr2line file {} is not executable",
-                        this.parameterConfiguration.getAddrlineExecutable());
-                return false;
-            }
-            if (!this.parameterConfiguration.getModelExecutable().canExecute()) {
-                this.logger.error("Model file {} is not executable", this.parameterConfiguration.getModelExecutable());
-                return false;
-            }
-        }
-
-        if (!this.parameterConfiguration.getInputFile().isFile()) {
-            this.logger.error("Input file {} is not file", this.parameterConfiguration.getInputFile());
+        if (!Files.isReadable(this.parameterConfiguration.getInputFile())) {
+            this.logger.error("Input path {} is not file", this.parameterConfiguration.getInputFile());
             return false;
         }
 
-        if (!this.parameterConfiguration.getOutputDirectory().toFile().isDirectory()) {
-            this.logger.error("Output directory {} is not directory", this.parameterConfiguration.getOutputDirectory());
+        if (this.parameterConfiguration.getFunctionNameFiles() != null) {
+            for (final Path functionNameFile : this.parameterConfiguration.getFunctionNameFiles()) {
+                if (!Files.isReadable(functionNameFile)) {
+                    this.logger.error("Function map file {} cannot be found", functionNameFile);
+                    return false;
+                }
+            }
+        }
+
+        if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory().getParent())) {
+            this.logger.error("Output path {} is not directory", this.parameterConfiguration.getOutputDirectory());
             return false;
         }
 
@@ -104,7 +103,12 @@ public class StaticArchitectureRecoveryMain extends AbstractService<TeetimeConfi
 
     @Override
     protected void shutdownService() {
-
+        try {
+            ArchitectureModelManagementFactory.writeModelRepository(this.parameterConfiguration.getOutputDirectory(),
+                    this.repository);
+        } catch (final IOException e) {
+            this.logger.error("Error saving model: {}", e.getLocalizedMessage());
+        }
     }
 
 }

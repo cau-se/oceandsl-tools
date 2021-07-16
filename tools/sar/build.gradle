@@ -30,5 +30,5 @@ dependencies {
 }
 
 application {
-    mainClassName = 'org.oceandsl.architecture.model.ArchitectureModelMain'
+    mainClassName = 'org.oceandsl.tools.sar.StaticArchitectureRecoveryMain'
 }

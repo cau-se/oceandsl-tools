@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.stages;
+package org.oceandsl.tools.sar;
 
 import org.oceandsl.analysis.CallerCallee;
 
@@ -21,27 +21,23 @@ import teetime.stage.basic.AbstractFilter;
 
 /**
  * @author Reiner Jung
- * @since 1.0
  *
  */
-public class CSVMapperStage extends AbstractFilter<CallerCallee> {
+public abstract class AbstractCleanupComponentSignatureStage extends AbstractFilter<CallerCallee> {
 
-    private final boolean caseInsensitive;
+    protected final boolean caseInsensitive;
 
-    public CSVMapperStage(final boolean caseInsensitive) {
+    public AbstractCleanupComponentSignatureStage(final boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
     }
 
     @Override
-    protected void execute(final CallerCallee element) throws Exception {
-        final CallerCallee result = new CallerCallee(this.convertToLowerCase(element.getSourcePath()),
-                this.convertToLowerCase(element.getCaller()), this.convertToLowerCase(element.getTargetPath()),
-                this.convertToLowerCase(element.getCallee()));
-        this.outputPort.send(result);
+    protected void execute(final CallerCallee event) throws Exception {
+        event.setSourcePath(this.processComponentSignature(event.getSourcePath()));
+        event.setTargetPath(this.processComponentSignature(event.getTargetPath()));
+
+        this.outputPort.send(event);
     }
 
-    private String convertToLowerCase(final String string) {
-        return this.caseInsensitive ? string.toLowerCase() : string;
-    }
-
+    protected abstract String processComponentSignature(String sourcePath);
 }

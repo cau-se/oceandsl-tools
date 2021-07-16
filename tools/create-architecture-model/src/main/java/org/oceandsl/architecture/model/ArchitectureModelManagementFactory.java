@@ -92,10 +92,8 @@ public final class ArchitectureModelManagementFactory {
         return repository;
     }
 
-    public static ModelRepository loadModelRepository(final File path, final String experimentName,
-            final boolean mapFile) throws ConfigurationException {
-        final ModelRepository repository = new ModelRepository(
-                String.format("%s-%s", experimentName, mapFile ? "map" : "file"));
+    public static ModelRepository loadModelRepository(final Path path) throws ConfigurationException {
+        final ModelRepository repository = new ModelRepository(path.getFileName().toString());
 
         final Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
         final Map<String, Object> m = reg.getExtensionToFactoryMap();
@@ -128,7 +126,7 @@ public final class ArchitectureModelManagementFactory {
     }
 
     private static <T extends EObject> void readModel(final ResourceSet resourceSet, final ModelRepository repository,
-            final Class<T> type, final File path, final String filename) throws ConfigurationException {
+            final Class<T> type, final Path path, final String filename) throws ConfigurationException {
         ArchitectureModelManagementFactory.LOGGER.info("Loading model {}", filename);
         final File modelFile = ArchitectureModelManagementFactory.createReadModelFileHandle(path, filename);
         if (modelFile.exists()) {
@@ -160,7 +158,9 @@ public final class ArchitectureModelManagementFactory {
         // store models
         final ResourceSet resourceSet = new ResourceSetImpl();
 
-        Files.createDirectory(outputDirectory);
+        if (!Files.exists(outputDirectory)) {
+            Files.createDirectory(outputDirectory);
+        }
 
         ArchitectureModelManagementFactory.writeModel(resourceSet, outputDirectory,
                 ArchitectureModelManagementFactory.TYPE_MODEL_NAME, repository.getModel(TypeModel.class));
@@ -193,8 +193,8 @@ public final class ArchitectureModelManagementFactory {
         }
     }
 
-    private static File createReadModelFileHandle(final File path, final String filename) {
-        return new File(path.getAbsolutePath() + File.separator + filename);
+    private static File createReadModelFileHandle(final Path path, final String filename) {
+        return new File(path.toString() + File.separator + filename);
     }
 
     private static File createWriteModelFileHandle(final Path path, final String filename) {

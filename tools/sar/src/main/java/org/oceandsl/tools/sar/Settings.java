@@ -15,11 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar;
 
-import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 
 import com.beust.jcommander.Parameter;
-import com.beust.jcommander.converters.FileConverter;
 import com.beust.jcommander.converters.PathConverter;
 
 /**
@@ -31,8 +30,12 @@ import com.beust.jcommander.converters.PathConverter;
 public class Settings {
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, converter = FileConverter.class, description = "Input Kieker log directory or CSV file location")
-    private File inputFile;
+            "--input" }, required = true, converter = PathConverter.class, description = "Function call CSV file")
+    private Path inputFile;
+
+    @Parameter(names = { "-f",
+            "--function-names" }, required = false, variableArity = true, converter = PathConverter.class, description = "Function file map CSV file")
+    private List<Path> functionNameFiles;
 
     @Parameter(names = { "-o",
             "--output" }, required = true, converter = PathConverter.class, description = "Output directory to store graphics and statistics")
@@ -41,22 +44,6 @@ public class Settings {
     @Parameter(names = { "-M",
             "--component-map" }, required = false, converter = PathConverter.class, description = "Component, file and function map file")
     private Path componentMapFile;
-
-    @Parameter(names = { "-a",
-            "--addrline" }, required = false, converter = FileConverter.class, description = "Location of the addrline tool")
-    private File addrlineExecutable;
-
-    @Parameter(names = { "-e",
-            "--executable" }, required = false, converter = FileConverter.class, description = "Location of the executable")
-    private File modelExecutable;
-
-    @Parameter(names = { "-ia",
-            "--input-architecture-model" }, required = false, converter = FileConverter.class, description = "Directory for an input architecture model")
-    private File inputArchitectureModelDirectory;
-
-    @Parameter(names = { "-oa",
-            "--output-architecture-model" }, required = false, converter = FileConverter.class, description = "Directory for an output architecture model")
-    private File outputArchitectureModelDirectory;
 
     @Parameter(names = { "-l", "--source-label" }, required = true, description = "Set source label for the read data")
     private String sourceLabel;
@@ -72,28 +59,16 @@ public class Settings {
     @Parameter(names = { "-E", "--experiment-name" }, required = true, description = "Name of the experiment")
     private String experimentName;
 
-    public File getInputFile() {
+    public Path getInputFile() {
         return this.inputFile;
+    }
+
+    public List<Path> getFunctionNameFiles() {
+        return this.functionNameFiles;
     }
 
     public Path getOutputDirectory() {
         return this.outputDirectory;
-    }
-
-    public File getAddrlineExecutable() {
-        return this.addrlineExecutable;
-    }
-
-    public File getModelExecutable() {
-        return this.modelExecutable;
-    }
-
-    public File getInputArchitectureModelDirectory() {
-        return this.inputArchitectureModelDirectory;
-    }
-
-    public File getOutputArchitectureModelDirectory() {
-        return this.outputArchitectureModelDirectory;
     }
 
     public String getSourceLabel() {

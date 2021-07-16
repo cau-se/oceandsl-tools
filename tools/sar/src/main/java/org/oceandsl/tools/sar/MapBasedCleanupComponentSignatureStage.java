@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.stages;
+package org.oceandsl.tools.sar;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,25 +25,18 @@ import java.util.Map;
 
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 
-import kieker.common.record.IMonitoringRecord;
-import kieker.common.record.flow.trace.operation.AfterOperationEvent;
-import kieker.common.record.flow.trace.operation.BeforeOperationEvent;
-import teetime.stage.basic.AbstractTransformation;
-
 /**
  * @author Reiner Jung
  * @since 1.1
  */
-public class MapBasedCleanupComponentSignatureStage
-        extends AbstractTransformation<IMonitoringRecord, IMonitoringRecord> {
+public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupComponentSignatureStage {
 
     private final Map<String, String> componentMap = new HashMap<>();
-    private final boolean caseInsensitive;
 
     public MapBasedCleanupComponentSignatureStage(final Path componentMapFile, final boolean caseInsensitive)
             throws IOException, ValueConversionErrorException {
+        super(caseInsensitive);
         this.logger.info("Reading map file {}", componentMapFile.toString());
-        this.caseInsensitive = caseInsensitive;
         final BufferedReader reader = Files.newBufferedReader(componentMapFile);
         String line;
         while ((line = reader.readLine()) != null) {
@@ -61,23 +54,6 @@ public class MapBasedCleanupComponentSignatureStage
         reader.close();
     }
 
-    @Override
-    protected void execute(final IMonitoringRecord event) throws Exception {
-        if (event instanceof BeforeOperationEvent) {
-            final BeforeOperationEvent before = (BeforeOperationEvent) event;
-            this.outputPort.send(new BeforeOperationEvent(before.getTimestamp(), before.getTraceId(),
-                    before.getOrderIndex(), before.getOperationSignature(),
-                    this.processComponentSignature(before.getClassSignature())));
-        } else if (event instanceof AfterOperationEvent) {
-            final AfterOperationEvent after = (AfterOperationEvent) event;
-            this.outputPort
-                    .send(new AfterOperationEvent(after.getTimestamp(), after.getTraceId(), after.getOrderIndex(),
-                            after.getOperationSignature(), this.processComponentSignature(after.getClassSignature())));
-        } else {
-            this.outputPort.send(event);
-        }
-    }
-
     private String convertToLowerCase(final String string) {
         String value;
         if (string.endsWith("_")) {
@@ -88,7 +64,8 @@ public class MapBasedCleanupComponentSignatureStage
         return this.caseInsensitive ? value.toLowerCase() : value;
     }
 
-    private String processComponentSignature(final String signature) {
+    @Override
+    protected String processComponentSignature(final String signature) {
         if ("<<no-file>>".equals(signature)) {
             return signature;
         } else {

@@ -33,7 +33,7 @@ subprojects {
         implementation 'ch.qos.logback:logback-classic:1.1.7'
         implementation 'org.slf4j:slf4j-api:1.7.30'
         implementation 'org.codehaus.groovy:groovy-all:3.0.2'
-	    implementation 'com.github.MoSimEngine.RefactorLizar:architecture-evaluation:1a1b08a5a4'
+        implementation 'com.github.MoSimEngine.RefactorLizar:architecture-evaluation:4717150d90'
 	
 	    // Use JUnit test framework
 	    testImplementation 'junit:junit:4.13'

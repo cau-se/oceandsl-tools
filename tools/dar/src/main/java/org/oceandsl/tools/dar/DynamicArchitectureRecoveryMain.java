@@ -17,6 +17,7 @@ package org.oceandsl.tools.dar;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import com.beust.jcommander.JCommander;
 
@@ -42,7 +43,7 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
     public static void main(final String[] args) {
         final DynamicArchitectureRecoveryMain main = new DynamicArchitectureRecoveryMain();
         try {
-            final int exitCode = main.run("architecture modeler", "arch-mod", args, new Settings());
+            final int exitCode = main.run("dynamic architecture recovery", "dar", args, new Settings());
             java.lang.System.exit(exitCode);
         } catch (final IllegalArgumentException e) {
             LoggerFactory.getLogger(DynamicArchitectureRecoveryMain.class).error("Configuration error: {}",
@@ -89,13 +90,13 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
                 return false;
             }
         } else {
-            if (!this.parameterConfiguration.getInputFile().isFile()) {
-                this.logger.error("Input file {} is not file", this.parameterConfiguration.getInputFile());
+            if (!Files.isDirectory(this.parameterConfiguration.getInputFile())) {
+                this.logger.error("Input path {} is not a directory", this.parameterConfiguration.getInputFile());
                 return false;
             }
         }
-        if (!this.parameterConfiguration.getOutputDirectory().toFile().isDirectory()) {
-            this.logger.error("Output directory {} is not directory", this.parameterConfiguration.getOutputDirectory());
+        if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory().getParent())) {
+            this.logger.error("Output path {} is not a directory", this.parameterConfiguration.getOutputDirectory());
             return false;
         }
         return true;
@@ -107,7 +108,7 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
             ArchitectureModelManagementFactory.writeModelRepository(this.parameterConfiguration.getOutputDirectory(),
                     this.repository);
         } catch (final IOException e) {
-            this.logger.error("Error {}", e.getLocalizedMessage());
+            this.logger.error("Error saving model: {}", e.getLocalizedMessage());
         }
     }
 

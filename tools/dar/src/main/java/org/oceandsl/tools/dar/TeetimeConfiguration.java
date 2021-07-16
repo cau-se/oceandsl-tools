@@ -15,20 +15,22 @@
  ***************************************************************************/
 package org.oceandsl.tools.dar;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.oceandsl.analysis.RewriteBeforeAndAfterEventsStage;
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 import org.oceandsl.architecture.model.stages.CountEventsStage;
-import org.oceandsl.architecture.model.stages.CountUniqueCallsStage;
-import org.oceandsl.architecture.model.stages.FileBasedCleanupComponentSignatureStage;
-import org.oceandsl.architecture.model.stages.MapBasedCleanupComponentSignatureStage;
 import org.slf4j.Logger;
 
+import kieker.analysis.signature.AbstractSignatureCleaner;
 import kieker.analysis.signature.IComponentSignatureExtractor;
 import kieker.analysis.signature.IOperationSignatureExtractor;
+import kieker.analysis.signature.NullSignatureCleaner;
 import kieker.analysis.stage.model.AssemblyModelAssemblerStage;
 import kieker.analysis.stage.model.CallEvent2OperationCallStage;
 import kieker.analysis.stage.model.DeploymentModelAssemblerStage;
@@ -43,7 +45,6 @@ import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypeModel;
@@ -66,11 +67,9 @@ public class TeetimeConfiguration extends Configuration {
         OutputPort<? extends IMonitoringRecord> readerPort;
 
         logger.info("Processing Kieker log");
-        final kieker.common.configuration.Configuration configuration = new kieker.common.configuration.Configuration();
-        configuration.setProperty(LogsReaderCompositeStage.LOG_DIRECTORIES,
-                parameterConfiguration.getInputFile().getCanonicalPath());
-
-        final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(configuration);
+        final List<File> files = new ArrayList<>();
+        files.add(parameterConfiguration.getInputFile().toFile());
+        final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(files, false, 8192);
 
         if (parameterConfiguration.getModelExecutable() != null) {
             final RewriteBeforeAndAfterEventsStage rewriteBeforeAndAfterEventsStage = new RewriteBeforeAndAfterEventsStage(
@@ -82,20 +81,15 @@ public class TeetimeConfiguration extends Configuration {
             readerPort = reader.getOutputPort();
         }
 
+        final AbstractSignatureCleaner componentSignatureCleaner;
+
         if (parameterConfiguration.getComponentMapFile() != null) {
             logger.info("Map based component definition");
-            final MapBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new MapBasedCleanupComponentSignatureStage(
-                    parameterConfiguration.getComponentMapFile(), parameterConfiguration.getCaseInsensitive());
-
-            this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
-            readerPort = cleanupComponentSignatureStage.getOutputPort();
+            componentSignatureCleaner = new MapBasedSignatureCleaner(parameterConfiguration.getComponentMapFile(),
+                    parameterConfiguration.getCaseInsensitive());
         } else {
             logger.info("File based component definition");
-            final FileBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new FileBasedCleanupComponentSignatureStage(
-                    parameterConfiguration.getCaseInsensitive());
-
-            this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
-            readerPort = cleanupComponentSignatureStage.getOutputPort();
+            componentSignatureCleaner = new FileBasedSignatureCleaner(parameterConfiguration.getCaseInsensitive());
         }
 
         final InstanceOfFilter<IMonitoringRecord, IFlowRecord> instanceOfFilter = new InstanceOfFilter<>(
@@ -140,7 +134,8 @@ public class TeetimeConfiguration extends Configuration {
                 repository.getModel(AssemblyModel.class), repository.getModel(DeploymentModel.class),
                 repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
 
-        final OperationAndCallGeneratorStage operationAndCallStage = new OperationAndCallGeneratorStage(true);
+        final OperationAndCallGeneratorStage operationAndCallStage = new OperationAndCallGeneratorStage(true,
+                componentSignatureCleaner, new NullSignatureCleaner(parameterConfiguration.getCaseInsensitive()));
         final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
                 repository.getModel(DeploymentModel.class));
 
@@ -148,20 +143,17 @@ public class TeetimeConfiguration extends Configuration {
                 new ExecutionModelAssembler(repository.getModel(ExecutionModel.class),
                         repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel()));
 
-        final CountUniqueCallsStage countUniqueCalls = new CountUniqueCallsStage(
-                repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
-
         /** connecting ports. */
         this.connectPorts(readerPort, instanceOfFilter.getInputPort());
         this.connectPorts(instanceOfFilter.getMatchedOutputPort(), counter.getInputPort());
-        this.connectPorts(counter.getOutputPort(), operationAndCallStage.getInputPort());
+        this.connectPorts(counter.getOutputPort(),
+
+                operationAndCallStage.getInputPort());
         this.connectPorts(operationAndCallStage.getOperationOutputPort(), typeModelAssemblerStage.getInputPort());
         this.connectPorts(typeModelAssemblerStage.getOutputPort(), assemblyModelAssemblerStage.getInputPort());
         this.connectPorts(assemblyModelAssemblerStage.getOutputPort(), deploymentModelAssemblerStage.getInputPort());
 
         this.connectPorts(operationAndCallStage.getCallOutputPort(), callEvent2OperationCallStage.getInputPort());
         this.connectPorts(callEvent2OperationCallStage.getOutputPort(), executionModelGenerationStage.getInputPort());
-
-        this.connectPorts(executionModelGenerationStage.getOutputPort(), countUniqueCalls.getInputPort());
     }
 }
