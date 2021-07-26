@@ -30,7 +30,7 @@ import com.beust.jcommander.converters.PathConverter;
 public class Settings {
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, variableArity = true, converter = PathConverter.class, description = "Input architecture models")
+            "--input" }, required = true, variableArity = true, converter = PathConverter.class, description = "Input architecture model directories")
     private List<Path> inputModelPaths;
 
     @Parameter(names = { "-o",

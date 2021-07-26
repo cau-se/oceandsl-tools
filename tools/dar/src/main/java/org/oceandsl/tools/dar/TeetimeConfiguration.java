@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import kieker.analysis.signature.AbstractSignatureCleaner;
 import kieker.analysis.signature.IComponentSignatureExtractor;
 import kieker.analysis.signature.IOperationSignatureExtractor;
-import kieker.analysis.signature.NullSignatureCleaner;
 import kieker.analysis.stage.model.AssemblyModelAssemblerStage;
 import kieker.analysis.stage.model.CallEvent2OperationCallStage;
 import kieker.analysis.stage.model.DeploymentModelAssemblerStage;
@@ -82,14 +81,19 @@ public class TeetimeConfiguration extends Configuration {
         }
 
         final AbstractSignatureCleaner componentSignatureCleaner;
+        final AbstractSignatureCleaner operationSignatureCleaner;
 
         if (parameterConfiguration.getComponentMapFile() != null) {
             logger.info("Map based component definition");
             componentSignatureCleaner = new MapBasedSignatureCleaner(parameterConfiguration.getComponentMapFile(),
                     parameterConfiguration.getCaseInsensitive());
+            operationSignatureCleaner = new MapBasedOperationSignatureCleaner(
+                    parameterConfiguration.getCaseInsensitive());
         } else {
             logger.info("File based component definition");
             componentSignatureCleaner = new FileBasedSignatureCleaner(parameterConfiguration.getCaseInsensitive());
+            operationSignatureCleaner = new FileBasedOperationSignatureCleaner(
+                    parameterConfiguration.getCaseInsensitive());
         }
 
         final InstanceOfFilter<IMonitoringRecord, IFlowRecord> instanceOfFilter = new InstanceOfFilter<>(
@@ -135,7 +139,7 @@ public class TeetimeConfiguration extends Configuration {
                 repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
 
         final OperationAndCallGeneratorStage operationAndCallStage = new OperationAndCallGeneratorStage(true,
-                componentSignatureCleaner, new NullSignatureCleaner(parameterConfiguration.getCaseInsensitive()));
+                componentSignatureCleaner, operationSignatureCleaner);
         final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
                 repository.getModel(DeploymentModel.class));
 

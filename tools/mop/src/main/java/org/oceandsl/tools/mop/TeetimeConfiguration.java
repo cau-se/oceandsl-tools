@@ -42,5 +42,9 @@ public class TeetimeConfiguration extends Configuration {
         final ModelProcessor modelProcessor = new ModelProcessor(parameterConfiguration.getOperations(),
                 parameterConfiguration.getStrategies());
         final ModelSink modelSink = new ModelSink(parameterConfiguration.getOutputDirectory());
+
+        this.connectPorts(modelSource.getOutputPort(), modelReader.getInputPort());
+        this.connectPorts(modelReader.getOutputPort(), modelProcessor.getInputPort());
+        this.connectPorts(modelProcessor.getOutputPort(), modelSink.getInputPort());
     }
 }

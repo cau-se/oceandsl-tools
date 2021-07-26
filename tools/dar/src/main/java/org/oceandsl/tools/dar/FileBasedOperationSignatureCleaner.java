@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright 2021 Kieker Project (http://kieker-monitoring.net)
+ * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,29 +15,25 @@
  ***************************************************************************/
 package org.oceandsl.tools.dar;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import kieker.analysis.signature.AbstractSignatureCleaner;
 
 /**
  * @author Reiner Jung
  * @since 1.1
  */
-public class FileBasedSignatureCleaner extends AbstractSignatureCleaner {
+public class FileBasedOperationSignatureCleaner extends AbstractSignatureCleaner {
 
-    public FileBasedSignatureCleaner(final boolean caseInsensitive) {
+    public FileBasedOperationSignatureCleaner(final boolean caseInsensitive) {
         super(caseInsensitive);
     }
 
     @Override
     public String processSignature(final String signature) {
-        if ("<<no-file>>".equals(signature)) {
-            return signature;
+        if (this.caseInsensitive) {
+            return this.convertToLowerCase(this.removeTrailingUnderscore(signature));
         } else {
-            final Path path = Paths.get(signature);
-            return this.convertToLowerCase(
-                    this.removeTrailingUnderscore(path.getName(path.getNameCount() - 1).toString()));
+            return this.removeTrailingUnderscore(signature);
         }
     }
+
 }

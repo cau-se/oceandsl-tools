@@ -51,12 +51,21 @@ public class StatisticsModelCloneUtils {
     }
 
     public static Object duplicateObject(final Object value) {
-
-        return value;
+        if (value instanceof Long) {
+            return (((Long) value).longValue());
+        } else if (value instanceof Double) {
+            return (((Double) value).doubleValue());
+        } else {
+            throw new InternalError("Unknown type");
+        }
     }
 
-    public static void compute(final Object newValue, final Object value) {
-        System.err.println(newValue + " " + value);
+    public static Object compute(final Object newValue, final Object value) {
+        if (newValue instanceof Long) {
+            return ((Long) newValue) + ((Long) value);
+        } else {
+            throw new InternalError("Unknown type");
+        }
     }
 
 }

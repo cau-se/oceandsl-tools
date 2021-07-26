@@ -55,29 +55,21 @@ public class ModelProcessor extends AbstractConsumerStage<ModelRepository> {
         } else {
             switch (this.operations.get(this.task)) {
             case DIFF:
-                this.diffModel(element, this.strategies.get(this.task));
+                ModelRepositoryDiffer.perform(this.lastModel, element, this.strategies.get(this.task));
                 break;
             case MERGE:
-                this.mergeModel(element, this.strategies.get(this.task));
+                ModelRepositoryMerger.perform(this.lastModel, element, this.strategies.get(this.task));
                 break;
             case SUBTRACT:
-                this.subtractModel(element, this.strategies.get(this.task));
+                ModelRepositorySubtracter.perform(this.lastModel, element, this.strategies.get(this.task));
                 break;
             }
             this.task++;
         }
     }
 
-    private void diffModel(final ModelRepository element, final EStrategy strategy) {
-        ModelRepositoryDiffer.perform(this.lastModel, element, strategy);
-    }
-
-    private void mergeModel(final ModelRepository element, final EStrategy strategy) {
-        ModelRepositoryMerger.perform(this.lastModel, element, strategy);
-    }
-
-    private void subtractModel(final ModelRepository element, final EStrategy strategy) {
-        ModelRepositorySubtracter.perform(this.lastModel, element, strategy);
+    public OutputPort<ModelRepository> getOutputPort() {
+        return this.outputPort;
     }
 
     @Override

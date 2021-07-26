@@ -122,6 +122,10 @@ public final class ArchitectureModelManagementFactory {
         ArchitectureModelManagementFactory.readModel(resourceSet, repository, SourceModel.class, path,
                 ArchitectureModelManagementFactory.SOURCES_MODEL_NAME);
 
+        resourceSet.getResources().forEach(resource -> {
+            resource.setURI(null);
+        });
+
         return repository;
     }
 

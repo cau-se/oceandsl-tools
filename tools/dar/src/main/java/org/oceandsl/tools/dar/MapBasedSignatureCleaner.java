@@ -59,7 +59,7 @@ public class MapBasedSignatureCleaner extends AbstractSignatureCleaner {
     }
 
     @Override
-    public String processComponentSignature(final String signature) {
+    public String processSignature(final String signature) {
         if ("<<no-file>>".equals(signature)) {
             return signature;
         } else {

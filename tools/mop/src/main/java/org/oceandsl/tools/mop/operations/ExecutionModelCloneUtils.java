@@ -20,6 +20,8 @@ import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.deployment.impl.EStringToDeployedComponentMapEntryImpl;
+import kieker.model.analysismodel.deployment.impl.EStringToDeployedOperationMapEntryImpl;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.AggregatedStorageAccess;
 import kieker.model.analysismodel.execution.ExecutionFactory;
@@ -54,8 +56,13 @@ public final class ExecutionModelCloneUtils {
 
     private static DeployedOperation findDeployedOperation(final DeploymentModel newModel,
             final DeployedOperation operation) {
-        final DeployedComponent component = (DeployedComponent) operation.eContainer();
-        final DeploymentContext context = (DeploymentContext) component.eContainer();
+        final EStringToDeployedOperationMapEntryImpl mapOperationEntry = (EStringToDeployedOperationMapEntryImpl) operation
+                .eContainer();
+        final DeployedComponent component = (DeployedComponent) mapOperationEntry.eContainer();
+
+        final EStringToDeployedComponentMapEntryImpl mapComponentEntry = (EStringToDeployedComponentMapEntryImpl) component
+                .eContainer();
+        final DeploymentContext context = (DeploymentContext) mapComponentEntry.eContainer();
 
         final DeploymentContext newContext = newModel.getDeploymentContexts().get(context.getName());
         final DeployedComponent newComponent = newContext.getComponents().get(component.getSignature());
@@ -64,8 +71,13 @@ public final class ExecutionModelCloneUtils {
     }
 
     private static DeployedStorage findDeployedStorage(final DeploymentModel newModel, final DeployedStorage storage) {
-        final DeployedComponent component = (DeployedComponent) storage.eContainer();
-        final DeploymentContext context = (DeploymentContext) component.eContainer();
+        final EStringToDeployedOperationMapEntryImpl mapOperationEntry = (EStringToDeployedOperationMapEntryImpl) storage
+                .eContainer();
+        final DeployedComponent component = (DeployedComponent) mapOperationEntry.eContainer();
+
+        final EStringToDeployedComponentMapEntryImpl mapComponentEntry = (EStringToDeployedComponentMapEntryImpl) component
+                .eContainer();
+        final DeploymentContext context = (DeploymentContext) mapComponentEntry.eContainer();
 
         final DeploymentContext newContext = newModel.getDeploymentContexts().get(context.getName());
         final DeployedComponent newComponent = newContext.getComponents().get(component.getSignature());
