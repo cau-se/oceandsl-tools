@@ -1,0 +1,223 @@
+/***************************************************************************
+ * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+package org.oceandsl.tools.mop.operations;
+
+import java.util.Map.Entry;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.oceandsl.tools.mop.EStrategy;
+
+import kieker.analysis.stage.model.ModelRepository;
+import kieker.model.analysismodel.assembly.AssemblyComponent;
+import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.assembly.AssemblyOperation;
+import kieker.model.analysismodel.deployment.DeployedComponent;
+import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeploymentContext;
+import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.type.ComponentType;
+import kieker.model.analysismodel.type.TypeModel;
+
+/**
+ * @author Reiner Jung
+ *
+ */
+public class ModelRepositoryMergerTest {
+
+    public ModelRepositoryMergerTest() {
+        // nothing to do here
+    }
+
+    /**
+     * Test method for
+     * {@link org.oceandsl.tools.mop.operations.ModelRepositoryMerger#perform(kieker.analysis.stage.model.ModelRepository, kieker.analysis.stage.model.ModelRepository, org.oceandsl.tools.mop.EStrategy)}.
+     */
+    @Test
+    public void testPerformType() {
+        final ModelRepository darRepo = this.createDarModel();
+        final ModelRepository sarRepo = this.createSarModel();
+        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+
+        final TypeModel typeModel = darRepo.getModel(TypeModel.class);
+
+        Assert.assertEquals("Numer of component types", 3, typeModel.getComponentTypes().size());
+        for (final Entry<String, ComponentType> type : typeModel.getComponentTypes().entrySet()) {
+            if (SarModelFactory.SAR_COMPONENT_SIGNATURE.equals(type.getKey())) {
+                Assert.assertEquals("Number of operation", 1, type.getValue().getProvidedOperations().size());
+            } else if (ModelTestFactory.JOINT_COMPONENT_SIGNATURE.equals(type.getKey())) {
+                Assert.assertEquals("Number of operation", 2, type.getValue().getProvidedOperations().size());
+            } else if (DarModelFactory.DAR_COMPONENT_SIGNATURE.equals(type.getKey())) {
+                Assert.assertEquals("Number of operation", 1, type.getValue().getProvidedOperations().size());
+            } else {
+                Assert.fail("Unkown component type " + type.getKey());
+            }
+        }
+    }
+
+    @Test
+    public void testPerformAssembly() {
+        final ModelRepository darRepo = this.createDarModel();
+        final ModelRepository sarRepo = this.createSarModel();
+        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+
+        final TypeModel typeModel = darRepo.getModel(TypeModel.class);
+        final AssemblyModel assemblyModel = darRepo.getModel(AssemblyModel.class);
+
+        Assert.assertEquals("Numer of component types", 3, assemblyModel.getAssemblyComponents().size());
+        for (final Entry<String, AssemblyComponent> entry : assemblyModel.getAssemblyComponents().entrySet()) {
+            final AssemblyComponent component = entry.getValue();
+
+            final ComponentType componentType = typeModel.getComponentTypes()
+                    .get(component.getComponentType().getSignature());
+
+            if (SarModelFactory.SAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
+                Assert.assertEquals("Number of operation", 1, component.getAssemblyOperations().size());
+                final AssemblyOperation operation = component.getAssemblyOperations()
+                        .get(ModelTestFactory.OP_SIGNATURE);
+                Assert.assertTrue("Operation not found " + ModelTestFactory.OP_SIGNATURE, operation != null);
+                Assert.assertTrue("Wrong operation type", operation.getOperationType() == componentType
+                        .getProvidedOperations().get(ModelTestFactory.OP_SIGNATURE));
+            } else if (ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
+                Assert.assertEquals("Number of operation", 2, component.getAssemblyOperations().size());
+            } else if (DarModelFactory.DAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
+                Assert.assertEquals("Number of operation", 1, component.getAssemblyOperations().size());
+            } else {
+                Assert.fail("Unkown assembly component " + entry.getKey());
+            }
+
+            Assert.assertEquals("Wrong component type", component.getComponentType(), componentType);
+        }
+    }
+
+    @Test
+    public void testPerformDeployment() {
+        final ModelRepository darRepo = this.createDarModel();
+        final ModelRepository sarRepo = this.createSarModel();
+        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+
+        final AssemblyModel assemblyModel = darRepo.getModel(AssemblyModel.class);
+        final DeploymentModel deploymentModel = darRepo.getModel(DeploymentModel.class);
+
+        Assert.assertEquals("Numer of deployment contexts", 1, deploymentModel.getDeploymentContexts().size());
+        final DeploymentContext context = deploymentModel.getDeploymentContexts().get(ModelTestFactory.HOSTNAME);
+        Assert.assertTrue("No context", context != null);
+        for (final Entry<String, DeployedComponent> entry : context.getComponents()) {
+            final DeployedComponent deployedComponent = entry.getValue();
+            Assert.assertTrue("Deployed component has wrong signature",
+                    deployedComponent.getSignature().equals(entry.getKey()));
+            final AssemblyComponent assemblyComponent = assemblyModel.getAssemblyComponents().get(entry.getKey());
+            if (SarModelFactory.SAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
+                this.checkDeployedOperation(deployedComponent, assemblyComponent, ModelTestFactory.OP_SIGNATURE);
+            } else if (DarModelFactory.DAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
+                this.checkDeployedOperation(deployedComponent, assemblyComponent, ModelTestFactory.OP_SIGNATURE);
+            } else if (ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
+                this.checkDeployedOperation(deployedComponent, assemblyComponent,
+                        ModelTestFactory.OP_COMPILE_SIGNATURE);
+                this.checkDeployedOperation(deployedComponent, assemblyComponent, ModelTestFactory.OP_LINK_SIGNATURE);
+            }
+        }
+    }
+
+    @Test
+    public void testPerformExecution() {
+        final ModelRepository darRepo = this.createDarModel();
+        final ModelRepository sarRepo = this.createSarModel();
+        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+
+        final ExecutionModel executionModel = darRepo.getModel(ExecutionModel.class);
+
+        Assert.assertEquals("Wrong number of invocations", 6, executionModel.getAggregatedInvocations().size());
+    }
+
+    @Test
+    public void testPerformStatistics() {
+        final ModelRepository darRepo = this.createDarModel();
+        final ModelRepository sarRepo = this.createSarModel();
+        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+
+        final ExecutionModel executionModel = darRepo.getModel(ExecutionModel.class);
+        final StatisticsModel statisticsModel = darRepo.getModel(StatisticsModel.class);
+
+        Assert.assertEquals("Wrong number of statistics", executionModel.getAggregatedInvocations().size(),
+                statisticsModel.getStatistics().size());
+    }
+
+    @Test
+    public void testPerformSource() {
+        final ModelRepository darRepo = this.createDarModel();
+        final ModelRepository sarRepo = this.createSarModel();
+        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+
+        final SourceModel sourceModel = darRepo.getModel(SourceModel.class);
+
+        /*
+         * 7 types (comp 3 +op 4), 7 assembly, 7 deployment + 1 deployment context, 3 sar,2 dar, 1
+         * joint calls.
+         */
+        Assert.assertEquals("Wrong number of elements in total", 7 + 7 + 7 + 1 + 6,
+                sourceModel.getSources().entrySet().size());
+
+    }
+
+    private void checkDeployedOperation(final DeployedComponent deployedComponent,
+            final AssemblyComponent assemblyComponent, final String operationSignature) {
+        final DeployedOperation deployedOperation = deployedComponent.getContainedOperations().get(operationSignature);
+        Assert.assertTrue("Wrong assembly operation for " + operationSignature, deployedOperation
+                .getAssemblyOperation() == assemblyComponent.getAssemblyOperations().get(operationSignature));
+    }
+
+    private ModelRepository createSarModel() {
+        final ModelRepository repository = new ModelRepository("sar");
+
+        final TypeModel typeModel = SarModelFactory.createTypeModel();
+        final AssemblyModel assemblyModel = SarModelFactory.createAssemblyModel(typeModel);
+        final DeploymentModel deploymentModel = SarModelFactory.createDeploymentModel(assemblyModel);
+        final ExecutionModel executionModel = SarModelFactory.createExecutionModel(deploymentModel);
+        final StatisticsModel statisticsModel = SarModelFactory.createStatisticsModel(executionModel);
+
+        repository.register(TypeModel.class, typeModel);
+        repository.register(AssemblyModel.class, assemblyModel);
+        repository.register(DeploymentModel.class, deploymentModel);
+        repository.register(ExecutionModel.class, executionModel);
+        repository.register(StatisticsModel.class, statisticsModel);
+        repository.register(SourceModel.class, ModelTestFactory.createSourceModel(typeModel, assemblyModel,
+                deploymentModel, executionModel, "static"));
+        return repository;
+    }
+
+    private ModelRepository createDarModel() {
+        final ModelRepository repository = new ModelRepository("dar");
+        final TypeModel typeModel = DarModelFactory.createTypeModel();
+        final AssemblyModel assemblyModel = DarModelFactory.createAssemblyModel(typeModel);
+        final DeploymentModel deploymentModel = DarModelFactory.createDeploymentModel(assemblyModel);
+        final ExecutionModel executionModel = DarModelFactory.createExecutionModel(deploymentModel);
+        final StatisticsModel statisticsModel = DarModelFactory.createStatisticsModel(executionModel);
+
+        repository.register(TypeModel.class, typeModel);
+        repository.register(AssemblyModel.class, assemblyModel);
+        repository.register(DeploymentModel.class, deploymentModel);
+        repository.register(ExecutionModel.class, executionModel);
+        repository.register(StatisticsModel.class, statisticsModel);
+        repository.register(SourceModel.class, ModelTestFactory.createSourceModel(typeModel, assemblyModel,
+                deploymentModel, executionModel, "dynamic"));
+        return repository;
+    }
+
+}

@@ -17,8 +17,11 @@ package org.oceandsl.tools.mop.operations;
 
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.oceandsl.tools.mop.EStrategy;
 import org.slf4j.Logger;
@@ -62,6 +65,8 @@ public class ModelRepositoryMerger {
             final EStrategy strategy) {
         ModelRepositoryMerger.mergeTypeModel(lastModelRepository.getModel(TypeModel.class),
                 mergeModelRepository.getModel(TypeModel.class));
+        ModelUtils.printTree(lastModelRepository.getModel(TypeModel.class), "");
+
         ModelRepositoryMerger.mergeAssemblyModel(lastModelRepository.getModel(TypeModel.class),
                 lastModelRepository.getModel(AssemblyModel.class), mergeModelRepository.getModel(AssemblyModel.class));
         ModelRepositoryMerger.mergeDeploymentModel(lastModelRepository.getModel(AssemblyModel.class),
@@ -70,9 +75,12 @@ public class ModelRepositoryMerger {
         ModelRepositoryMerger.mergeExecutionModel(lastModelRepository.getModel(DeploymentModel.class),
                 lastModelRepository.getModel(ExecutionModel.class),
                 mergeModelRepository.getModel(ExecutionModel.class));
-        ModelRepositoryMerger.mergeStatisticsModel(lastModelRepository.getModel(StatisticsModel.class),
+        ModelRepositoryMerger.mergeStatisticsModel(lastModelRepository.getModel(ExecutionModel.class),
+                lastModelRepository.getModel(StatisticsModel.class),
                 mergeModelRepository.getModel(StatisticsModel.class));
-        ModelRepositoryMerger.mergeSourceModel(lastModelRepository.getModel(SourceModel.class),
+        ModelRepositoryMerger.mergeSourceModel(lastModelRepository.getModel(TypeModel.class),
+                lastModelRepository.getModel(AssemblyModel.class), lastModelRepository.getModel(DeploymentModel.class),
+                lastModelRepository.getModel(ExecutionModel.class), lastModelRepository.getModel(SourceModel.class),
                 mergeModelRepository.getModel(SourceModel.class));
     }
 
@@ -94,8 +102,8 @@ public class ModelRepositoryMerger {
     }
 
     private static void mergeTypeOperations(final ComponentType type,
-            final EMap<String, OperationType> providedOperations) {
-        for (final OperationType mergeOperation : providedOperations.values()) {
+            final EMap<String, OperationType> mergeProvidedOperations) {
+        for (final OperationType mergeOperation : mergeProvidedOperations.values()) {
             if (!type.getProvidedOperations().containsKey(mergeOperation.getSignature())) {
                 type.getProvidedOperations().put(mergeOperation.getSignature(),
                         TypeModelCloneUtils.duplicate(mergeOperation));
@@ -241,13 +249,20 @@ public class ModelRepositoryMerger {
     }
 
     /** -- statistics model -- */
-    private static void mergeStatisticsModel(final StatisticsModel model, final StatisticsModel mergeModel) {
+    private static void mergeStatisticsModel(final ExecutionModel executionModel, final StatisticsModel model,
+            final StatisticsModel mergeModel) {
         for (final Entry<EObject, Statistics> statistic : mergeModel.getStatistics()) {
-            if (!model.getStatistics().containsKey(statistic.getKey())) {
-                model.getStatistics().put(statistic.getKey(),
+            /*
+             * Unfortunately th map function containsKey does not match the correct keys, as the
+             * hash value is computed also over references which belong to another model. Thus, the
+             * containsKey always fails.
+             */
+            final EObject mergeKey = ModelRepositoryMerger.findKey(model.getStatistics(), statistic.getKey());
+            if (mergeKey == null) {
+                model.getStatistics().put(ModelRepositoryMerger.createKey(executionModel, statistic.getKey()),
                         StatisticsModelCloneUtils.duplicate(statistic.getValue()));
             } else {
-                final Statistics newStatistic = model.getStatistics().get(statistic.getKey());
+                final Statistics newStatistic = model.getStatistics().get(mergeKey);
                 for (final Entry<EPredefinedUnits, StatisticRecord> statisticRecord : statistic.getValue()
                         .getStatistics()) {
                     if (!newStatistic.getStatistics().containsKey(statisticRecord.getKey())) {
@@ -271,26 +286,91 @@ public class ModelRepositoryMerger {
         }
     }
 
-    private static void mergeSourceModel(final SourceModel model, final SourceModel mergeModel) {
+    private static EObject createKey(final ExecutionModel executionModel, final EObject key) {
+        if (key instanceof AggregatedInvocation) {
+            for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
+                if (ModelRepositoryMerger.areObjectsEqual(key, invocation)) {
+                    return invocation;
+                }
+            }
+            ModelRepositoryMerger.LOGGER.error("Missing correpsonding {} in the merged model.", key.getClass());
+            throw new InternalError(String.format("Missing correpsonding %s in the merged model.", key.getClass()));
+        } else {
+            ModelRepositoryMerger.LOGGER.error("Statistics related to {} objects are not yet supported.",
+                    key.getClass());
+            throw new NotImplementedException(
+                    String.format("Statistics related to %s objects are not yet supported.", key.getClass()));
+        }
+    }
+
+    private static EObject findKey(final EMap<EObject, Statistics> statistics, final EObject key) {
+        for (final EObject mapkey : statistics.keySet()) {
+            if (ModelRepositoryMerger.areObjectsEqual(mapkey, key)) {
+                return mapkey;
+            }
+        }
+        return null;
+    }
+
+    /** -- source model -- */
+
+    private static void mergeSourceModel(final TypeModel typeModel, final AssemblyModel assemblyModel,
+            final DeploymentModel deploymentModel, final ExecutionModel executionModel, final SourceModel model,
+            final SourceModel mergeModel) {
         for (final Entry<EObject, EList<String>> mergeSource : mergeModel.getSources()) {
             final EObject modelKey = ModelRepositoryMerger.findCorrespondingKey(model.getSources(),
                     mergeSource.getKey());
             if (modelKey != null) {
                 final EList<String> modelSource = model.getSources().get(modelKey);
                 if (modelSource == null) {
+                    ModelRepositoryMerger.LOGGER.error("Model error no sources for existing key {}", modelKey);
                     model.getSources().put(modelKey, mergeSource.getValue());
                 } else {
                     ModelRepositoryMerger.mergeSources(modelSource, mergeSource.getValue());
                 }
-
-                for (final String source : model.getSources().get(modelKey)) {
-                    ModelRepositoryMerger.LOGGER.debug("source {}", source);
-                }
             } else {
-                ModelRepositoryMerger.LOGGER.error("The merged model must contain all keys, but {} is missing",
-                        mergeSource.getKey());
+                final EList<String> modelSources = new BasicEList<>();
+                ModelRepositoryMerger.mergeSources(modelSources, mergeSource.getValue());
+                model.getSources().put(ModelRepositoryMerger.findCorrespondingObject(typeModel, assemblyModel,
+                        deploymentModel, executionModel, mergeSource.getKey()), modelSources);
             }
         }
+    }
+
+    private static EObject findCorrespondingObject(final TypeModel typeModel, final AssemblyModel assemblyModel,
+            final DeploymentModel deploymentModel, final ExecutionModel executionModel, final EObject key) {
+        EObject result = ModelRepositoryMerger.findObjectInModel(typeModel.eAllContents(), key);
+        if (result != null) {
+            return result;
+        }
+
+        result = ModelRepositoryMerger.findObjectInModel(assemblyModel.eAllContents(), key);
+        if (result != null) {
+            return result;
+        }
+
+        result = ModelRepositoryMerger.findObjectInModel(deploymentModel.eAllContents(), key);
+        if (result != null) {
+            return result;
+        }
+
+        result = ModelRepositoryMerger.findObjectInModel(executionModel.eAllContents(), key);
+        if (result != null) {
+            return result;
+        }
+
+        return null;
+    }
+
+    private static EObject findObjectInModel(final TreeIterator<EObject> iterator, final EObject key) {
+        while (iterator.hasNext()) {
+            final EObject item = iterator.next();
+            if (ModelRepositoryMerger.areObjectsEqual(key, item)) {
+                return item;
+            }
+        }
+
+        return null;
     }
 
     private static void mergeSources(final EList<String> modelSource, final EList<String> mergeSource) {
@@ -303,58 +383,42 @@ public class ModelRepositoryMerger {
 
     private static EObject findCorrespondingKey(final EMap<EObject, EList<String>> sources, final EObject mergeKey) {
         for (final EObject key : sources.keySet()) {
-            if (key.getClass().equals(mergeKey.getClass())) {
-                if (mergeKey instanceof DeployedOperation) {
-                    if (ModelRepositoryMerger.isEqual((DeployedOperation) mergeKey, (DeployedOperation) key)) {
-                        return key;
-                    }
-                } else if (mergeKey instanceof DeployedComponent) {
-                    if (ModelRepositoryMerger.isEqual((DeployedComponent) mergeKey, (DeployedComponent) key)) {
-                        return key;
-                    }
-                } else if (mergeKey instanceof DeploymentContext) {
-                    if (ModelRepositoryMerger.isEqual((DeploymentContext) mergeKey, (DeploymentContext) key)) {
-                        return key;
-                    }
-                } else if (mergeKey instanceof AssemblyOperation) {
-                    if (ModelRepositoryMerger.isEqual((AssemblyOperation) mergeKey, (AssemblyOperation) key)) {
-                        return key;
-                    }
-                } else if (mergeKey instanceof AssemblyComponent) {
-                    if (ModelRepositoryMerger.isEqual((AssemblyComponent) mergeKey, (AssemblyComponent) key)) {
-                        return key;
-                    }
-                } else if (mergeKey instanceof AssemblyOperation) {
-                    if (ModelRepositoryMerger.isEqual((AssemblyOperation) mergeKey, (AssemblyOperation) key)) {
-                        return key;
-                    }
-                } else if (mergeKey instanceof ComponentType) {
-                    if (ModelRepositoryMerger.isEqual((ComponentType) mergeKey, (ComponentType) key)) {
-                        return key;
-                    }
-                } else if (mergeKey instanceof OperationType) {
-                    if (ModelRepositoryMerger.isEqual((OperationType) mergeKey, (OperationType) key)) {
-                        return key;
-                    }
-                } else if (mergeKey instanceof StorageType) {
-                    if (ModelRepositoryMerger.isEqual((StorageType) mergeKey, (StorageType) key)) {
-                        return key;
-                    }
-                } else if (mergeKey instanceof AggregatedInvocation) {
-                    if (ModelRepositoryMerger.isEqual((AggregatedInvocation) mergeKey, (AggregatedInvocation) key)) {
-                        return key;
-                    }
-                } else if (mergeKey instanceof AggregatedStorageAccess) {
-                    if (ModelRepositoryMerger.isEqual((AggregatedStorageAccess) mergeKey,
-                            (AggregatedStorageAccess) key)) {
-                        return key;
-                    }
-                } else {
-                    System.err.println("Missing support for " + mergeKey.getClass().getCanonicalName());
-                }
+            if (ModelRepositoryMerger.areObjectsEqual(key, mergeKey)) {
+                return key;
             }
         }
         return null;
+    }
+
+    private static boolean areObjectsEqual(final EObject left, final EObject right) {
+        if (left.getClass().equals(right.getClass())) {
+            if (right instanceof DeployedOperation) {
+                return ModelRepositoryMerger.isEqual((DeployedOperation) right, (DeployedOperation) left);
+            } else if (right instanceof DeployedComponent) {
+                return ModelRepositoryMerger.isEqual((DeployedComponent) right, (DeployedComponent) left);
+            } else if (right instanceof DeploymentContext) {
+                return ModelRepositoryMerger.isEqual((DeploymentContext) right, (DeploymentContext) left);
+            } else if (right instanceof AssemblyOperation) {
+                return ModelRepositoryMerger.isEqual((AssemblyOperation) right, (AssemblyOperation) left);
+            } else if (right instanceof AssemblyComponent) {
+                return ModelRepositoryMerger.isEqual((AssemblyComponent) right, (AssemblyComponent) left);
+            } else if (right instanceof AssemblyOperation) {
+                return ModelRepositoryMerger.isEqual((AssemblyOperation) right, (AssemblyOperation) left);
+            } else if (right instanceof ComponentType) {
+                return ModelRepositoryMerger.isEqual((ComponentType) right, (ComponentType) left);
+            } else if (right instanceof OperationType) {
+                return ModelRepositoryMerger.isEqual((OperationType) right, (OperationType) left);
+            } else if (right instanceof StorageType) {
+                return ModelRepositoryMerger.isEqual((StorageType) right, (StorageType) left);
+            } else if (right instanceof AggregatedInvocation) {
+                return ModelRepositoryMerger.isEqual((AggregatedInvocation) right, (AggregatedInvocation) left);
+            } else if (right instanceof AggregatedStorageAccess) {
+                return ModelRepositoryMerger.isEqual((AggregatedStorageAccess) right, (AggregatedStorageAccess) left);
+            } else {
+                System.err.println("Missing support for " + right.getClass().getCanonicalName());
+            }
+        }
+        return false;
     }
 
     private static boolean isEqual(final AggregatedStorageAccess mergeStorageAccess,

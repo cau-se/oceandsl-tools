@@ -36,6 +36,7 @@ public final class AssemblyModelCloneUtils {
         final AssemblyComponent newComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
         newComponent.setSignature(component.getSignature());
 
+        // TODO the following fails.
         newComponent.setComponentType(
                 AssemblyModelCloneUtils.findComponentType(typeModel, component.getComponentType().getSignature()));
 
