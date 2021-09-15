@@ -15,20 +15,49 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.operations;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.oceandsl.tools.mop.EStrategy;
 
 import kieker.analysis.stage.model.ModelRepository;
+import kieker.model.analysismodel.type.ComponentType;
+import kieker.model.analysismodel.type.TypeModel;
 
 /**
+ * Diff two models and store the result in the last model repository. The difference is defined as
+ * all elements in last model which are not in second model, and all elements in second model which
+ * are not in last model. diffModel = lastModel\secondModel combined secondModel\lastModel.
+ *
+ * For entities with properties they are equal when their name is the same. The other properties are
+ * ignored. Contained objects are equal when their name is identical and they belong to the same
+ * parent. Entities without a name element are not diffed.
+ *
  * @author Reiner Jung
  * @since 1.1
  */
 public class ModelRepositoryDiffer {
 
-    public static void perform(final ModelRepository lastModel, final ModelRepository element,
+    public static void perform(final ModelRepository lastModelRepository, final ModelRepository secondModelRepository,
             final EStrategy strategy) {
-        // TODO Auto-generated method stub
+        ModelRepositoryDiffer.diffTypeModel(lastModelRepository.getModel(TypeModel.class),
+                secondModelRepository.getModel(TypeModel.class));
+    }
 
+    private static void diffTypeModel(final TypeModel firstModel, final TypeModel secondModel) {
+        final Map<String, ComponentType> firstComponentMap = ModelRepositoryDiffer.makeMap(firstModel);
+        final Map<String, ComponentType> secondComponentMap = ModelRepositoryDiffer.makeMap(secondModel);
+
+        // removeType();
+    }
+
+    private static Map<String, ComponentType> makeMap(final TypeModel model) {
+        final Map<String, ComponentType> componentMap = new HashMap<>();
+        for (final Entry<String, ComponentType> entry : model.getComponentTypes().entrySet()) {
+            componentMap.put(entry.getKey(), entry.getValue());
+        }
+        return componentMap;
     }
 
 }

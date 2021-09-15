@@ -54,6 +54,8 @@ import kieker.model.analysismodel.type.StorageType;
 import kieker.model.analysismodel.type.TypeModel;
 
 /**
+ * Merge two different model repositories
+ *
  * @author Reiner Jung
  * @since 1.1
  */
@@ -259,7 +261,8 @@ public class ModelRepositoryMerger {
              */
             final EObject mergeKey = ModelRepositoryMerger.findKey(model.getStatistics(), statistic.getKey());
             if (mergeKey == null) {
-                model.getStatistics().put(ModelRepositoryMerger.createExecutionModelKey(executionModel, statistic.getKey()),
+                model.getStatistics().put(
+                        ModelRepositoryMerger.createExecutionModelKey(executionModel, statistic.getKey()),
                         StatisticsModelCloneUtils.duplicate(statistic.getValue()));
             } else {
                 final Statistics newStatistic = model.getStatistics().get(mergeKey);
