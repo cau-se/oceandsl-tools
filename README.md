@@ -1,9 +1,10 @@
-# OceanDSL Java Tools
+# OceanDSL Tools
 
 Project containing all Java-based tools developed in OceanDSL.
 
 ## Build
 
+All java tools can be build with
 `./gradlew build`
 
 ## Execute
