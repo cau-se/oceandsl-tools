@@ -13,13 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop;
+package org.oceandsl.tools.mvis;
+
+import org.eclipse.emf.ecore.EObject;
+import org.oceandsl.architecture.model.stages.graph.ISelector;
+
+import kieker.analysis.stage.model.ModelRepository;
+import kieker.model.analysismodel.execution.AggregatedInvocation;
 
 /**
  * @author Reiner Jung
- * @since 1.1
  *
  */
-public enum EStrategy {
-    REMOVE, MARK
+public class DefaultSelector implements ISelector {
+
+    @Override
+    public void setRepository(final ModelRepository repository) {
+        // nothing to do here
+    }
+
+    @Override
+    public boolean nodeIsSelected(final EObject value) {
+        return true;
+    }
+
+    @Override
+    public boolean edgeIsSelected(final AggregatedInvocation value) {
+        return true;
+    }
+
+    @Override
+    public String getFilePrefix() {
+        return "all";
+    }
+
 }

@@ -36,8 +36,14 @@ import teetime.stage.basic.AbstractTransformation;
  * @author Reiner Jung
  *
  */
-public class AllenArchitectureModularGraphStage
+public class AllenDeployedArchitectureGraphStage
         extends AbstractTransformation<ModelRepository, Graph<Node<DeployedComponent>>> {
+
+    ISelector selector;
+
+    public AllenDeployedArchitectureGraphStage(final ISelector selector) {
+        this.selector = selector;
+    }
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
@@ -45,21 +51,27 @@ public class AllenArchitectureModularGraphStage
         final ExecutionModel executionModel = repository.getModel(ExecutionModel.class);
         final Graph<Node<DeployedComponent>> graph = GraphBuilder.undirected().build();
 
+        this.selector.setRepository(repository);
+
         for (final Entry<String, DeploymentContext> context : deploymentModel.getDeploymentContexts()) {
             for (final Entry<String, DeployedComponent> component : context.getValue().getComponents()) {
                 for (final Entry<String, DeployedOperation> operation : component.getValue().getContainedOperations()) {
-                    final Node<DeployedComponent> node = new KiekerNode<>(operation.getValue());
-                    graph.nodes().add(node);
+                    if (this.selector.nodeIsSelected(operation.getValue())) {
+                        final Node<DeployedComponent> node = new KiekerNode<>(operation.getValue());
+                        graph.nodes().add(node);
+                    }
                 }
             }
         }
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> invocation : executionModel
                 .getAggregatedInvocations()) {
-            final EndpointPair<Node<DeployedComponent>> edge = EndpointPair.unordered(
-                    this.findNode(graph, invocation.getKey().getFirst()),
-                    this.findNode(graph, invocation.getKey().getSecond()));
+            if (this.selector.edgeIsSelected(invocation.getValue())) {
+                final EndpointPair<Node<DeployedComponent>> edge = EndpointPair.unordered(
+                        this.findNode(graph, invocation.getKey().getFirst()),
+                        this.findNode(graph, invocation.getKey().getSecond()));
 
-            graph.edges().add(edge);
+                graph.edges().add(edge);
+            }
         }
     }
 

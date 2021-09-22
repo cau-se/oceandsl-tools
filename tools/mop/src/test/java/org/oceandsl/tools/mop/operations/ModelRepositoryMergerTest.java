@@ -19,7 +19,6 @@ import java.util.Map.Entry;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.oceandsl.tools.mop.EStrategy;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
@@ -53,7 +52,7 @@ public class ModelRepositoryMergerTest {
     public void testPerformType() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
-        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+        ModelRepositoryMerger.perform(darRepo, sarRepo);
 
         final TypeModel typeModel = darRepo.getModel(TypeModel.class);
 
@@ -75,7 +74,7 @@ public class ModelRepositoryMergerTest {
     public void testPerformAssembly() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
-        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+        ModelRepositoryMerger.perform(darRepo, sarRepo);
 
         final TypeModel typeModel = darRepo.getModel(TypeModel.class);
         final AssemblyModel assemblyModel = darRepo.getModel(AssemblyModel.class);
@@ -110,7 +109,7 @@ public class ModelRepositoryMergerTest {
     public void testPerformDeployment() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
-        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+        ModelRepositoryMerger.perform(darRepo, sarRepo);
 
         final AssemblyModel assemblyModel = darRepo.getModel(AssemblyModel.class);
         final DeploymentModel deploymentModel = darRepo.getModel(DeploymentModel.class);
@@ -139,7 +138,7 @@ public class ModelRepositoryMergerTest {
     public void testPerformExecution() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
-        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+        ModelRepositoryMerger.perform(darRepo, sarRepo);
 
         final ExecutionModel executionModel = darRepo.getModel(ExecutionModel.class);
 
@@ -150,7 +149,7 @@ public class ModelRepositoryMergerTest {
     public void testPerformStatistics() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
-        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+        ModelRepositoryMerger.perform(darRepo, sarRepo);
 
         final ExecutionModel executionModel = darRepo.getModel(ExecutionModel.class);
         final StatisticsModel statisticsModel = darRepo.getModel(StatisticsModel.class);
@@ -163,7 +162,7 @@ public class ModelRepositoryMergerTest {
     public void testPerformSource() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
-        ModelRepositoryMerger.perform(darRepo, sarRepo, EStrategy.MARK);
+        ModelRepositoryMerger.perform(darRepo, sarRepo);
 
         final SourceModel sourceModel = darRepo.getModel(SourceModel.class);
 

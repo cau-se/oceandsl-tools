@@ -15,13 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.architecture.model.stages.graph;
 
-import org.eclipse.emf.common.util.EList;
-
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.sources.SourceModel;
 import teetime.stage.basic.AbstractTransformation;
 
 /**
@@ -32,37 +29,35 @@ import teetime.stage.basic.AbstractTransformation;
  */
 public class FunctionCallGraphStage extends AbstractTransformation<ModelRepository, IGraph> {
 
-    private final String subgraphName;
+    private final ISelector selector;
 
-    public FunctionCallGraphStage(final String subgraphName) {
-        this.subgraphName = subgraphName;
+    public FunctionCallGraphStage(final ISelector selector) {
+        this.selector = selector;
     }
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
         final ExecutionModel executionModel = (ExecutionModel) element.getModels().get(ExecutionModel.class);
-        final SourceModel sourcesModel = (SourceModel) element.getModels().get(SourceModel.class);
 
         final IGraph graph = IGraph.create();
         graph.setName(element.getName());
 
         for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
-            if (this.findInvocationInGraph(sourcesModel, invocation)) {
+            final boolean sourceSelected = this.selector.nodeIsSelected(invocation.getTarget().getComponent());
+            final boolean targetSelected = this.selector.nodeIsSelected(invocation.getTarget());
+            if (sourceSelected) {
                 graph.addVertexIfAbsent(invocation.getSource());
+            }
+            if (targetSelected) {
                 graph.addVertexIfAbsent(invocation.getTarget());
+            }
+            if (sourceSelected && targetSelected && this.selector.edgeIsSelected(invocation)) {
                 graph.addEdge(invocation, graph.getVertex(invocation.getSource()),
                         graph.getVertex(invocation.getTarget()));
             }
         }
 
         this.outputPort.send(graph);
-    }
-
-    private boolean findInvocationInGraph(final SourceModel sourcesModel, final AggregatedInvocation invocation) {
-        final EList<String> sources = sourcesModel.getSources().get(invocation.getSource());
-        final EList<String> targets = sourcesModel.getSources().get(invocation.getTarget());
-
-        return (sources.contains(this.subgraphName) && targets.contains(this.subgraphName));
     }
 
 }

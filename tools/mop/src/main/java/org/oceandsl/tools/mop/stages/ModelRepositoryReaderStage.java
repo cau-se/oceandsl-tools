@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop.operations;
+package org.oceandsl.tools.mop.stages;
 
-import org.oceandsl.tools.mop.EStrategy;
+import java.nio.file.Path;
+
+import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
 
 import kieker.analysis.stage.model.ModelRepository;
+import teetime.stage.basic.AbstractTransformation;
 
 /**
  * @author Reiner Jung
- * @since 1.1
+ *
  */
-public final class ModelRepositorySubtracter {
+public class ModelRepositoryReaderStage extends AbstractTransformation<Path, ModelRepository> {
 
-    public static void perform(final ModelRepository lastModel, final ModelRepository element,
-            final EStrategy strategy) {
-        // TODO Auto-generated method stub
-
+    @Override
+    protected void execute(final Path element) throws Exception {
+        this.outputPort.send(ArchitectureModelManagementFactory.loadModelRepository(element));
     }
 
 }

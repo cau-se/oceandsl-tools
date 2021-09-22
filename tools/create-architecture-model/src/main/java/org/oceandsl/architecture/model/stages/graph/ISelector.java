@@ -13,25 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop;
+package org.oceandsl.architecture.model.stages.graph;
 
-import com.beust.jcommander.IStringConverter;
+import org.eclipse.emf.ecore.EObject;
+
+import kieker.analysis.stage.model.ModelRepository;
+import kieker.model.analysismodel.execution.AggregatedInvocation;
 
 /**
+ * Interface for a node and edge selector for graphs to realize diff and subtract.
+ *
  * @author Reiner Jung
- * @since 1.1
  *
  */
-public class StrategyConverter implements IStringConverter<EStrategy> {
+public interface ISelector {
 
-    @Override
-    public EStrategy convert(final String value) {
-        for (final EStrategy operation : EStrategy.values()) {
-            if (operation.name().equals(value.toUpperCase())) {
-                return operation;
-            }
-        }
-        return null;
-    }
+    void setRepository(ModelRepository repository);
+
+    boolean nodeIsSelected(EObject value);
+
+    boolean edgeIsSelected(AggregatedInvocation value);
+
+    String getFilePrefix();
 
 }

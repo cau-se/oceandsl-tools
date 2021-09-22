@@ -15,13 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.stages;
 
-import java.util.List;
-
-import org.oceandsl.tools.mop.EOperation;
-import org.oceandsl.tools.mop.EStrategy;
-import org.oceandsl.tools.mop.operations.ModelRepositoryDiffer;
 import org.oceandsl.tools.mop.operations.ModelRepositoryMerger;
-import org.oceandsl.tools.mop.operations.ModelRepositorySubtracter;
 
 import kieker.analysis.stage.model.ModelRepository;
 import teetime.framework.AbstractConsumerStage;
@@ -37,15 +31,9 @@ public class ModelProcessor extends AbstractConsumerStage<ModelRepository> {
 
     private ModelRepository lastModel = null;
 
-    private final List<EOperation> operations;
-
-    private final List<EStrategy> strategies;
-
     int task = 0;
 
-    public ModelProcessor(final List<EOperation> operations, final List<EStrategy> strategies) {
-        this.operations = operations;
-        this.strategies = strategies;
+    public ModelProcessor() {
     }
 
     @Override
@@ -53,17 +41,7 @@ public class ModelProcessor extends AbstractConsumerStage<ModelRepository> {
         if (this.lastModel == null) {
             this.lastModel = element;
         } else {
-            switch (this.operations.get(this.task)) {
-            case DIFF:
-                ModelRepositoryDiffer.perform(this.lastModel, element, this.strategies.get(this.task));
-                break;
-            case MERGE:
-                ModelRepositoryMerger.perform(this.lastModel, element, this.strategies.get(this.task));
-                break;
-            case SUBTRACT:
-                ModelRepositorySubtracter.perform(this.lastModel, element, this.strategies.get(this.task));
-                break;
-            }
+            ModelRepositoryMerger.perform(this.lastModel, element);
             this.task++;
         }
     }
