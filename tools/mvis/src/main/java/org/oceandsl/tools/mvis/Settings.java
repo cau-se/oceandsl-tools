@@ -23,6 +23,7 @@ import com.beust.jcommander.converters.PathConverter;
 
 import org.oceandsl.architecture.model.EOutputGraph;
 import org.oceandsl.architecture.model.GraphTypeConverter;
+import org.oceandsl.architecture.model.stages.graph.ISelector;
 
 /**
  * All settings including command line parameters for the analysis.
@@ -44,8 +45,9 @@ public class Settings {
             "--component-map" }, required = false, converter = PathConverter.class, description = "Component, file and function map file")
     private Path componentMapFile;
 
-    @Parameter(names = { "-l", "--source-label" }, required = true, description = "Set source label for the read data")
-    private String sourceLabel;
+    @Parameter(names = { "-s",
+            "--selector" }, required = true, converter = SelectorKindConverter.class, description = "Set architecture graph selector")
+    private ISelector selector;
 
     @Parameter(names = { "-g",
             "--graphs" }, required = false, variableArity = true, converter = GraphTypeConverter.class, description = "Specify which output graphs must be generated")
@@ -59,15 +61,15 @@ public class Settings {
         return this.outputDirectory;
     }
 
-    public String getSourceLabel() {
-        return this.sourceLabel;
-    }
-
     public Path getComponentMapFile() {
         return this.componentMapFile;
     }
 
     public List<EOutputGraph> getOutputGraphs() {
         return this.outputGraphs;
+    }
+
+    public ISelector getSelector() {
+        return this.selector;
     }
 }

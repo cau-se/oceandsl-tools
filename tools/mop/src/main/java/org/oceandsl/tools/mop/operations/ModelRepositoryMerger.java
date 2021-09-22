@@ -23,7 +23,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.tools.mop.EStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,12 +62,9 @@ public class ModelRepositoryMerger {
 
     final static Logger LOGGER = LoggerFactory.getLogger(ModelRepositoryMerger.class);
 
-    public static void perform(final ModelRepository lastModelRepository, final ModelRepository mergeModelRepository,
-            final EStrategy strategy) {
+    public static void perform(final ModelRepository lastModelRepository, final ModelRepository mergeModelRepository) {
         ModelRepositoryMerger.mergeTypeModel(lastModelRepository.getModel(TypeModel.class),
                 mergeModelRepository.getModel(TypeModel.class));
-        ModelUtils.printTree(lastModelRepository.getModel(TypeModel.class), "");
-
         ModelRepositoryMerger.mergeAssemblyModel(lastModelRepository.getModel(TypeModel.class),
                 lastModelRepository.getModel(AssemblyModel.class), mergeModelRepository.getModel(AssemblyModel.class));
         ModelRepositoryMerger.mergeDeploymentModel(lastModelRepository.getModel(AssemblyModel.class),

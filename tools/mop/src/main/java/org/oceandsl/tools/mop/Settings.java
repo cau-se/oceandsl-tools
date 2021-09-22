@@ -37,28 +37,12 @@ public class Settings {
             "--output" }, required = true, converter = PathConverter.class, description = "Output architecture model directory")
     private Path outputDirectory;
 
-    @Parameter(names = { "-p",
-            "--operation" }, variableArity = true, required = true, converter = OperationConverter.class, description = "List of operation to be applied to the models.")
-    private List<EOperation> operations;
-
-    @Parameter(names = { "-s",
-            "--strategy" }, variableArity = true, required = false, converter = StrategyConverter.class, description = "Operation strategies for each operation.")
-    private List<EStrategy> strategies;
-
     public List<Path> getInputModelPaths() {
         return this.inputModelPaths;
     }
 
     public Path getOutputDirectory() {
         return this.outputDirectory;
-    }
-
-    public List<EOperation> getOperations() {
-        return this.operations;
-    }
-
-    public List<EStrategy> getStrategies() {
-        return this.strategies;
     }
 
 }

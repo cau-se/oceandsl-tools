@@ -22,8 +22,7 @@ import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 import org.oceandsl.architecture.model.graph.ColorAssemblyLevelComponentDependencyGraphBuilderFactory;
 import org.oceandsl.architecture.model.graph.ColorAssemblyLevelOperationDependencyGraphBuilderFactory;
 import org.oceandsl.architecture.model.graph.ColoredDotExportConfigurationFactory;
-import org.oceandsl.architecture.model.stages.graph.AllenArchitectureModularGraphStage;
-import org.oceandsl.architecture.model.stages.graph.ComputeExtraSubGraphStage;
+import org.oceandsl.architecture.model.stages.graph.AllenDeployedArchitectureGraphStage;
 import org.oceandsl.architecture.model.stages.graph.FunctionCallGraphStage;
 import org.oceandsl.architecture.model.stages.graph.ModuleCallGraphStage;
 import org.oceandsl.architecture.model.stages.metrics.ComputeAllenComplexityMetrics;
@@ -80,34 +79,29 @@ public class TeetimeConfiguration extends Configuration {
         /** Stages for statistics. */
         final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
         final FunctionCallGraphStage functionCallGraphStage = new FunctionCallGraphStage(
-                parameterConfiguration.getSourceLabel());
+                parameterConfiguration.getSelector());
         final FunctionNodeCountCouplingStage functionNodeCouplingStage = new FunctionNodeCountCouplingStage();
         final ModuleCallGraphStage moduleCallGraphStage = new ModuleCallGraphStage(
-                parameterConfiguration.getSourceLabel());
+                parameterConfiguration.getSelector());
         final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
 
-        final ComputeExtraSubGraphStage computeExtraSubGraph = new ComputeExtraSubGraphStage(
-                parameterConfiguration.getSourceLabel());
-        final FunctionNodeCountCouplingStage functionExtraNodeCouplingStage = new FunctionNodeCountCouplingStage();
-
         /** Sinks for metrics writing to CSV files. */
-        final TableCSVSink functionCallSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(), String
-                .format("%s-%s", parameterConfiguration.getSourceLabel(), TeetimeConfiguration.FUNCTION_CALLS_CSV));
+        final TableCSVSink functionCallSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
+                String.format("%s-%s", parameterConfiguration.getSelector().getFilePrefix(),
+                        TeetimeConfiguration.FUNCTION_CALLS_CSV));
         final TableCSVSink distinctFunctionDegreeSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
-                String.format("%s-%s", parameterConfiguration.getSourceLabel(),
+                String.format("%s-%s", parameterConfiguration.getSelector().getFilePrefix(),
                         TeetimeConfiguration.DISTINCT_FUNCTION_DEGREE_CSV));
         final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
-                String.format("%s-%s", parameterConfiguration.getSourceLabel(),
+                String.format("%s-%s", parameterConfiguration.getSelector().getFilePrefix(),
                         TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
-
-        final TableCSVSink extraEdgesSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
-                String.format("%s-%s", parameterConfiguration.getSourceLabel(), TeetimeConfiguration.EXTRA_EDGES_CSV));
 
         final GraphMLFileWriterStage graphMLFileWriterStage = new GraphMLFileWriterStage(
                 parameterConfiguration.getOutputDirectory());
 
         /** connecting ports. */
         this.connectPorts(statisticsDistributor.getNewOutputPort(), triggerStage.getInputPort());
+        this.connectPorts(triggerStage.getOutputPort(), triggerDistributor.getInputPort());
 
         /** operation graph. */
         if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.DOT_OP)
@@ -145,7 +139,8 @@ public class TeetimeConfiguration extends Configuration {
         }
 
         /** setup allen metrics. */
-        final AllenArchitectureModularGraphStage allenArchitectureModularGraphStage = new AllenArchitectureModularGraphStage();
+        final AllenDeployedArchitectureGraphStage allenArchitectureModularGraphStage = new AllenDeployedArchitectureGraphStage(
+                parameterConfiguration.getSelector());
         final ComputeAllenComplexityMetrics computeAllenComplexityStage = new ComputeAllenComplexityMetrics();
         final SaveAllenDataStage saveAllenDataStage = new SaveAllenDataStage(
                 parameterConfiguration.getOutputDirectory());
@@ -169,9 +164,5 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(statisticsDistributor.getNewOutputPort(), moduleCallGraphStage.getInputPort());
         this.connectPorts(moduleCallGraphStage.getOutputPort(), moduleNodeCouplingStage.getInputPort());
         this.connectPorts(moduleNodeCouplingStage.getOutputPort(), distinctModuleDegreeSink.getInputPort());
-
-        this.connectPorts(statisticsDistributor.getNewOutputPort(), computeExtraSubGraph.getInputPort());
-        this.connectPorts(computeExtraSubGraph.getOutputPort(), functionExtraNodeCouplingStage.getInputPort());
-        this.connectPorts(functionExtraNodeCouplingStage.getOutputPort(), extraEdgesSink.getInputPort());
     }
 }

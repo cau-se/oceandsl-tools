@@ -15,13 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.architecture.model.stages.graph;
 
-import org.eclipse.emf.common.util.EList;
-
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.sources.SourceModel;
 import teetime.stage.basic.AbstractTransformation;
 
 /**
@@ -33,37 +30,35 @@ import teetime.stage.basic.AbstractTransformation;
  */
 public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository, IGraph> {
 
-    private final String measurementSourceName;
+    private final ISelector selector;
 
-    public ModuleCallGraphStage(final String measurementSourceName) {
-        this.measurementSourceName = measurementSourceName;
+    public ModuleCallGraphStage(final ISelector selector) {
+        this.selector = selector;
     }
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
         final ExecutionModel executionModel = (ExecutionModel) repository.getModels().get(ExecutionModel.class);
-        final SourceModel sourcesModel = (SourceModel) repository.getModels().get(SourceModel.class);
 
         final IGraph graph = IGraph.create();
         graph.setName(repository.getName());
 
         for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
-            if (this.findInvocationInGraph(sourcesModel, invocation)) {
+            final boolean sourceSelected = this.selector.nodeIsSelected(invocation.getSource().getComponent());
+            final boolean targetSelected = this.selector.nodeIsSelected(invocation.getTarget().getComponent());
+            if (sourceSelected) {
                 graph.addVertexIfAbsent(invocation.getSource().getComponent());
+            }
+            if (targetSelected) {
                 graph.addVertexIfAbsent(invocation.getTarget().getComponent());
+            }
+            if (sourceSelected && targetSelected && this.selector.edgeIsSelected(invocation)) {
                 graph.addEdge(invocation, graph.getVertex(invocation.getSource().getComponent()),
                         graph.getVertex(invocation.getTarget().getComponent()));
             }
         }
 
         this.outputPort.send(graph);
-    }
-
-    private boolean findInvocationInGraph(final SourceModel sourcesModel, final AggregatedInvocation invocation) {
-        final EList<String> sources = sourcesModel.getSources().get(invocation.getSource());
-        final EList<String> targets = sourcesModel.getSources().get(invocation.getTarget());
-
-        return (sources.contains(this.measurementSourceName) && targets.contains(this.measurementSourceName));
     }
 
 }

@@ -18,7 +18,7 @@ package org.oceandsl.tools.mop;
 import java.io.IOException;
 
 import org.oceandsl.tools.mop.stages.ModelProcessor;
-import org.oceandsl.tools.mop.stages.ModelRepositoryReader;
+import org.oceandsl.tools.mop.stages.ModelRepositoryReaderStage;
 import org.oceandsl.tools.mop.stages.ModelSink;
 import org.oceandsl.tools.mop.stages.ModelSource;
 import org.slf4j.Logger;
@@ -38,9 +38,8 @@ public class TeetimeConfiguration extends Configuration {
             final ModelRepository repository) throws IOException {
 
         final ModelSource modelSource = new ModelSource(parameterConfiguration.getInputModelPaths());
-        final ModelRepositoryReader modelReader = new ModelRepositoryReader();
-        final ModelProcessor modelProcessor = new ModelProcessor(parameterConfiguration.getOperations(),
-                parameterConfiguration.getStrategies());
+        final ModelRepositoryReaderStage modelReader = new ModelRepositoryReaderStage();
+        final ModelProcessor modelProcessor = new ModelProcessor();
         final ModelSink modelSink = new ModelSink(parameterConfiguration.getOutputDirectory());
 
         this.connectPorts(modelSource.getOutputPort(), modelReader.getInputPort());

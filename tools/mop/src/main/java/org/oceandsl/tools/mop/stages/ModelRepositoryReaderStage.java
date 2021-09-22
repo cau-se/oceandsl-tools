@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop;
+package org.oceandsl.tools.mop.stages;
 
-import com.beust.jcommander.IStringConverter;
+import java.nio.file.Path;
+
+import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
+
+import kieker.analysis.stage.model.ModelRepository;
+import teetime.stage.basic.AbstractTransformation;
 
 /**
  * @author Reiner Jung
- * @since 1.1
  *
  */
-public class StrategyConverter implements IStringConverter<EStrategy> {
+public class ModelRepositoryReaderStage extends AbstractTransformation<Path, ModelRepository> {
 
     @Override
-    public EStrategy convert(final String value) {
-        for (final EStrategy operation : EStrategy.values()) {
-            if (operation.name().equals(value.toUpperCase())) {
-                return operation;
-            }
-        }
-        return null;
+    protected void execute(final Path element) throws Exception {
+        this.outputPort.send(ArchitectureModelManagementFactory.loadModelRepository(element));
     }
 
 }
