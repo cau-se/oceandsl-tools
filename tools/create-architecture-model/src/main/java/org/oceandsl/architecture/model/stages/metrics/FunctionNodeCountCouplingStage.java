@@ -40,8 +40,8 @@ public class FunctionNodeCountCouplingStage extends AbstractTransformation<IGrap
 
     @Override
     protected void execute(final IGraph graph) throws Exception {
-        final Table result = new Table(graph.getName(), new StringValueHandler("filepath"),
-                new StringValueHandler("function"), new LongValueHandler("in-edges"),
+        final Table result = new Table(graph.getName(), new StringValueHandler("module"),
+                new StringValueHandler("operation"), new LongValueHandler("in-edges"),
                 new LongValueHandler("out-edges"));
 
         for (final IVertex vertex : graph.getVertices()) {
