@@ -17,6 +17,19 @@ There are two supported formats with 3 and 4 column CSV files.
   at a later point.
 - 4 columns: caller-file, caller, callee-file, callee
 
+Function call file hs comments
+-----------------------------
+
+The fparser-based tools already perform the lookup for the callee in the later
+versions (this information is added in a post-processing step by a bash
+script). The result is stored in a file typically called coupling-joined.csv, with
+the four columns you describe above.
+
+(The files produced by versions up until now also have a number as the fifth component, 
+hs planned to implement counting here, but we do not look at this in the current
+analysis, so hs just removed this from the scripts.)
+
+
 Function lookup file
 --------------------
 
@@ -36,6 +49,19 @@ Dataflow file
 
 Dataflow is stored in a file with 4 columns:
 caller file, caller, direction, common block
+
+Dataflow file hs comments
+------------------------
+There is an additional column that specifies the index of the variable 
+in the common block. We probably do not need this for the current paper, though.
+The column names from the CSV are a bit different:
+
+filename, function, readWrite, blockname, index
+
+(I did not use "caller" since that looks too much like method call coupling, but
+names of course don't really matter ;-))
+
+The fparser-based tool stores this in a file called dataflow.cvs
 
 
 
