@@ -30,8 +30,12 @@ import com.beust.jcommander.converters.PathConverter;
 public class Settings {
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, converter = PathConverter.class, description = "Function call CSV file")
-    private Path inputFile;
+            "--call-input" }, required = true, converter = PathConverter.class, description = "Function call CSV file")
+    private Path operationCallInputFile;
+
+    @Parameter(names = { "-j",
+            "--dataflow-input" }, required = true, converter = PathConverter.class, description = "Dataflow CSV file")
+    private Path dataflowInputFile;
 
     @Parameter(names = { "-f",
             "--function-names" }, required = false, variableArity = true, converter = PathConverter.class, description = "Function file map CSV file")
@@ -59,8 +63,8 @@ public class Settings {
     @Parameter(names = { "-E", "--experiment-name" }, required = true, description = "Name of the experiment")
     private String experimentName;
 
-    public Path getInputFile() {
-        return this.inputFile;
+    public Path getOperationCallInputFile() {
+        return this.operationCallInputFile;
     }
 
     public List<Path> getFunctionNameFiles() {
@@ -89,5 +93,9 @@ public class Settings {
 
     public Path getComponentMapFile() {
         return this.componentMapFile;
+    }
+
+    public Path getDataflowInputFile() {
+        return this.dataflowInputFile;
     }
 }

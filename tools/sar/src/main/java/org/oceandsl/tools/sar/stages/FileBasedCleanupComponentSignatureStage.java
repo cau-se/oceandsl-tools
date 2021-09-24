@@ -13,45 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar;
+package org.oceandsl.tools.sar.stages;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 
 /**
+ * Remove the directory name portion of class signatures.
+ *
  * @author Reiner Jung
  * @since 1.1
  */
-public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupComponentSignatureStage {
+public class FileBasedCleanupComponentSignatureStage extends AbstractCleanupComponentSignatureStage {
 
-    private final Map<String, String> componentMap = new HashMap<>();
-
-    public MapBasedCleanupComponentSignatureStage(final Path componentMapFile, final boolean caseInsensitive)
+    public FileBasedCleanupComponentSignatureStage(final boolean caseInsensitive)
             throws IOException, ValueConversionErrorException {
         super(caseInsensitive);
-        this.logger.info("Reading map file {}", componentMapFile.toString());
-        final BufferedReader reader = Files.newBufferedReader(componentMapFile);
-        String line;
-        while ((line = reader.readLine()) != null) {
-            final String[] values = line.split(",");
-            if (values.length == 3) {
-                // 0 = component name
-                // 1 = file name
-                // 2 = function name
-                this.componentMap.put(this.convertToLowerCase(values[1].trim()),
-                        this.convertToLowerCase(values[0].trim().toLowerCase()));
-            } else {
-                this.logger.error("Entry incomplete '{}'", line.trim());
-            }
-        }
-        reader.close();
     }
 
     private String convertToLowerCase(final String string) {
@@ -70,14 +50,7 @@ public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupCompo
             return signature;
         } else {
             final Path path = Paths.get(signature);
-            final String filename = this.convertToLowerCase(path.getName(path.getNameCount() - 1).toString());
-            final String result = this.componentMap.get(filename);
-            if (result != null) {
-                return result;
-            } else {
-                this.logger.warn("File '{}' has no component mapping. Signature '{}'", filename, signature);
-                return "??" + signature.toLowerCase();
-            }
+            return this.convertToLowerCase(path.getName(path.getNameCount() - 1).toString());
         }
     }
 

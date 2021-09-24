@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar;
+package org.oceandsl.tools.sar.stages;
 
 import org.oceandsl.analysis.CallerCallee;
 

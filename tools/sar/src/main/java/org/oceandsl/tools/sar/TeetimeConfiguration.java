@@ -25,6 +25,13 @@ import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 import org.oceandsl.architecture.model.stages.CSVFixPathStage;
 import org.oceandsl.architecture.model.stages.CSVMapperStage;
 import org.oceandsl.architecture.model.stages.CountUniqueCallsStage;
+import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
+import org.oceandsl.tools.sar.stages.dataflow.AssemblyModelDataflowAssemblerStage;
+import org.oceandsl.tools.sar.stages.dataflow.CSVDataflowReaderStage;
+import org.oceandsl.tools.sar.stages.dataflow.DeploymentModelDataflowAssemblerStage;
+import org.oceandsl.tools.sar.stages.dataflow.TypeModelDataflowAssemblerStage;
 import org.slf4j.Logger;
 
 import kieker.analysis.signature.IComponentSignatureExtractor;
@@ -61,7 +68,11 @@ public class TeetimeConfiguration extends Configuration {
 
         logger.info("Processing static call log");
         final CSVFunctionCallReaderStage readCsvStage = new CSVFunctionCallReaderStage(
-                parameterConfiguration.getInputFile());
+                parameterConfiguration.getOperationCallInputFile());
+
+        final CSVDataflowReaderStage readDataflowStage = new CSVDataflowReaderStage(
+                parameterConfiguration.getDataflowInputFile());
+
         readerPort = readCsvStage.getOutputPort();
         if ((parameterConfiguration.getFunctionNameFiles() != null)
                 && !parameterConfiguration.getFunctionNameFiles().isEmpty()) {
@@ -119,7 +130,7 @@ public class TeetimeConfiguration extends Configuration {
 
         final OperationAndCall4StaticDataStage operationAndCallStage = new OperationAndCall4StaticDataStage(
                 parameterConfiguration.getHostname());
-
+        /** -- call based modeling -- */
         final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
                 parameterConfiguration.getSourceLabel(), componentSignatureExtractor, operationSignatureExtractor);
@@ -140,11 +151,27 @@ public class TeetimeConfiguration extends Configuration {
         final CountUniqueCallsStage countUniqueCalls = new CountUniqueCallsStage(
                 repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
 
+        final TypeModelDataflowAssemblerStage typeModelDataflowAssemblerStage = new TypeModelDataflowAssemblerStage(
+                repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
+                parameterConfiguration.getSourceLabel());
+        final AssemblyModelDataflowAssemblerStage assemblyModelDataflowAssemblerStage = new AssemblyModelDataflowAssemblerStage(
+                repository.getModel(TypeModel.class), repository.getModel(AssemblyModel.class),
+                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+        final DeploymentModelDataflowAssemblerStage deploymentModelDataflowAssemblerStage = new DeploymentModelDataflowAssemblerStage(
+                repository.getModel(AssemblyModel.class), repository.getModel(DeploymentModel.class),
+                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+
         /** connecting ports. */
         this.connectPorts(readerPort, operationAndCallStage.getInputPort());
         this.connectPorts(operationAndCallStage.getOperationOutputPort(), typeModelAssemblerStage.getInputPort());
         this.connectPorts(typeModelAssemblerStage.getOutputPort(), assemblyModelAssemblerStage.getInputPort());
         this.connectPorts(assemblyModelAssemblerStage.getOutputPort(), deploymentModelAssemblerStage.getInputPort());
+
+        this.connectPorts(readDataflowStage.getOutputPort(), typeModelDataflowAssemblerStage.getInputPort());
+        this.connectPorts(typeModelDataflowAssemblerStage.getOutputPort(),
+                assemblyModelDataflowAssemblerStage.getInputPort());
+        this.connectPorts(assemblyModelDataflowAssemblerStage.getOutputPort(),
+                deploymentModelDataflowAssemblerStage.getInputPort());
 
         this.connectPorts(operationAndCallStage.getCallOutputPort(), callEvent2OperationCallStage.getInputPort());
         this.connectPorts(callEvent2OperationCallStage.getOutputPort(), executionModelGenerationStage.getInputPort());

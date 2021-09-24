@@ -79,8 +79,8 @@ public class StaticArchitectureRecoveryMain extends AbstractService<TeetimeConfi
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (!Files.isReadable(this.parameterConfiguration.getInputFile())) {
-            this.logger.error("Input path {} is not file", this.parameterConfiguration.getInputFile());
+        if (!Files.isReadable(this.parameterConfiguration.getOperationCallInputFile())) {
+            this.logger.error("Input path {} is not file", this.parameterConfiguration.getOperationCallInputFile());
             return false;
         }
 
