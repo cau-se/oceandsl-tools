@@ -15,21 +15,22 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 
 import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kieker.analysis.stage.model.ModelRepository;
-import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
-import kieker.tools.common.AbstractService;
+import teetime.framework.Configuration;
+import teetime.framework.Execution;
 
 /**
  * Architecture analysis main class.
@@ -37,7 +38,28 @@ import kieker.tools.common.AbstractService;
  * @author Reiner Jung
  * @since 1.1
  */
-public class StaticArchitectureRecoveryMain extends AbstractService<TeetimeConfiguration, Settings> {
+public class StaticArchitectureRecoveryMain {
+
+    /** Exit code for successful operation. */
+    public static final int SUCCESS_EXIT_CODE = 0;
+    /** An runtime error happened. */
+    public static final int RUNTIME_ERROR = 1;
+    /** There was an configuration error. */
+    public static final int CONFIGURATION_ERROR = 2;
+    /** There was a parameter error. */
+    public static final int PARAMETER_ERROR = 3;
+    /** Displayed the usage message. */
+    public static final int USAGE_EXIT_CODE = 4;
+
+    /** logger for all tools. */
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass().getCanonicalName()); // NOPMD
+
+    /** true if help should be displayed. */
+    protected boolean help = false; // NOPMD this is set to false for documentation purposes
+    /** configuration specified as parameters. */
+    protected Settings settings;
+    /** configuration provided as kieker configuration file. */
+    protected kieker.common.configuration.Configuration kiekerConfiguration;
 
     private ModelRepository repository;
 
@@ -53,39 +75,84 @@ public class StaticArchitectureRecoveryMain extends AbstractService<TeetimeConfi
         }
     }
 
-    @Override
-    protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
+    /**
+     * Execute the tool.
+     *
+     * @param commander
+     *            command line parter JCommander
+     * @param label
+     *            printed to the debug log about what application is running.
+     */
+    private void execute(final JCommander commander, final String label) throws ConfigurationException {
+        this.executeConfiguration("call", label, this.createTeetimeCallConfiguration());
+        this.executeConfiguration("dataflow", label, this.createTeetimeDataflowConfiguration());
+
+        this.shutdownService();
+
+        this.logger.debug("Done");
+    }
+
+    private <T extends Configuration> void executeConfiguration(final String type, final String label,
+            final T createTeetimeConfiguration) {
+        final Execution<T> execution = new Execution<>(createTeetimeConfiguration);
+
+        final Thread shutdownThread = this.shutdownHook(execution);
+        this.logger.debug("Running {} {}", type, label);
+        execution.executeBlocking();
+        if (!shutdownThread.isAlive()) {
+            Runtime.getRuntime().removeShutdownHook(shutdownThread);
+        }
+    }
+
+    /**
+     * General shutdown hook for services and tools.
+     *
+     * @param execution
+     *            teetime execution
+     */
+    private Thread shutdownHook(final Execution<?> execution) {
+        final Thread shutdownThread = new Thread(new Runnable() { // NOPMD is not a web app
+            /**
+             * Thread to gracefully terminate service.
+             */
+            @Override
+            public void run() {
+                synchronized (execution) {
+                    execution.abortEventually();
+                    StaticArchitectureRecoveryMain.this.shutdownService();
+                }
+            }
+        });
+        Runtime.getRuntime().addShutdownHook(shutdownThread);
+        return shutdownThread;
+    }
+
+    private TeetimeCallConfiguration createTeetimeCallConfiguration() throws ConfigurationException {
         try {
-            this.repository = ArchitectureModelManagementFactory.createModelRepository(
-                    this.parameterConfiguration.getExperimentName(),
-                    this.parameterConfiguration.getComponentMapFile() != null);
-            return new TeetimeConfiguration(this.logger, this.parameterConfiguration, this.repository);
+            return new TeetimeCallConfiguration(this.logger, this.settings, this.repository);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
         }
     }
 
-    @Override
-    protected File getConfigurationFile() {
-        // we do not use a configuration file
-        return null;
+    private TeetimeDataflowConfiguration createTeetimeDataflowConfiguration() throws ConfigurationException {
+        try {
+            return new TeetimeDataflowConfiguration(this.logger, this.settings, this.repository);
+        } catch (final IOException | ValueConversionErrorException e) {
+            this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
+            throw new ConfigurationException(e);
+        }
     }
 
-    @Override
-    protected boolean checkConfiguration(final Configuration configuration, final JCommander commander) {
-        return true;
-    }
-
-    @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (!Files.isReadable(this.parameterConfiguration.getInputFile())) {
-            this.logger.error("Input path {} is not file", this.parameterConfiguration.getInputFile());
+        if (!Files.isReadable(this.settings.getOperationCallInputFile())) {
+            this.logger.error("Input path {} is not file", this.settings.getOperationCallInputFile());
             return false;
         }
 
-        if (this.parameterConfiguration.getFunctionNameFiles() != null) {
-            for (final Path functionNameFile : this.parameterConfiguration.getFunctionNameFiles()) {
+        if (this.settings.getFunctionNameFiles() != null) {
+            for (final Path functionNameFile : this.settings.getFunctionNameFiles()) {
                 if (!Files.isReadable(functionNameFile)) {
                     this.logger.error("Function map file {} cannot be found", functionNameFile);
                     return false;
@@ -93,18 +160,63 @@ public class StaticArchitectureRecoveryMain extends AbstractService<TeetimeConfi
             }
         }
 
-        if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory().getParent())) {
-            this.logger.error("Output path {} is not directory", this.parameterConfiguration.getOutputDirectory());
+        if (!Files.isDirectory(this.settings.getOutputDirectory().getParent())) {
+            this.logger.error("Output path {} is not directory", this.settings.getOutputDirectory());
             return false;
         }
 
         return true;
     }
 
-    @Override
-    protected void shutdownService() {
+    /**
+     * Configure and execute the evaluation tool utilizing an external configuration.
+     *
+     * @param title
+     *            start up label for debug messages
+     * @param label
+     *            label used during execution to indicate the running service
+     * @param args
+     *            arguments are ignored
+     * @param stettings
+     *            configuration object
+     *
+     * @return returns exit code
+     */
+    public int run(final String title, final String label, final String[] args, final Settings stettings) {
+        this.settings = stettings;
+        this.logger.debug(title);
+
+        final JCommander commander = new JCommander(stettings);
         try {
-            ArchitectureModelManagementFactory.writeModelRepository(this.parameterConfiguration.getOutputDirectory(),
+            commander.parse(args);
+            if (this.checkParameters(commander)) {
+                if (this.help) {
+                    commander.usage();
+                    return StaticArchitectureRecoveryMain.USAGE_EXIT_CODE;
+                } else {
+                    this.repository = ArchitectureModelManagementFactory.createModelRepository(
+                            this.settings.getExperimentName(), this.settings.getComponentMapFile() != null);
+                    this.execute(commander, label);
+                    return StaticArchitectureRecoveryMain.SUCCESS_EXIT_CODE;
+                }
+            } else {
+                this.logger.error("Configuration Error"); // NOPMD
+                return StaticArchitectureRecoveryMain.CONFIGURATION_ERROR;
+            }
+        } catch (final ParameterException e) {
+            this.logger.error(e.getLocalizedMessage()); // NOPMD
+            commander.usage();
+            return StaticArchitectureRecoveryMain.PARAMETER_ERROR;
+        } catch (final ConfigurationException e) {
+            this.logger.error(e.getLocalizedMessage()); // NOPMD
+            commander.usage();
+            return StaticArchitectureRecoveryMain.CONFIGURATION_ERROR;
+        }
+    }
+
+    private void shutdownService() {
+        try {
+            ArchitectureModelManagementFactory.writeModelRepository(this.settings.getOutputDirectory(),
                     this.repository);
         } catch (final IOException e) {
             this.logger.error("Error saving model: {}", e.getLocalizedMessage());

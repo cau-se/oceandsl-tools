@@ -25,6 +25,9 @@ import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 import org.oceandsl.architecture.model.stages.CSVFixPathStage;
 import org.oceandsl.architecture.model.stages.CSVMapperStage;
 import org.oceandsl.architecture.model.stages.CountUniqueCallsStage;
+import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
 import org.slf4j.Logger;
 
 import kieker.analysis.signature.IComponentSignatureExtractor;
@@ -53,16 +56,18 @@ import teetime.framework.OutputPort;
  * @author Reiner Jung
  * @since 1.0
  */
-public class TeetimeConfiguration extends Configuration {
-    public TeetimeConfiguration(final Logger logger, final Settings parameterConfiguration,
+public class TeetimeCallConfiguration extends Configuration {
+    public TeetimeCallConfiguration(final Logger logger, final Settings parameterConfiguration,
             final ModelRepository repository) throws IOException, ValueConversionErrorException {
 
         OutputPort<CallerCallee> readerPort;
 
         logger.info("Processing static call log");
         final CSVFunctionCallReaderStage readCsvStage = new CSVFunctionCallReaderStage(
-                parameterConfiguration.getInputFile());
+                parameterConfiguration.getOperationCallInputFile());
+
         readerPort = readCsvStage.getOutputPort();
+
         if ((parameterConfiguration.getFunctionNameFiles() != null)
                 && !parameterConfiguration.getFunctionNameFiles().isEmpty()) {
             final CSVFixPathStage fixPathStage = new CSVFixPathStage(parameterConfiguration.getFunctionNameFiles());
@@ -86,6 +91,7 @@ public class TeetimeConfiguration extends Configuration {
                     parameterConfiguration.getCaseInsensitive());
 
             this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
+
             readerPort = cleanupComponentSignatureStage.getOutputPort();
         }
 
@@ -119,7 +125,7 @@ public class TeetimeConfiguration extends Configuration {
 
         final OperationAndCall4StaticDataStage operationAndCallStage = new OperationAndCall4StaticDataStage(
                 parameterConfiguration.getHostname());
-
+        /** -- call based modeling -- */
         final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
                 parameterConfiguration.getSourceLabel(), componentSignatureExtractor, operationSignatureExtractor);

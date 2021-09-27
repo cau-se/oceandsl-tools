@@ -13,25 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar;
+package org.oceandsl.tools.sar.stages.dataflow;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
+import teetime.stage.basic.AbstractTransformation;
 
 /**
- * Remove the directory name portion of class signatures.
- *
  * @author Reiner Jung
- * @since 1.1
+ *
  */
-public class FileBasedCleanupComponentSignatureStage extends AbstractCleanupComponentSignatureStage {
+public class FileBasedCleanupComponentInDataflowSignatureStage extends AbstractTransformation<DataAccess, DataAccess> {
 
-    public FileBasedCleanupComponentSignatureStage(final boolean caseInsensitive)
-            throws IOException, ValueConversionErrorException {
-        super(caseInsensitive);
+    private final boolean caseInsensitive;
+
+    public FileBasedCleanupComponentInDataflowSignatureStage(final boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
+    }
+
+    @Override
+    protected void execute(final DataAccess element) throws Exception {
+        element.setModule(this.convertToLowerCase(this.processComponentSignature(element.getModule())));
+        this.outputPort.send(element);
     }
 
     private String convertToLowerCase(final String string) {
@@ -44,8 +48,7 @@ public class FileBasedCleanupComponentSignatureStage extends AbstractCleanupComp
         return this.caseInsensitive ? value.toLowerCase() : value;
     }
 
-    @Override
-    protected String processComponentSignature(final String signature) {
+    private String processComponentSignature(final String signature) {
         if ("<<no-file>>".equals(signature)) {
             return signature;
         } else {
@@ -53,5 +56,4 @@ public class FileBasedCleanupComponentSignatureStage extends AbstractCleanupComp
             return this.convertToLowerCase(path.getName(path.getNameCount() - 1).toString());
         }
     }
-
 }
