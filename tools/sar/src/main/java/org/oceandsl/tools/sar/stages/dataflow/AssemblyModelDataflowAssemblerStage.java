@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
@@ -32,27 +29,23 @@ import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.StorageType;
 import kieker.model.analysismodel.type.TypeModel;
-import teetime.stage.basic.AbstractTransformation;
 
 /**
  * @author Reiner Jung
  *
  */
-public class AssemblyModelDataflowAssemblerStage extends AbstractTransformation<DataAccess, DataAccess> {
+public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssemblerStage<DataAccess, DataAccess> {
 
     private final TypeModel typeModel;
     private final AssemblyModel assemblyModel;
-    private final SourceModel sourceModel;
-    private final String sourceLabel;
     private final Map<String, AssemblyStorage> assemblyStorageMap = new HashMap<>();
-    private Map<AssemblyStorage, List<AssemblyComponent>> assemblyStorageAccessMap;
+    private final Map<AssemblyStorage, List<AssemblyComponent>> assemblyStorageAccessMap = new HashMap<>();
 
     public AssemblyModelDataflowAssemblerStage(final TypeModel typeModel, final AssemblyModel assemblyModel,
             final SourceModel sourceModel, final String sourceLabel) {
+        super(sourceModel, sourceLabel);
         this.typeModel = typeModel;
         this.assemblyModel = assemblyModel;
-        this.sourceModel = sourceModel;
-        this.sourceLabel = sourceLabel;
     }
 
     @Override
@@ -121,22 +114,20 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractTransformation<
     }
 
     private AssemblyOperation findOperation(final DataAccess element) {
-        final AssemblyComponent assemblyComponent = this.assemblyModel.getAssemblyComponents().get(element.getModule());
-        return assemblyComponent.getAssemblyOperations().get(element.getOperation());
-    }
-
-    private void addObjectToSource(final EObject object) {
-        final EList<String> sources = this.sourceModel.getSources().get(object);
-        boolean exists = false;
-        for (final String source : sources) {
-            if (this.sourceLabel.equals(source)) {
-                exists = true;
-            }
+        AssemblyComponent assemblyComponent = this.assemblyModel.getAssemblyComponents().get(element.getModule());
+        if (assemblyComponent == null) {
+            assemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
+            assemblyComponent.setComponentType(this.findComponentType(element.getModule()));
+            assemblyComponent.setSignature(element.getModule());
+            this.assemblyModel.getAssemblyComponents().put(element.getModule(), assemblyComponent);
         }
-        if (!exists) {
-            sources.add(this.sourceLabel);
-            this.sourceModel.getSources().put(object, sources);
+        AssemblyOperation operation = assemblyComponent.getAssemblyOperations().get(element.getOperation());
+        if (operation == null) {
+            operation = AssemblyFactory.eINSTANCE.createAssemblyOperation();
+            operation.setOperationType(
+                    assemblyComponent.getComponentType().getProvidedOperations().get(element.getOperation()));
+            assemblyComponent.getAssemblyOperations().put(element.getOperation(), operation);
         }
+        return operation;
     }
-
 }

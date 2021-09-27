@@ -21,7 +21,7 @@ package org.oceandsl.tools.sar.stages.dataflow;
  */
 public class DataAccess {
 
-    private final String module;
+    private String module;
     private final String operation;
     private final EDirection direction;
     private final String sharedData;
@@ -48,6 +48,10 @@ public class DataAccess {
 
     public String getSharedData() {
         return this.sharedData;
+    }
+
+    public void setModule(final String module) {
+        this.module = module;
     }
 
 }

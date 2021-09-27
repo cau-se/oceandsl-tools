@@ -20,11 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -33,28 +31,24 @@ import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentFactory;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.sources.SourceModel;
-import teetime.stage.basic.AbstractTransformation;
 
 /**
  * @author Reiner Jung
  * @since 1.1
  *
  */
-public class DeploymentModelDataflowAssemblerStage extends AbstractTransformation<DataAccess, DataAccess> {
+public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssemblerStage<DataAccess, DataAccess> {
 
     private final AssemblyModel assemblyModel;
     private final DeploymentModel deploymentModel;
-    private final SourceModel sourceModel;
-    private final String sourceLabel;
     private final Map<String, DeployedStorage> deployedStorageMap = new HashMap<>();
-    private Map<DeployedStorage, List<DeployedComponent>> deployedStorageAccessMap;
+    private final Map<DeployedStorage, List<DeployedComponent>> deployedStorageAccessMap = new HashMap<>();
 
     public DeploymentModelDataflowAssemblerStage(final AssemblyModel assemblyModel,
             final DeploymentModel deploymentModel, final SourceModel sourceModel, final String sourceLabel) {
+        super(sourceModel, sourceLabel);
         this.assemblyModel = assemblyModel;
         this.deploymentModel = deploymentModel;
-        this.sourceModel = sourceModel;
-        this.sourceLabel = sourceLabel;
     }
 
     @Override
@@ -105,14 +99,33 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractTransformatio
 
     private DeployedOperation findOperation(final DataAccess element) {
         final DeploymentContext context = this.deploymentModel.getDeploymentContexts().get(0).getValue();
-        for (final DeployedComponent component : context.getComponents().values()) {
-            final DeployedOperation deployedOperation = component.getContainedOperations().get(element.getOperation());
-            if (deployedOperation != null) {
-                return deployedOperation;
+        if (context == null) {
+            this.logger.error("Internal error: Data must contain at least one deployment context.");
+            return null;
+        } else {
+            DeployedComponent component = context.getComponents().get(element.getModule());
+            if (component == null) {
+                this.logger.warn("Cannot find deployed component for {}", element.getModule());
+
+                component = DeploymentFactory.eINSTANCE.createDeployedComponent();
+                component.setSignature(element.getModule());
+                component.setAssemblyComponent(this.findAssemblyComponent(element.getModule()));
+                context.getComponents().put(element.getModule(), component);
             }
+            DeployedOperation deployedOperation = component.getContainedOperations().get(element.getOperation());
+            if (deployedOperation == null) {
+                this.logger.warn("Operation {} cannot be found in model.", element.getOperation());
+
+                final AssemblyComponent assemblyComponent = this.assemblyModel.getAssemblyComponents()
+                        .get(element.getModule());
+                final AssemblyOperation assemblyOperation = assemblyComponent.getAssemblyOperations()
+                        .get(element.getOperation());
+                deployedOperation = DeploymentFactory.eINSTANCE.createDeployedOperation();
+                deployedOperation.setAssemblyOperation(assemblyOperation);
+                component.getContainedOperations().put(element.getOperation(), deployedOperation);
+            }
+            return deployedOperation;
         }
-        this.logger.error("Internal error. Operation {} cannot be found in model.", element.getOperation());
-        return null;
     }
 
     private void moveStorageAccessToSeparateComponent(final DeployedStorage deployedStorage,
@@ -133,20 +146,6 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractTransformatio
 
     private AssemblyComponent findAssemblyComponent(final String signature) {
         return this.assemblyModel.getAssemblyComponents().get(signature);
-    }
-
-    private void addObjectToSource(final EObject object) {
-        final EList<String> sources = this.sourceModel.getSources().get(object);
-        boolean exists = false;
-        for (final String source : sources) {
-            if (this.sourceLabel.equals(source)) {
-                exists = true;
-            }
-        }
-        if (!exists) {
-            sources.add(this.sourceLabel);
-            this.sourceModel.getSources().put(object, sources);
-        }
     }
 
 }

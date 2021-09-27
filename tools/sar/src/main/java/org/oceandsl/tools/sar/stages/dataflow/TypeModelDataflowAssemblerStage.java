@@ -20,16 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-
 import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.StorageType;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
-import teetime.stage.basic.AbstractTransformation;
 
 /**
  * Add data sorages to the model.
@@ -37,23 +33,20 @@ import teetime.stage.basic.AbstractTransformation;
  * @author Reiner Jung
  * @since 1.1
  */
-public class TypeModelDataflowAssemblerStage extends AbstractTransformation<DataAccess, DataAccess> {
+public class TypeModelDataflowAssemblerStage extends AbstractDataflowAssemblerStage<DataAccess, DataAccess> {
 
     static final String GLOBAL_PACKAGE = "global";
 
     private static final String UNKOWN_TYPE = "UNKNOWN";
 
     private final TypeModel typeModel;
-    private final SourceModel sourceModel;
-    private final String sourceLabel;
     private final Map<String, StorageType> storageTypeMap = new HashMap<>();
-    private Map<StorageType, List<ComponentType>> storageAccessMap;
+    private final Map<StorageType, List<ComponentType>> storageAccessMap = new HashMap<>();
 
     public TypeModelDataflowAssemblerStage(final TypeModel typeModel, final SourceModel sourceModel,
             final String sourceLabel) {
+        super(sourceModel, sourceLabel);
         this.typeModel = typeModel;
-        this.sourceModel = sourceModel;
-        this.sourceLabel = sourceLabel;
     }
 
     @Override
@@ -63,20 +56,6 @@ public class TypeModelDataflowAssemblerStage extends AbstractTransformation<Data
 
         this.addObjectToSource(type);
         this.outputPort.send(element);
-    }
-
-    private void addObjectToSource(final EObject object) {
-        final EList<String> sources = this.sourceModel.getSources().get(object);
-        boolean exists = false;
-        for (final String source : sources) {
-            if (this.sourceLabel.equals(source)) {
-                exists = true;
-            }
-        }
-        if (!exists) {
-            sources.add(this.sourceLabel);
-            this.sourceModel.getSources().put(object, sources);
-        }
     }
 
     private StorageType findOrCreateDataStorage(final DataAccess element, final ComponentType componentType) {
@@ -120,17 +99,39 @@ public class TypeModelDataflowAssemblerStage extends AbstractTransformation<Data
     }
 
     private OperationType findOperation(final DataAccess element) {
-        for (final ComponentType componentType : this.typeModel.getComponentTypes().values()) {
-            if (componentType.getName().equals(element.getModule())) {
-                for (final OperationType operation : componentType.getProvidedOperations().values()) {
-                    if (operation.getName().equals(element.getOperation())) {
-                        return operation;
-                    }
+        ComponentType componentType = this.typeModel.getComponentTypes().get(element.getModule());
+        if (componentType == null) {
+            componentType = TypeFactory.eINSTANCE.createComponentType();
+            componentType.setName(element.getModule());
+            componentType.setSignature(element.getModule());
+            componentType.setPackage(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
+
+            this.typeModel.getComponentTypes().put(element.getModule(), componentType);
+            final OperationType operationType = this.createOperation(element.getOperation());
+            componentType.getProvidedOperations().put(element.getOperation(), operationType);
+
+            return operationType;
+        } else {
+            for (final OperationType operation : componentType.getProvidedOperations().values()) {
+                if (operation.getName().equals(element.getOperation())) {
+                    return operation;
                 }
             }
-        }
 
-        return null;
+            final OperationType operationType = this.createOperation(element.getOperation());
+            componentType.getProvidedOperations().put(element.getOperation(), operationType);
+
+            return operationType;
+        }
+    }
+
+    private OperationType createOperation(final String operation) {
+        final OperationType operationType = TypeFactory.eINSTANCE.createOperationType();
+        operationType.setName(operation);
+        operationType.setReturnType("unknown");
+        operationType.setSignature(operation);
+
+        return operationType;
     }
 
 }
