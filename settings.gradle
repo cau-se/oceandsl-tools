@@ -7,7 +7,7 @@
  * in the user manual at https://docs.gradle.org/6.5/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'oceandsl-java-tools'
+rootProject.name = 'oceandsl-tools'
 
 include 'common'
 include 'analysis'
