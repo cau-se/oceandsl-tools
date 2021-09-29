@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 import org.oceandsl.tools.sar.stages.dataflow.AssemblyModelDataflowAssemblerStage;
 import org.oceandsl.tools.sar.stages.dataflow.CSVDataflowReaderStage;
+import org.oceandsl.tools.sar.stages.dataflow.CountUniqueDataflowCallsStage;
 import org.oceandsl.tools.sar.stages.dataflow.DataAccess;
 import org.oceandsl.tools.sar.stages.dataflow.DeploymentModelDataflowAssemblerStage;
 import org.oceandsl.tools.sar.stages.dataflow.ExecutionModelDataflowAssemblerStage;
@@ -32,6 +33,7 @@ import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.TypeModel;
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
@@ -79,6 +81,8 @@ public class TeetimeDataflowConfiguration extends Configuration {
         final ExecutionModelDataflowAssemblerStage executionModelDataflowGenerationStage = new ExecutionModelDataflowAssemblerStage(
                 repository.getModel(ExecutionModel.class), repository.getModel(DeploymentModel.class),
                 repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+        final CountUniqueDataflowCallsStage countUniqueDataflowCalls = new CountUniqueDataflowCallsStage(
+                repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
 
         /** connecting ports. */
         this.connectPorts(readerDataflowPort, typeModelDataflowAssemblerStage.getInputPort());
@@ -88,5 +92,6 @@ public class TeetimeDataflowConfiguration extends Configuration {
                 deploymentModelDataflowAssemblerStage.getInputPort());
         this.connectPorts(deploymentModelDataflowAssemblerStage.getOutputPort(),
                 executionModelDataflowGenerationStage.getInputPort());
+        this.connectPorts(executionModelDataflowGenerationStage.getOutputPort(), countUniqueDataflowCalls.getInputPort());
     }
 }

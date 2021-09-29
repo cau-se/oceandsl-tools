@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.graph;
+package org.oceandsl.tools.mvis;
 
-import kieker.analysis.graph.dependency.IDependencyGraphBuilder;
-import kieker.analysis.graph.dependency.IDependencyGraphBuilderFactory;
-import kieker.analysis.stage.model.ModelRepository;
+import com.beust.jcommander.IStringConverter;
 
 /**
- * Factory for colored assembly level operation dependency graphs.
- *
  * @author Reiner Jung
  * @since 1.0
+ *
  */
-public class ColorAssemblyLevelOperationDependencyGraphBuilderFactory implements IDependencyGraphBuilderFactory {
-
-    public ColorAssemblyLevelOperationDependencyGraphBuilderFactory() {
-        super();
-    }
+public class GraphTypeConverter implements IStringConverter<EOutputGraph> {
 
     @Override
-    public IDependencyGraphBuilder createDependencyGraphBuilder(final ModelRepository repository) {
-        return new ColorAssemblyLevelOperationDependencyGraphBuilder(repository);
+    public EOutputGraph convert(final String value) {
+        for (final EOutputGraph outputGraph : EOutputGraph.values()) {
+            if (outputGraph.name().toLowerCase().replace("_", "-").equals(value)) {
+                return outputGraph;
+            }
+        }
+        throw new IllegalArgumentException(String.format("Graph output type %s is not supported.", value));
+
     }
 
 }

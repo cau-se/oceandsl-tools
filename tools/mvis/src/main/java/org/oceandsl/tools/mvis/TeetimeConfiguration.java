@@ -17,11 +17,7 @@ package org.oceandsl.tools.mvis;
 
 import java.io.IOException;
 
-import org.oceandsl.architecture.model.EOutputGraph;
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
-import org.oceandsl.architecture.model.graph.ColorAssemblyLevelComponentDependencyGraphBuilderFactory;
-import org.oceandsl.architecture.model.graph.ColorAssemblyLevelOperationDependencyGraphBuilderFactory;
-import org.oceandsl.architecture.model.graph.ColoredDotExportConfigurationFactory;
 import org.oceandsl.architecture.model.stages.graph.AllenDeployedArchitectureGraphStage;
 import org.oceandsl.architecture.model.stages.graph.FunctionCallGraphStage;
 import org.oceandsl.architecture.model.stages.graph.ModuleCallGraphStage;
@@ -31,6 +27,10 @@ import org.oceandsl.architecture.model.stages.metrics.ModuleNodeCountCouplingSta
 import org.oceandsl.architecture.model.stages.metrics.NumberOfCallsStage;
 import org.oceandsl.architecture.model.stages.sinks.TableCSVSink;
 import org.oceandsl.architecture.model.stages.utils.DedicatedFileNameMapper;
+import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelComponentDependencyGraphBuilderFactory;
+import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelOperationDependencyGraphBuilderFactory;
+import org.oceandsl.tools.mvis.graph.ColoredDotExportConfigurationFactory;
+import org.oceandsl.tools.mvis.stages.ModelRepositoryProducerStage;
 import org.slf4j.Logger;
 
 import kieker.analysis.graph.IGraph;
@@ -57,12 +57,11 @@ public class TeetimeConfiguration extends Configuration {
     private static final String FUNCTION_CALLS_CSV = "function-calls.csv";
     private static final String DISTINCT_FUNCTION_DEGREE_CSV = "distinct-function-degree.csv";
     private static final String DISTINCT_MODULE_DEGREE_CSV = "distinct-module-degree.csv";
-    private static final String EXTRA_EDGES_CSV = "extra-edges.csv";
 
     public TeetimeConfiguration(final Logger logger, final Settings parameterConfiguration,
             final ModelRepository repository) throws IOException, ValueConversionErrorException {
 
-        final ModelRepositoryReaderStage readerStage = new ModelRepositoryReaderStage(
+        final ModelRepositoryProducerStage readerStage = new ModelRepositoryProducerStage(
                 parameterConfiguration.getInputDirectory());
 
         final TriggerOnTerminationStage triggerStage = new TriggerOnTerminationStage();

@@ -75,6 +75,8 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
                 }
             }
         }
+
+        this.outputPort.send(element);
     }
 
     private EDirection convertDirection(final org.oceandsl.tools.sar.stages.dataflow.EDirection direction) {

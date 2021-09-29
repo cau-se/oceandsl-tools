@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model;
+package org.oceandsl.tools.mvis;
 
 /**
  * @author Reiner Jung
  * @since 1.0
  */
-public enum EInputType {
-    KIEKER, CSV
+public final class ExtraConstants {
+
+    public static final String FOREGROUND_COLOR = "fg-color";
+    public static final String BACKGROUND_COLOR = "bg-color";
 }

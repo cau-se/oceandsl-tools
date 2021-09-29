@@ -13,26 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.graph;
-
-import kieker.analysis.graph.dependency.IDependencyGraphBuilder;
-import kieker.analysis.graph.dependency.IDependencyGraphBuilderFactory;
-import kieker.analysis.stage.model.ModelRepository;
+package org.oceandsl.tools.mvis;
 
 /**
  * @author Reiner Jung
  * @since 1.0
- *
  */
-public class ColorAssemblyLevelComponentDependencyGraphBuilderFactory implements IDependencyGraphBuilderFactory {
-
-    public ColorAssemblyLevelComponentDependencyGraphBuilderFactory() {
-        super();
-    }
-
-    @Override
-    public IDependencyGraphBuilder createDependencyGraphBuilder(final ModelRepository repository) {
-        return new ColorAssemblyLevelComponentDependencyGraphBuilder(repository);
-    }
-
+public enum EInputType {
+    KIEKER, CSV
 }

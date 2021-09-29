@@ -82,19 +82,22 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
     private Statistics findStatistics(final EMap<EObject, Statistics> statistics,
             final AggregatedInvocation invocation) {
         for (final Entry<EObject, Statistics> entry : statistics.entrySet()) {
-            final AggregatedInvocation key = (AggregatedInvocation) entry.getKey();
-            if (key != null) {
-                if (invocation.getSource().equals(key.getSource()) && invocation.getTarget().equals(key.getTarget())) {
-                    return entry.getValue();
-                }
-            } else {
-                this.logger.error("Found statistics without a key value");
-                for (final Entry<EObject, Statistics> stats : statistics.entrySet()) {
-                    final String kex = stats.getKey() != null ? stats.getKey().toString() : "NO-KEY";
-                    this.logger.info("  Key {}", kex);
-                    for (final Entry<EPredefinedUnits, StatisticRecord> stat : stats.getValue().getStatistics()
-                            .entrySet()) {
-                        this.logger.info("    {} = {}", kex, stat.getValue().getProperties().toString());
+            if (entry.getKey() instanceof AggregatedInvocation) {
+                final AggregatedInvocation key = (AggregatedInvocation) entry.getKey();
+                if (key != null) {
+                    if (invocation.getSource().equals(key.getSource())
+                            && invocation.getTarget().equals(key.getTarget())) {
+                        return entry.getValue();
+                    }
+                } else {
+                    this.logger.error("Found statistics without a key value");
+                    for (final Entry<EObject, Statistics> stats : statistics.entrySet()) {
+                        final String kex = stats.getKey() != null ? stats.getKey().toString() : "NO-KEY";
+                        this.logger.info("  Key {}", kex);
+                        for (final Entry<EPredefinedUnits, StatisticRecord> stat : stats.getValue().getStatistics()
+                                .entrySet()) {
+                            this.logger.info("    {} = {}", kex, stat.getValue().getProperties().toString());
+                        }
                     }
                 }
             }

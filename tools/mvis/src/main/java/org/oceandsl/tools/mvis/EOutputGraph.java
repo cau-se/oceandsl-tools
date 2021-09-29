@@ -15,29 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis;
 
-import java.nio.file.Path;
-
-import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
-
-import kieker.analysis.stage.model.ModelRepository;
-import teetime.framework.AbstractProducerStage;
-
 /**
  * @author Reiner Jung
- * @since 1.1
+ *
  */
-public class ModelRepositoryReaderStage extends AbstractProducerStage<ModelRepository> {
-
-    private final Path path;
-
-    public ModelRepositoryReaderStage(final Path path) {
-        this.path = path;
-    }
-
-    @Override
-    protected void execute() throws Exception {
-        this.outputPort.send(ArchitectureModelManagementFactory.loadModelRepository(this.path));
-        this.workCompleted();
-    }
-
+public enum EOutputGraph {
+    DOT_OP, GRAPHML, DOT_COMPONENT
 }

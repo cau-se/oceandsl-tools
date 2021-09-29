@@ -17,9 +17,9 @@ package org.oceandsl.architecture.model.stages.graph;
 
 import java.util.Map.Entry;
 
-import com.google.common.graph.EndpointPair;
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.MutableGraph;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import kieker.analysis.stage.model.ModelRepository;
@@ -47,9 +47,11 @@ public class AllenDeployedArchitectureGraphStage
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
+        // RepositoryUtils.print(repository);
+
         final DeploymentModel deploymentModel = repository.getModel(DeploymentModel.class);
         final ExecutionModel executionModel = repository.getModel(ExecutionModel.class);
-        final Graph<Node<DeployedComponent>> graph = GraphBuilder.undirected().build();
+        final MutableGraph<Node<DeployedComponent>> graph = GraphBuilder.undirected().allowsSelfLoops(true).build();
 
         this.selector.setRepository(repository);
 
@@ -58,7 +60,7 @@ public class AllenDeployedArchitectureGraphStage
                 for (final Entry<String, DeployedOperation> operation : component.getValue().getContainedOperations()) {
                     if (this.selector.nodeIsSelected(operation.getValue())) {
                         final Node<DeployedComponent> node = new KiekerNode<>(operation.getValue());
-                        graph.nodes().add(node);
+                        graph.addNode(node);
                     }
                 }
             }
@@ -66,11 +68,8 @@ public class AllenDeployedArchitectureGraphStage
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> invocation : executionModel
                 .getAggregatedInvocations()) {
             if (this.selector.edgeIsSelected(invocation.getValue())) {
-                final EndpointPair<Node<DeployedComponent>> edge = EndpointPair.unordered(
-                        this.findNode(graph, invocation.getKey().getFirst()),
+                graph.putEdge(this.findNode(graph, invocation.getKey().getFirst()),
                         this.findNode(graph, invocation.getKey().getSecond()));
-
-                graph.edges().add(edge);
             }
         }
     }
@@ -85,6 +84,8 @@ public class AllenDeployedArchitectureGraphStage
             }
         }
 
+        this.logger.error("Internal error: Looked for node of an edge that does not exist: {}",
+                operation.getAssemblyOperation().getOperationType().getSignature());
         return null;
     }
 

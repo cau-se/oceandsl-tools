@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.graph;
+package org.oceandsl.tools.mvis.graph;
 
-import org.oceandsl.architecture.model.ExtraConstants;
+import org.oceandsl.tools.mvis.ExtraConstants;
 
 import kieker.analysis.graph.IVertex;
 import kieker.analysis.graph.dependency.PropertyConstants;
@@ -23,7 +23,9 @@ import kieker.analysis.graph.dependency.vertextypes.VertexType;
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
+import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeployedStorage;
 
 /**
  * @author Reiner Jung
@@ -50,6 +52,22 @@ public class ColorAssemblyLevelComponentDependencyGraphBuilder extends AbstractC
         componentVertex.setPropertyIfAbsent(ExtraConstants.BACKGROUND_COLOR, this.selectBackgroundColor(component));
 
         this.responseTimeDecorator.decorate(componentVertex, component);
+
+        return componentVertex;
+    }
+
+    @Override
+    protected IVertex addStorageVertex(final DeployedStorage deployedStorage) {
+        final AssemblyStorage storage = deployedStorage.getAssemblyStorage();
+        final AssemblyComponent component = storage.getAssemblyComponent();
+
+        final int componentId = this.identifierRegistry.getIdentifier(component);
+        final IVertex componentVertex = this.graph.addVertexIfAbsent(componentId);
+        componentVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_COMPONENT);
+        componentVertex.setPropertyIfAbsent(PropertyConstants.NAME, component.getComponentType().getName());
+        componentVertex.setPropertyIfAbsent(PropertyConstants.PACKAGE_NAME, component.getComponentType().getPackage());
+        componentVertex.setPropertyIfAbsent(ExtraConstants.FOREGROUND_COLOR, this.selectForegroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstants.BACKGROUND_COLOR, this.selectBackgroundColor(component));
 
         return componentVertex;
     }

@@ -18,4 +18,4 @@
  * @author Reiner Jung
  * @since 1.1
  */
-package org.oceandsl.architecture.model.graph;
+package org.oceandsl.tools.mvis.graph;

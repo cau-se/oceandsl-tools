@@ -13,14 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model;
+package org.oceandsl.tools.mvis.graph;
+
+import kieker.analysis.graph.dependency.IDependencyGraphBuilder;
+import kieker.analysis.graph.dependency.IDependencyGraphBuilderFactory;
+import kieker.analysis.stage.model.ModelRepository;
 
 /**
  * @author Reiner Jung
  * @since 1.0
+ *
  */
-public final class ExtraConstants {
+public class ColorAssemblyLevelComponentDependencyGraphBuilderFactory implements IDependencyGraphBuilderFactory {
 
-    public static final String FOREGROUND_COLOR = "fg-color";
-    public static final String BACKGROUND_COLOR = "bg-color";
+    public ColorAssemblyLevelComponentDependencyGraphBuilderFactory() {
+        super();
+    }
+
+    @Override
+    public IDependencyGraphBuilder createDependencyGraphBuilder(final ModelRepository repository) {
+        return new ColorAssemblyLevelComponentDependencyGraphBuilder(repository);
+    }
+
 }

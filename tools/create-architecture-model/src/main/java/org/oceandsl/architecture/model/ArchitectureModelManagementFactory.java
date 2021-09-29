@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -122,10 +123,6 @@ public final class ArchitectureModelManagementFactory {
         ArchitectureModelManagementFactory.readModel(resourceSet, repository, SourceModel.class, path,
                 ArchitectureModelManagementFactory.SOURCES_MODEL_NAME);
 
-        resourceSet.getResources().forEach(resource -> {
-            resource.setURI(null);
-        });
-
         return repository;
     }
 
@@ -144,6 +141,10 @@ public final class ArchitectureModelManagementFactory {
                         error.getLocation(), error.getLine(), error.getMessage());
             }
             repository.register(type, resource.getContents().get(0));
+            final Iterator<EObject> i = resource.getAllContents();
+            while (i.hasNext()) {
+                i.next().eCrossReferences();
+            }
         } else {
             ArchitectureModelManagementFactory.LOGGER.error("Error reading model file {}. File does not exist.",
                     modelFile.getAbsoluteFile());

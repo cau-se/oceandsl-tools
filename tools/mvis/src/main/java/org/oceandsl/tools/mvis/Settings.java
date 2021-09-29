@@ -21,8 +21,6 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
 
-import org.oceandsl.architecture.model.EOutputGraph;
-import org.oceandsl.architecture.model.GraphTypeConverter;
 import org.oceandsl.architecture.model.stages.graph.ISelector;
 
 /**

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.graph;
+package org.oceandsl.tools.mvis.graph;
 
 import java.util.Collection;
 
-import org.oceandsl.architecture.model.ExtraConstants;
+import org.oceandsl.tools.mvis.ExtraConstants;
 
 import kieker.analysis.graph.IElement;
 import kieker.analysis.graph.IVertex;
@@ -138,6 +138,17 @@ public class ColoredDotExportConfigurationFactory {
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "oval");
 
+        builder.addNodeAttribute(DotNodeAttribute.SHAPE, v -> {
+            final VertexType type = this.getProperty(v, PropertyConstants.TYPE, VertexType.class);
+            switch (type) {
+            case ASSEMBLY_OPERATION:
+                return "oval";
+            case ASSEMBLY_STORAGE:
+                return "box";
+            default:
+                return "circle";
+            }
+        });
         builder.addNodeAttribute(DotNodeAttribute.COLOR, v -> {
             return this.createForegroundColorFromVertex(v);
         });
@@ -148,9 +159,14 @@ public class ColoredDotExportConfigurationFactory {
             final VertexType type = this.getProperty(v, PropertyConstants.TYPE, VertexType.class);
             if (type == VertexType.ENTRY) {
                 return ColoredDotExportConfigurationFactory.ENTRY_LABEL;
-            } else {
+            } else if (type == VertexType.ASSEMBLY_OPERATION) {
                 return new StringBuilder().append(this.createOperationLabelFromVertex(v)).append("\\n")
                         .append(vertexStatistics ? this.createStatisticsFromVertex(v) : "").toString();
+            } else if (type == VertexType.ASSEMBLY_STORAGE) {
+                return new StringBuilder().append(this.createStorageLabelFromVertex(v)).append("\\n")
+                        .append(vertexStatistics ? this.createStatisticsFromVertex(v) : "").toString();
+            } else {
+                return "unsupported verttext type " + type.name();
             }
         });
 
@@ -284,6 +300,13 @@ public class ColoredDotExportConfigurationFactory {
 
         return new StringBuilder(
                 this.nameBuilder.getOperationNameBuilder().build(modifiers, returnType, name, parameterTypes));
+    }
+
+    private StringBuilder createStorageLabelFromVertex(final IVertex vertex) {
+        final String name = this.getProperty(vertex, PropertyConstants.NAME, String.class);
+
+        // TODO Kieker must be extended to support storageNameBuilder
+        return new StringBuilder(name);
     }
 
     private StringBuilder createComponentLabelFromVertex(final IVertex vertex) {
