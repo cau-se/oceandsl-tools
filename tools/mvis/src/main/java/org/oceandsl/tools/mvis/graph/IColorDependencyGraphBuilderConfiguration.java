@@ -15,27 +15,15 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
-import kieker.analysis.graph.dependency.IDependencyGraphBuilder;
-import kieker.analysis.graph.dependency.IDependencyGraphBuilderFactory;
+import kieker.analysis.graph.dependency.IDependencyGraphBuilderConfiguration;
 
 /**
- * Factory for colored assembly level operation dependency graphs.
- *
  * @author Reiner Jung
- * @since 1.0
+ * @since 1.1
  */
-public class ColorAssemblyLevelOperationDependencyGraphBuilderFactory
-        implements IDependencyGraphBuilderFactory<IColorDependencyGraphBuilderConfiguration> {
+public interface IColorDependencyGraphBuilderConfiguration extends IDependencyGraphBuilderConfiguration {
 
-    public ColorAssemblyLevelOperationDependencyGraphBuilderFactory() {
-        super();
-    }
+    String[] getGroupA();
 
-    @Override
-    public IDependencyGraphBuilder createDependencyGraphBuilder(
-            final IColorDependencyGraphBuilderConfiguration configuration) {
-        return new ColorAssemblyLevelOperationDependencyGraphBuilder(configuration.getModelRepository(),
-                configuration.getGroupA(), configuration.getGroupB());
-    }
-
+    String[] getGroupB();
 }

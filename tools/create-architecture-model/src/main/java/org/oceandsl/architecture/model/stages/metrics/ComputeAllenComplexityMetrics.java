@@ -22,13 +22,9 @@ import com.google.common.graph.Graph;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.CalculationMode;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.CodeMetric;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Cohesion;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Complexity;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Coupling;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.HyperGraphSize;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.cohesion.HyperGraphCohesionCalculator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.complexity.HyperGraphComplexityCalculator;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.coupling.HyperGraphInterModuleCouplingGenerator;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.size.HyperGraphSizeCalculator;
@@ -50,15 +46,17 @@ public class ComputeAllenComplexityMetrics
         final HyperGraphSize size = this.calculateHyperGraphSize(mode, systemGraphUtils, graph);
         final Complexity graphComplexity = new HyperGraphComplexityCalculator<>(mode, systemGraphUtils)
                 .calculate(graph);
-        final Coupling graphCoupling = new HyperGraphInterModuleCouplingGenerator<>(mode, systemGraphUtils)
-                .calculate(graph);
-        final Cohesion cohesion = new HyperGraphCohesionCalculator<>(mode, systemGraphUtils).calculate(graph);
+        // final Coupling graphCoupling = new HyperGraphInterModuleCouplingGenerator<>(mode,
+        // systemGraphUtils)
+        // .calculate(graph);
+        // final Cohesion cohesion = new HyperGraphCohesionCalculator<>(mode,
+        // systemGraphUtils).calculate(graph);
 
         final Map<Class<? extends CodeMetric>, CodeMetric> result = new HashMap<>();
         result.put(HyperGraphSize.class, size);
         result.put(Complexity.class, graphComplexity);
-        result.put(Coupling.class, graphCoupling);
-        result.put(Cohesion.class, cohesion);
+        // result.put(Coupling.class, graphCoupling);
+        // result.put(Cohesion.class, cohesion);
 
         this.outputPort.send(result);
     }

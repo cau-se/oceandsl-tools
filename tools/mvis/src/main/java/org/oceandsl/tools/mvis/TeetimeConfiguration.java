@@ -22,14 +22,15 @@ import org.oceandsl.architecture.model.stages.graph.AllenDeployedArchitectureGra
 import org.oceandsl.architecture.model.stages.graph.FunctionCallGraphStage;
 import org.oceandsl.architecture.model.stages.graph.ModuleCallGraphStage;
 import org.oceandsl.architecture.model.stages.metrics.ComputeAllenComplexityMetrics;
-import org.oceandsl.architecture.model.stages.metrics.FunctionNodeCountCouplingStage;
 import org.oceandsl.architecture.model.stages.metrics.ModuleNodeCountCouplingStage;
 import org.oceandsl.architecture.model.stages.metrics.NumberOfCallsStage;
+import org.oceandsl.architecture.model.stages.metrics.OperationNodeCountCouplingStage;
 import org.oceandsl.architecture.model.stages.sinks.TableCSVSink;
 import org.oceandsl.architecture.model.stages.utils.DedicatedFileNameMapper;
 import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelComponentDependencyGraphBuilderFactory;
 import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelOperationDependencyGraphBuilderFactory;
 import org.oceandsl.tools.mvis.graph.ColoredDotExportConfigurationFactory;
+import org.oceandsl.tools.mvis.graph.IColorDependencyGraphBuilderConfiguration;
 import org.oceandsl.tools.mvis.stages.ModelRepositoryProducerStage;
 import org.slf4j.Logger;
 
@@ -54,8 +55,8 @@ import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
  */
 public class TeetimeConfiguration extends Configuration {
 
-    private static final String FUNCTION_CALLS_CSV = "function-calls.csv";
-    private static final String DISTINCT_FUNCTION_DEGREE_CSV = "distinct-function-degree.csv";
+    private static final String OPERATION_CALLS_CSV = "operation-calls.csv";
+    private static final String DISTINCT_OPERATION_DEGREE_CSV = "distinct-operatin-degree.csv";
     private static final String DISTINCT_MODULE_DEGREE_CSV = "distinct-module-degree.csv";
 
     public TeetimeConfiguration(final Logger logger, final Settings parameterConfiguration,
@@ -79,18 +80,18 @@ public class TeetimeConfiguration extends Configuration {
         final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
         final FunctionCallGraphStage functionCallGraphStage = new FunctionCallGraphStage(
                 parameterConfiguration.getSelector());
-        final FunctionNodeCountCouplingStage functionNodeCouplingStage = new FunctionNodeCountCouplingStage();
+        final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
         final ModuleCallGraphStage moduleCallGraphStage = new ModuleCallGraphStage(
                 parameterConfiguration.getSelector());
         final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
 
         /** Sinks for metrics writing to CSV files. */
-        final TableCSVSink functionCallSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
+        final TableCSVSink operationCallSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
                 String.format("%s-%s", parameterConfiguration.getSelector().getFilePrefix(),
-                        TeetimeConfiguration.FUNCTION_CALLS_CSV));
-        final TableCSVSink distinctFunctionDegreeSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
+                        TeetimeConfiguration.OPERATION_CALLS_CSV));
+        final TableCSVSink distinctOperationDegreeSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
                 String.format("%s-%s", parameterConfiguration.getSelector().getFilePrefix(),
-                        TeetimeConfiguration.DISTINCT_FUNCTION_DEGREE_CSV));
+                        TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV));
         final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
                 String.format("%s-%s", parameterConfiguration.getSelector().getFilePrefix(),
                         TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
@@ -102,11 +103,17 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(statisticsDistributor.getNewOutputPort(), triggerStage.getInputPort());
         this.connectPorts(triggerStage.getOutputPort(), triggerDistributor.getInputPort());
 
+        final String[] groupA;
+        final String[] groupB;
+
+        final IColorDependencyGraphBuilderConfiguration configuration = new ColorDependencyGraphBuilderConfiguration(
+                repository, groupA, groupB);
+
         /** operation graph. */
         if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.DOT_OP)
                 || parameterConfiguration.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
             final DependencyGraphCreatorStage operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage(
-                    repository, new ColorAssemblyLevelOperationDependencyGraphBuilderFactory());
+                    configuration, new ColorAssemblyLevelOperationDependencyGraphBuilderFactory());
             final Distributor<IGraph> graphsDistributor = new Distributor<>(new CopyByReferenceStrategy());
 
             this.connectPorts(triggerDistributor.getNewOutputPort(),
@@ -124,7 +131,7 @@ public class TeetimeConfiguration extends Configuration {
         /** component graph. */
         if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.DOT_COMPONENT)) {
             final DependencyGraphCreatorStage componentDependencyGraphCreatorStage = new DependencyGraphCreatorStage(
-                    repository, new ColorAssemblyLevelComponentDependencyGraphBuilderFactory());
+                    configuration, new ColorAssemblyLevelComponentDependencyGraphBuilderFactory());
             final DotFileWriterStage componentDependencyDotFileWriterStage = new DotFileWriterStage(
                     new DedicatedFileNameMapper(parameterConfiguration.getOutputDirectory(), "component",
                             FileExtension.DOT),
@@ -154,11 +161,11 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(computeAllenComplexityStage.getOutputPort(), saveAllenDataStage.getInputPort());
 
         this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
-        this.connectPorts(numberOfCallsStage.getOutputPort(), functionCallSink.getInputPort());
+        this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());
 
         this.connectPorts(statisticsDistributor.getNewOutputPort(), functionCallGraphStage.getInputPort());
         this.connectPorts(functionCallGraphStage.getOutputPort(), functionNodeCouplingStage.getInputPort());
-        this.connectPorts(functionNodeCouplingStage.getOutputPort(), distinctFunctionDegreeSink.getInputPort());
+        this.connectPorts(functionNodeCouplingStage.getOutputPort(), distinctOperationDegreeSink.getInputPort());
 
         this.connectPorts(statisticsDistributor.getNewOutputPort(), moduleCallGraphStage.getInputPort());
         this.connectPorts(moduleCallGraphStage.getOutputPort(), moduleNodeCouplingStage.getInputPort());

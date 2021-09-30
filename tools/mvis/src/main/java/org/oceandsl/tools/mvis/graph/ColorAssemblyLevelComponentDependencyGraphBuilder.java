@@ -34,8 +34,9 @@ import kieker.model.analysismodel.deployment.DeployedStorage;
  */
 public class ColorAssemblyLevelComponentDependencyGraphBuilder extends AbstractColorDependencyGraphBuilder {
 
-    public ColorAssemblyLevelComponentDependencyGraphBuilder(final ModelRepository repository) {
-        super(repository);
+    public ColorAssemblyLevelComponentDependencyGraphBuilder(final ModelRepository repository, final String[] groupA,
+            final String[] groupB) {
+        super(repository, groupA, groupB);
     }
 
     @Override

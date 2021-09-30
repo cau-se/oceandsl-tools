@@ -17,22 +17,24 @@ package org.oceandsl.tools.mvis.graph;
 
 import kieker.analysis.graph.dependency.IDependencyGraphBuilder;
 import kieker.analysis.graph.dependency.IDependencyGraphBuilderFactory;
-import kieker.analysis.stage.model.ModelRepository;
 
 /**
  * @author Reiner Jung
  * @since 1.0
  *
  */
-public class ColorAssemblyLevelComponentDependencyGraphBuilderFactory implements IDependencyGraphBuilderFactory {
+public class ColorAssemblyLevelComponentDependencyGraphBuilderFactory
+        implements IDependencyGraphBuilderFactory<IColorDependencyGraphBuilderConfiguration> {
 
     public ColorAssemblyLevelComponentDependencyGraphBuilderFactory() {
         super();
     }
 
     @Override
-    public IDependencyGraphBuilder createDependencyGraphBuilder(final ModelRepository repository) {
-        return new ColorAssemblyLevelComponentDependencyGraphBuilder(repository);
+    public IDependencyGraphBuilder createDependencyGraphBuilder(
+            final IColorDependencyGraphBuilderConfiguration configuration) {
+        return new ColorAssemblyLevelComponentDependencyGraphBuilder(configuration.getModelRepository(),
+                configuration.getGroupA(), configuration.getGroupB());
     }
 
 }

@@ -30,6 +30,7 @@ import teetime.framework.AbstractConsumerStage;
  */
 public class SaveAllenDataStage extends AbstractConsumerStage<Map<Class<? extends CodeMetric>, CodeMetric>> {
 
+    private static final String ALLEN_METRIC_FILENAME = "model-complexity.csv";
     private final Path outputDirectory;
 
     public SaveAllenDataStage(final Path outputDirectory) {
@@ -38,7 +39,8 @@ public class SaveAllenDataStage extends AbstractConsumerStage<Map<Class<? extend
 
     @Override
     protected void execute(final Map<Class<? extends CodeMetric>, CodeMetric> element) throws Exception {
-        final BufferedWriter writer = Files.newBufferedWriter(this.outputDirectory);
+        final BufferedWriter writer = Files
+                .newBufferedWriter(this.outputDirectory.resolve(SaveAllenDataStage.ALLEN_METRIC_FILENAME));
         for (final Entry<Class<? extends CodeMetric>, CodeMetric> value : element.entrySet()) {
             writer.write(String.format("%s, %s\n", value.getKey().getCanonicalName(), value.getValue().getValue()));
         }

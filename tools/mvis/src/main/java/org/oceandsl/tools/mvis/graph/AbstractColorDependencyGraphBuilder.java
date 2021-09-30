@@ -40,23 +40,36 @@ import kieker.model.analysismodel.statistics.Statistics;
 public abstract class AbstractColorDependencyGraphBuilder extends AbstractDependencyGraphBuilder {
 
     private final SourceModel sourcesModel;
+    private final String[] groupA;
+    private final String[] groupB;
+    private final String[] intersect;
 
-    public AbstractColorDependencyGraphBuilder(final ModelRepository repository) {
+    public AbstractColorDependencyGraphBuilder(final ModelRepository repository, final String[] groupA,
+            final String[] groupB) {
         super(repository);
         this.sourcesModel = repository.getModel(SourceModel.class);
+        this.groupA = groupA;
+        this.groupB = groupB;
+        this.intersect = new String[groupA.length + groupB.length];
+        for (int i = 0; i < groupA.length; i++) {
+            this.intersect[i] = groupA[i];
+        }
+        for (int i = 0; i < groupB.length; i++) {
+            this.intersect[i + groupA.length] = groupB[i];
+        }
     }
 
     protected String selectForegroundColor(final EObject object) {
         final EList<String> sources = this.sourcesModel.getSources().get(object);
         if (sources != null) {
-            if (this.contains(sources, "static", "dynamic")) {
+            if (this.contains(sources, this.intersect)) {
                 return "#000000";
-            } else if (this.contains(sources, "static")) {
+            } else if (this.contains(sources, this.groupA)) {
                 return "#0000ff"; // blue for static
-            } else if (this.contains(sources, "dynamic")) {
+            } else if (this.contains(sources, this.groupB)) {
                 return "#00ff00"; // green on dynamic
             } else {
-                return "#ff00ff"; // pink on error
+                return "#fafafa"; // other objects
             }
         } else {
             return "#ff00ff"; // pink on error
@@ -66,17 +79,17 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
     protected String selectBackgroundColor(final EObject object) {
         final EList<String> sources = this.sourcesModel.getSources().get(object);
         if (sources != null) {
-            if (this.contains(sources, "static", "dynamic")) {
+            if (this.contains(sources, this.intersect)) {
                 return "#ffffff";
-            } else if (this.contains(sources, "static")) {
+            } else if (this.contains(sources, this.groupA)) {
                 return "#a0a0ff"; // blue for static
-            } else if (this.contains(sources, "dynamic")) {
+            } else if (this.contains(sources, this.groupB)) {
                 return "#90ff90"; // green on dynamic
             } else {
-                return "#ffa0ff"; // pink on error
+                return "#eaeaea"; // other objects
             }
         } else {
-            return "#ff00ff"; // pink on error
+            return "#f000f0"; // pink on error
         }
     }
 

@@ -36,7 +36,7 @@ import teetime.stage.basic.AbstractTransformation;
  * @author Reiner Jung
  * @since 1.1
  */
-public class FunctionNodeCountCouplingStage extends AbstractTransformation<IGraph, Table> {
+public class OperationNodeCountCouplingStage extends AbstractTransformation<IGraph, Table> {
 
     @Override
     protected void execute(final IGraph graph) throws Exception {

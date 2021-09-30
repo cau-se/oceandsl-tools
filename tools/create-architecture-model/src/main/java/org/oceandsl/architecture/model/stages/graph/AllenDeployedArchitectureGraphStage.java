@@ -72,6 +72,7 @@ public class AllenDeployedArchitectureGraphStage
                         this.findNode(graph, invocation.getKey().getSecond()));
             }
         }
+        this.outputPort.send(graph);
     }
 
     private Node<DeployedComponent> findNode(final Graph<Node<DeployedComponent>> graph,
