@@ -16,6 +16,7 @@
 package org.oceandsl.tools.mvis.graph;
 
 import org.oceandsl.tools.mvis.ExtraConstants;
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 import kieker.analysis.graph.IEdge;
 import kieker.analysis.graph.IGraph;
@@ -37,9 +38,9 @@ import kieker.model.analysismodel.deployment.DeployedStorage;
  */
 public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractColorDependencyGraphBuilder {
 
-    public ColorAssemblyLevelOperationDependencyGraphBuilder(final ModelRepository repository, final String[] groupA,
-            final String[] groupB) {
-        super(repository, groupA, groupB);
+    public ColorAssemblyLevelOperationDependencyGraphBuilder(final ModelRepository repository,
+            final IGraphElementSelector selector) {
+        super(repository, selector);
     }
 
     @Override

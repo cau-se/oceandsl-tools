@@ -31,7 +31,7 @@ public class FixStaticLogTeetimeConfiguration extends Configuration {
 
     public FixStaticLogTeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
         final CSVFunctionCallReaderStage readCsvStage = new CSVFunctionCallReaderStage(
-                parameterConfiguration.getInputPath());
+                parameterConfiguration.getInputPath(), ",");
         final CSVFunctionMapperStage functionMapperStage = new CSVFunctionMapperStage(
                 parameterConfiguration.getMapPaths());
         final CorrectCallsStage correctCallsStage = new CorrectCallsStage();

@@ -84,8 +84,13 @@ public class StaticArchitectureRecoveryMain {
      *            printed to the debug log about what application is running.
      */
     private void execute(final JCommander commander, final String label) throws ConfigurationException {
-        this.executeConfiguration("call", label, this.createTeetimeCallConfiguration());
-        this.executeConfiguration("dataflow", label, this.createTeetimeDataflowConfiguration());
+    	this.repository = ArchitectureModelManagementFactory.createModelRepository(
+                this.settings.getExperimentName(), this.settings.getComponentMapFile() != null);
+    	
+        if (this.settings.getOperationCallInputFile() != null)
+        	this.executeConfiguration("call", label, this.createTeetimeCallConfiguration());
+        if (this.settings.getDataflowInputFile() != null)
+        	this.executeConfiguration("dataflow", label, this.createTeetimeDataflowConfiguration());
 
         this.shutdownService();
 
@@ -146,6 +151,10 @@ public class StaticArchitectureRecoveryMain {
     }
 
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
+    	if (this.settings.getOperationCallInputFile() == null && this.settings.getDataflowInputFile() == null) {
+    		this.logger.error("You need at least operation calls or dataflow as input.");
+    		return false;
+    	}
         if (!Files.isReadable(this.settings.getOperationCallInputFile())) {
             this.logger.error("Input path {} is not file", this.settings.getOperationCallInputFile());
             return false;
@@ -194,8 +203,6 @@ public class StaticArchitectureRecoveryMain {
                     commander.usage();
                     return StaticArchitectureRecoveryMain.USAGE_EXIT_CODE;
                 } else {
-                    this.repository = ArchitectureModelManagementFactory.createModelRepository(
-                            this.settings.getExperimentName(), this.settings.getComponentMapFile() != null);
                     this.execute(commander, label);
                     return StaticArchitectureRecoveryMain.SUCCESS_EXIT_CODE;
                 }

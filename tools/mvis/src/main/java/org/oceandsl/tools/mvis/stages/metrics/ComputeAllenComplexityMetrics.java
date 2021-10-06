@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.stages.metrics;
+package org.oceandsl.tools.mvis.stages.metrics;
 
 import java.util.HashMap;
 import java.util.Map;

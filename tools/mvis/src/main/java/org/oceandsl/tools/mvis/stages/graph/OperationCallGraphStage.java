@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.stages.graph;
+package org.oceandsl.tools.mvis.stages.graph;
 
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.stage.model.ModelRepository;
@@ -27,11 +27,11 @@ import teetime.stage.basic.AbstractTransformation;
  * @author Reiner Jung
  * @since 1.1
  */
-public class FunctionCallGraphStage extends AbstractTransformation<ModelRepository, IGraph> {
+public class OperationCallGraphStage extends AbstractTransformation<ModelRepository, IGraph> {
 
-    private final ISelector selector;
+    private final IGraphElementSelector selector;
 
-    public FunctionCallGraphStage(final ISelector selector) {
+    public OperationCallGraphStage(final IGraphElementSelector selector) {
         this.selector = selector;
     }
 

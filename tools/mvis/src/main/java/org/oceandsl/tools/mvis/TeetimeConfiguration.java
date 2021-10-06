@@ -18,13 +18,6 @@ package org.oceandsl.tools.mvis;
 import java.io.IOException;
 
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
-import org.oceandsl.architecture.model.stages.graph.AllenDeployedArchitectureGraphStage;
-import org.oceandsl.architecture.model.stages.graph.FunctionCallGraphStage;
-import org.oceandsl.architecture.model.stages.graph.ModuleCallGraphStage;
-import org.oceandsl.architecture.model.stages.metrics.ComputeAllenComplexityMetrics;
-import org.oceandsl.architecture.model.stages.metrics.ModuleNodeCountCouplingStage;
-import org.oceandsl.architecture.model.stages.metrics.NumberOfCallsStage;
-import org.oceandsl.architecture.model.stages.metrics.OperationNodeCountCouplingStage;
 import org.oceandsl.architecture.model.stages.sinks.TableCSVSink;
 import org.oceandsl.architecture.model.stages.utils.DedicatedFileNameMapper;
 import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelComponentDependencyGraphBuilderFactory;
@@ -32,6 +25,15 @@ import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelOperationDependencyGraphB
 import org.oceandsl.tools.mvis.graph.ColoredDotExportConfigurationFactory;
 import org.oceandsl.tools.mvis.graph.IColorDependencyGraphBuilderConfiguration;
 import org.oceandsl.tools.mvis.stages.ModelRepositoryProducerStage;
+import org.oceandsl.tools.mvis.stages.SaveAllenDataStage;
+import org.oceandsl.tools.mvis.stages.graph.AllenDeployedArchitectureGraphStage;
+import org.oceandsl.tools.mvis.stages.graph.ColorDependencyGraphBuilderConfiguration;
+import org.oceandsl.tools.mvis.stages.graph.ModuleCallGraphStage;
+import org.oceandsl.tools.mvis.stages.graph.OperationCallGraphStage;
+import org.oceandsl.tools.mvis.stages.metrics.ComputeAllenComplexityMetrics;
+import org.oceandsl.tools.mvis.stages.metrics.ModuleNodeCountCouplingStage;
+import org.oceandsl.tools.mvis.stages.metrics.NumberOfCallsStage;
+import org.oceandsl.tools.mvis.stages.metrics.OperationNodeCountCouplingStage;
 import org.slf4j.Logger;
 
 import kieker.analysis.graph.IGraph;
@@ -78,7 +80,7 @@ public class TeetimeConfiguration extends Configuration {
 
         /** Stages for statistics. */
         final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
-        final FunctionCallGraphStage functionCallGraphStage = new FunctionCallGraphStage(
+        final OperationCallGraphStage functionCallGraphStage = new OperationCallGraphStage(
                 parameterConfiguration.getSelector());
         final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
         final ModuleCallGraphStage moduleCallGraphStage = new ModuleCallGraphStage(
@@ -103,16 +105,13 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(statisticsDistributor.getNewOutputPort(), triggerStage.getInputPort());
         this.connectPorts(triggerStage.getOutputPort(), triggerDistributor.getInputPort());
 
-        final String[] groupA;
-        final String[] groupB;
-
         final IColorDependencyGraphBuilderConfiguration configuration = new ColorDependencyGraphBuilderConfiguration(
-                repository, groupA, groupB);
+                repository, parameterConfiguration.getSelector());
 
         /** operation graph. */
         if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.DOT_OP)
                 || parameterConfiguration.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
-            final DependencyGraphCreatorStage operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage(
+            final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
                     configuration, new ColorAssemblyLevelOperationDependencyGraphBuilderFactory());
             final Distributor<IGraph> graphsDistributor = new Distributor<>(new CopyByReferenceStrategy());
 
@@ -130,7 +129,7 @@ public class TeetimeConfiguration extends Configuration {
 
         /** component graph. */
         if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.DOT_COMPONENT)) {
-            final DependencyGraphCreatorStage componentDependencyGraphCreatorStage = new DependencyGraphCreatorStage(
+            final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> componentDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
                     configuration, new ColorAssemblyLevelComponentDependencyGraphBuilderFactory());
             final DotFileWriterStage componentDependencyDotFileWriterStage = new DotFileWriterStage(
                     new DedicatedFileNameMapper(parameterConfiguration.getOutputDirectory(), "component",

@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mvis;
+package org.oceandsl.tools.mvis.graph;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.architecture.model.stages.graph.ISelector;
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
@@ -27,15 +30,18 @@ import kieker.model.analysismodel.sources.SourceModel;
  * @author Reiner Jung
  *
  */
-public class SubtractSelector implements ISelector {
+public class SubtractSelector implements IGraphElementSelector {
 
     private SourceModel sourceModel;
-    private final String partition;
-    private final String filePrefix;
+    private final List<String> partitions;
+    private String filePrefix;
 
-    public SubtractSelector(final String partition) {
-        this.partition = partition;
-        this.filePrefix = "subtract" + partition;
+    public SubtractSelector(final String[] partitions) {
+        this.partitions = Arrays.asList(partitions);
+        this.filePrefix = "subtract";
+        for (final String partition : partitions) {
+            this.filePrefix += "-" + partition;
+        }
     }
 
     @Override
@@ -46,19 +52,19 @@ public class SubtractSelector implements ISelector {
     @Override
     public boolean nodeIsSelected(final EObject value) {
         final EList<String> sources = this.sourceModel.getSources().get(value);
-        if (sources.size() == 1) {
-            if (this.partition.equals(sources.get(0))) {
-                return true;
-            }
-        }
-        return false;
+        return this.isSelected(sources);
     }
 
     @Override
     public boolean edgeIsSelected(final AggregatedInvocation value) {
         final EList<String> sources = this.sourceModel.getSources().get(value);
-        if (sources.size() == 1) {
-            if (this.partition.equals(sources.get(0))) {
+        return this.isSelected(sources);
+    }
+
+    private boolean isSelected(final EList<String> sources) {
+        if (sources.size() == this.partitions.size()) {
+            if (sources.stream()
+                    .allMatch(source -> this.partitions.stream().anyMatch(element -> element.equals(source)))) {
                 return true;
             }
         }
@@ -68,5 +74,23 @@ public class SubtractSelector implements ISelector {
     @Override
     public String getFilePrefix() {
         return this.filePrefix;
+    }
+
+    @Override
+    public boolean isColorGroup(final EList<String> sources, final int group) {
+        if (group == 0) {
+            return this.isGroupSelected(sources, this.partitions);
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isGroupSelected(final EList<String> sources, final List<String> group) {
+        if (sources.size() == group.size()) {
+            if (sources.stream().allMatch(source -> group.stream().anyMatch(element -> element.equals(source)))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

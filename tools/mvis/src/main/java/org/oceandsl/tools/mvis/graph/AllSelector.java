@@ -13,27 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.stages.graph;
+package org.oceandsl.tools.mvis.graph;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 
 /**
- * Interface for a node and edge selector for graphs to realize diff and subtract.
- *
  * @author Reiner Jung
  *
  */
-public interface ISelector {
+public class AllSelector implements IGraphElementSelector {
 
-    void setRepository(ModelRepository repository);
+    @Override
+    public void setRepository(final ModelRepository repository) {
+        // nothing to do here
+    }
 
-    boolean nodeIsSelected(EObject value);
+    @Override
+    public boolean nodeIsSelected(final EObject value) {
+        return true;
+    }
 
-    boolean edgeIsSelected(AggregatedInvocation value);
+    @Override
+    public boolean edgeIsSelected(final AggregatedInvocation value) {
+        return true;
+    }
 
-    String getFilePrefix();
+    @Override
+    public String getFilePrefix() {
+        return "all";
+    }
+
+    @Override
+    public boolean isColorGroup(final EList<String> sources, final int group) {
+        return group == 0;
+    }
 
 }

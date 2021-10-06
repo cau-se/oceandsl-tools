@@ -45,23 +45,23 @@ import teetime.framework.OutputPort;
  * @since 1.0
  */
 public class TeetimeDataflowConfiguration extends Configuration {
-    public TeetimeDataflowConfiguration(final Logger logger, final Settings parameterConfiguration,
+    public TeetimeDataflowConfiguration(final Logger logger, final Settings settings,
             final ModelRepository repository) throws IOException, ValueConversionErrorException {
 
         OutputPort<DataAccess> readerDataflowPort;
 
         logger.info("Processing static call log");
         final CSVDataflowReaderStage readDataflowStage = new CSVDataflowReaderStage(
-                parameterConfiguration.getDataflowInputFile());
+                settings.getDataflowInputFile(), settings.getSplitSymbol());
 
         readerDataflowPort = readDataflowStage.getOutputPort();
 
-        if (parameterConfiguration.getComponentMapFile() != null) {
+        if (settings.getComponentMapFile() != null) {
             logger.info("Map based component definition");
         } else {
             logger.info("File based component definition");
             final FileBasedCleanupComponentInDataflowSignatureStage cleanupComponentDataflowSignatureStage = new FileBasedCleanupComponentInDataflowSignatureStage(
-                    parameterConfiguration.getCaseInsensitive());
+                    settings.getCaseInsensitive());
 
             this.connectPorts(readerDataflowPort, cleanupComponentDataflowSignatureStage.getInputPort());
 
@@ -71,16 +71,16 @@ public class TeetimeDataflowConfiguration extends Configuration {
         /** -- call based modeling -- */
         final TypeModelDataflowAssemblerStage typeModelDataflowAssemblerStage = new TypeModelDataflowAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
-                parameterConfiguration.getSourceLabel());
+                settings.getSourceLabel());
         final AssemblyModelDataflowAssemblerStage assemblyModelDataflowAssemblerStage = new AssemblyModelDataflowAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(AssemblyModel.class),
-                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+                repository.getModel(SourceModel.class), settings.getSourceLabel());
         final DeploymentModelDataflowAssemblerStage deploymentModelDataflowAssemblerStage = new DeploymentModelDataflowAssemblerStage(
                 repository.getModel(AssemblyModel.class), repository.getModel(DeploymentModel.class),
-                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+                repository.getModel(SourceModel.class), settings.getSourceLabel());
         final ExecutionModelDataflowAssemblerStage executionModelDataflowGenerationStage = new ExecutionModelDataflowAssemblerStage(
                 repository.getModel(ExecutionModel.class), repository.getModel(DeploymentModel.class),
-                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+                repository.getModel(SourceModel.class), settings.getSourceLabel());
         final CountUniqueDataflowCallsStage countUniqueDataflowCalls = new CountUniqueDataflowCallsStage(
                 repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
 

@@ -17,7 +17,11 @@ package org.oceandsl.tools.mvis;
 
 import com.beust.jcommander.IStringConverter;
 
-import org.oceandsl.architecture.model.stages.graph.ISelector;
+import org.oceandsl.tools.mvis.graph.AllSelector;
+import org.oceandsl.tools.mvis.graph.DiffSelector;
+import org.oceandsl.tools.mvis.graph.IntersectSelector;
+import org.oceandsl.tools.mvis.graph.SubtractSelector;
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 /**
  * Convert string to selector used in graph selection.
@@ -25,27 +29,24 @@ import org.oceandsl.architecture.model.stages.graph.ISelector;
  * @author Reiner Jung
  * @since 1.1
  */
-public class SelectorKindConverter implements IStringConverter<ISelector> {
-
-    private static final String DEFAULT_SELECTOR = "default";
-    private static final String DIFF_SELECTOR = "diff";
-    private static final String SUBTRACT_SELECTOR = "subtract";
-    private static final String INTERSECT_SELECTOR = "intersect";
+public class SelectorKindConverter implements IStringConverter<IGraphElementSelector> {
 
     @Override
-    public ISelector convert(final String value) {
+    public IGraphElementSelector convert(final String value) {
         final String parts[] = value.split(":");
         final String command = parts[0];
-        if (SelectorKindConverter.DEFAULT_SELECTOR.equals(command)) {
-            return new DefaultSelector();
-        } else if (SelectorKindConverter.DIFF_SELECTOR.equals(command)) {
-            return new DiffSelector(parts[1].split(","));
-        } else if (SelectorKindConverter.SUBTRACT_SELECTOR.equals(command)) {
-            return new SubtractSelector(parts[1]);
-        } else if (SelectorKindConverter.INTERSECT_SELECTOR.equals(command)) {
-            return new IntersectSelector(parts[1].split(","));
-        } else {
-            return new DefaultSelector();
+        final ESelectorKind selectorKind = ESelectorKind.valueOf(command.toUpperCase());
+        switch (selectorKind) {
+        case ALL:
+            return new AllSelector();
+        case DIFF:
+            return new DiffSelector(parts[1].split(","), parts[2].split(","));
+        case INTERSECT:
+            return new SubtractSelector(parts[1].split(","));
+        case SUBTRACT:
+            return new IntersectSelector(parts[1].split(","), parts[2].split(","));
+        default:
+            return new AllSelector();
         }
     }
 

@@ -42,7 +42,7 @@ public final class RepositoryUtils {
         System.out.println("---------------------");
     }
 
-    private static void print(final EObject object, final String offset) {
+    public static void print(final EObject object, final String offset) {
         object.eCrossReferences();
         System.out.println(offset + object.getClass().getCanonicalName());
         RepositoryUtils.printAttributes(object, offset + "  ");

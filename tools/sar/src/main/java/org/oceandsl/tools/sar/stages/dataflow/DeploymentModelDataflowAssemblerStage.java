@@ -53,10 +53,10 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
 
     @Override
     protected void execute(final DataAccess element) throws Exception {
-        final DeployedOperation operation = this.findOperation(element);
-        final DeployedStorage assemblyStorage = this.findOrCreateDataStorage(element, operation.getComponent());
+        final DeployedOperation deployedOperation = this.findOperation(element);
+        final DeployedStorage deployedStorage = this.findOrCreateDataStorage(element, deployedOperation.getComponent());
 
-        this.addObjectToSource(assemblyStorage);
+        this.addObjectToSource(deployedStorage);
         this.outputPort.send(element);
     }
 
@@ -98,21 +98,22 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
     }
 
     private DeployedOperation findOperation(final DataAccess element) {
-        final DeploymentContext context = this.deploymentModel.getDeploymentContexts().get(0).getValue();
-        if (context == null) {
+        final DeploymentContext deployedContext = this.deploymentModel.getDeploymentContexts().get(0).getValue();
+        if (deployedContext == null) {
             this.logger.error("Internal error: Data must contain at least one deployment context.");
             return null;
         } else {
-            DeployedComponent component = context.getComponents().get(element.getModule());
-            if (component == null) {
+            DeployedComponent deployedComponent = deployedContext.getComponents().get(element.getModule());
+            if (deployedComponent == null) {
                 this.logger.warn("Cannot find deployed component for {}", element.getModule());
 
-                component = DeploymentFactory.eINSTANCE.createDeployedComponent();
-                component.setSignature(element.getModule());
-                component.setAssemblyComponent(this.findAssemblyComponent(element.getModule()));
-                context.getComponents().put(element.getModule(), component);
+                deployedComponent = DeploymentFactory.eINSTANCE.createDeployedComponent();
+                deployedComponent.setSignature(element.getModule());
+                deployedComponent.setAssemblyComponent(this.findAssemblyComponent(element.getModule()));
+                deployedContext.getComponents().put(element.getModule(), deployedComponent);
+                addObjectToSource(deployedComponent);
             }
-            DeployedOperation deployedOperation = component.getContainedOperations().get(element.getOperation());
+            DeployedOperation deployedOperation = deployedComponent.getContainedOperations().get(element.getOperation());
             if (deployedOperation == null) {
                 this.logger.warn("Operation {} cannot be found in model.", element.getOperation());
 
@@ -122,7 +123,8 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
                         .get(element.getOperation());
                 deployedOperation = DeploymentFactory.eINSTANCE.createDeployedOperation();
                 deployedOperation.setAssemblyOperation(assemblyOperation);
-                component.getContainedOperations().put(element.getOperation(), deployedOperation);
+                deployedComponent.getContainedOperations().put(element.getOperation(), deployedOperation);
+                addObjectToSource(deployedOperation);
             }
             return deployedOperation;
         }

@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 /**
  * @author Reiner Jung
- * @since 1.0
+ * @since 1.1
  */
-package org.oceandsl.architecture.model.stages.metrics;
+package org.oceandsl.tools.mvis.stages.graph;

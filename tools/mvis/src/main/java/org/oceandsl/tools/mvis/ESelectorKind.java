@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+package org.oceandsl.tools.mvis;
 
 /**
  * @author Reiner Jung
  * @since 1.1
+ *
  */
-package org.oceandsl.architecture.model.stages.graph;
+public enum ESelectorKind {
+
+    ALL, DIFF, SUBTRACT, INTERSECT;
+}

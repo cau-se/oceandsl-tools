@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.stages.graph;
+package org.oceandsl.tools.mvis.stages.graph;
 
 import java.util.Map.Entry;
 
@@ -39,9 +39,9 @@ import teetime.stage.basic.AbstractTransformation;
 public class AllenDeployedArchitectureGraphStage
         extends AbstractTransformation<ModelRepository, Graph<Node<DeployedComponent>>> {
 
-    ISelector selector;
+    IGraphElementSelector selector;
 
-    public AllenDeployedArchitectureGraphStage(final ISelector selector) {
+    public AllenDeployedArchitectureGraphStage(final IGraphElementSelector selector) {
         this.selector = selector;
     }
 

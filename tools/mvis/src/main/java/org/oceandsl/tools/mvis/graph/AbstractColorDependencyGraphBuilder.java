@@ -18,6 +18,7 @@ package org.oceandsl.tools.mvis.graph;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.graph.IVertex;
@@ -40,33 +41,22 @@ import kieker.model.analysismodel.statistics.Statistics;
 public abstract class AbstractColorDependencyGraphBuilder extends AbstractDependencyGraphBuilder {
 
     private final SourceModel sourcesModel;
-    private final String[] groupA;
-    private final String[] groupB;
-    private final String[] intersect;
+    private final IGraphElementSelector selector;
 
-    public AbstractColorDependencyGraphBuilder(final ModelRepository repository, final String[] groupA,
-            final String[] groupB) {
+    public AbstractColorDependencyGraphBuilder(final ModelRepository repository, final IGraphElementSelector selector) {
         super(repository);
         this.sourcesModel = repository.getModel(SourceModel.class);
-        this.groupA = groupA;
-        this.groupB = groupB;
-        this.intersect = new String[groupA.length + groupB.length];
-        for (int i = 0; i < groupA.length; i++) {
-            this.intersect[i] = groupA[i];
-        }
-        for (int i = 0; i < groupB.length; i++) {
-            this.intersect[i + groupA.length] = groupB[i];
-        }
+        this.selector = selector;
     }
 
     protected String selectForegroundColor(final EObject object) {
         final EList<String> sources = this.sourcesModel.getSources().get(object);
         if (sources != null) {
-            if (this.contains(sources, this.intersect)) {
+            if (this.selector.isColorGroup(sources, 0)) {
                 return "#000000";
-            } else if (this.contains(sources, this.groupA)) {
+            } else if (this.selector.isColorGroup(sources, 1)) {
                 return "#0000ff"; // blue for static
-            } else if (this.contains(sources, this.groupB)) {
+            } else if (this.selector.isColorGroup(sources, 2)) {
                 return "#00ff00"; // green on dynamic
             } else {
                 return "#fafafa"; // other objects
@@ -79,11 +69,11 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
     protected String selectBackgroundColor(final EObject object) {
         final EList<String> sources = this.sourcesModel.getSources().get(object);
         if (sources != null) {
-            if (this.contains(sources, this.intersect)) {
+            if (this.selector.isColorGroup(sources, 0)) {
                 return "#ffffff";
-            } else if (this.contains(sources, this.groupA)) {
+            } else if (this.selector.isColorGroup(sources, 1)) {
                 return "#a0a0ff"; // blue for static
-            } else if (this.contains(sources, this.groupB)) {
+            } else if (this.selector.isColorGroup(sources, 2)) {
                 return "#90ff90"; // green on dynamic
             } else {
                 return "#eaeaea"; // other objects
@@ -137,11 +127,4 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
 
     protected abstract IVertex addStorageVertex(final DeployedStorage deployedStorage);
 
-    private boolean contains(final EList<String> operationSource, final String... labels) {
-        boolean result = true;
-        for (final String label : labels) {
-            result &= operationSource.contains(label);
-        }
-        return result;
-    }
 }

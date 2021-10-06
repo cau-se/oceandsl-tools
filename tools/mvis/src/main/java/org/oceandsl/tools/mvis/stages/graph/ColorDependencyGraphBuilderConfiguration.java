@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mvis;
+package org.oceandsl.tools.mvis.stages.graph;
 
 import org.oceandsl.tools.mvis.graph.IColorDependencyGraphBuilderConfiguration;
 
@@ -26,14 +26,11 @@ import kieker.analysis.stage.model.ModelRepository;
 public class ColorDependencyGraphBuilderConfiguration implements IColorDependencyGraphBuilderConfiguration {
 
     private final ModelRepository modelRepository;
-    private final String[] groupA;
-    private final String[] groupB;
+    private final IGraphElementSelector selector;
 
-    public ColorDependencyGraphBuilderConfiguration(final ModelRepository modelRepository, final String[] groupA,
-            final String[] groupB) {
+    public ColorDependencyGraphBuilderConfiguration(final ModelRepository modelRepository, final IGraphElementSelector selector) {
         this.modelRepository = modelRepository;
-        this.groupA = groupA;
-        this.groupB = groupB;
+        this.selector = selector;
     }
 
     @Override
@@ -42,13 +39,8 @@ public class ColorDependencyGraphBuilderConfiguration implements IColorDependenc
     }
 
     @Override
-    public String[] getGroupA() {
-        return this.groupA;
-    }
-
-    @Override
-    public String[] getGroupB() {
-        return this.groupB;
+    public IGraphElementSelector getSelector() {
+        return this.selector;
     }
 
 }

@@ -13,28 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mvis.graph;
-
-import kieker.analysis.graph.dependency.IDependencyGraphBuilder;
-import kieker.analysis.graph.dependency.IDependencyGraphBuilderFactory;
-
 /**
  * @author Reiner Jung
  * @since 1.0
- *
  */
-public class ColorAssemblyLevelComponentDependencyGraphBuilderFactory
-        implements IDependencyGraphBuilderFactory<IColorDependencyGraphBuilderConfiguration> {
-
-    public ColorAssemblyLevelComponentDependencyGraphBuilderFactory() {
-        super();
-    }
-
-    @Override
-    public IDependencyGraphBuilder createDependencyGraphBuilder(
-            final IColorDependencyGraphBuilderConfiguration configuration) {
-        return new ColorAssemblyLevelComponentDependencyGraphBuilder(configuration.getModelRepository(),
-                configuration.getSelector());
-    }
-
-}
+package org.oceandsl.tools.mvis.stages.metrics;

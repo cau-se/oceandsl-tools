@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.stages.metrics;
+package org.oceandsl.tools.mvis.stages.metrics;
 
 import org.oceandsl.architecture.model.data.table.LongValueHandler;
 import org.oceandsl.architecture.model.data.table.StringValueHandler;
@@ -24,47 +24,52 @@ import kieker.analysis.graph.IEdge;
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.graph.IVertex;
 import kieker.common.exception.ConfigurationException;
-import kieker.model.analysismodel.assembly.AssemblyComponent;
-import kieker.model.analysismodel.deployment.DeployedComponent;
-import kieker.model.analysismodel.type.ComponentType;
+import kieker.model.analysismodel.assembly.AssemblyOperation;
+import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.type.OperationType;
 import teetime.stage.basic.AbstractTransformation;
 
 /**
- * Counts the incoming and outgoing edges for each node. Where nodes represent modules/components in
- * the architecture.
+ * Counts the number of incoming and outgoing edges of each node. Nodes represent functions or
+ * operations.
  *
  * @author Reiner Jung
  * @since 1.1
  */
-public class ModuleNodeCountCouplingStage extends AbstractTransformation<IGraph, Table> {
+public class OperationNodeCountCouplingStage extends AbstractTransformation<IGraph, Table> {
 
     @Override
     protected void execute(final IGraph graph) throws Exception {
         final Table result = new Table(graph.getName(), new StringValueHandler("module"),
-                new LongValueHandler("in-edges"), new LongValueHandler("out-edges"));
+                new StringValueHandler("operation"), new LongValueHandler("in-edges"),
+                new LongValueHandler("out-edges"));
 
         for (final IVertex vertex : graph.getVertices()) {
             final long inEdges = this.countEdges(vertex.getEdges(Direction.IN));
             final long outEdges = this.countEdges(vertex.getEdges(Direction.OUT));
-            result.addRow(this.getFilepath(vertex.getId()), inEdges, outEdges);
+            result.addRow(this.getFilepath(vertex.getId()), this.getFunction(vertex.getId()), inEdges, outEdges);
         }
 
         this.outputPort.send(result);
     }
 
     private String getFilepath(final Object id) throws ConfigurationException {
-        return this.getComponentType(id).getSignature();
+        return this.getOperationType(id).getComponentType().getSignature();
     }
 
-    private ComponentType getComponentType(final Object id) throws ConfigurationException {
-        if (id instanceof DeployedComponent) {
-            return this.getComponentType(((DeployedComponent) id).getAssemblyComponent());
-        } else if (id instanceof AssemblyComponent) {
-            return this.getComponentType(((AssemblyComponent) id).getComponentType());
-        } else if (id instanceof ComponentType) {
-            return (ComponentType) id;
+    private String getFunction(final Object id) throws ConfigurationException {
+        return this.getOperationType(id).getSignature();
+    }
+
+    private OperationType getOperationType(final Object id) throws ConfigurationException {
+        if (id instanceof DeployedOperation) {
+            return this.getOperationType(((DeployedOperation) id).getAssemblyOperation());
+        } else if (id instanceof AssemblyOperation) {
+            return this.getOperationType(((AssemblyOperation) id).getOperationType());
+        } else if (id instanceof OperationType) {
+            return (OperationType) id;
         } else {
-            throw new ConfigurationException("Vertex does not relate to an operation.");
+            throw new ConfigurationException("Vertex does not relate to a operation.");
         }
     }
 

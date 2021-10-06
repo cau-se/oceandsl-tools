@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
+
 import kieker.analysis.graph.dependency.IDependencyGraphBuilderConfiguration;
 
 /**
@@ -23,7 +25,5 @@ import kieker.analysis.graph.dependency.IDependencyGraphBuilderConfiguration;
  */
 public interface IColorDependencyGraphBuilderConfiguration extends IDependencyGraphBuilderConfiguration {
 
-    String[] getGroupA();
-
-    String[] getGroupB();
+    IGraphElementSelector getSelector();
 }

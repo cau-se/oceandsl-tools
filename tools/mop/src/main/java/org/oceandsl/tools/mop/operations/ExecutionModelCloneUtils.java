@@ -22,6 +22,7 @@ import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.deployment.impl.EStringToDeployedComponentMapEntryImpl;
 import kieker.model.analysismodel.deployment.impl.EStringToDeployedOperationMapEntryImpl;
+import kieker.model.analysismodel.deployment.impl.EStringToDeployedStorageMapEntryImpl;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.AggregatedStorageAccess;
 import kieker.model.analysismodel.execution.ExecutionFactory;
@@ -71,9 +72,9 @@ public final class ExecutionModelCloneUtils {
     }
 
     private static DeployedStorage findDeployedStorage(final DeploymentModel newModel, final DeployedStorage storage) {
-        final EStringToDeployedOperationMapEntryImpl mapOperationEntry = (EStringToDeployedOperationMapEntryImpl) storage
+        final EStringToDeployedStorageMapEntryImpl mapStorageEntry = (EStringToDeployedStorageMapEntryImpl) storage
                 .eContainer();
-        final DeployedComponent component = (DeployedComponent) mapOperationEntry.eContainer();
+        final DeployedComponent component = (DeployedComponent) mapStorageEntry.eContainer();
 
         final EStringToDeployedComponentMapEntryImpl mapComponentEntry = (EStringToDeployedComponentMapEntryImpl) component
                 .eContainer();

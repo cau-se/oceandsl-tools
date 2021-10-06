@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.stages.metrics;
+package org.oceandsl.tools.mvis.stages.metrics;
 
 import com.google.common.graph.Graph;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 
-import org.oceandsl.architecture.model.stages.graph.KiekerNode;
+import org.oceandsl.tools.mvis.stages.graph.KiekerNode;
 
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;

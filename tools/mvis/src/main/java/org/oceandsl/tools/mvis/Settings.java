@@ -21,7 +21,7 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
 
-import org.oceandsl.architecture.model.stages.graph.ISelector;
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 /**
  * All settings including command line parameters for the analysis.
@@ -32,7 +32,7 @@ import org.oceandsl.architecture.model.stages.graph.ISelector;
 public class Settings {
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, converter = PathConverter.class, description = "Input Kieker log directory")
+            "--input" }, required = true, converter = PathConverter.class, description = "Input model directory")
     private Path inputDirectory;
 
     @Parameter(names = { "-o",
@@ -45,7 +45,7 @@ public class Settings {
 
     @Parameter(names = { "-s",
             "--selector" }, required = true, converter = SelectorKindConverter.class, description = "Set architecture graph selector")
-    private ISelector selector;
+    private IGraphElementSelector selector;
 
     @Parameter(names = { "-g",
             "--graphs" }, required = false, variableArity = true, converter = GraphTypeConverter.class, description = "Specify which output graphs must be generated")
@@ -67,7 +67,7 @@ public class Settings {
         return this.outputGraphs;
     }
 
-    public ISelector getSelector() {
+    public IGraphElementSelector getSelector() {
         return this.selector;
     }
 }
