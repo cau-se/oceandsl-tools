@@ -35,12 +35,12 @@ public class CSVFixPathStage extends AbstractFilter<CallerCallee> {
 
     Map<String, String> functionToFileMap = new HashMap<>();
 
-    public CSVFixPathStage(final List<Path> functionMapPaths) throws IOException {
+    public CSVFixPathStage(final List<Path> functionMapPaths, String splitSymbol) throws IOException {
         for (final Path functionMapPath : functionMapPaths) {
             final BufferedReader reader = Files.newBufferedReader(functionMapPath);
             String line = reader.readLine();
             while ((line = reader.readLine()) != null) {
-                final String[] values = line.split(",");
+                final String[] values = line.split(splitSymbol);
                 if (values.length >= 2) {
                     this.functionToFileMap.put(values[1].trim(), values[0].trim());
                 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
 import org.oceandsl.tools.sar.stages.dataflow.AssemblyModelDataflowAssemblerStage;
 import org.oceandsl.tools.sar.stages.dataflow.CSVDataflowReaderStage;
+import org.oceandsl.tools.sar.stages.dataflow.CountUniqueDataflowCallsStage;
 import org.oceandsl.tools.sar.stages.dataflow.DataAccess;
 import org.oceandsl.tools.sar.stages.dataflow.DeploymentModelDataflowAssemblerStage;
 import org.oceandsl.tools.sar.stages.dataflow.ExecutionModelDataflowAssemblerStage;
@@ -32,6 +33,7 @@ import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.TypeModel;
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
@@ -43,23 +45,23 @@ import teetime.framework.OutputPort;
  * @since 1.0
  */
 public class TeetimeDataflowConfiguration extends Configuration {
-    public TeetimeDataflowConfiguration(final Logger logger, final Settings parameterConfiguration,
+    public TeetimeDataflowConfiguration(final Logger logger, final Settings settings,
             final ModelRepository repository) throws IOException, ValueConversionErrorException {
 
         OutputPort<DataAccess> readerDataflowPort;
 
         logger.info("Processing static call log");
         final CSVDataflowReaderStage readDataflowStage = new CSVDataflowReaderStage(
-                parameterConfiguration.getDataflowInputFile());
+                settings.getDataflowInputFile(), settings.getSplitSymbol());
 
         readerDataflowPort = readDataflowStage.getOutputPort();
 
-        if (parameterConfiguration.getComponentMapFile() != null) {
+        if (settings.getComponentMapFile() != null) {
             logger.info("Map based component definition");
         } else {
             logger.info("File based component definition");
             final FileBasedCleanupComponentInDataflowSignatureStage cleanupComponentDataflowSignatureStage = new FileBasedCleanupComponentInDataflowSignatureStage(
-                    parameterConfiguration.getCaseInsensitive());
+                    settings.getCaseInsensitive());
 
             this.connectPorts(readerDataflowPort, cleanupComponentDataflowSignatureStage.getInputPort());
 
@@ -69,16 +71,18 @@ public class TeetimeDataflowConfiguration extends Configuration {
         /** -- call based modeling -- */
         final TypeModelDataflowAssemblerStage typeModelDataflowAssemblerStage = new TypeModelDataflowAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
-                parameterConfiguration.getSourceLabel());
+                settings.getSourceLabel());
         final AssemblyModelDataflowAssemblerStage assemblyModelDataflowAssemblerStage = new AssemblyModelDataflowAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(AssemblyModel.class),
-                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+                repository.getModel(SourceModel.class), settings.getSourceLabel());
         final DeploymentModelDataflowAssemblerStage deploymentModelDataflowAssemblerStage = new DeploymentModelDataflowAssemblerStage(
                 repository.getModel(AssemblyModel.class), repository.getModel(DeploymentModel.class),
-                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+                repository.getModel(SourceModel.class), settings.getSourceLabel());
         final ExecutionModelDataflowAssemblerStage executionModelDataflowGenerationStage = new ExecutionModelDataflowAssemblerStage(
                 repository.getModel(ExecutionModel.class), repository.getModel(DeploymentModel.class),
-                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+                repository.getModel(SourceModel.class), settings.getSourceLabel());
+        final CountUniqueDataflowCallsStage countUniqueDataflowCalls = new CountUniqueDataflowCallsStage(
+                repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
 
         /** connecting ports. */
         this.connectPorts(readerDataflowPort, typeModelDataflowAssemblerStage.getInputPort());
@@ -88,5 +92,6 @@ public class TeetimeDataflowConfiguration extends Configuration {
                 deploymentModelDataflowAssemblerStage.getInputPort());
         this.connectPorts(deploymentModelDataflowAssemblerStage.getOutputPort(),
                 executionModelDataflowGenerationStage.getInputPort());
+        this.connectPorts(executionModelDataflowGenerationStage.getOutputPort(), countUniqueDataflowCalls.getInputPort());
     }
 }

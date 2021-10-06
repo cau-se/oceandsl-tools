@@ -30,13 +30,16 @@ import com.beust.jcommander.converters.PathConverter;
 public class Settings {
 
     @Parameter(names = { "-i",
-            "--call-input" }, required = true, converter = PathConverter.class, description = "Function call CSV file")
+            "--call-input" }, required = false, converter = PathConverter.class, description = "Function call CSV file")
     private Path operationCallInputFile;
 
     @Parameter(names = { "-j",
-            "--dataflow-input" }, required = true, converter = PathConverter.class, description = "Dataflow CSV file")
+            "--dataflow-input" }, required = false, converter = PathConverter.class, description = "Dataflow CSV file")
     private Path dataflowInputFile;
-
+    
+    @Parameter(names = { "-s", "--separation-char" }, required = false, description = "Separation character for CSV files, default is comma (,)")
+    private String splitSymbol;
+    
     @Parameter(names = { "-f",
             "--function-names" }, required = false, variableArity = true, converter = PathConverter.class, description = "Function file map CSV file")
     private List<Path> functionNameFiles;
@@ -70,6 +73,13 @@ public class Settings {
     public List<Path> getFunctionNameFiles() {
         return this.functionNameFiles;
     }
+    
+    public String getSplitSymbol() {
+    	if (splitSymbol == null)
+    		return ",";
+    	else
+    		return splitSymbol;
+	}
 
     public Path getOutputDirectory() {
         return this.outputDirectory;

@@ -29,17 +29,20 @@ import teetime.framework.AbstractProducerStage;
 public class CSVDataflowReaderStage extends AbstractProducerStage<DataAccess> {
 
     private final BufferedReader reader;
+	private String splitSymbol;
 
     /**
      * Read a single CSV file.
      *
      * @param path
      *            file path
+     * @param splitSymbol string containing the split symbol for the CSV file
      * @throws IOException
      *             when a stream could not be opened.
      */
-    public CSVDataflowReaderStage(final Path path) throws IOException {
+    public CSVDataflowReaderStage(final Path path, String splitSymbol) throws IOException {
         this.reader = Files.newBufferedReader(path);
+        this.splitSymbol = splitSymbol;
     }
 
     @Override
@@ -48,7 +51,7 @@ public class CSVDataflowReaderStage extends AbstractProducerStage<DataAccess> {
         this.reader.readLine();
         String line;
         while ((line = this.reader.readLine()) != null) {
-            final String[] values = line.split(",");
+            final String[] values = line.split(this.splitSymbol);
             if (values.length >= 4) {
                 try {
                     this.outputPort.send(new DataAccess(values[0].trim(), values[1].trim(),

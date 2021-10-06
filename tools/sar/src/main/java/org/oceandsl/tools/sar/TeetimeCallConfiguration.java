@@ -57,38 +57,38 @@ import teetime.framework.OutputPort;
  * @since 1.0
  */
 public class TeetimeCallConfiguration extends Configuration {
-    public TeetimeCallConfiguration(final Logger logger, final Settings parameterConfiguration,
+    public TeetimeCallConfiguration(final Logger logger, final Settings settings,
             final ModelRepository repository) throws IOException, ValueConversionErrorException {
-
+    	
         OutputPort<CallerCallee> readerPort;
 
         logger.info("Processing static call log");
         final CSVFunctionCallReaderStage readCsvStage = new CSVFunctionCallReaderStage(
-                parameterConfiguration.getOperationCallInputFile());
+                settings.getOperationCallInputFile(), settings.getSplitSymbol());
 
         readerPort = readCsvStage.getOutputPort();
 
-        if ((parameterConfiguration.getFunctionNameFiles() != null)
-                && !parameterConfiguration.getFunctionNameFiles().isEmpty()) {
-            final CSVFixPathStage fixPathStage = new CSVFixPathStage(parameterConfiguration.getFunctionNameFiles());
+        if ((settings.getFunctionNameFiles() != null)
+                && !settings.getFunctionNameFiles().isEmpty()) {
+            final CSVFixPathStage fixPathStage = new CSVFixPathStage(settings.getFunctionNameFiles(), settings.getSplitSymbol());
             this.connectPorts(readerPort, fixPathStage.getInputPort());
             readerPort = fixPathStage.getOutputPort();
         }
-        final CSVMapperStage mapperStage = new CSVMapperStage(parameterConfiguration.getCaseInsensitive());
+        final CSVMapperStage mapperStage = new CSVMapperStage(settings.getCaseInsensitive());
         this.connectPorts(readerPort, mapperStage.getInputPort());
         readerPort = mapperStage.getOutputPort();
 
-        if (parameterConfiguration.getComponentMapFile() != null) {
+        if (settings.getComponentMapFile() != null) {
             logger.info("Map based component definition");
             final MapBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new MapBasedCleanupComponentSignatureStage(
-                    parameterConfiguration.getComponentMapFile(), parameterConfiguration.getCaseInsensitive());
+                    settings.getComponentMapFile(), settings.getCaseInsensitive());
 
             this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
             readerPort = cleanupComponentSignatureStage.getOutputPort();
         } else {
             logger.info("File based component definition");
             final FileBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new FileBasedCleanupComponentSignatureStage(
-                    parameterConfiguration.getCaseInsensitive());
+                    settings.getCaseInsensitive());
 
             this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
 
@@ -106,8 +106,8 @@ public class TeetimeCallConfiguration extends Configuration {
                 final Path path = Paths.get(signature);
                 final String name = path.getName(path.getNameCount() - 1).toString();
                 final String rest = (path.getParent() != null)
-                        ? parameterConfiguration.getExperimentName() + "." + path.getParent().toString()
-                        : parameterConfiguration.getExperimentName();
+                        ? settings.getExperimentName() + "." + path.getParent().toString()
+                        : settings.getExperimentName();
                 componentType.setName(name);
                 componentType.setPackage(rest);
             }
@@ -124,24 +124,24 @@ public class TeetimeCallConfiguration extends Configuration {
         };
 
         final OperationAndCall4StaticDataStage operationAndCallStage = new OperationAndCall4StaticDataStage(
-                parameterConfiguration.getHostname());
+                settings.getHostname());
         /** -- call based modeling -- */
         final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
-                parameterConfiguration.getSourceLabel(), componentSignatureExtractor, operationSignatureExtractor);
+                settings.getSourceLabel(), componentSignatureExtractor, operationSignatureExtractor);
         final AssemblyModelAssemblerStage assemblyModelAssemblerStage = new AssemblyModelAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(AssemblyModel.class),
-                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+                repository.getModel(SourceModel.class), settings.getSourceLabel());
         final DeploymentModelAssemblerStage deploymentModelAssemblerStage = new DeploymentModelAssemblerStage(
                 repository.getModel(AssemblyModel.class), repository.getModel(DeploymentModel.class),
-                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+                repository.getModel(SourceModel.class), settings.getSourceLabel());
 
         final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
                 repository.getModel(DeploymentModel.class));
 
         final ExecutionModelAssemblerStage executionModelGenerationStage = new ExecutionModelAssemblerStage(
                 new ExecutionModelAssembler(repository.getModel(ExecutionModel.class),
-                        repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel()));
+                        repository.getModel(SourceModel.class), settings.getSourceLabel()));
 
         final CountUniqueCallsStage countUniqueCalls = new CountUniqueCallsStage(
                 repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
