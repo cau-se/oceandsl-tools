@@ -45,14 +45,14 @@ import teetime.framework.OutputPort;
  * @since 1.0
  */
 public class TeetimeDataflowConfiguration extends Configuration {
-    public TeetimeDataflowConfiguration(final Logger logger, final Settings settings,
-            final ModelRepository repository) throws IOException, ValueConversionErrorException {
+    public TeetimeDataflowConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
+            throws IOException, ValueConversionErrorException {
 
         OutputPort<DataAccess> readerDataflowPort;
 
         logger.info("Processing static call log");
-        final CSVDataflowReaderStage readDataflowStage = new CSVDataflowReaderStage(
-                settings.getDataflowInputFile(), settings.getSplitSymbol());
+        final CSVDataflowReaderStage readDataflowStage = new CSVDataflowReaderStage(settings.getDataflowInputFile(),
+                settings.getDataflowSplitSymbol());
 
         readerDataflowPort = readDataflowStage.getOutputPort();
 
@@ -92,6 +92,7 @@ public class TeetimeDataflowConfiguration extends Configuration {
                 deploymentModelDataflowAssemblerStage.getInputPort());
         this.connectPorts(deploymentModelDataflowAssemblerStage.getOutputPort(),
                 executionModelDataflowGenerationStage.getInputPort());
-        this.connectPorts(executionModelDataflowGenerationStage.getOutputPort(), countUniqueDataflowCalls.getInputPort());
+        this.connectPorts(executionModelDataflowGenerationStage.getOutputPort(),
+                countUniqueDataflowCalls.getInputPort());
     }
 }

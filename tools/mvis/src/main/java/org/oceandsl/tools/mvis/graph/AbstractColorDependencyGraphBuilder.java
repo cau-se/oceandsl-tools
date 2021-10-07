@@ -79,7 +79,7 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
                 return "#eaeaea"; // other objects
             }
         } else {
-            return "#f000f0"; // pink on error
+            return "#d000d0"; // pink on error
         }
     }
 

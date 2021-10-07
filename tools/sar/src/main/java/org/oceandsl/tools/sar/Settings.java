@@ -36,10 +36,19 @@ public class Settings {
     @Parameter(names = { "-j",
             "--dataflow-input" }, required = false, converter = PathConverter.class, description = "Dataflow CSV file")
     private Path dataflowInputFile;
-    
-    @Parameter(names = { "-s", "--separation-char" }, required = false, description = "Separation character for CSV files, default is comma (,)")
-    private String splitSymbol;
-    
+
+    @Parameter(names = { "-cs",
+            "--call-separation-char" }, required = false, description = "Separation character for operation call CSV files, default is comma (,)")
+    private String callSplitSymbol;
+
+    @Parameter(names = { "-ds",
+            "--dataflow-separation-char" }, required = false, description = "Separation character for dataflow CSV files, default is comma (,)")
+    private String dataflowSplitSymbol;
+
+    @Parameter(names = { "-ns",
+            "--names-separation-char" }, required = false, description = "Separation character for function name lists CSV files, default is comma (,)")
+    private String namesSplitSymbol;
+
     @Parameter(names = { "-f",
             "--function-names" }, required = false, variableArity = true, converter = PathConverter.class, description = "Function file map CSV file")
     private List<Path> functionNameFiles;
@@ -73,13 +82,30 @@ public class Settings {
     public List<Path> getFunctionNameFiles() {
         return this.functionNameFiles;
     }
-    
-    public String getSplitSymbol() {
-    	if (splitSymbol == null)
-    		return ",";
-    	else
-    		return splitSymbol;
-	}
+
+    public String getCallSplitSymbol() {
+        if (this.callSplitSymbol == null) {
+            return ",";
+        } else {
+            return this.callSplitSymbol;
+        }
+    }
+
+    public String getDataflowSplitSymbol() {
+        if (this.dataflowSplitSymbol == null) {
+            return ",";
+        } else {
+            return this.dataflowSplitSymbol;
+        }
+    }
+
+    public String getNamesSplitSymbol() {
+        if (this.namesSplitSymbol == null) {
+            return ",";
+        } else {
+            return this.namesSplitSymbol;
+        }
+    }
 
     public Path getOutputDirectory() {
         return this.outputDirectory;

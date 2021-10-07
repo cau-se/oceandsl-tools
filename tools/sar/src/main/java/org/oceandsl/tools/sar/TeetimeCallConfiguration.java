@@ -57,20 +57,20 @@ import teetime.framework.OutputPort;
  * @since 1.0
  */
 public class TeetimeCallConfiguration extends Configuration {
-    public TeetimeCallConfiguration(final Logger logger, final Settings settings,
-            final ModelRepository repository) throws IOException, ValueConversionErrorException {
-    	
+    public TeetimeCallConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
+            throws IOException, ValueConversionErrorException {
+
         OutputPort<CallerCallee> readerPort;
 
         logger.info("Processing static call log");
         final CSVFunctionCallReaderStage readCsvStage = new CSVFunctionCallReaderStage(
-                settings.getOperationCallInputFile(), settings.getSplitSymbol());
+                settings.getOperationCallInputFile(), settings.getCallSplitSymbol());
 
         readerPort = readCsvStage.getOutputPort();
 
-        if ((settings.getFunctionNameFiles() != null)
-                && !settings.getFunctionNameFiles().isEmpty()) {
-            final CSVFixPathStage fixPathStage = new CSVFixPathStage(settings.getFunctionNameFiles(), settings.getSplitSymbol());
+        if ((settings.getFunctionNameFiles() != null) && !settings.getFunctionNameFiles().isEmpty()) {
+            final CSVFixPathStage fixPathStage = new CSVFixPathStage(settings.getFunctionNameFiles(),
+                    settings.getNamesSplitSymbol());
             this.connectPorts(readerPort, fixPathStage.getInputPort());
             readerPort = fixPathStage.getOutputPort();
         }
@@ -127,8 +127,8 @@ public class TeetimeCallConfiguration extends Configuration {
                 settings.getHostname());
         /** -- call based modeling -- */
         final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
-                repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
-                settings.getSourceLabel(), componentSignatureExtractor, operationSignatureExtractor);
+                repository.getModel(TypeModel.class), repository.getModel(SourceModel.class), settings.getSourceLabel(),
+                componentSignatureExtractor, operationSignatureExtractor);
         final AssemblyModelAssemblerStage assemblyModelAssemblerStage = new AssemblyModelAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(AssemblyModel.class),
                 repository.getModel(SourceModel.class), settings.getSourceLabel());
