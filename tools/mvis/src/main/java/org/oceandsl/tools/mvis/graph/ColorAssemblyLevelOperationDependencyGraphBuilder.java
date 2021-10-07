@@ -72,7 +72,7 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         operationVertex.setPropertyIfAbsent(PropertyConstants.PARAMETER_TYPES,
                 operation.getOperationType().getParameterTypes());
         operationVertex.setPropertyIfAbsent(ExtraConstants.FOREGROUND_COLOR, this.selectForegroundColor(operation));
-        componentVertex.setPropertyIfAbsent(ExtraConstants.BACKGROUND_COLOR, this.selectBackgroundColor(operation));
+        operationVertex.setPropertyIfAbsent(ExtraConstants.BACKGROUND_COLOR, this.selectBackgroundColor(operation));
 
         this.responseTimeDecorator.decorate(operationVertex, operation);
 
