@@ -55,6 +55,7 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
         final Tuple<DeployedOperation, DeployedStorage> key = ExecutionFactory.eINSTANCE.createTuple();
         key.setFirst(callerOperation);
         key.setSecond(accessedStorage);
+        this.addObjectToSource(key);
 
         AggregatedStorageAccess aggregatedStorageAccess = this.executionModel.getAggregatedStorageAccesses().get(key);
         if (aggregatedStorageAccess == null) {
@@ -63,6 +64,7 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
             aggregatedStorageAccess.setStorage(accessedStorage);
             aggregatedStorageAccess.setDirection(this.convertDirection(element.getDirection()));
             this.executionModel.getAggregatedStorageAccesses().put(key, aggregatedStorageAccess);
+            this.addObjectToSource(aggregatedStorageAccess);
         } else {
             final EDirection newDirection = this.convertDirection(element.getDirection());
             if (aggregatedStorageAccess.getDirection() == EDirection.READ) {

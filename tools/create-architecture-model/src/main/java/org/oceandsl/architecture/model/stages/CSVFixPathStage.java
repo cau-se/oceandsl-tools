@@ -19,12 +19,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.oceandsl.analysis.CallerCallee;
 
+import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractFilter;
 
 /**
@@ -34,6 +36,8 @@ import teetime.stage.basic.AbstractFilter;
 public class CSVFixPathStage extends AbstractFilter<CallerCallee> {
 
     Map<String, String> functionToFileMap = new HashMap<>();
+	private OutputPort<String> missingFunctionOutputPort = this.createOutputPort(String.class);
+	private List<String> missingFunctionNames = new ArrayList<>();
 
     public CSVFixPathStage(final List<Path> functionMapPaths, String splitSymbol) throws IOException {
         for (final Path functionMapPath : functionMapPaths) {
@@ -63,11 +67,19 @@ public class CSVFixPathStage extends AbstractFilter<CallerCallee> {
     private String findPath(final String functionName) {
         final String path = this.functionToFileMap.get(functionName);
         if (path == null) {
-            this.logger.error("Missing function entry for {}", functionName);
+            if (!this.missingFunctionNames.contains(functionName)) {
+                this.logger.warn("Missing function entry for {}", functionName);
+            	this.missingFunctionNames.add(functionName);
+            	this.missingFunctionOutputPort.send(functionName);
+            }
             return "";
         } else {
             return path;
         }
     }
+
+	public OutputPort<String> getMissingFunctionOutputPort() {
+		return this.missingFunctionOutputPort;
+	}
 
 }

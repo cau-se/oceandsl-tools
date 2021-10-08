@@ -52,7 +52,10 @@ public class Settings {
     @Parameter(names = { "-f",
             "--function-names" }, required = false, variableArity = true, converter = PathConverter.class, description = "Function file map CSV file")
     private List<Path> functionNameFiles;
-
+    
+    @Parameter(names = { "-m", "--missing-functions" }, required=false, converter = PathConverter.class, description = "Output file for the list of function without an associated file")
+    private Path missingFunctionsFile;
+    
     @Parameter(names = { "-o",
             "--output" }, required = true, converter = PathConverter.class, description = "Output directory to store graphics and statistics")
     private Path outputDirectory;
@@ -134,4 +137,8 @@ public class Settings {
     public Path getDataflowInputFile() {
         return this.dataflowInputFile;
     }
+
+	public Path getMissingFunctionsFile() {
+		return this.missingFunctionsFile;
+	}
 }

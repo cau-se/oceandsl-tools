@@ -28,6 +28,7 @@ import org.oceandsl.architecture.model.stages.CountUniqueCallsStage;
 import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
+import org.oceandsl.tools.sar.stages.StringFileWriterSink;
 import org.slf4j.Logger;
 
 import kieker.analysis.signature.IComponentSignatureExtractor;
@@ -71,6 +72,10 @@ public class TeetimeCallConfiguration extends Configuration {
         if ((settings.getFunctionNameFiles() != null) && !settings.getFunctionNameFiles().isEmpty()) {
             final CSVFixPathStage fixPathStage = new CSVFixPathStage(settings.getFunctionNameFiles(),
                     settings.getNamesSplitSymbol());
+            if (settings.getMissingFunctionsFile() != null) {
+            	final StringFileWriterSink missingFunctionsListSink = new StringFileWriterSink(settings.getMissingFunctionsFile());
+                this.connectPorts(fixPathStage.getMissingFunctionOutputPort(), missingFunctionsListSink.getInputPort());
+            }
             this.connectPorts(readerPort, fixPathStage.getInputPort());
             readerPort = fixPathStage.getOutputPort();
         }

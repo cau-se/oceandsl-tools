@@ -70,6 +70,7 @@ public class TypeModelDataflowAssemblerStage extends AbstractDataflowAssemblerSt
             final List<ComponentType> newList = new ArrayList<>();
             newList.add(componentType);
             this.storageAccessMap.put(type, newList);
+            this.addObjectToSource(type);
         } else {
             final List<ComponentType> accessedByList = this.storageAccessMap.get(type);
             if (!accessedByList.contains(componentType)) {
@@ -105,11 +106,12 @@ public class TypeModelDataflowAssemblerStage extends AbstractDataflowAssemblerSt
             componentType.setName(element.getModule());
             componentType.setSignature(element.getModule());
             componentType.setPackage(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
+            this.addObjectToSource(componentType);
 
             this.typeModel.getComponentTypes().put(element.getModule(), componentType);
             final OperationType operationType = this.createOperation(element.getOperation());
             componentType.getProvidedOperations().put(element.getOperation(), operationType);
-
+            
             return operationType;
         } else {
             for (final OperationType operation : componentType.getProvidedOperations().values()) {
@@ -130,6 +132,7 @@ public class TypeModelDataflowAssemblerStage extends AbstractDataflowAssemblerSt
         operationType.setName(operation);
         operationType.setReturnType("unknown");
         operationType.setSignature(operation);
+        this.addObjectToSource(operationType);
 
         return operationType;
     }

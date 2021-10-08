@@ -69,6 +69,7 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssembl
             final List<AssemblyComponent> newList = new ArrayList<>();
             newList.add(assemblyComponent);
             this.assemblyStorageAccessMap.put(assemblyStorage, newList);
+            this.addObjectToSource(assemblyStorage);
         } else {
             final List<AssemblyComponent> accessedByList = this.assemblyStorageAccessMap.get(assemblyStorage);
             if (!accessedByList.contains(assemblyComponent)) {
@@ -120,6 +121,7 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssembl
             assemblyComponent.setComponentType(this.findComponentType(element.getModule()));
             assemblyComponent.setSignature(element.getModule());
             this.assemblyModel.getAssemblyComponents().put(element.getModule(), assemblyComponent);
+            this.addObjectToSource(assemblyComponent);
         }
         AssemblyOperation operation = assemblyComponent.getAssemblyOperations().get(element.getOperation());
         if (operation == null) {
@@ -127,6 +129,7 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssembl
             operation.setOperationType(
                     assemblyComponent.getComponentType().getProvidedOperations().get(element.getOperation()));
             assemblyComponent.getAssemblyOperations().put(element.getOperation(), operation);
+            this.addObjectToSource(operation);
         }
         return operation;
     }
