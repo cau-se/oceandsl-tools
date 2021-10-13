@@ -20,8 +20,11 @@ import org.oceandsl.analysis.CallerCallee;
 import teetime.stage.basic.AbstractFilter;
 
 /**
- * @author Reiner Jung
+ * Sanitize component names in {@link CallerCallee} entries. This is helpful to cleanup names based
+ * on file or module names. It allows to make all entries lower case.
  *
+ * @author Reiner Jung
+ * @since 1.0
  */
 public abstract class AbstractCleanupComponentSignatureStage extends AbstractFilter<CallerCallee> {
 

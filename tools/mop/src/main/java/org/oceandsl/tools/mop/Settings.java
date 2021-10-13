@@ -37,12 +37,19 @@ public class Settings {
             "--output" }, required = true, converter = PathConverter.class, description = "Output architecture model directory")
     private Path outputDirectory;
 
+    @Parameter(names = { "-e", "--experiment" }, required = true, description = "Experiment name")
+    private String experimentName;
+
     public List<Path> getInputModelPaths() {
         return this.inputModelPaths;
     }
 
     public Path getOutputDirectory() {
         return this.outputDirectory;
+    }
+
+    public String getExperimentName() {
+        return this.experimentName;
     }
 
 }

@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.oceandsl.architecture.model.data.table.LongValueHandler;
 import org.oceandsl.architecture.model.data.table.StringValueHandler;
 import org.oceandsl.architecture.model.data.table.Table;
+import org.oceandsl.architecture.model.stages.utils.RepositoryUtils;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -57,11 +58,13 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
                 .getAggregatedInvocations().entrySet()) {
             final AggregatedInvocation value = invocationEntry.getValue();
             if (value == null) {
-                this.logger.error("Broken invocation entry. {}", invocationEntry.getKey().toString());
+                this.logger.error("Broken invocation entry. {} -> {}",
+                        RepositoryUtils.getName(invocationEntry.getKey().getFirst()),
+                        RepositoryUtils.getName(invocationEntry.getKey().getSecond()));
             }
             final Statistics statistics = this.findStatistics(statisticsModel.getStatistics(), value);
             if (statistics != null) {
-                final Long data = (Long) statistics.getStatistics().get(EPredefinedUnits.RESPONSE_TIME).getProperties()
+                final Long data = (Long) statistics.getStatistics().get(EPredefinedUnits.INVOCATION).getProperties()
                         .get(EPropertyType.COUNT);
 
                 result.addRow(
@@ -72,7 +75,9 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
                                 .getSignature(),
                         value.getTarget().getAssemblyOperation().getOperationType().getSignature(), data);
             } else {
-                System.err.println("Error");
+                this.logger.error("Missing statistics for invocation {} -> {}",
+                        RepositoryUtils.getName(invocationEntry.getValue().getSource()),
+                        RepositoryUtils.getName(invocationEntry.getValue().getTarget()));
             }
         }
 

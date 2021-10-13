@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mvis.graph;
+package org.oceandsl.tools.mvis.graph.selector;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,19 +28,19 @@ import kieker.model.analysismodel.sources.SourceModel;
 
 /**
  * @author Reiner Jung
- *
+ * @since 1.1
  */
-public class DiffSelector implements IGraphElementSelector {
+public class IntersectSelector implements IGraphElementSelector {
 
     private SourceModel sourceModel;
     private final List<String> groupA;
     private final List<String> groupB;
     private String filePrefix;
 
-    public DiffSelector(final String[] groupA, final String[] groupB) {
+    public IntersectSelector(final String[] groupA, final String[] groupB) {
         this.groupA = Arrays.asList(groupA);
         this.groupB = Arrays.asList(groupB);
-        this.filePrefix = "diff";
+        this.filePrefix = "intersect";
         for (final String partition : groupA) {
             this.filePrefix += "-" + partition;
         }
@@ -67,7 +67,9 @@ public class DiffSelector implements IGraphElementSelector {
     }
 
     private boolean isSelected(final EList<String> sources) {
-        return this.isGroupSelected(sources, this.groupA) || this.isGroupSelected(sources, this.groupB);
+        return this.groupA.stream().allMatch(element -> sources.stream().anyMatch(source -> source.equals(element)))
+                && this.groupB.stream()
+                        .allMatch(element -> sources.stream().anyMatch(source -> source.equals(element)));
     }
 
     @Override
@@ -96,5 +98,4 @@ public class DiffSelector implements IGraphElementSelector {
         }
         return false;
     }
-
 }

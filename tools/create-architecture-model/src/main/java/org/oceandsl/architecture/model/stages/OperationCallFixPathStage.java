@@ -30,23 +30,34 @@ import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractFilter;
 
 /**
+ * This stage receives an {@link CallerCallee} object and checks whether the file path for caller
+ * and callee operation are specified. In case they are missing, the stage sets them based on its
+ * operation to file lookup table. In case the operation is not listed, it collects all operations
+ * which do not have a file name.
+ *
+ * <ul>
+ * <li>outputPort sends out {@link CallerCallee} objects with all 4 values set.</li>
+ * <li>missingOperationOutputPort sends out each newly found operation which does not have a
+ * associated file path.</li>
+ * </ul>
+ *
  * @author Reiner Jung
  * @since 1.1
  */
-public class CSVFixPathStage extends AbstractFilter<CallerCallee> {
+public class OperationCallFixPathStage extends AbstractFilter<CallerCallee> {
 
-    Map<String, String> functionToFileMap = new HashMap<>();
-	private OutputPort<String> missingFunctionOutputPort = this.createOutputPort(String.class);
-	private List<String> missingFunctionNames = new ArrayList<>();
+    Map<String, String> operationToFileMap = new HashMap<>();
+    private final OutputPort<String> missingOperationOutputPort = this.createOutputPort(String.class);
+    private final List<String> missingOperationNames = new ArrayList<>();
 
-    public CSVFixPathStage(final List<Path> functionMapPaths, String splitSymbol) throws IOException {
+    public OperationCallFixPathStage(final List<Path> functionMapPaths, final String splitSymbol) throws IOException {
         for (final Path functionMapPath : functionMapPaths) {
             final BufferedReader reader = Files.newBufferedReader(functionMapPath);
             String line = reader.readLine();
             while ((line = reader.readLine()) != null) {
                 final String[] values = line.split(splitSymbol);
                 if (values.length >= 2) {
-                    this.functionToFileMap.put(values[1].trim(), values[0].trim());
+                    this.operationToFileMap.put(values[1].trim(), values[0].trim());
                 }
             }
         }
@@ -65,12 +76,12 @@ public class CSVFixPathStage extends AbstractFilter<CallerCallee> {
     }
 
     private String findPath(final String functionName) {
-        final String path = this.functionToFileMap.get(functionName);
+        final String path = this.operationToFileMap.get(functionName);
         if (path == null) {
-            if (!this.missingFunctionNames.contains(functionName)) {
-                this.logger.warn("Missing function entry for {}", functionName);
-            	this.missingFunctionNames.add(functionName);
-            	this.missingFunctionOutputPort.send(functionName);
+            if (!this.missingOperationNames.contains(functionName)) {
+                this.logger.warn("Missing file entry for operation: {}", functionName);
+                this.missingOperationNames.add(functionName);
+                this.missingOperationOutputPort.send(functionName);
             }
             return "";
         } else {
@@ -78,8 +89,8 @@ public class CSVFixPathStage extends AbstractFilter<CallerCallee> {
         }
     }
 
-	public OutputPort<String> getMissingFunctionOutputPort() {
-		return this.missingFunctionOutputPort;
-	}
+    public OutputPort<String> getMissingOperationOutputPort() {
+        return this.missingOperationOutputPort;
+    }
 
 }

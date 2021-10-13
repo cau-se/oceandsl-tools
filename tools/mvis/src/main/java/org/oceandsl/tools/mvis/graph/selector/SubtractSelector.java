@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mvis.graph;
+package org.oceandsl.tools.mvis.graph.selector;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,23 +28,18 @@ import kieker.model.analysismodel.sources.SourceModel;
 
 /**
  * @author Reiner Jung
- * @since 1.1
+ *
  */
-public class IntersectSelector implements IGraphElementSelector {
+public class SubtractSelector implements IGraphElementSelector {
 
     private SourceModel sourceModel;
-    private final List<String> groupA;
-    private final List<String> groupB;
+    private final List<String> partitions;
     private String filePrefix;
 
-    public IntersectSelector(final String[] groupA, final String[] groupB) {
-        this.groupA = Arrays.asList(groupA);
-        this.groupB = Arrays.asList(groupB);
-        this.filePrefix = "intersect";
-        for (final String partition : groupA) {
-            this.filePrefix += "-" + partition;
-        }
-        for (final String partition : groupB) {
+    public SubtractSelector(final String[] partitions) {
+        this.partitions = Arrays.asList(partitions);
+        this.filePrefix = "subtract";
+        for (final String partition : partitions) {
             this.filePrefix += "-" + partition;
         }
     }
@@ -67,9 +62,13 @@ public class IntersectSelector implements IGraphElementSelector {
     }
 
     private boolean isSelected(final EList<String> sources) {
-        return this.groupA.stream().allMatch(element -> sources.stream().anyMatch(source -> source.equals(element)))
-                && this.groupB.stream()
-                        .allMatch(element -> sources.stream().anyMatch(source -> source.equals(element)));
+        if (sources.size() == this.partitions.size()) {
+            if (sources.stream()
+                    .allMatch(source -> this.partitions.stream().anyMatch(element -> element.equals(source)))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -80,11 +79,7 @@ public class IntersectSelector implements IGraphElementSelector {
     @Override
     public boolean isColorGroup(final EList<String> sources, final int group) {
         if (group == 0) {
-            return this.isGroupSelected(sources, this.groupA) && this.isGroupSelected(sources, this.groupB);
-        } else if (group == 1) {
-            return this.isGroupSelected(sources, this.groupA);
-        } else if (group == 1) {
-            return this.isGroupSelected(sources, this.groupB);
+            return this.isGroupSelected(sources, this.partitions);
         } else {
             return false;
         }

@@ -38,12 +38,14 @@ import kieker.analysis.stage.model.ExecutionModelAssemblerStage;
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.analysis.stage.model.OperationAndCallGeneratorStage;
 import kieker.analysis.stage.model.TypeModelAssemblerStage;
+import kieker.analysis.statistics.CallStatisticsStage;
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.flow.IFlowRecord;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypeModel;
@@ -111,7 +113,7 @@ public class TeetimeConfiguration extends Configuration {
                 }
                 final Path path = Paths.get(signature);
                 final String name = path.getName(path.getNameCount() - 1).toString();
-                final String rest = (path.getParent() != null)
+                final String rest = path.getParent() != null
                         ? parameterConfiguration.getExperimentName() + "." + path.getParent().toString()
                         : parameterConfiguration.getExperimentName();
                 componentType.setName(name);
@@ -147,6 +149,9 @@ public class TeetimeConfiguration extends Configuration {
                 new ExecutionModelAssembler(repository.getModel(ExecutionModel.class),
                         repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel()));
 
+        final CallStatisticsStage callStatisticsStage = new CallStatisticsStage(
+                repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
+
         /** connecting ports. */
         this.connectPorts(readerPort, instanceOfFilter.getInputPort());
         this.connectPorts(instanceOfFilter.getMatchedOutputPort(), counter.getInputPort());
@@ -159,5 +164,6 @@ public class TeetimeConfiguration extends Configuration {
 
         this.connectPorts(operationAndCallStage.getCallOutputPort(), callEvent2OperationCallStage.getInputPort());
         this.connectPorts(callEvent2OperationCallStage.getOutputPort(), executionModelGenerationStage.getInputPort());
+        this.connectPorts(executionModelGenerationStage.getOutputPort(), callStatisticsStage.getInputPort());
     }
 }

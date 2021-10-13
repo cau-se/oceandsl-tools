@@ -32,6 +32,7 @@ import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.AggregatedStorageAccess;
+import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.StorageType;
@@ -46,6 +47,8 @@ public class ModelUtils {
         if (left.getClass().equals(right.getClass())) {
             if (right instanceof DeployedOperation) {
                 return ModelUtils.isEqual((DeployedOperation) right, (DeployedOperation) left);
+            } else if (right instanceof DeployedStorage) {
+                return ModelUtils.isEqual((DeployedStorage) right, (DeployedStorage) left);
             } else if (right instanceof DeployedComponent) {
                 return ModelUtils.isEqual((DeployedComponent) right, (DeployedComponent) left);
             } else if (right instanceof DeploymentContext) {
@@ -56,6 +59,8 @@ public class ModelUtils {
                 return ModelUtils.isEqual((AssemblyComponent) right, (AssemblyComponent) left);
             } else if (right instanceof AssemblyOperation) {
                 return ModelUtils.isEqual((AssemblyOperation) right, (AssemblyOperation) left);
+            } else if (right instanceof AssemblyStorage) {
+                return ModelUtils.isEqual((AssemblyStorage) right, (AssemblyStorage) left);
             } else if (right instanceof ComponentType) {
                 return ModelUtils.isEqual((ComponentType) right, (ComponentType) left);
             } else if (right instanceof OperationType) {
@@ -66,11 +71,18 @@ public class ModelUtils {
                 return ModelUtils.isEqual((AggregatedInvocation) right, (AggregatedInvocation) left);
             } else if (right instanceof AggregatedStorageAccess) {
                 return ModelUtils.isEqual((AggregatedStorageAccess) right, (AggregatedStorageAccess) left);
+            } else if (right instanceof Tuple) {
+                return ModelUtils.isEqual((Tuple<?, ?>) right, (Tuple<?, ?>) left);
             } else {
                 System.err.println("Missing support for " + right.getClass().getCanonicalName());
             }
         }
         return false;
+    }
+
+    public static boolean isEqual(final Tuple<?, ?> leftTuple, final Tuple<?, ?> rightTuple) {
+        return ModelUtils.areObjectsEqual((EObject) leftTuple.getFirst(), (EObject) rightTuple.getFirst())
+                && ModelUtils.areObjectsEqual((EObject) leftTuple.getSecond(), (EObject) rightTuple.getSecond());
     }
 
     public static boolean isEqual(final AggregatedStorageAccess leftStorageAccess,
@@ -90,21 +102,23 @@ public class ModelUtils {
                 .isEqual(leftAssemblyStorage.getAssemblyComponent(), assemblyStorage.getAssemblyComponent());
     }
 
-    public static boolean isEqual(final AggregatedInvocation leftInvocation, final AggregatedInvocation invocation) {
-        return ModelUtils.isEqual(leftInvocation.getSource(), invocation.getSource())
-                && ModelUtils.isEqual(leftInvocation.getTarget(), invocation.getTarget());
+    public static boolean isEqual(final AggregatedInvocation leftInvocation,
+            final AggregatedInvocation rightInvocation) {
+        return ModelUtils.isEqual(leftInvocation.getSource(), rightInvocation.getSource())
+                && ModelUtils.isEqual(leftInvocation.getTarget(), rightInvocation.getTarget());
     }
 
-    public static boolean isEqual(final DeployedOperation leftKey, final DeployedOperation key) {
-        return ModelUtils.isEqual(leftKey.getComponent(), key.getComponent())
-                && ModelUtils.isEqual(leftKey.getAssemblyOperation(), key.getAssemblyOperation());
+    public static boolean isEqual(final DeployedOperation leftKey, final DeployedOperation rightKey) {
+        return ModelUtils.isEqual(leftKey.getComponent(), rightKey.getComponent())
+                && ModelUtils.isEqual(leftKey.getAssemblyOperation(), rightKey.getAssemblyOperation());
     }
 
     public static boolean isEqual(final AssemblyOperation leftAssemblyOperation,
-            final AssemblyOperation assemblyOperation) {
+            final AssemblyOperation rightAssemblyOperation) {
         return ModelUtils.isEqual(leftAssemblyOperation.getAssemblyComponent(),
-                assemblyOperation.getAssemblyComponent())
-                && ModelUtils.isEqual(leftAssemblyOperation.getOperationType(), assemblyOperation.getOperationType());
+                rightAssemblyOperation.getAssemblyComponent())
+                && ModelUtils.isEqual(leftAssemblyOperation.getOperationType(),
+                        rightAssemblyOperation.getOperationType());
     }
 
     public static boolean isEqual(final OperationType leftOperationType, final OperationType operationType) {
@@ -128,9 +142,9 @@ public class ModelUtils {
         return leftComponentType.getSignature().equals(componentType.getSignature());
     }
 
-    public static boolean isEqual(final DeployedComponent leftComponent, final DeployedComponent component) {
-        return ModelUtils.isEqual(leftComponent.getSignature(), component.getSignature())
-                && ModelUtils.isEqual(leftComponent.getDeploymentContext(), component.getDeploymentContext());
+    public static boolean isEqual(final DeployedComponent leftComponent, final DeployedComponent rightComponent) {
+        return ModelUtils.isEqual(leftComponent.getSignature(), rightComponent.getSignature())
+                && ModelUtils.isEqual(leftComponent.getDeploymentContext(), rightComponent.getDeploymentContext());
     }
 
     public static boolean isEqual(final String leftSignature, final String signature) {

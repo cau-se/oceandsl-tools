@@ -39,7 +39,7 @@ public class TeetimeConfiguration extends Configuration {
 
         final ModelSource modelSource = new ModelSource(parameterConfiguration.getInputModelPaths());
         final ModelRepositoryReaderStage modelReader = new ModelRepositoryReaderStage();
-        final ModelProcessor modelProcessor = new ModelProcessor();
+        final ModelProcessor modelProcessor = new ModelProcessor(parameterConfiguration.getExperimentName());
         final ModelSink modelSink = new ModelSink(parameterConfiguration.getOutputDirectory());
 
         this.connectPorts(modelSource.getOutputPort(), modelReader.getInputPort());

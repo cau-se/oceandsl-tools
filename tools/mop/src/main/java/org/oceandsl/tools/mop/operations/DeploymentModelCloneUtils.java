@@ -86,7 +86,8 @@ public final class DeploymentModelCloneUtils {
 
     private static AssemblyOperation findAssemblyOperation(final AssemblyComponent assemblyComponent,
             final String signature) {
-        return assemblyComponent.getAssemblyOperations().get(signature);
+        final AssemblyOperation assemblyOperation = assemblyComponent.getAssemblyOperations().get(signature);
+        return assemblyOperation;
     }
 
     private static AssemblyComponent findAssemblyComponent(final AssemblyModel assemblyModel, final String signature) {
