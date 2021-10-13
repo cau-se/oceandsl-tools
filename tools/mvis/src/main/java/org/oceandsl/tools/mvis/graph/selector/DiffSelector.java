@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mvis.graph;
+package org.oceandsl.tools.mvis.graph.selector;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,16 +30,21 @@ import kieker.model.analysismodel.sources.SourceModel;
  * @author Reiner Jung
  *
  */
-public class SubtractSelector implements IGraphElementSelector {
+public class DiffSelector implements IGraphElementSelector {
 
     private SourceModel sourceModel;
-    private final List<String> partitions;
+    private final List<String> groupA;
+    private final List<String> groupB;
     private String filePrefix;
 
-    public SubtractSelector(final String[] partitions) {
-        this.partitions = Arrays.asList(partitions);
-        this.filePrefix = "subtract";
-        for (final String partition : partitions) {
+    public DiffSelector(final String[] groupA, final String[] groupB) {
+        this.groupA = Arrays.asList(groupA);
+        this.groupB = Arrays.asList(groupB);
+        this.filePrefix = "diff";
+        for (final String partition : groupA) {
+            this.filePrefix += "-" + partition;
+        }
+        for (final String partition : groupB) {
             this.filePrefix += "-" + partition;
         }
     }
@@ -62,13 +67,7 @@ public class SubtractSelector implements IGraphElementSelector {
     }
 
     private boolean isSelected(final EList<String> sources) {
-        if (sources.size() == this.partitions.size()) {
-            if (sources.stream()
-                    .allMatch(source -> this.partitions.stream().anyMatch(element -> element.equals(source)))) {
-                return true;
-            }
-        }
-        return false;
+        return this.isGroupSelected(sources, this.groupA) || this.isGroupSelected(sources, this.groupB);
     }
 
     @Override
@@ -79,7 +78,11 @@ public class SubtractSelector implements IGraphElementSelector {
     @Override
     public boolean isColorGroup(final EList<String> sources, final int group) {
         if (group == 0) {
-            return this.isGroupSelected(sources, this.partitions);
+            return this.isGroupSelected(sources, this.groupA) && this.isGroupSelected(sources, this.groupB);
+        } else if (group == 1) {
+            return this.isGroupSelected(sources, this.groupA);
+        } else if (group == 2) {
+            return this.isGroupSelected(sources, this.groupB);
         } else {
             return false;
         }
@@ -93,4 +96,5 @@ public class SubtractSelector implements IGraphElementSelector {
         }
         return false;
     }
+
 }

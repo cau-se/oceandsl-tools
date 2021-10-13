@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mvis;
 
 /**
  * @author Reiner Jung
- * @since 1.0
+ * @since 1.1
  */
-public enum EInputType {
-    KIEKER, CSV
-}
+package org.oceandsl.tools.mvis.graph.selector;

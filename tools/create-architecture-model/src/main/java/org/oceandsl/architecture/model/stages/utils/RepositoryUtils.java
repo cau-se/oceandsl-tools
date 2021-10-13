@@ -18,10 +18,12 @@ package org.oceandsl.architecture.model.stages.utils;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 
 import kieker.analysis.stage.model.ModelRepository;
+import kieker.model.analysismodel.deployment.DeployedOperation;
 
 /**
  * @author Reiner Jung
@@ -61,7 +63,8 @@ public final class RepositoryUtils {
                         if (element instanceof EObject) {
                             ((EObject) element).eCrossReferences();
                             final boolean proxy = ((EObject) element).eIsProxy();
-                            System.out.println(String.format("%s %b %s", offset, proxy, element.toString()));
+                            System.out.println(String.format("%s %b %s", offset, proxy,
+                                    RepositoryUtils.getName((EObject) element)));
                         }
                     }
                     System.out.println(offset + "}");
@@ -70,13 +73,33 @@ public final class RepositoryUtils {
                         ((EObject) result).eCrossReferences();
                         final boolean proxy = ((EObject) result).eIsProxy();
                         System.out.println(String.format("%sref %s = %b %s", offset, reference.getName(), proxy,
-                                result.toString()));
+                                RepositoryUtils.getName((EObject) result)));
                     } else {
                         System.out.println(offset + "ERROR");
                     }
                 }
             }
         }
+    }
+
+    public static Object getName(final EObject result) {
+        if (result instanceof DeployedOperation) {
+            final DeployedOperation operation = (DeployedOperation) result;
+            return String.format("%s::%s::[%s]%s",
+                    RepositoryUtils.getName(operation.getComponent().getDeploymentContext()),
+                    RepositoryUtils.getName(operation.getComponent()), result.getClass().getSimpleName(),
+                    RepositoryUtils.getName(operation.getAssemblyOperation().getOperationType()));
+
+        }
+        final EClass clazz = result.eClass();
+        for (final EAttribute attribute : clazz.getEAllAttributes()) {
+            if ("signature".equals(attribute.getName())) {
+                return "signature " + result.eGet(attribute);
+            } else if ("name".equals(attribute.getName())) {
+                return "name " + result.eGet(attribute);
+            }
+        }
+        return result.toString();
     }
 
     private static void printContainments(final EObject object, final String offset) {

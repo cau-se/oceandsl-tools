@@ -21,6 +21,5 @@ package org.oceandsl.tools.mvis;
  *
  */
 public enum ESelectorKind {
-
     ALL, DIFF, SUBTRACT, INTERSECT;
 }

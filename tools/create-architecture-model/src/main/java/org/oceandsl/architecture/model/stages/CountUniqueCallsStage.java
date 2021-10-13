@@ -43,7 +43,7 @@ import kieker.model.analysismodel.statistics.StatisticsModel;
 public class CountUniqueCallsStage extends StatisticsDecoratorStage<OperationCallDurationEvent> {
 
     public CountUniqueCallsStage(final StatisticsModel statisticsModel, final ExecutionModel executionModel) {
-        super(statisticsModel, EPredefinedUnits.RESPONSE_TIME, new CountCalculator<>(),
+        super(statisticsModel, EPredefinedUnits.INVOCATION, new CountCalculator<>(),
                 CountUniqueCallsStage.createForAggregatedInvocation(executionModel));
     }
 

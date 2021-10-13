@@ -22,7 +22,7 @@ import java.nio.file.Paths;
 import org.oceandsl.analysis.CSVFunctionCallReaderStage;
 import org.oceandsl.analysis.CallerCallee;
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
-import org.oceandsl.architecture.model.stages.CSVFixPathStage;
+import org.oceandsl.architecture.model.stages.OperationCallFixPathStage;
 import org.oceandsl.architecture.model.stages.CSVMapperStage;
 import org.oceandsl.architecture.model.stages.CountUniqueCallsStage;
 import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
@@ -70,11 +70,11 @@ public class TeetimeCallConfiguration extends Configuration {
         readerPort = readCsvStage.getOutputPort();
 
         if ((settings.getFunctionNameFiles() != null) && !settings.getFunctionNameFiles().isEmpty()) {
-            final CSVFixPathStage fixPathStage = new CSVFixPathStage(settings.getFunctionNameFiles(),
+            final OperationCallFixPathStage fixPathStage = new OperationCallFixPathStage(settings.getFunctionNameFiles(),
                     settings.getNamesSplitSymbol());
             if (settings.getMissingFunctionsFile() != null) {
             	final StringFileWriterSink missingFunctionsListSink = new StringFileWriterSink(settings.getMissingFunctionsFile());
-                this.connectPorts(fixPathStage.getMissingFunctionOutputPort(), missingFunctionsListSink.getInputPort());
+                this.connectPorts(fixPathStage.getMissingOperationOutputPort(), missingFunctionsListSink.getInputPort());
             }
             this.connectPorts(readerPort, fixPathStage.getInputPort());
             readerPort = fixPathStage.getOutputPort();

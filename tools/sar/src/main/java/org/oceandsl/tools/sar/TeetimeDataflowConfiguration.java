@@ -42,7 +42,7 @@ import teetime.framework.OutputPort;
  * Pipe and Filter configuration for the architecture creation tool.
  *
  * @author Reiner Jung
- * @since 1.0
+ * @since 1.1
  */
 public class TeetimeDataflowConfiguration extends Configuration {
     public TeetimeDataflowConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)

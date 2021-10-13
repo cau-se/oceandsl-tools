@@ -103,7 +103,7 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
         final EMap<EObject, Statistics> statisticsMap = this.statisticsModel.getStatistics();
         final Statistics statistics = statisticsMap.get(invocation);
         final EMap<EPredefinedUnits, StatisticRecord> recordMap = statistics.getStatistics();
-        final StatisticRecord record = recordMap.get(EPredefinedUnits.RESPONSE_TIME);
+        final StatisticRecord record = recordMap.get(EPredefinedUnits.INVOCATION);
         final EMap<EPropertyType, Object> properties = record.getProperties();
 
         final long calls = (Long) properties.get(EPropertyType.COUNT);

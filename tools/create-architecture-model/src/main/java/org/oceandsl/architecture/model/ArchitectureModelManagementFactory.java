@@ -80,9 +80,12 @@ public final class ArchitectureModelManagementFactory {
     }
 
     public static ModelRepository createModelRepository(final String experimentName, final boolean mapFile) {
-        final ModelRepository repository = new ModelRepository(
-                String.format("%s-%s", experimentName, mapFile ? "map" : "file"));
+        return ArchitectureModelManagementFactory
+                .createModelRepository(String.format("%s-%s", experimentName, mapFile ? "map" : "file"));
+    }
 
+    public static ModelRepository createModelRepository(final String repositoryName) {
+        final ModelRepository repository = new ModelRepository(repositoryName);
         repository.register(TypeModel.class, TypeFactory.eINSTANCE.createTypeModel());
         repository.register(AssemblyModel.class, AssemblyFactory.eINSTANCE.createAssemblyModel());
         repository.register(DeploymentModel.class, DeploymentFactory.eINSTANCE.createDeploymentModel());
@@ -205,4 +208,5 @@ public final class ArchitectureModelManagementFactory {
     private static File createWriteModelFileHandle(final Path path, final String filename) {
         return new File(path.toFile().getAbsolutePath() + File.separator + filename);
     }
+
 }

@@ -224,7 +224,7 @@ public class ModelRepositoryMerger {
             final ExecutionModel mergeModel) {
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> entry : mergeModel
                 .getAggregatedInvocations()) {
-            if (!model.getAggregatedInvocations().containsKey(entry.getKey())) {
+            if (!ModelRepositoryMerger.compareTupleOperationKeys(model.getAggregatedInvocations(), entry.getKey())) {
                 final AggregatedInvocation value = ExecutionModelCloneUtils.duplicate(deploymentModel,
                         entry.getValue());
                 final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
@@ -235,7 +235,7 @@ public class ModelRepositoryMerger {
         }
         for (final Entry<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> entry : mergeModel
                 .getAggregatedStorageAccesses()) {
-            if (!model.getAggregatedStorageAccesses().containsKey(entry.getKey())) {
+            if (!ModelRepositoryMerger.compareTupleStorageKeys(model.getAggregatedStorageAccesses(), entry.getKey())) {
                 final AggregatedStorageAccess value = ExecutionModelCloneUtils.duplicate(deploymentModel,
                         entry.getValue());
                 final Tuple<DeployedOperation, DeployedStorage> key = ExecutionFactory.eINSTANCE.createTuple();
@@ -244,6 +244,30 @@ public class ModelRepositoryMerger {
                 model.getAggregatedStorageAccesses().put(key, value);
             }
         }
+    }
+
+    private static boolean compareTupleOperationKeys(
+            final EMap<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> aggregatedInvocations,
+            final Tuple<DeployedOperation, DeployedOperation> key) {
+        for (final Tuple<DeployedOperation, DeployedOperation> invocationKey : aggregatedInvocations.keySet()) {
+            if (ModelUtils.isEqual(invocationKey.getFirst(), key.getFirst())
+                    && ModelUtils.isEqual(invocationKey.getSecond(), key.getSecond())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean compareTupleStorageKeys(
+            final EMap<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> aggregatedStorageAccesses,
+            final Tuple<DeployedOperation, DeployedStorage> key) {
+        for (final Tuple<DeployedOperation, DeployedStorage> invocationKey : aggregatedStorageAccesses.keySet()) {
+            if (ModelUtils.isEqual(invocationKey.getFirst(), key.getFirst())
+                    && ModelUtils.isEqual(invocationKey.getSecond(), key.getSecond())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** -- statistics model -- */
@@ -290,6 +314,14 @@ public class ModelRepositoryMerger {
             for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
                 if (ModelUtils.areObjectsEqual(key, invocation)) {
                     return invocation;
+                }
+            }
+            ModelRepositoryMerger.LOGGER.error("Missing correpsonding {} in the merged model.", key.getClass());
+            throw new InternalError(String.format("Missing correpsonding %s in the merged model.", key.getClass()));
+        } else if (key instanceof AggregatedStorageAccess) {
+            for (final AggregatedStorageAccess storageAccess : executionModel.getAggregatedStorageAccesses().values()) {
+                if (ModelUtils.areObjectsEqual(key, storageAccess)) {
+                    return storageAccess;
                 }
             }
             ModelRepositoryMerger.LOGGER.error("Missing correpsonding {} in the merged model.", key.getClass());

@@ -17,10 +17,10 @@ package org.oceandsl.tools.mvis;
 
 import com.beust.jcommander.IStringConverter;
 
-import org.oceandsl.tools.mvis.graph.AllSelector;
-import org.oceandsl.tools.mvis.graph.DiffSelector;
-import org.oceandsl.tools.mvis.graph.IntersectSelector;
-import org.oceandsl.tools.mvis.graph.SubtractSelector;
+import org.oceandsl.tools.mvis.graph.selector.AllSelector;
+import org.oceandsl.tools.mvis.graph.selector.DiffSelector;
+import org.oceandsl.tools.mvis.graph.selector.IntersectSelector;
+import org.oceandsl.tools.mvis.graph.selector.SubtractSelector;
 import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 /**
