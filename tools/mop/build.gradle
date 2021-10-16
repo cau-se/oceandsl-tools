@@ -31,5 +31,5 @@ dependencies {
 }
 
 application {
-    mainClassName = 'org.oceandsl.tools.ModelOperationMain'
+    mainClassName = 'org.oceandsl.tools.mop.ModelOperationMain'
 }

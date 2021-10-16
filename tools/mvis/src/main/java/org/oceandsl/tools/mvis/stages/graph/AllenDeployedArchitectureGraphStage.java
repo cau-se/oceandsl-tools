@@ -21,9 +21,9 @@ import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
+import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 import org.oceandsl.architecture.model.stages.utils.RepositoryUtils;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -79,7 +79,7 @@ public class AllenDeployedArchitectureGraphStage
             if (this.selector.edgeIsSelected(entry.getValue())) {
                 final Node<DeployedComponent> source = this.findNode(graph, entry.getValue().getSource());
                 final Node<DeployedComponent> target = this.findNode(graph, entry.getValue().getTarget());
-                if (source != null && target != null) {
+                if ((source != null) && (target != null)) {
                     graph.putEdge(source, target);
                 } else {
                     final SourceModel sourceModel = repository.getModel(SourceModel.class);

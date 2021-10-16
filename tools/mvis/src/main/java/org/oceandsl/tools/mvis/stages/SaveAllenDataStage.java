@@ -21,7 +21,8 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.CodeMetric;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.CodeMetric;
+
 import teetime.framework.AbstractConsumerStage;
 
 /**

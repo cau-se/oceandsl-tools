@@ -18,8 +18,7 @@ package org.oceandsl.tools.mvis.stages.graph;
 import java.util.Objects;
 
 import org.eclipse.emf.ecore.EObject;
-
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
+import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 
 /**
  * Central node class for graphs

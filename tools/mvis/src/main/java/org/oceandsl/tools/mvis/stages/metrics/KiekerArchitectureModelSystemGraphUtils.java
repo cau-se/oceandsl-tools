@@ -19,10 +19,10 @@ import com.google.common.graph.Graph;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
 
+import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
+import org.mosim.refactorlizar.architecture.evaluation.graphs.SystemGraphUtils;
 import org.oceandsl.tools.mvis.stages.graph.KiekerNode;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 

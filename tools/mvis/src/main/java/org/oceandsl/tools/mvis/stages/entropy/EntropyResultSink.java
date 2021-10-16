@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.architecture.model.stages.sinks;
+package org.oceandsl.tools.mvis.stages.entropy;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -24,19 +24,20 @@ import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.CodeMetric;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.CodeMetric;
+
 import teetime.framework.AbstractConsumerStage;
 
 /**
  * @author Reiner Jung
  *
  */
-public class ResultSink extends AbstractConsumerStage<Map<Class<? extends CodeMetric>, CodeMetric>> {
+public class EntropyResultSink extends AbstractConsumerStage<Map<Class<? extends CodeMetric>, CodeMetric>> {
 
     private final BufferedWriter fileHandle;
     private final Path path;
 
-    public ResultSink(final Path path) throws IOException {
+    public EntropyResultSink(final Path path) throws IOException {
         this.fileHandle = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE,
                 StandardOpenOption.WRITE);
         this.path = path;
