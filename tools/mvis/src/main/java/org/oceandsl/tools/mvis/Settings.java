@@ -21,6 +21,7 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
 
+import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
 import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 /**
@@ -51,6 +52,10 @@ public class Settings {
             "--graphs" }, required = false, variableArity = true, converter = GraphTypeConverter.class, description = "Specify which output graphs must be generated")
     private List<EOutputGraph> outputGraphs;
 
+    @Parameter(names = { "-m",
+            "--mode" }, required = false, variableArity = true, converter = GraphGenerationConverter.class, description = "Mode deciding whether an edge is added when its nodes are not selected")
+    private EGraphGenerationMode graphGenerationMode;
+
     public Path getInputDirectory() {
         return this.inputDirectory;
     }
@@ -69,5 +74,9 @@ public class Settings {
 
     public IGraphElementSelector getSelector() {
         return this.selector;
+    }
+
+    public EGraphGenerationMode getGraphSelectionMode() {
+        return this.graphGenerationMode;
     }
 }

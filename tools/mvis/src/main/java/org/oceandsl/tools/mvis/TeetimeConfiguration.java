@@ -61,17 +61,17 @@ public class TeetimeConfiguration extends Configuration {
     private static final String DISTINCT_OPERATION_DEGREE_CSV = "distinct-operation-degree.csv";
     private static final String DISTINCT_MODULE_DEGREE_CSV = "distinct-module-degree.csv";
 
-    public TeetimeConfiguration(final Logger logger, final Settings parameterConfiguration,
+    public TeetimeConfiguration(final Logger logger, final Settings settings,
             final ModelRepository repository) throws IOException, ValueConversionErrorException {
 
         final ModelRepositoryProducerStage readerStage = new ModelRepositoryProducerStage(
-                parameterConfiguration.getInputDirectory());
+                settings.getInputDirectory());
 
         final TriggerOnTerminationStage triggerStage = new TriggerOnTerminationStage();
         final Distributor<Trigger> triggerDistributor = new Distributor<>(new CopyByReferenceStrategy());
 
         final DotFileWriterStage dotFileOperationDependencyWriterStage = new DotFileWriterStage(
-                new DedicatedFileNameMapper(parameterConfiguration.getOutputDirectory(), "operation",
+                new DedicatedFileNameMapper(settings.getOutputDirectory(), "operation",
                         FileExtension.DOT),
                 new ColoredDotExportConfigurationFactory(NameBuilder.forJavaShortOperations())
                         .createForAssemblyLevelOperationDependencyGraph(false));
@@ -81,36 +81,36 @@ public class TeetimeConfiguration extends Configuration {
         /** Stages for statistics. */
         final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
         final OperationCallGraphStage functionCallGraphStage = new OperationCallGraphStage(
-                parameterConfiguration.getSelector());
+                settings.getSelector(), settings.getGraphSelectionMode());
         final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
-        final ModuleCallGraphStage moduleCallGraphStage = new ModuleCallGraphStage(
-                parameterConfiguration.getSelector());
+        final ModuleCallGraphStage moduleCallGraphStage = new ModuleCallGraphStage(settings.getSelector(),
+                settings.getGraphSelectionMode());
         final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
 
         /** Sinks for metrics writing to CSV files. */
-        final TableCSVSink operationCallSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
-                String.format("%s-%s", parameterConfiguration.getSelector().getFilePrefix(),
+        final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputDirectory(),
+                String.format("%s-%s", settings.getSelector().getFilePrefix(),
                         TeetimeConfiguration.OPERATION_CALLS_CSV));
-        final TableCSVSink distinctOperationDegreeSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
-                String.format("%s-%s", parameterConfiguration.getSelector().getFilePrefix(),
+        final TableCSVSink distinctOperationDegreeSink = new TableCSVSink(settings.getOutputDirectory(),
+                String.format("%s-%s", settings.getSelector().getFilePrefix(),
                         TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV));
-        final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(parameterConfiguration.getOutputDirectory(),
-                String.format("%s-%s", parameterConfiguration.getSelector().getFilePrefix(),
+        final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(settings.getOutputDirectory(),
+                String.format("%s-%s", settings.getSelector().getFilePrefix(),
                         TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
 
         final GraphMLFileWriterStage graphMLFileWriterStage = new GraphMLFileWriterStage(
-                parameterConfiguration.getOutputDirectory());
+                settings.getOutputDirectory());
 
         /** connecting ports. */
         this.connectPorts(statisticsDistributor.getNewOutputPort(), triggerStage.getInputPort());
         this.connectPorts(triggerStage.getOutputPort(), triggerDistributor.getInputPort());
 
         final IColorDependencyGraphBuilderConfiguration configuration = new ColorDependencyGraphBuilderConfiguration(
-                repository, parameterConfiguration.getSelector());
+                repository, settings.getSelector());
 
         /** operation graph. */
-        if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.DOT_OP)
-                || parameterConfiguration.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
+        if (settings.getOutputGraphs().contains(EOutputGraph.DOT_OP)
+                || settings.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
             final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
                     configuration, new ColorAssemblyLevelOperationDependencyGraphBuilderFactory());
             final Distributor<IGraph> graphsDistributor = new Distributor<>(new CopyByReferenceStrategy());
@@ -118,21 +118,21 @@ public class TeetimeConfiguration extends Configuration {
             this.connectPorts(triggerDistributor.getNewOutputPort(),
                     operationDependencyGraphCreatorStage.getInputPort());
             this.connectPorts(operationDependencyGraphCreatorStage.getOutputPort(), graphsDistributor.getInputPort());
-            if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.DOT_OP)) {
+            if (settings.getOutputGraphs().contains(EOutputGraph.DOT_OP)) {
                 this.connectPorts(graphsDistributor.getNewOutputPort(),
                         dotFileOperationDependencyWriterStage.getInputPort());
             }
-            if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
+            if (settings.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
                 this.connectPorts(graphsDistributor.getNewOutputPort(), graphMLFileWriterStage.getInputPort());
             }
         }
 
         /** component graph. */
-        if (parameterConfiguration.getOutputGraphs().contains(EOutputGraph.DOT_COMPONENT)) {
+        if (settings.getOutputGraphs().contains(EOutputGraph.DOT_COMPONENT)) {
             final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> componentDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
                     configuration, new ColorAssemblyLevelComponentDependencyGraphBuilderFactory());
             final DotFileWriterStage componentDependencyDotFileWriterStage = new DotFileWriterStage(
-                    new DedicatedFileNameMapper(parameterConfiguration.getOutputDirectory(), "component",
+                    new DedicatedFileNameMapper(settings.getOutputDirectory(), "component",
                             FileExtension.DOT),
                     new ColoredDotExportConfigurationFactory(NameBuilder.forJavaShortOperations())
                             .createForAssemblyLevelComponentDependencyGraph(false));
@@ -145,10 +145,10 @@ public class TeetimeConfiguration extends Configuration {
 
         /** setup allen metrics. */
         final AllenDeployedArchitectureGraphStage allenArchitectureModularGraphStage = new AllenDeployedArchitectureGraphStage(
-                parameterConfiguration.getSelector());
+                settings.getSelector(), settings.getGraphSelectionMode());
         final ComputeAllenComplexityMetrics computeAllenComplexityStage = new ComputeAllenComplexityMetrics();
         final SaveAllenDataStage saveAllenDataStage = new SaveAllenDataStage(
-                parameterConfiguration.getOutputDirectory());
+                settings.getOutputDirectory());
 
         /** connect stages. */
         this.connectPorts(readerStage.getOutputPort(), statisticsDistributor.getInputPort());

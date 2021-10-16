@@ -30,9 +30,12 @@ import teetime.stage.basic.AbstractTransformation;
 public class OperationCallGraphStage extends AbstractTransformation<ModelRepository, IGraph> {
 
     private final IGraphElementSelector selector;
+    private final EGraphGenerationMode graphGeneratioMode;
 
-    public OperationCallGraphStage(final IGraphElementSelector selector) {
+    public OperationCallGraphStage(final IGraphElementSelector selector,
+            final EGraphGenerationMode graphGeneratioMode) {
         this.selector = selector;
+        this.graphGeneratioMode = graphGeneratioMode;
     }
 
     @Override
@@ -51,9 +54,25 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
             if (targetSelected) {
                 graph.addVertexIfAbsent(invocation.getTarget());
             }
-            if (sourceSelected && targetSelected && this.selector.edgeIsSelected(invocation)) {
-                graph.addEdge(invocation, graph.getVertex(invocation.getSource()),
-                        graph.getVertex(invocation.getTarget()));
+            switch (this.graphGeneratioMode) {
+            case ONLY_EDGES_FOR_NODES:
+                if (sourceSelected && targetSelected && this.selector.edgeIsSelected(invocation)) {
+                    graph.addEdge(invocation, graph.getVertex(invocation.getSource()),
+                            graph.getVertex(invocation.getTarget()));
+                }
+                break;
+            case ADD_NODES_FOR_EDGES:
+                if (this.selector.edgeIsSelected(invocation)) {
+                    if (!sourceSelected) {
+                        graph.addVertexIfAbsent(invocation.getSource());
+                    }
+                    if (!targetSelected) {
+                        graph.addVertexIfAbsent(invocation.getTarget());
+                    }
+                    graph.addEdge(invocation, graph.getVertex(invocation.getSource()),
+                            graph.getVertex(invocation.getTarget()));
+                }
+                break;
             }
         }
 
