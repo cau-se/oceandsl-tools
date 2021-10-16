@@ -58,7 +58,7 @@ import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 public class TeetimeConfiguration extends Configuration {
 
     private static final String OPERATION_CALLS_CSV = "operation-calls.csv";
-    private static final String DISTINCT_OPERATION_DEGREE_CSV = "distinct-operatin-degree.csv";
+    private static final String DISTINCT_OPERATION_DEGREE_CSV = "distinct-operation-degree.csv";
     private static final String DISTINCT_MODULE_DEGREE_CSV = "distinct-module-degree.csv";
 
     public TeetimeConfiguration(final Logger logger, final Settings parameterConfiguration,
