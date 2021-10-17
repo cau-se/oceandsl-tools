@@ -112,8 +112,6 @@ public class AllenDeployedArchitectureGraphStage
             }
         }
 
-        this.logger.error("Internal error: Looked for node of an edge that does not exist: {}",
-                operation.getAssemblyOperation().getOperationType().getSignature());
         return null;
     }
 

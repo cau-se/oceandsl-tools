@@ -64,13 +64,13 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
             case ADD_NODES_FOR_EDGES:
                 if (this.selector.edgeIsSelected(invocation)) {
                     if (!sourceSelected) {
-                        graph.addVertexIfAbsent(invocation.getSource());
+                        graph.addVertexIfAbsent(invocation.getSource().getComponent());
                     }
                     if (!targetSelected) {
-                        graph.addVertexIfAbsent(invocation.getTarget());
+                        graph.addVertexIfAbsent(invocation.getTarget().getComponent());
                     }
-                    graph.addEdge(invocation, graph.getVertex(invocation.getSource()),
-                            graph.getVertex(invocation.getTarget()));
+                    graph.addEdge(invocation, graph.getVertex(invocation.getSource().getComponent()),
+                            graph.getVertex(invocation.getTarget().getComponent()));
                 }
                 break;
             }
