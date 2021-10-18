@@ -105,8 +105,6 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
         } else {
             DeployedComponent deployedComponent = deployedContext.getComponents().get(element.getModule());
             if (deployedComponent == null) {
-                this.logger.warn("Cannot find deployed component for {}", element.getModule());
-
                 deployedComponent = DeploymentFactory.eINSTANCE.createDeployedComponent();
                 deployedComponent.setSignature(element.getModule());
                 deployedComponent.setAssemblyComponent(this.findAssemblyComponent(element.getModule()));
@@ -116,8 +114,6 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
             DeployedOperation deployedOperation = deployedComponent.getContainedOperations()
                     .get(element.getOperation());
             if (deployedOperation == null) {
-                this.logger.warn("Operation {} cannot be found in model.", element.getOperation());
-
                 final AssemblyComponent assemblyComponent = this.assemblyModel.getAssemblyComponents()
                         .get(element.getModule());
                 final AssemblyOperation assemblyOperation = assemblyComponent.getAssemblyOperations()
