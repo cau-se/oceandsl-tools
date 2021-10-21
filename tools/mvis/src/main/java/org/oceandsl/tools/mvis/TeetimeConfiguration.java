@@ -26,8 +26,8 @@ import org.oceandsl.tools.mvis.graph.ColoredDotExportConfigurationFactory;
 import org.oceandsl.tools.mvis.graph.IColorDependencyGraphBuilderConfiguration;
 import org.oceandsl.tools.mvis.stages.ModelRepositoryProducerStage;
 import org.oceandsl.tools.mvis.stages.SaveAllenDataStage;
+import org.oceandsl.tools.mvis.stages.entropy.AllenDeployedArchitectureGraphStage;
 import org.oceandsl.tools.mvis.stages.entropy.ComputeAllenComplexityMetrics;
-import org.oceandsl.tools.mvis.stages.graph.AllenDeployedArchitectureGraphStage;
 import org.oceandsl.tools.mvis.stages.graph.ColorDependencyGraphBuilderConfiguration;
 import org.oceandsl.tools.mvis.stages.graph.ModuleCallGraphStage;
 import org.oceandsl.tools.mvis.stages.graph.OperationCallGraphStage;
@@ -43,8 +43,6 @@ import kieker.analysis.graph.export.graphml.GraphMLFileWriterStage;
 import kieker.analysis.graph.util.FileExtension;
 import kieker.analysis.signature.NameBuilder;
 import kieker.analysis.stage.model.ModelRepository;
-import kieker.analysis.util.stage.trigger.Trigger;
-import kieker.analysis.util.stage.trigger.TriggerOnTerminationStage;
 import teetime.framework.Configuration;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
@@ -61,18 +59,15 @@ public class TeetimeConfiguration extends Configuration {
     private static final String DISTINCT_OPERATION_DEGREE_CSV = "distinct-operation-degree.csv";
     private static final String DISTINCT_MODULE_DEGREE_CSV = "distinct-module-degree.csv";
 
-    public TeetimeConfiguration(final Logger logger, final Settings settings,
-            final ModelRepository repository) throws IOException, ValueConversionErrorException {
+    public TeetimeConfiguration(final Logger logger, final Settings settings)
+            throws IOException, ValueConversionErrorException {
 
-        final ModelRepositoryProducerStage readerStage = new ModelRepositoryProducerStage(
-                settings.getInputDirectory());
+        final ModelRepositoryProducerStage readerStage = new ModelRepositoryProducerStage(settings.getInputDirectory());
 
-        final TriggerOnTerminationStage triggerStage = new TriggerOnTerminationStage();
-        final Distributor<Trigger> triggerDistributor = new Distributor<>(new CopyByReferenceStrategy());
+        final Distributor<ModelRepository> triggerDistributor = new Distributor<>(new CopyByReferenceStrategy());
 
         final DotFileWriterStage dotFileOperationDependencyWriterStage = new DotFileWriterStage(
-                new DedicatedFileNameMapper(settings.getOutputDirectory(), "operation",
-                        FileExtension.DOT),
+                new DedicatedFileNameMapper(settings.getOutputDirectory(), "operation", FileExtension.DOT),
                 new ColoredDotExportConfigurationFactory(NameBuilder.forJavaShortOperations())
                         .createForAssemblyLevelOperationDependencyGraph(false));
 
@@ -80,33 +75,28 @@ public class TeetimeConfiguration extends Configuration {
 
         /** Stages for statistics. */
         final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
-        final OperationCallGraphStage functionCallGraphStage = new OperationCallGraphStage(
-                settings.getSelector(), settings.getGraphSelectionMode());
+        final OperationCallGraphStage functionCallGraphStage = new OperationCallGraphStage(settings.getSelector(),
+                settings.getGraphGenerationMode());
         final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
         final ModuleCallGraphStage moduleCallGraphStage = new ModuleCallGraphStage(settings.getSelector(),
-                settings.getGraphSelectionMode());
+                settings.getGraphGenerationMode());
         final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
 
         /** Sinks for metrics writing to CSV files. */
-        final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputDirectory(),
-                String.format("%s-%s", settings.getSelector().getFilePrefix(),
-                        TeetimeConfiguration.OPERATION_CALLS_CSV));
-        final TableCSVSink distinctOperationDegreeSink = new TableCSVSink(settings.getOutputDirectory(),
-                String.format("%s-%s", settings.getSelector().getFilePrefix(),
-                        TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV));
-        final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(settings.getOutputDirectory(),
-                String.format("%s-%s", settings.getSelector().getFilePrefix(),
-                        TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
+        final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputDirectory(), String.format("%s-%s",
+                settings.getSelector().getFilePrefix(), TeetimeConfiguration.OPERATION_CALLS_CSV));
+        final TableCSVSink distinctOperationDegreeSink = new TableCSVSink(settings.getOutputDirectory(), String.format(
+                "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV));
+        final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(settings.getOutputDirectory(), String.format(
+                "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
 
-        final GraphMLFileWriterStage graphMLFileWriterStage = new GraphMLFileWriterStage(
-                settings.getOutputDirectory());
+        final GraphMLFileWriterStage graphMLFileWriterStage = new GraphMLFileWriterStage(settings.getOutputDirectory());
 
         /** connecting ports. */
-        this.connectPorts(statisticsDistributor.getNewOutputPort(), triggerStage.getInputPort());
-        this.connectPorts(triggerStage.getOutputPort(), triggerDistributor.getInputPort());
+        this.connectPorts(statisticsDistributor.getNewOutputPort(), triggerDistributor.getInputPort());
 
         final IColorDependencyGraphBuilderConfiguration configuration = new ColorDependencyGraphBuilderConfiguration(
-                repository, settings.getSelector());
+                settings.getSelector());
 
         /** operation graph. */
         if (settings.getOutputGraphs().contains(EOutputGraph.DOT_OP)
@@ -132,8 +122,7 @@ public class TeetimeConfiguration extends Configuration {
             final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> componentDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
                     configuration, new ColorAssemblyLevelComponentDependencyGraphBuilderFactory());
             final DotFileWriterStage componentDependencyDotFileWriterStage = new DotFileWriterStage(
-                    new DedicatedFileNameMapper(settings.getOutputDirectory(), "component",
-                            FileExtension.DOT),
+                    new DedicatedFileNameMapper(settings.getOutputDirectory(), "component", FileExtension.DOT),
                     new ColoredDotExportConfigurationFactory(NameBuilder.forJavaShortOperations())
                             .createForAssemblyLevelComponentDependencyGraph(false));
 
@@ -145,10 +134,9 @@ public class TeetimeConfiguration extends Configuration {
 
         /** setup allen metrics. */
         final AllenDeployedArchitectureGraphStage allenArchitectureModularGraphStage = new AllenDeployedArchitectureGraphStage(
-                settings.getSelector(), settings.getGraphSelectionMode());
+                settings.getSelector(), settings.getGraphGenerationMode());
         final ComputeAllenComplexityMetrics computeAllenComplexityStage = new ComputeAllenComplexityMetrics();
-        final SaveAllenDataStage saveAllenDataStage = new SaveAllenDataStage(
-                settings.getOutputDirectory());
+        final SaveAllenDataStage saveAllenDataStage = new SaveAllenDataStage(settings.getOutputDirectory());
 
         /** connect stages. */
         this.connectPorts(readerStage.getOutputPort(), statisticsDistributor.getInputPort());

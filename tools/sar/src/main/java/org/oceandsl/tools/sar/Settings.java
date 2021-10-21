@@ -52,17 +52,18 @@ public class Settings {
     @Parameter(names = { "-f",
             "--function-names" }, required = false, variableArity = true, converter = PathConverter.class, description = "Function file map CSV file")
     private List<Path> functionNameFiles;
-    
-    @Parameter(names = { "-m", "--missing-functions" }, required=false, converter = PathConverter.class, description = "Output file for the list of function without an associated file")
+
+    @Parameter(names = { "-m",
+            "--missing-functions" }, required = false, converter = PathConverter.class, description = "Output file for the list of function without an associated file")
     private Path missingFunctionsFile;
-    
+
     @Parameter(names = { "-o",
             "--output" }, required = true, converter = PathConverter.class, description = "Output directory to store graphics and statistics")
     private Path outputDirectory;
 
     @Parameter(names = { "-M",
-            "--component-map" }, required = false, converter = PathConverter.class, description = "Component, file and function map file")
-    private Path componentMapFile;
+            "--component-map" }, required = false, variableArity = true, converter = PathConverter.class, description = "Component, file and function map file")
+    private List<Path> componentMapFiles;
 
     @Parameter(names = { "-l", "--source-label" }, required = true, description = "Set source label for the read data")
     private String sourceLabel;
@@ -77,6 +78,10 @@ public class Settings {
 
     @Parameter(names = { "-E", "--experiment-name" }, required = true, description = "Name of the experiment")
     private String experimentName;
+
+    @Parameter(names = { "-n",
+            "--missing-mappings" }, required = false, converter = PathConverter.class, description = "Output file for files without a mapping in the mapping file.")
+    private Path missingMappingFile;
 
     public Path getOperationCallInputFile() {
         return this.operationCallInputFile;
@@ -130,15 +135,19 @@ public class Settings {
         return this.experimentName;
     }
 
-    public Path getComponentMapFile() {
-        return this.componentMapFile;
+    public List<Path> getComponentMapFiles() {
+        return this.componentMapFiles;
     }
 
     public Path getDataflowInputFile() {
         return this.dataflowInputFile;
     }
 
-	public Path getMissingFunctionsFile() {
-		return this.missingFunctionsFile;
-	}
+    public Path getMissingFunctionsFile() {
+        return this.missingFunctionsFile;
+    }
+
+    public Path getMissingMappingFile() {
+        return this.missingMappingFile;
+    }
 }

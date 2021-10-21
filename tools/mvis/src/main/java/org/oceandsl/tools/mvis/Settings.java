@@ -53,7 +53,7 @@ public class Settings {
     private List<EOutputGraph> outputGraphs;
 
     @Parameter(names = { "-m",
-            "--mode" }, required = false, variableArity = true, converter = GraphGenerationConverter.class, description = "Mode deciding whether an edge is added when its nodes are not selected")
+            "--mode" }, required = true, variableArity = true, converter = GraphGenerationConverter.class, description = "Mode deciding whether an edge is added when its nodes are not selected")
     private EGraphGenerationMode graphGenerationMode;
 
     public Path getInputDirectory() {
@@ -76,7 +76,7 @@ public class Settings {
         return this.selector;
     }
 
-    public EGraphGenerationMode getGraphSelectionMode() {
+    public EGraphGenerationMode getGraphGenerationMode() {
         return this.graphGenerationMode;
     }
 }

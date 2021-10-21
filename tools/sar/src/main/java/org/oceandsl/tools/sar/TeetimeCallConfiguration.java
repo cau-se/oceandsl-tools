@@ -22,9 +22,9 @@ import java.nio.file.Paths;
 import org.oceandsl.analysis.CSVFunctionCallReaderStage;
 import org.oceandsl.analysis.CallerCallee;
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
-import org.oceandsl.architecture.model.stages.OperationCallFixPathStage;
 import org.oceandsl.architecture.model.stages.CSVMapperStage;
 import org.oceandsl.architecture.model.stages.CountUniqueCallsStage;
+import org.oceandsl.architecture.model.stages.OperationCallFixPathStage;
 import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
@@ -69,12 +69,14 @@ public class TeetimeCallConfiguration extends Configuration {
 
         readerPort = readCsvStage.getOutputPort();
 
-        if ((settings.getFunctionNameFiles() != null) && !settings.getFunctionNameFiles().isEmpty()) {
-            final OperationCallFixPathStage fixPathStage = new OperationCallFixPathStage(settings.getFunctionNameFiles(),
-                    settings.getNamesSplitSymbol());
+        if (settings.getFunctionNameFiles() != null && !settings.getFunctionNameFiles().isEmpty()) {
+            final OperationCallFixPathStage fixPathStage = new OperationCallFixPathStage(
+                    settings.getFunctionNameFiles(), settings.getNamesSplitSymbol());
             if (settings.getMissingFunctionsFile() != null) {
-            	final StringFileWriterSink missingFunctionsListSink = new StringFileWriterSink(settings.getMissingFunctionsFile());
-                this.connectPorts(fixPathStage.getMissingOperationOutputPort(), missingFunctionsListSink.getInputPort());
+                final StringFileWriterSink missingFunctionsListSink = new StringFileWriterSink(
+                        settings.getMissingFunctionsFile());
+                this.connectPorts(fixPathStage.getMissingOperationOutputPort(),
+                        missingFunctionsListSink.getInputPort());
             }
             this.connectPorts(readerPort, fixPathStage.getInputPort());
             readerPort = fixPathStage.getOutputPort();
@@ -83,10 +85,11 @@ public class TeetimeCallConfiguration extends Configuration {
         this.connectPorts(readerPort, mapperStage.getInputPort());
         readerPort = mapperStage.getOutputPort();
 
-        if (settings.getComponentMapFile() != null) {
+        if (settings.getComponentMapFiles() != null) {
             logger.info("Map based component definition");
             final MapBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new MapBasedCleanupComponentSignatureStage(
-                    settings.getComponentMapFile(), settings.getCaseInsensitive());
+                    settings.getComponentMapFiles(), settings.getMissingMappingFile(), settings.getCallSplitSymbol(),
+                    settings.getCaseInsensitive());
 
             this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
             readerPort = cleanupComponentSignatureStage.getOutputPort();
@@ -110,7 +113,7 @@ public class TeetimeCallConfiguration extends Configuration {
                 }
                 final Path path = Paths.get(signature);
                 final String name = path.getName(path.getNameCount() - 1).toString();
-                final String rest = (path.getParent() != null)
+                final String rest = path.getParent() != null
                         ? settings.getExperimentName() + "." + path.getParent().toString()
                         : settings.getExperimentName();
                 componentType.setName(name);

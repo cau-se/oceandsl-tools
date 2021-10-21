@@ -89,14 +89,23 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssembl
         final String name = assemblyStorage.getStorageType().getName();
         assemblyComponent.getAssemblyStorages().removeKey(name);
 
-        final AssemblyComponent newAssemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
-        newAssemblyComponent
-                .setComponentType(this.findComponentType(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE + "." + name));
-        newAssemblyComponent.setSignature(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE + "." + name);
-        newAssemblyComponent.getAssemblyStorages().put(name, assemblyStorage);
+        this.findOrCreateAssemblyComponent().getAssemblyStorages().put(name, assemblyStorage);
+    }
 
-        this.addObjectToSource(newAssemblyComponent);
-        this.assemblyModel.getAssemblyComponents().put(newAssemblyComponent.getSignature(), newAssemblyComponent);
+    private AssemblyComponent findOrCreateAssemblyComponent() {
+        final AssemblyComponent existingAssemblyComponent = this.assemblyModel.getAssemblyComponents()
+                .get(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
+        if (existingAssemblyComponent == null) {
+            final AssemblyComponent newAssemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
+            newAssemblyComponent
+                    .setComponentType(this.findComponentType(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE));
+            newAssemblyComponent.setSignature(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
+            this.addObjectToSource(newAssemblyComponent);
+            this.assemblyModel.getAssemblyComponents().put(newAssemblyComponent.getSignature(), newAssemblyComponent);
+            return newAssemblyComponent;
+        } else {
+            return existingAssemblyComponent;
+        }
     }
 
     private ComponentType findComponentType(final String componentSignature) {

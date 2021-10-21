@@ -17,25 +17,17 @@ package org.oceandsl.tools.mvis.stages.graph;
 
 import org.oceandsl.tools.mvis.graph.IColorDependencyGraphBuilderConfiguration;
 
-import kieker.analysis.stage.model.ModelRepository;
-
 /**
- * @author reiner
+ * @author Reiner Jung
+ * @since 1.1
  *
  */
 public class ColorDependencyGraphBuilderConfiguration implements IColorDependencyGraphBuilderConfiguration {
 
-    private final ModelRepository modelRepository;
     private final IGraphElementSelector selector;
 
-    public ColorDependencyGraphBuilderConfiguration(final ModelRepository modelRepository, final IGraphElementSelector selector) {
-        this.modelRepository = modelRepository;
+    public ColorDependencyGraphBuilderConfiguration(final IGraphElementSelector selector) {
         this.selector = selector;
-    }
-
-    @Override
-    public ModelRepository getModelRepository() {
-        return this.modelRepository;
     }
 
     @Override

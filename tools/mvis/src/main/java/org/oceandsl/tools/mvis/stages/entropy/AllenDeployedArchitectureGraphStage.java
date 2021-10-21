@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mvis.stages.graph;
+package org.oceandsl.tools.mvis.stages.entropy;
 
 import java.util.Map.Entry;
 
@@ -22,6 +22,9 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
+import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
+import org.oceandsl.tools.mvis.stages.graph.KiekerNode;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;

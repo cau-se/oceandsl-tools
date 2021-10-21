@@ -91,6 +91,41 @@ public class CheckModelIntegrityMain {
         CheckModelIntegrityMain.checkExecutionInvocationIntegrity(repository.getModel(ExecutionModel.class),
                 repository.getModel(DeploymentModel.class));
         CheckModelIntegrityMain.checkExecutionStorageAccessIntegrity(repository.getModel(ExecutionModel.class));
+        CheckModelIntegrityMain.checkForDuplicateInvocations(repository.getModel(ExecutionModel.class));
+    }
+
+    private static void checkForDuplicateInvocations(final ExecutionModel model) {
+        final Map<DeployedOperation, Map<DeployedOperation, AggregatedInvocation>> map = new HashMap<>();
+        for (final AggregatedInvocation invocation : model.getAggregatedInvocations().values()) {
+            Map<DeployedOperation, AggregatedInvocation> targetMap = map.get(invocation.getSource());
+            if (targetMap == null) {
+                targetMap = new HashMap<>();
+                targetMap.put(invocation.getTarget(), invocation);
+            } else {
+                if (targetMap.get(invocation.getTarget()) != null) {
+                    System.err.printf("Found duplicate %s -> %s\n",
+                            invocation.getSource().getAssemblyOperation().getOperationType().getName(),
+                            invocation.getTarget().getAssemblyOperation().getOperationType().getName());
+                }
+            }
+        }
+
+        final List<String> l = new ArrayList<>();
+        for (final AggregatedInvocation invocation : model.getAggregatedInvocations().values()) {
+            final String m = String.format(">> %s -> %s",
+                    invocation.getSource().getAssemblyOperation().getOperationType().getSignature(),
+                    invocation.getTarget().getAssemblyOperation().getOperationType().getSignature());
+            boolean g = false;
+            for (final String x : l) {
+                if (x.equals(m)) {
+                    System.err.printf("Duplicate %s\n", m);
+                    g = true;
+                }
+            }
+            if (!g) {
+                l.add(m);
+            }
+        }
     }
 
     private static void checkExecutionInvocationIntegrity(final ExecutionModel model,
@@ -230,7 +265,8 @@ public class CheckModelIntegrityMain {
             for (final EReference reference : clazz.getEAllReferences()) {
                 final Object referencedObject = object.eGet(reference, true);
                 if (referencedObject == null) {
-                    System.out.printf("Missing referenced object: %s -> %s\n", RepositoryUtils.getName(object),reference.getName());
+                    System.out.printf("Missing referenced object: %s -> %s\n", RepositoryUtils.getName(object),
+                            reference.getName());
                     errorCount++;
 
                 }

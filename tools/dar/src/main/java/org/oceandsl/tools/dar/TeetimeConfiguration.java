@@ -85,9 +85,9 @@ public class TeetimeConfiguration extends Configuration {
         final AbstractSignatureCleaner componentSignatureCleaner;
         final AbstractSignatureCleaner operationSignatureCleaner;
 
-        if (parameterConfiguration.getComponentMapFile() != null) {
+        if (parameterConfiguration.getComponentMapFiles() != null) {
             logger.info("Map based component definition");
-            componentSignatureCleaner = new MapBasedSignatureCleaner(parameterConfiguration.getComponentMapFile(),
+            componentSignatureCleaner = new MapBasedSignatureCleaner(parameterConfiguration.getComponentMapFiles(),
                     parameterConfiguration.getCaseInsensitive());
             operationSignatureCleaner = new MapBasedOperationSignatureCleaner(
                     parameterConfiguration.getCaseInsensitive());

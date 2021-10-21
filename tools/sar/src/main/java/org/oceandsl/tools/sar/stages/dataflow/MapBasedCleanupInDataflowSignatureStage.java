@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar.stages;
+package org.oceandsl.tools.sar.stages.dataflow;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,25 +24,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
+import teetime.stage.basic.AbstractTransformation;
 
 /**
+ * Cleanup names and make them lower case if requested.
+ *
  * @author Reiner Jung
  * @since 1.1
  */
-public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupComponentSignatureStage {
+public class MapBasedCleanupInDataflowSignatureStage extends AbstractTransformation<DataAccess, DataAccess> {
 
+    private final boolean caseInsensitive;
     private final Map<String, String> componentMap = new HashMap<>();
-    private final PrintWriter missingMappingWriter;
 
-    public MapBasedCleanupComponentSignatureStage(final List<Path> componentMapFiles, final Path missingMappingFile,
-            final String separator, final boolean caseInsensitive) throws IOException, ValueConversionErrorException {
-        super(caseInsensitive);
-        if (missingMappingFile != null) {
-            this.missingMappingWriter = new PrintWriter(Files.newBufferedWriter(missingMappingFile));
-        } else {
-            this.missingMappingWriter = null;
-        }
+    public MapBasedCleanupInDataflowSignatureStage(final List<Path> componentMapFiles, final Path missingMappingFile,
+            final String seperator, final boolean caseInsensitive) throws IOException {
+        this.caseInsensitive = caseInsensitive;
+        this.setupMap(componentMapFiles, seperator);
+    }
+
+    private void setupMap(final List<Path> componentMapFiles, final String separator) throws IOException {
         for (final Path componentMapFile : componentMapFiles) {
             this.logger.info("Reading map file {}", componentMapFile.toString());
             final BufferedReader reader = Files.newBufferedReader(componentMapFile);
@@ -63,6 +63,15 @@ public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupCompo
         }
     }
 
+    @Override
+    protected void execute(final DataAccess element) throws Exception {
+        element.setModule(this.convertToLowerCase(this.processComponentSignature(element.getModule())));
+        element.setOperation(this.convertToLowerCase(this.processSignature(element.getOperation())));
+        element.setSharedData(this.convertToLowerCase(this.processSignature(element.getSharedData())));
+
+        this.outputPort.send(element);
+    }
+
     private String convertToLowerCase(final String string) {
         String value;
         if (string.endsWith("_")) {
@@ -73,8 +82,16 @@ public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupCompo
         return this.caseInsensitive ? value.toLowerCase() : value;
     }
 
-    @Override
-    protected String processComponentSignature(final String signature) {
+    private String processSignature(final String signature) {
+        if ("<<no-file>>".equals(signature)) {
+            return signature;
+        } else {
+            final Path path = Paths.get(signature);
+            return this.convertToLowerCase(path.getName(path.getNameCount() - 1).toString());
+        }
+    }
+
+    private String processComponentSignature(final String signature) {
         if ("<<no-file>>".equals(signature)) {
             return signature;
         } else {
@@ -85,20 +102,8 @@ public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupCompo
                 return result;
             } else {
                 this.logger.warn("File '{}' has no component mapping. Signature '{}'", filename, signature);
-                if (this.missingMappingWriter != null) {
-                    this.missingMappingWriter.println(filename + "; " + signature);
-                }
                 return "unknown";
             }
         }
     }
-
-    @Override
-    protected void onTerminating() {
-        if (this.missingMappingWriter != null) {
-            this.missingMappingWriter.close();
-        }
-        super.onTerminating();
-    }
-
 }

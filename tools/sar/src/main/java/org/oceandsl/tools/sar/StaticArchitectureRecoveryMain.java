@@ -85,7 +85,7 @@ public class StaticArchitectureRecoveryMain {
      */
     private void execute(final JCommander commander, final String label) throws ConfigurationException {
     	this.repository = ArchitectureModelManagementFactory.createModelRepository(
-                this.settings.getExperimentName(), this.settings.getComponentMapFile() != null);
+                this.settings.getExperimentName(), this.settings.getComponentMapFiles() != null);
     	
         if (this.settings.getOperationCallInputFile() != null)
         	this.executeConfiguration("call", label, this.createTeetimeCallConfiguration());
