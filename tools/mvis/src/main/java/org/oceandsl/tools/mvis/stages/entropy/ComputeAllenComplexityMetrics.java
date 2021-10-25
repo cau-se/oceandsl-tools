@@ -13,21 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mvis.stages.metrics;
+package org.oceandsl.tools.mvis.stages.entropy;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.graph.Graph;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.CalculationMode;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.CodeMetric;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.Complexity;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.codemetrics.HyperGraphSize;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.complexity.HyperGraphComplexityCalculator;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.SystemGraphUtils;
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.size.HyperGraphSizeCalculator;
+import org.mosim.refactorlizar.architecture.evaluation.CalculationMode;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.CodeMetric;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Cohesion;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Complexity;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Coupling;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.HyperGraphSize;
+import org.mosim.refactorlizar.architecture.evaluation.cohesion.HyperGraphCohesionCalculator;
+import org.mosim.refactorlizar.architecture.evaluation.complexity.HyperGraphComplexityCalculator;
+import org.mosim.refactorlizar.architecture.evaluation.coupling.HyperGraphInterModuleCouplingGenerator;
+import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
+import org.mosim.refactorlizar.architecture.evaluation.graphs.SystemGraphUtils;
+import org.mosim.refactorlizar.architecture.evaluation.size.HyperGraphSizeCalculator;
+import org.oceandsl.tools.mvis.stages.metrics.KiekerArchitectureModelSystemGraphUtils;
+
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import teetime.stage.basic.AbstractTransformation;
 
@@ -40,23 +46,21 @@ public class ComputeAllenComplexityMetrics
 
     @Override
     protected void execute(final Graph<Node<DeployedComponent>> graph) throws Exception {
-        final CalculationMode mode = CalculationMode.REINER;
+        final CalculationMode mode = CalculationMode.NO_OFFSET;
         final SystemGraphUtils<DeployedComponent> systemGraphUtils = new KiekerArchitectureModelSystemGraphUtils();
 
         final HyperGraphSize size = this.calculateHyperGraphSize(mode, systemGraphUtils, graph);
         final Complexity graphComplexity = new HyperGraphComplexityCalculator<>(mode, systemGraphUtils)
                 .calculate(graph);
-        // final Coupling graphCoupling = new HyperGraphInterModuleCouplingGenerator<>(mode,
-        // systemGraphUtils)
-        // .calculate(graph);
-        // final Cohesion cohesion = new HyperGraphCohesionCalculator<>(mode,
-        // systemGraphUtils).calculate(graph);
+        final Coupling graphCoupling = new HyperGraphInterModuleCouplingGenerator<>(mode, systemGraphUtils)
+                .calculate(graph);
+        final Cohesion cohesion = new HyperGraphCohesionCalculator<>(mode, systemGraphUtils).calculate(graph);
 
         final Map<Class<? extends CodeMetric>, CodeMetric> result = new HashMap<>();
         result.put(HyperGraphSize.class, size);
         result.put(Complexity.class, graphComplexity);
-        // result.put(Coupling.class, graphCoupling);
-        // result.put(Cohesion.class, cohesion);
+        result.put(Coupling.class, graphCoupling);
+        result.put(Cohesion.class, cohesion);
 
         this.outputPort.send(result);
     }

@@ -21,7 +21,6 @@ import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 import kieker.analysis.graph.IVertex;
 import kieker.analysis.graph.dependency.PropertyConstants;
 import kieker.analysis.graph.dependency.vertextypes.VertexType;
-import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
@@ -35,9 +34,8 @@ import kieker.model.analysismodel.deployment.DeployedStorage;
  */
 public class ColorAssemblyLevelComponentDependencyGraphBuilder extends AbstractColorDependencyGraphBuilder {
 
-    public ColorAssemblyLevelComponentDependencyGraphBuilder(final ModelRepository repository,
-            final IGraphElementSelector selector) {
-        super(repository, selector);
+    public ColorAssemblyLevelComponentDependencyGraphBuilder(final IGraphElementSelector selector) {
+        super(selector);
     }
 
     @Override

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mvis.stages.graph;
+package org.oceandsl.tools.mvis.stages.entropy;
 
 import java.util.Map.Entry;
 
@@ -21,9 +21,11 @@ import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
-import org.oceandsl.architecture.model.stages.utils.RepositoryUtils;
+import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
+import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
+import org.oceandsl.tools.mvis.stages.graph.KiekerNode;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -32,7 +34,6 @@ import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Tuple;
-import kieker.model.analysismodel.sources.SourceModel;
 import teetime.stage.basic.AbstractTransformation;
 
 /**
@@ -42,10 +43,13 @@ import teetime.stage.basic.AbstractTransformation;
 public class AllenDeployedArchitectureGraphStage
         extends AbstractTransformation<ModelRepository, Graph<Node<DeployedComponent>>> {
 
-    IGraphElementSelector selector;
+    private final IGraphElementSelector selector;
+    private final EGraphGenerationMode graphGeneratioMode;
 
-    public AllenDeployedArchitectureGraphStage(final IGraphElementSelector selector) {
+    public AllenDeployedArchitectureGraphStage(final IGraphElementSelector selector,
+            final EGraphGenerationMode graphGeneratioMode) {
         this.selector = selector;
+        this.graphGeneratioMode = graphGeneratioMode;
     }
 
     @Override
@@ -64,12 +68,6 @@ public class AllenDeployedArchitectureGraphStage
                     if (this.selector.nodeIsSelected(operation.getValue())) {
                         final Node<DeployedComponent> node = new KiekerNode<>(operation.getValue());
                         graph.addNode(node);
-                    } else {
-                        this.logger.error("Node was skipped {}", RepositoryUtils.getName(operation.getValue()));
-                        final SourceModel sourceModel = repository.getModel(SourceModel.class);
-                        for (final String source : sourceModel.getSources().get(operation.getValue())) {
-                            this.logger.error("Node label: {}", source);
-                        }
                     }
                 }
             }
@@ -79,34 +77,32 @@ public class AllenDeployedArchitectureGraphStage
             if (this.selector.edgeIsSelected(entry.getValue())) {
                 final Node<DeployedComponent> source = this.findNode(graph, entry.getValue().getSource());
                 final Node<DeployedComponent> target = this.findNode(graph, entry.getValue().getTarget());
-                if (source != null && target != null) {
-                    graph.putEdge(source, target);
-                } else {
-                    final SourceModel sourceModel = repository.getModel(SourceModel.class);
-                    for (final String s : sourceModel.getSources().get(entry.getValue().getSource())) {
-                        this.logger.error("Source label: {}", s);
-                    }
-                    for (final String s : sourceModel.getSources().get(entry.getValue().getTarget())) {
-                        this.logger.error("Target label: {}", s);
-                    }
-                    for (final String s : sourceModel.getSources().get(entry.getValue())) {
-                        this.logger.error("Edge label: {}", s);
-                    }
 
-                    if (this.selector.nodeIsSelected(entry.getValue().getSource())
-                            && this.selector.nodeIsSelected(entry.getValue().getTarget())) {
-                        this.logger.error("Both nodes should be part of the graph, but are not: {} -> {}",
-                                RepositoryUtils.getName(entry.getValue().getSource()),
-                                RepositoryUtils.getName(entry.getValue().getTarget()));
-                    } else {
-                        this.logger.warn("When an edge is selected, both nodes should be selected too: {} -> {}",
-                                RepositoryUtils.getName(entry.getValue().getSource()),
-                                RepositoryUtils.getName(entry.getValue().getTarget()));
+                switch (this.graphGeneratioMode) {
+                case ADD_NODES_FOR_EDGES:
+                    graph.putEdge(this.getOrCreateNode(graph, source, entry.getValue().getSource()),
+                            this.getOrCreateNode(graph, target, entry.getValue().getTarget()));
+                    break;
+                case ONLY_EDGES_FOR_NODES:
+                    if (source != null && target != null) {
+                        graph.putEdge(source, target);
                     }
+                    break;
                 }
             }
         }
         this.outputPort.send(graph);
+    }
+
+    private Node<DeployedComponent> getOrCreateNode(final MutableGraph<Node<DeployedComponent>> graph,
+            final Node<DeployedComponent> node, final DeployedOperation operation) {
+        if (node == null) {
+            final Node<DeployedComponent> newNode = new KiekerNode<>(operation);
+            graph.addNode(newNode);
+            return newNode;
+        } else {
+            return node;
+        }
     }
 
     private Node<DeployedComponent> findNode(final Graph<Node<DeployedComponent>> graph,
@@ -119,8 +115,6 @@ public class AllenDeployedArchitectureGraphStage
             }
         }
 
-        this.logger.error("Internal error: Looked for node of an edge that does not exist: {}",
-                operation.getAssemblyOperation().getOperationType().getSignature());
         return null;
     }
 

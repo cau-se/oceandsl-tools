@@ -24,7 +24,8 @@ import org.oceandsl.tools.sar.stages.dataflow.CountUniqueDataflowCallsStage;
 import org.oceandsl.tools.sar.stages.dataflow.DataAccess;
 import org.oceandsl.tools.sar.stages.dataflow.DeploymentModelDataflowAssemblerStage;
 import org.oceandsl.tools.sar.stages.dataflow.ExecutionModelDataflowAssemblerStage;
-import org.oceandsl.tools.sar.stages.dataflow.FileBasedCleanupComponentInDataflowSignatureStage;
+import org.oceandsl.tools.sar.stages.dataflow.FileBasedCleanupInDataflowSignatureStage;
+import org.oceandsl.tools.sar.stages.dataflow.MapBasedCleanupInDataflowSignatureStage;
 import org.oceandsl.tools.sar.stages.dataflow.TypeModelDataflowAssemblerStage;
 import org.slf4j.Logger;
 
@@ -56,11 +57,17 @@ public class TeetimeDataflowConfiguration extends Configuration {
 
         readerDataflowPort = readDataflowStage.getOutputPort();
 
-        if (settings.getComponentMapFile() != null) {
+        if (settings.getComponentMapFiles() != null) {
             logger.info("Map based component definition");
+            final MapBasedCleanupInDataflowSignatureStage cleanupComponentDataflowSignatureStage = new MapBasedCleanupInDataflowSignatureStage(
+                    settings.getComponentMapFiles(), settings.getMissingMappingFile(), settings.getCallSplitSymbol(),
+                    settings.getCaseInsensitive());
+
+            this.connectPorts(readerDataflowPort, cleanupComponentDataflowSignatureStage.getInputPort());
+            readerDataflowPort = cleanupComponentDataflowSignatureStage.getOutputPort();
         } else {
             logger.info("File based component definition");
-            final FileBasedCleanupComponentInDataflowSignatureStage cleanupComponentDataflowSignatureStage = new FileBasedCleanupComponentInDataflowSignatureStage(
+            final FileBasedCleanupInDataflowSignatureStage cleanupComponentDataflowSignatureStage = new FileBasedCleanupInDataflowSignatureStage(
                     settings.getCaseInsensitive());
 
             this.connectPorts(readerDataflowPort, cleanupComponentDataflowSignatureStage.getInputPort());

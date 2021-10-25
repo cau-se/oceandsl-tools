@@ -15,12 +15,12 @@
  ***************************************************************************/
 package org.oceandsl.architecture.model.stages;
 
-import teetime.stage.basic.AbstractTransformation;
+import teetime.stage.basic.AbstractFilter;
 
 /**
  * Counts all events and hands them to the next filter unchanged. The stage outputs the number of
- * events for every <code>interval</code> event occurrence and on termination. Output is written to
- * info log channel.
+ * events for every <code>numberOfOccurance</code> event occurrence and on termination. Output is
+ * written to info log channel.
  *
  * @param <T>
  *            event type
@@ -28,19 +28,19 @@ import teetime.stage.basic.AbstractTransformation;
  * @author Reiner Jung
  * @since 1.0
  */
-public class CountEventsStage<T> extends AbstractTransformation<T, T> {
+public class CountEventsStage<T> extends AbstractFilter<T> {
 
     private long counter;
-    private final long interval;
+    private final long numberOfOccurance;
 
-    public CountEventsStage(final long interval) {
-        this.interval = interval;
+    public CountEventsStage(final long numberOfOccurance) {
+        this.numberOfOccurance = numberOfOccurance;
     }
 
     @Override
     protected void execute(final T element) throws Exception {
         this.counter++;
-        if ((this.counter % this.interval) == 0) {
+        if (this.counter % this.numberOfOccurance == 0) {
             this.logger.info("Received {} events.", this.counter);
         }
         this.outputPort.send(element);

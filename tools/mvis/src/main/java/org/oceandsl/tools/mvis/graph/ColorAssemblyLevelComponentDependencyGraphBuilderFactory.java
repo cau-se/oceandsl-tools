@@ -33,8 +33,7 @@ public class ColorAssemblyLevelComponentDependencyGraphBuilderFactory
     @Override
     public IDependencyGraphBuilder createDependencyGraphBuilder(
             final IColorDependencyGraphBuilderConfiguration configuration) {
-        return new ColorAssemblyLevelComponentDependencyGraphBuilder(configuration.getModelRepository(),
-                configuration.getSelector());
+        return new ColorAssemblyLevelComponentDependencyGraphBuilder(configuration.getSelector());
     }
 
 }

@@ -21,11 +21,10 @@ import java.nio.file.Files;
 
 import com.beust.jcommander.JCommander;
 
-import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
 import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
+import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
 import org.slf4j.LoggerFactory;
 
-import kieker.analysis.stage.model.ModelRepository;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
@@ -37,8 +36,6 @@ import kieker.tools.common.AbstractService;
  * @since 1.0
  */
 public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration, Settings> {
-
-    private ModelRepository repository;
 
     public static void main(final String[] args) {
         final ModelVisualizationMain main = new ModelVisualizationMain();
@@ -55,9 +52,7 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            this.repository = ArchitectureModelManagementFactory
-                    .loadModelRepository(this.parameterConfiguration.getInputDirectory());
-            return new TeetimeConfiguration(this.logger, this.parameterConfiguration, this.repository);
+            return new TeetimeConfiguration(this.logger, this.parameterConfiguration);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
@@ -77,6 +72,16 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
+        if (this.parameterConfiguration.getGraphGenerationMode() == null) {
+            this.logger.error("You need to specify a graph generation mode: {}",
+                    this.createModeList(EGraphGenerationMode.values()));
+            return false;
+        }
+        if (this.parameterConfiguration.getSelector() == null) {
+            this.logger.error("No valid node and edge selector specificed. Valid types are: {}",
+                    this.createSelectorList(ESelectorKind.values()));
+            return false;
+        }
         if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory())) {
             this.logger.error("Output path {} is not directory", this.parameterConfiguration.getOutputDirectory());
             return false;
@@ -86,6 +91,30 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
             return false;
         }
         return true;
+    }
+
+    private Object createSelectorList(final ESelectorKind[] values) {
+        String list = null;
+        for (final ESelectorKind value : values) {
+            if (list == null) {
+                list = value.name().toLowerCase();
+            } else {
+                list += "," + value.name().toLowerCase();
+            }
+        }
+        return list;
+    }
+
+    private String createModeList(final EGraphGenerationMode[] values) {
+        String list = null;
+        for (final EGraphGenerationMode value : values) {
+            if (list == null) {
+                list = value.getKey();
+            } else {
+                list += "," + value.getKey();
+            }
+        }
+        return list;
     }
 
     @Override

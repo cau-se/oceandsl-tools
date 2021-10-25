@@ -13,31 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mvis.stages;
+package org.oceandsl.tools.relable;
 
-import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 
-import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
-
-import kieker.analysis.stage.model.ModelRepository;
-import teetime.framework.AbstractProducerStage;
+import com.beust.jcommander.IStringConverter;
 
 /**
+ *
  * @author Reiner Jung
  * @since 1.1
  */
-public class ModelRepositoryProducerStage extends AbstractProducerStage<ModelRepository> {
-
-    private final Path path;
-
-    public ModelRepositoryProducerStage(final Path path) {
-        this.path = path;
-    }
+public class ReplacementConverter implements IStringConverter<Replacement> {
 
     @Override
-    protected void execute() throws Exception {
-        this.outputPort.send(ArchitectureModelManagementFactory.loadModelRepository(this.path));
-        this.workCompleted();
+    public Replacement convert(final String value) {
+        final String[] rule = value.split(":");
+        if (rule.length == 2) {
+            final List<String> sources = Arrays.asList(rule[0].split(","));
+            return new Replacement(sources, rule[1]);
+        } else {
+            System.err.printf("Format of replacement rule is not supported: %s", value);
+            return null;
+        }
     }
 
 }

@@ -89,14 +89,25 @@ public class TypeModelDataflowAssemblerStage extends AbstractDataflowAssemblerSt
             final ComponentType componentType) {
         componentType.getProvidedStorages().removeKey(storageType.getName());
 
-        final ComponentType newComponentType = TypeFactory.eINSTANCE.createComponentType();
-        newComponentType.setName(storageType.getName());
-        newComponentType.setPackage(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
-        newComponentType.setSignature(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE + "." + storageType.getName());
-        newComponentType.getProvidedStorages().put(storageType.getName(), storageType);
+        this.findOrCreateGlobalComponentType().getProvidedStorages().put(storageType.getName(), storageType);
+    }
 
-        this.addObjectToSource(newComponentType);
-        this.typeModel.getComponentTypes().put(newComponentType.getSignature(), newComponentType);
+    private ComponentType findOrCreateGlobalComponentType() {
+        final ComponentType componentType = this.typeModel.getComponentTypes()
+                .get(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
+        if (componentType != null) {
+            return componentType;
+        } else {
+            final ComponentType newComponentType = TypeFactory.eINSTANCE.createComponentType();
+            newComponentType.setName(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
+            newComponentType.setPackage(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
+            newComponentType.setSignature(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
+
+            this.typeModel.getComponentTypes().put(newComponentType.getSignature(), newComponentType);
+            this.addObjectToSource(newComponentType);
+
+            return newComponentType;
+        }
     }
 
     private OperationType findOperation(final DataAccess element) {
@@ -111,7 +122,7 @@ public class TypeModelDataflowAssemblerStage extends AbstractDataflowAssemblerSt
             this.typeModel.getComponentTypes().put(element.getModule(), componentType);
             final OperationType operationType = this.createOperation(element.getOperation());
             componentType.getProvidedOperations().put(element.getOperation(), operationType);
-            
+
             return operationType;
         } else {
             for (final OperationType operation : componentType.getProvidedOperations().values()) {

@@ -75,7 +75,8 @@ public class CheckModelIntegrityMain {
         errors = 0;
         for (final Entry<Class<? extends EObject>, List<Class<? extends EObject>>> modelConfig : CheckModelIntegrityMain
                 .configureModels().entrySet()) {
-            errors += CheckModelIntegrityMain.checkReferences(repository.getModel(modelConfig.getKey()).eAllContents());
+            errors += CheckModelIntegrityMain.checkReferences(modelConfig.getKey(),
+                    repository.getModel(modelConfig.getKey()).eAllContents());
         }
 
         System.out.printf("Missing references %s\n", errors);
@@ -88,9 +89,60 @@ public class CheckModelIntegrityMain {
         }
         System.out.printf("Missing signature %s\n", errors);
 
+        // CheckModelIntegrityMain.checkForDuplicateDeployedOperations(repository.getModel(DeploymentModel.class));
+
         CheckModelIntegrityMain.checkExecutionInvocationIntegrity(repository.getModel(ExecutionModel.class),
                 repository.getModel(DeploymentModel.class));
         CheckModelIntegrityMain.checkExecutionStorageAccessIntegrity(repository.getModel(ExecutionModel.class));
+        CheckModelIntegrityMain.checkForDuplicateInvocations(repository.getModel(ExecutionModel.class));
+    }
+
+//    private static void checkForDuplicateDeployedOperations(final DeploymentModel model) {
+//        for (final DeploymentContext context : model.getDeploymentContexts().values()) {
+//            for (final DeployedComponent component : context.getComponents().values()) {
+//                component.getContainedOperations().keySet()
+//            }
+//        }
+//    }
+
+    private static void checkForDuplicateInvocations(final ExecutionModel model) {
+        System.out.println("Check for duplicate invocations based on DeployedOperation");
+        final Map<DeployedOperation, Map<DeployedOperation, AggregatedInvocation>> map = new HashMap<>();
+        for (final AggregatedInvocation invocation : model.getAggregatedInvocations().values()) {
+            Map<DeployedOperation, AggregatedInvocation> targetMap = map.get(invocation.getSource());
+            if (targetMap == null) {
+                targetMap = new HashMap<>();
+                targetMap.put(invocation.getTarget(), invocation);
+            } else {
+                if (targetMap.get(invocation.getTarget()) != null) {
+                    System.out.printf("Found duplicate %s -> %s\n",
+                            invocation.getSource().getAssemblyOperation().getOperationType().getName(),
+                            invocation.getTarget().getAssemblyOperation().getOperationType().getName());
+                }
+            }
+        }
+
+        System.out.println("Check for duplicate invocations based on DeployedOperation names");
+        final List<String> l = new ArrayList<>();
+        for (final AggregatedInvocation invocation : model.getAggregatedInvocations().values()) {
+            final String m = String.format("%s:%s:%s -> %s:%s:%s",
+                    invocation.getSource().getComponent().getDeploymentContext().getName(),
+                    invocation.getSource().getComponent().getAssemblyComponent().getSignature(),
+                    invocation.getSource().getAssemblyOperation().getOperationType().getSignature(),
+                    invocation.getTarget().getComponent().getDeploymentContext().getName(),
+                    invocation.getTarget().getComponent().getAssemblyComponent().getSignature(),
+                    invocation.getTarget().getAssemblyOperation().getOperationType().getSignature());
+            boolean g = false;
+            for (final String x : l) {
+                if (x.equals(m)) {
+                    System.out.printf("Found duplicate %s\n", m);
+                    g = true;
+                }
+            }
+            if (!g) {
+                l.add(m);
+            }
+        }
     }
 
     private static void checkExecutionInvocationIntegrity(final ExecutionModel model,
@@ -222,7 +274,9 @@ public class CheckModelIntegrityMain {
         return result;
     }
 
-    private static long checkReferences(final TreeIterator<EObject> iterator) {
+    private static long checkReferences(final Class<? extends EObject> modelClass,
+            final TreeIterator<EObject> iterator) {
+        System.out.printf("Model %s\n", modelClass.getName());
         long errorCount = 0;
         while (iterator.hasNext()) {
             final EObject object = iterator.next();
@@ -230,7 +284,8 @@ public class CheckModelIntegrityMain {
             for (final EReference reference : clazz.getEAllReferences()) {
                 final Object referencedObject = object.eGet(reference, true);
                 if (referencedObject == null) {
-                    System.out.printf("Missing referenced object: %s -> %s\n", RepositoryUtils.getName(object),reference.getName());
+                    System.out.printf("Missing referenced object: %s:%s -> %s:%s\n", object.getClass().getSimpleName(),
+                            RepositoryUtils.getName(object), reference.getEType().getName(), reference.getName());
                     errorCount++;
 
                 }

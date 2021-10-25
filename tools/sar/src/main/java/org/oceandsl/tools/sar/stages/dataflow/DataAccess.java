@@ -22,9 +22,9 @@ package org.oceandsl.tools.sar.stages.dataflow;
 public class DataAccess {
 
     private String module;
-    private final String operation;
+    private String operation;
     private final EDirection direction;
-    private final String sharedData;
+    private String sharedData;
 
     public DataAccess(final String module, final String operation, final EDirection direction,
             final String sharedData) {
@@ -38,8 +38,16 @@ public class DataAccess {
         return this.module;
     }
 
+    public void setModule(final String module) {
+        this.module = module;
+    }
+
     public String getOperation() {
         return this.operation;
+    }
+
+    public void setOperation(final String operation) {
+        this.operation = operation;
     }
 
     public EDirection getDirection() {
@@ -50,8 +58,7 @@ public class DataAccess {
         return this.sharedData;
     }
 
-    public void setModule(final String module) {
-        this.module = module;
+    public void setSharedData(final String sharedData) {
+        this.sharedData = sharedData;
     }
-
 }

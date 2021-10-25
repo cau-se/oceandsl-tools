@@ -21,20 +21,25 @@ import java.nio.file.Paths;
 import teetime.stage.basic.AbstractTransformation;
 
 /**
- * @author Reiner Jung
+ * Cleanup names and make them lower case if requested.
  *
+ * @author Reiner Jung
+ * @since 1.1
  */
-public class FileBasedCleanupComponentInDataflowSignatureStage extends AbstractTransformation<DataAccess, DataAccess> {
+public class FileBasedCleanupInDataflowSignatureStage extends AbstractTransformation<DataAccess, DataAccess> {
 
     private final boolean caseInsensitive;
 
-    public FileBasedCleanupComponentInDataflowSignatureStage(final boolean caseInsensitive) {
+    public FileBasedCleanupInDataflowSignatureStage(final boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
     }
 
     @Override
     protected void execute(final DataAccess element) throws Exception {
-        element.setModule(this.convertToLowerCase(this.processComponentSignature(element.getModule())));
+        element.setModule(this.convertToLowerCase(this.processSignature(element.getModule())));
+        element.setOperation(this.convertToLowerCase(this.processSignature(element.getOperation())));
+        element.setSharedData(this.convertToLowerCase(this.processSignature(element.getSharedData())));
+
         this.outputPort.send(element);
     }
 
@@ -48,7 +53,7 @@ public class FileBasedCleanupComponentInDataflowSignatureStage extends AbstractT
         return this.caseInsensitive ? value.toLowerCase() : value;
     }
 
-    private String processComponentSignature(final String signature) {
+    private String processSignature(final String signature) {
         if ("<<no-file>>".equals(signature)) {
             return signature;
         } else {

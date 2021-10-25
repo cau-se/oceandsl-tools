@@ -22,7 +22,8 @@ import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
-import edu.kit.kastel.sdq.case4lang.refactorlizar.architecture_evaluation.graphs.Node;
+import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
+
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -40,6 +41,10 @@ import teetime.stage.basic.AbstractTransformation;
  */
 public class CreateGraph4AllenMetricStage
         extends AbstractTransformation<ModelRepository, Graph<Node<DeployedComponent>>> {
+
+    public CreateGraph4AllenMetricStage() {
+        // TODO Auto-generated constructor stub
+    }
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {

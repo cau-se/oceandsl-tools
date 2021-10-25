@@ -31,9 +31,11 @@ import teetime.stage.basic.AbstractTransformation;
 public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository, IGraph> {
 
     private final IGraphElementSelector selector;
+    private final EGraphGenerationMode graphGeneratioMode;
 
-    public ModuleCallGraphStage(final IGraphElementSelector selector) {
+    public ModuleCallGraphStage(final IGraphElementSelector selector, final EGraphGenerationMode graphGeneratioMode) {
         this.selector = selector;
+        this.graphGeneratioMode = graphGeneratioMode;
     }
 
     @Override
@@ -52,9 +54,25 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
             if (targetSelected) {
                 graph.addVertexIfAbsent(invocation.getTarget().getComponent());
             }
-            if (sourceSelected && targetSelected && this.selector.edgeIsSelected(invocation)) {
-                graph.addEdge(invocation, graph.getVertex(invocation.getSource().getComponent()),
-                        graph.getVertex(invocation.getTarget().getComponent()));
+            switch (this.graphGeneratioMode) {
+            case ONLY_EDGES_FOR_NODES:
+                if (sourceSelected && targetSelected && this.selector.edgeIsSelected(invocation)) {
+                    graph.addEdge(invocation, graph.getVertex(invocation.getSource().getComponent()),
+                            graph.getVertex(invocation.getTarget().getComponent()));
+                }
+                break;
+            case ADD_NODES_FOR_EDGES:
+                if (this.selector.edgeIsSelected(invocation)) {
+                    if (!sourceSelected) {
+                        graph.addVertexIfAbsent(invocation.getSource().getComponent());
+                    }
+                    if (!targetSelected) {
+                        graph.addVertexIfAbsent(invocation.getTarget().getComponent());
+                    }
+                    graph.addEdge(invocation, graph.getVertex(invocation.getSource().getComponent()),
+                            graph.getVertex(invocation.getTarget().getComponent()));
+                }
+                break;
             }
         }
 

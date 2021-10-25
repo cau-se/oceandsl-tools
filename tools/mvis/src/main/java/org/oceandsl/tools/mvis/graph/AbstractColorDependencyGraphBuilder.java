@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
+import java.time.temporal.ChronoUnit;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
@@ -23,15 +25,19 @@ import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.graph.IVertex;
 import kieker.analysis.graph.dependency.AbstractDependencyGraphBuilder;
+import kieker.analysis.graph.dependency.ResponseTimeDecorator;
 import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.util.ObjectIdentifierRegistry;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.AggregatedStorageAccess;
+import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.statistics.EPredefinedUnits;
 import kieker.model.analysismodel.statistics.EPropertyType;
 import kieker.model.analysismodel.statistics.StatisticRecord;
 import kieker.model.analysismodel.statistics.Statistics;
+import kieker.model.analysismodel.statistics.StatisticsModel;
 
 /**
  * @author Reiner Jung
@@ -40,12 +46,11 @@ import kieker.model.analysismodel.statistics.Statistics;
  */
 public abstract class AbstractColorDependencyGraphBuilder extends AbstractDependencyGraphBuilder {
 
-    private final SourceModel sourcesModel;
+    private SourceModel sourcesModel;
     private final IGraphElementSelector selector;
 
-    public AbstractColorDependencyGraphBuilder(final ModelRepository repository, final IGraphElementSelector selector) {
-        super(repository);
-        this.sourcesModel = repository.getModel(SourceModel.class);
+    public AbstractColorDependencyGraphBuilder(final IGraphElementSelector selector) {
+        super();
         this.selector = selector;
     }
 
@@ -84,7 +89,15 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
     }
 
     @Override
-    public IGraph build() {
+    public IGraph build(final ModelRepository repository) {
+        this.graph = IGraph.create();
+        this.graph.setName(repository.getName());
+
+        this.sourcesModel = repository.getModel(SourceModel.class);
+        this.executionModel = repository.getModel(ExecutionModel.class);
+        this.statisticsModel = repository.getModel(StatisticsModel.class);
+        this.identifierRegistry = new ObjectIdentifierRegistry();
+        this.responseTimeDecorator = new ResponseTimeDecorator(this.statisticsModel, ChronoUnit.NANOS);
         for (final AggregatedInvocation invocation : this.executionModel.getAggregatedInvocations().values()) {
             this.handleInvocation(invocation);
         }

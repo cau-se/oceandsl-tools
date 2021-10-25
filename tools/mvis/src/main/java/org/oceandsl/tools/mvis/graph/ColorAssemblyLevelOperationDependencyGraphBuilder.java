@@ -38,14 +38,13 @@ import kieker.model.analysismodel.deployment.DeployedStorage;
  */
 public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractColorDependencyGraphBuilder {
 
-    public ColorAssemblyLevelOperationDependencyGraphBuilder(final ModelRepository repository,
-            final IGraphElementSelector selector) {
-        super(repository, selector);
+    public ColorAssemblyLevelOperationDependencyGraphBuilder(final IGraphElementSelector selector) {
+        super(selector);
     }
 
     @Override
-    public IGraph build() {
-        return super.build();
+    public IGraph build(final ModelRepository repository) {
+        return super.build(repository);
     }
 
     @Override

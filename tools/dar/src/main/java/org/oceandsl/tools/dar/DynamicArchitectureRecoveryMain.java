@@ -57,7 +57,7 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
         try {
             this.repository = ArchitectureModelManagementFactory.createModelRepository(
                     this.parameterConfiguration.getExperimentName(),
-                    this.parameterConfiguration.getComponentMapFile() != null);
+                    this.parameterConfiguration.getComponentMapFiles() != null);
 
             return new TeetimeConfiguration(this.logger, this.parameterConfiguration, this.repository);
         } catch (final IOException | ValueConversionErrorException e) {

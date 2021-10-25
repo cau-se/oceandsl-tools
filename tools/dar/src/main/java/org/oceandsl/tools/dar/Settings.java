@@ -17,6 +17,7 @@ package org.oceandsl.tools.dar;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
@@ -39,8 +40,8 @@ public class Settings {
     private Path outputDirectory;
 
     @Parameter(names = { "-M",
-            "--component-map" }, required = false, converter = PathConverter.class, description = "Component, file and function map file")
-    private Path componentMapFile;
+            "--component-map" }, required = false, variableArity = true, converter = PathConverter.class, description = "Component, file and function map file")
+    private List<Path> componentMapFiles;
 
     @Parameter(names = { "-a",
             "--addrline" }, required = false, converter = FileConverter.class, description = "Location of the addrline tool")
@@ -84,8 +85,8 @@ public class Settings {
         return this.caseInsensitive;
     }
 
-    public Path getComponentMapFile() {
-        return this.componentMapFile;
+    public List<Path> getComponentMapFiles() {
+        return this.componentMapFiles;
     }
 
     public String getExperimentName() {

@@ -16,7 +16,7 @@
 package org.oceandsl.tools.mop.stages;
 
 import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
-import org.oceandsl.tools.mop.operations.ModelRepositoryMerger;
+import org.oceandsl.tools.mop.merge.ModelRepositoryMerger;
 
 import kieker.analysis.stage.model.ModelRepository;
 import teetime.framework.AbstractConsumerStage;
@@ -40,6 +40,7 @@ public class ModelProcessor extends AbstractConsumerStage<ModelRepository> {
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
+        this.logger.info("Merging models {}", element.getName());
         ModelRepositoryMerger.perform(this.lastModel, element);
         this.task++;
     }

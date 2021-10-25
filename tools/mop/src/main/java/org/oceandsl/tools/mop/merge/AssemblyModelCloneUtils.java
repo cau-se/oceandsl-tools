@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop.operations;
+package org.oceandsl.tools.mop.merge;
 
 import java.util.Map.Entry;
 
@@ -35,6 +35,11 @@ public final class AssemblyModelCloneUtils {
     public static AssemblyComponent duplicate(final TypeModel typeModel, final AssemblyComponent component) {
         final AssemblyComponent newComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
         newComponent.setSignature(component.getSignature());
+
+        if (component.getComponentType().eIsProxy()) {
+            throw new InternalError(
+                    "Unresolved component type for " + component.getSignature() + " probably broken reference URI");
+        }
 
         // TODO the following fails.
         newComponent.setComponentType(
@@ -77,6 +82,9 @@ public final class AssemblyModelCloneUtils {
     }
 
     private static ComponentType findComponentType(final TypeModel typeModel, final String signature) {
+        if (signature == null) {
+            throw new InternalError("Try to find signature, bit signature is null");
+        }
         return typeModel.getComponentTypes().get(signature);
     }
 }
