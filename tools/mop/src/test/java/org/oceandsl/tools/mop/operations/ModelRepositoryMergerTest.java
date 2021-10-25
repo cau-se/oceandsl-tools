@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.oceandsl.tools.mop.merge.ModelRepositoryMerger;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
@@ -46,7 +47,7 @@ public class ModelRepositoryMergerTest {
 
     /**
      * Test method for
-     * {@link org.oceandsl.tools.mop.operations.ModelRepositoryMerger#perform(kieker.analysis.stage.model.ModelRepository, kieker.analysis.stage.model.ModelRepository, org.oceandsl.tools.mop.EStrategy)}.
+     * {@link org.oceandsl.tools.mop.merge.ModelRepositoryMerger#perform(kieker.analysis.stage.model.ModelRepository, kieker.analysis.stage.model.ModelRepository, org.oceandsl.tools.mop.EStrategy)}.
      */
     @Test
     public void testPerformType() {

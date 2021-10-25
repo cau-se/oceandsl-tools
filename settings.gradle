@@ -19,5 +19,6 @@ include 'tools:dar'
 include 'tools:mop'
 include 'tools:mvis'
 include 'tools:cmi'
+include 'tools:relabel'
 
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop.operations;
+package org.oceandsl.tools.mop.merge;
 
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -55,7 +55,7 @@ public final class ExecutionModelCloneUtils {
         return newAccess;
     }
 
-    private static DeployedOperation findDeployedOperation(final DeploymentModel newModel,
+    private static DeployedOperation findDeployedOperation(final DeploymentModel targetModel,
             final DeployedOperation operation) {
         final EStringToDeployedOperationMapEntryImpl mapOperationEntry = (EStringToDeployedOperationMapEntryImpl) operation
                 .eContainer();
@@ -65,13 +65,14 @@ public final class ExecutionModelCloneUtils {
                 .eContainer();
         final DeploymentContext context = (DeploymentContext) mapComponentEntry.eContainer();
 
-        final DeploymentContext newContext = newModel.getDeploymentContexts().get(context.getName());
+        final DeploymentContext newContext = targetModel.getDeploymentContexts().get(context.getName());
         final DeployedComponent newComponent = newContext.getComponents().get(component.getSignature());
+
         return newComponent.getContainedOperations()
                 .get(operation.getAssemblyOperation().getOperationType().getSignature());
     }
 
-    private static DeployedStorage findDeployedStorage(final DeploymentModel newModel, final DeployedStorage storage) {
+    private static DeployedStorage findDeployedStorage(final DeploymentModel targetModel, final DeployedStorage storage) {
         final EStringToDeployedStorageMapEntryImpl mapStorageEntry = (EStringToDeployedStorageMapEntryImpl) storage
                 .eContainer();
         final DeployedComponent component = (DeployedComponent) mapStorageEntry.eContainer();
@@ -80,7 +81,7 @@ public final class ExecutionModelCloneUtils {
                 .eContainer();
         final DeploymentContext context = (DeploymentContext) mapComponentEntry.eContainer();
 
-        final DeploymentContext newContext = newModel.getDeploymentContexts().get(context.getName());
+        final DeploymentContext newContext = targetModel.getDeploymentContexts().get(context.getName());
         final DeployedComponent newComponent = newContext.getComponents().get(component.getSignature());
         return newComponent.getContainedStorages().get(storage.getAssemblyStorage().getStorageType().getName());
     }

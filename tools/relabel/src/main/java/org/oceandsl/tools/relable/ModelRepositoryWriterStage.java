@@ -13,46 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop.stages;
+package org.oceandsl.tools.relable;
+
+import java.nio.file.Path;
 
 import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
-import org.oceandsl.tools.mop.merge.ModelRepositoryMerger;
 
 import kieker.analysis.stage.model.ModelRepository;
 import teetime.framework.AbstractConsumerStage;
-import teetime.framework.OutputPort;
 
 /**
+ * Write model to repository.
+ *
  * @author Reiner Jung
+ * @since 1.1
  *
  */
-public class ModelProcessor extends AbstractConsumerStage<ModelRepository> {
+public class ModelRepositoryWriterStage extends AbstractConsumerStage<ModelRepository> {
 
-    private final OutputPort<ModelRepository> outputPort = this.createOutputPort(ModelRepository.class);
+    private final Path outputDirectory;
 
-    private final ModelRepository lastModel;
-
-    int task = 0;
-
-    public ModelProcessor(final String repositoryName) {
-        this.lastModel = ArchitectureModelManagementFactory.createModelRepository(repositoryName);
+    public ModelRepositoryWriterStage(final Path outputDirectory) {
+        this.outputDirectory = outputDirectory;
     }
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
-        this.logger.info("Merging models {}", element.getName());
-        ModelRepositoryMerger.perform(this.lastModel, element);
-        this.task++;
-    }
-
-    public OutputPort<ModelRepository> getOutputPort() {
-        return this.outputPort;
-    }
-
-    @Override
-    protected void onTerminating() {
-        this.outputPort.send(this.lastModel);
-        super.onTerminating();
+        ArchitectureModelManagementFactory.writeModelRepository(this.outputDirectory, element);
     }
 
 }

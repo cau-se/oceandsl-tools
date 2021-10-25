@@ -132,15 +132,23 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
         final String name = deployedStorage.getAssemblyStorage().getStorageType().getName();
         deployedComponent.getContainedStorages().removeKey(name);
 
-        final DeployedComponent newDeployedComponent = DeploymentFactory.eINSTANCE.createDeployedComponent();
-        newDeployedComponent.setAssemblyComponent(
-                this.findAssemblyComponent(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE + "." + name));
-        newDeployedComponent.setSignature(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE + "." + name);
-        newDeployedComponent.getContainedStorages().put(name, deployedStorage);
+        final DeploymentContext context = deployedComponent.getDeploymentContext();
 
-        this.addObjectToSource(newDeployedComponent);
-        this.deploymentModel.getDeploymentContexts().get(0).getValue().getComponents()
-                .put(newDeployedComponent.getSignature(), newDeployedComponent);
+        final DeployedComponent existingComponent = context.getComponents()
+                .get(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
+
+        if (existingComponent == null) {
+            final DeployedComponent newDeployedComponent = DeploymentFactory.eINSTANCE.createDeployedComponent();
+            newDeployedComponent
+                    .setAssemblyComponent(this.findAssemblyComponent(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE));
+            newDeployedComponent.setSignature(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
+            newDeployedComponent.getContainedStorages().put(name, deployedStorage);
+
+            this.addObjectToSource(newDeployedComponent);
+            context.getComponents().put(newDeployedComponent.getSignature(), newDeployedComponent);
+        } else {
+            existingComponent.getContainedStorages().put(name, deployedStorage);
+        }
     }
 
     private AssemblyComponent findAssemblyComponent(final String signature) {

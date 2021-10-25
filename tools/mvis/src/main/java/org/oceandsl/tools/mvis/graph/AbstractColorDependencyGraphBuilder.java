@@ -16,8 +16,6 @@
 package org.oceandsl.tools.mvis.graph;
 
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
@@ -100,22 +98,8 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
         this.statisticsModel = repository.getModel(StatisticsModel.class);
         this.identifierRegistry = new ObjectIdentifierRegistry();
         this.responseTimeDecorator = new ResponseTimeDecorator(this.statisticsModel, ChronoUnit.NANOS);
-        final List<String> l = new ArrayList<>();
         for (final AggregatedInvocation invocation : this.executionModel.getAggregatedInvocations().values()) {
-            final String m = String.format(">> %s -> %s",
-                    invocation.getSource().getAssemblyOperation().getOperationType().getSignature(),
-                    invocation.getTarget().getAssemblyOperation().getOperationType().getSignature());
-            boolean g = false;
-            for (final String x : l) {
-                if (x.equals(m)) {
-                    System.err.printf("Duplicate %s\n", m);
-                    g = true;
-                }
-            }
-            if (!g) {
-                l.add(m);
-                this.handleInvocation(invocation);
-            }
+            this.handleInvocation(invocation);
         }
         for (final AggregatedStorageAccess storageAccess : this.executionModel.getAggregatedStorageAccesses()
                 .values()) {
