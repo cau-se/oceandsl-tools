@@ -15,7 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
-import org.oceandsl.tools.mvis.ExtraConstants;
 import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 import kieker.analysis.graph.IEdge;

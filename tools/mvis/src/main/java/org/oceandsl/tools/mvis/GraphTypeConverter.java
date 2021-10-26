@@ -19,7 +19,7 @@ import com.beust.jcommander.IStringConverter;
 
 /**
  * @author Reiner Jung
- * @since 1.0
+ * @since 1.1
  *
  */
 public class GraphTypeConverter implements IStringConverter<EOutputGraph> {

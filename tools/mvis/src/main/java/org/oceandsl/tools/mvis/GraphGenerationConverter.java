@@ -20,8 +20,10 @@ import com.beust.jcommander.IStringConverter;
 import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
 
 /**
- * @author reiner
+ * Convert command line parameter strings to @{link EGraphGenerationMode}s.
  *
+ * @author Reiner Jung
+ * @since 1.1
  */
 public class GraphGenerationConverter implements IStringConverter<EGraphGenerationMode> {
 

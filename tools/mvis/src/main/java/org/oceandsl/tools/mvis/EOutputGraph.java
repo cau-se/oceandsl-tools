@@ -16,8 +16,10 @@
 package org.oceandsl.tools.mvis;
 
 /**
- * @author Reiner Jung
+ * Different supported graph outputs.
  *
+ * @author Reiner Jung
+ * @since 1.1
  */
 public enum EOutputGraph {
     DOT_OP, GRAPHML, DOT_COMPONENT

@@ -17,8 +17,6 @@ package org.oceandsl.tools.mvis.graph;
 
 import java.util.Collection;
 
-import org.oceandsl.tools.mvis.ExtraConstants;
-
 import kieker.analysis.graph.IElement;
 import kieker.analysis.graph.IVertex;
 import kieker.analysis.graph.dependency.PropertyConstants;
