@@ -26,8 +26,8 @@ public class FileBasedCleanupComponentSignatureStageTest {
                 FileBasedCleanupComponentSignatureStageTest.CALLEE);
 
         final CallerCallee resultCallerCallee = new CallerCallee("first",
-                FileBasedCleanupComponentSignatureStageTest.CALLER.toLowerCase(), "second",
-                FileBasedCleanupComponentSignatureStageTest.CALLEE.toLowerCase());
+                FileBasedCleanupComponentSignatureStageTest.CALLER, "second",
+                FileBasedCleanupComponentSignatureStageTest.CALLEE);
 
         StageTester.test(stage).and().send(callerCallee).to(stage.getInputPort()).start();
 
