@@ -19,10 +19,10 @@ import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.architecture.model.data.table.LongValueHandler;
-import org.oceandsl.architecture.model.data.table.StringValueHandler;
-import org.oceandsl.architecture.model.data.table.Table;
-import org.oceandsl.architecture.model.stages.utils.RepositoryUtils;
+import org.oceandsl.analysis.architecture.model.RepositoryUtils;
+import org.oceandsl.analysis.stages.staticdata.data.LongValueHandler;
+import org.oceandsl.analysis.stages.staticdata.data.StringValueHandler;
+import org.oceandsl.analysis.stages.staticdata.data.Table;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedOperation;

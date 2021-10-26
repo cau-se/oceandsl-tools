@@ -15,15 +15,15 @@
  ***************************************************************************/
 package org.oceandsl.tools.dar;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.oceandsl.analysis.utils.MapFileReader;
+import org.oceandsl.analysis.utils.StringValueConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,26 +39,16 @@ public class MapBasedSignatureCleaner extends AbstractSignatureCleaner {
 
     private final Map<String, String> componentMap = new HashMap<>();
 
-    public MapBasedSignatureCleaner(final List<Path> componentMapFiles, final boolean caseInsensitive)
-            throws IOException {
+    public MapBasedSignatureCleaner(final List<Path> componentMapFiles, final boolean caseInsensitive,
+            final String separator) throws IOException {
         super(caseInsensitive);
         for (final Path componentMapFile : componentMapFiles) {
             this.logger.info("Reading map file {}", componentMapFile.toString());
-            final BufferedReader reader = Files.newBufferedReader(componentMapFile);
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final String[] values = line.split(";");
-                if (values.length == 2) {
-                    // 0 = component name
-                    // 1 = file name
-                    // 2 = function name
-                    this.componentMap.put(this.convertToLowerCase(this.removeTrailingUnderscore(values[1].trim())),
-                            this.convertToLowerCase(this.removeTrailingUnderscore(values[0].trim())));
-                } else {
-                    this.logger.error("Entry incomplete '{}'", line.trim());
-                }
-            }
-            reader.close();
+
+            final MapFileReader<String, String> mapFileReader = new MapFileReader<String, String>(componentMapFile,
+                    separator, this.componentMap, new StringValueConverter(caseInsensitive, 1),
+                    new StringValueConverter(caseInsensitive, 0));
+            mapFileReader.read();
         }
     }
 

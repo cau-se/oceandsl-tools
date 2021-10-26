@@ -18,7 +18,7 @@ package org.oceandsl.pp.log;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.oceandsl.analysis.CallerCallee;
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 import teetime.framework.AbstractStage;
 import teetime.framework.InputPort;

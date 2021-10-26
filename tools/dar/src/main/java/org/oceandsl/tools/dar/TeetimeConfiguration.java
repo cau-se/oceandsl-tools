@@ -22,9 +22,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oceandsl.analysis.RewriteBeforeAndAfterEventsStage;
-import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
-import org.oceandsl.architecture.model.stages.CountEventsStage;
+import org.oceandsl.analysis.stages.dynamic.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.analysis.stages.generic.CountEventsStage;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 import org.slf4j.Logger;
 
 import kieker.analysis.signature.AbstractSignatureCleaner;
@@ -88,7 +88,7 @@ public class TeetimeConfiguration extends Configuration {
         if (parameterConfiguration.getComponentMapFiles() != null) {
             logger.info("Map based component definition");
             componentSignatureCleaner = new MapBasedSignatureCleaner(parameterConfiguration.getComponentMapFiles(),
-                    parameterConfiguration.getCaseInsensitive());
+                    parameterConfiguration.getCaseInsensitive(), ";");
             operationSignatureCleaner = new MapBasedOperationSignatureCleaner(
                     parameterConfiguration.getCaseInsensitive());
         } else {

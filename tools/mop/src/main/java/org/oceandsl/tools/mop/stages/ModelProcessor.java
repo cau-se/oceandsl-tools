@@ -15,7 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.stages;
 
-import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
+import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
 import org.oceandsl.tools.mop.merge.ModelRepositoryMerger;
 
 import kieker.analysis.stage.model.ModelRepository;
@@ -35,7 +35,7 @@ public class ModelProcessor extends AbstractConsumerStage<ModelRepository> {
     int task = 0;
 
     public ModelProcessor(final String repositoryName) {
-        this.lastModel = ArchitectureModelManagementFactory.createModelRepository(repositoryName);
+        this.lastModel = ArchitectureModelManagementUtils.createModelRepository(repositoryName);
     }
 
     @Override

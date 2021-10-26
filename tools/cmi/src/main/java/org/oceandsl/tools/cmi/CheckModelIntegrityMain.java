@@ -29,8 +29,8 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
-import org.oceandsl.architecture.model.stages.utils.RepositoryUtils;
+import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.architecture.model.RepositoryUtils;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.common.exception.ConfigurationException;
@@ -57,7 +57,7 @@ public class CheckModelIntegrityMain {
 
     public static void main(final String[] args) throws ConfigurationException {
         final Path path = Paths.get(args[0]);
-        final ModelRepository repository = ArchitectureModelManagementFactory.loadModelRepository(path);
+        final ModelRepository repository = ArchitectureModelManagementUtils.loadModelRepository(path);
         // RepositoryUtils.print(repository);
 
         long errors = 0;

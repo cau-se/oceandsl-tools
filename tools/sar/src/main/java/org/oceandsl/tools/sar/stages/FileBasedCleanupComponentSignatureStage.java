@@ -19,10 +19,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 
 /**
- * Remove the directory name portion of class signatures.
+ * Remove the directory name portion of "class" signatures.
  *
  * @author Reiner Jung
  * @since 1.1

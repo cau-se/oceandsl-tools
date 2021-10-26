@@ -15,7 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages;
 
-import org.oceandsl.analysis.CallerCallee;
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 import teetime.stage.basic.AbstractFilter;
 
