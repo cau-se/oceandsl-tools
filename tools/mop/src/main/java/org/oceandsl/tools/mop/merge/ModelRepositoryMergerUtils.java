@@ -29,7 +29,11 @@ import kieker.model.analysismodel.type.TypeModel;
  * @author Reiner Jung
  * @since 1.1
  */
-public class ModelRepositoryMerger {
+public final class ModelRepositoryMergerUtils {
+
+    private ModelRepositoryMergerUtils() {
+        // Utility class
+    }
 
     public static void perform(final ModelRepository lastModelRepository, final ModelRepository mergeModelRepository) {
         TypeModelMerger.mergeTypeModel(lastModelRepository.getModel(TypeModel.class),

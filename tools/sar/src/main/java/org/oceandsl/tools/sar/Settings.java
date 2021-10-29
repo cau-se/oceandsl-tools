@@ -27,7 +27,7 @@ import com.beust.jcommander.converters.PathConverter;
  * @author Reiner Jung
  * @since 1.0
  */
-public class Settings {
+public class Settings { // NOPMD dataclass - required to contain settings
 
     @Parameter(names = { "-i",
             "--call-input" }, required = false, converter = PathConverter.class, description = "Function call CSV file")
@@ -123,7 +123,7 @@ public class Settings {
         return this.sourceLabel;
     }
 
-    public boolean getCaseInsensitive() {
+    public boolean isCaseInsensitive() {
         return this.caseInsensitive;
     }
 

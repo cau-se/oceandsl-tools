@@ -17,10 +17,11 @@ package org.oceandsl.tools.mvis.graph.selector;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
+
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung

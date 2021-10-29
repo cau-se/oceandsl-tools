@@ -4,11 +4,13 @@ import java.time.Duration;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 import kieker.analysis.stage.model.data.CallEvent;
 import kieker.analysis.stage.model.data.OperationEvent;
+
 import teetime.framework.test.StageTester;
+
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 public class OperationAndCall4StaticDataStageTest {
 

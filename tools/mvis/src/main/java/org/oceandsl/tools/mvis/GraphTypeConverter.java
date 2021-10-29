@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis;
 
+import java.util.Locale;
+
 import com.beust.jcommander.IStringConverter;
 
 /**
@@ -27,7 +29,7 @@ public class GraphTypeConverter implements IStringConverter<EOutputGraph> {
     @Override
     public EOutputGraph convert(final String value) {
         for (final EOutputGraph outputGraph : EOutputGraph.values()) {
-            if (outputGraph.name().toLowerCase().replace("_", "-").equals(value)) {
+            if (outputGraph.name().toLowerCase(Locale.ROOT).replace("_", "-").equals(value)) {
                 return outputGraph;
             }
         }

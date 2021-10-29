@@ -32,7 +32,7 @@ import kieker.model.analysismodel.type.TypeModel;
 
 /**
  * @author Reiner Jung
- *
+ * @since 1.1
  */
 public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssemblerStage<DataAccess, DataAccess> {
 

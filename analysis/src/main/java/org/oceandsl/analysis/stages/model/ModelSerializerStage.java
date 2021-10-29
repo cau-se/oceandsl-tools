@@ -49,6 +49,7 @@ import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypeModel;
+
 import teetime.framework.AbstractConsumerStage;
 
 /**
@@ -81,7 +82,7 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
     protected void execute(final Trigger element) throws Exception {
         final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
-        final HashMap<String, Object> modelMap = new HashMap<>();
+        final Map<String, Object> modelMap = new HashMap<>();
 
         modelMap.put("type-model", this.createTypeModel());
         modelMap.put("assembly-model", this.createAssemblyModel());

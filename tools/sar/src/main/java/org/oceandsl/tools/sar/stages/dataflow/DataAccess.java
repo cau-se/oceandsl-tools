@@ -19,7 +19,7 @@ package org.oceandsl.tools.sar.stages.dataflow;
  * @author Reiner Jung
  * @since 1.1
  */
-public class DataAccess {
+public class DataAccess { // NOPMD data class
 
     private String module;
     private String operation;

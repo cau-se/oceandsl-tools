@@ -21,10 +21,11 @@ import com.google.common.graph.MutableGraph;
 
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 import org.mosim.refactorlizar.architecture.evaluation.graphs.SystemGraphUtils;
-import org.oceandsl.tools.mvis.stages.graph.KiekerNode;
 
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
+
+import org.oceandsl.tools.mvis.stages.graph.KiekerNode;
 
 /**
  * @author Reiner Jung

@@ -20,7 +20,6 @@ import java.time.temporal.ChronoUnit;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.graph.IVertex;
@@ -38,6 +37,8 @@ import kieker.model.analysismodel.statistics.EPropertyType;
 import kieker.model.analysismodel.statistics.StatisticRecord;
 import kieker.model.analysismodel.statistics.Statistics;
 import kieker.model.analysismodel.statistics.StatisticsModel;
+
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung

@@ -33,6 +33,10 @@ import kieker.model.analysismodel.deployment.DeploymentFactory;
  */
 public final class DeploymentModelCloneUtils {
 
+    private DeploymentModelCloneUtils() {
+        // private constructor for utils
+    }
+
     public static DeploymentContext duplicate(final AssemblyModel assemblyModel,
             final DeploymentContext deploymentContext) {
         final DeploymentContext newContext = DeploymentFactory.eINSTANCE.createDeploymentContext();
@@ -86,8 +90,7 @@ public final class DeploymentModelCloneUtils {
 
     private static AssemblyOperation findAssemblyOperation(final AssemblyComponent assemblyComponent,
             final String signature) {
-        final AssemblyOperation assemblyOperation = assemblyComponent.getAssemblyOperations().get(signature);
-        return assemblyOperation;
+        return assemblyComponent.getAssemblyOperations().get(signature);
     }
 
     private static AssemblyComponent findAssemblyComponent(final AssemblyModel assemblyModel, final String signature) {

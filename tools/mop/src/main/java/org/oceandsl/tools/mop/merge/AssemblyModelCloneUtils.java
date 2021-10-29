@@ -32,6 +32,10 @@ import kieker.model.analysismodel.type.TypeModel;
  */
 public final class AssemblyModelCloneUtils {
 
+    private AssemblyModelCloneUtils() {
+        // Utility class
+    }
+
     public static AssemblyComponent duplicate(final TypeModel typeModel, final AssemblyComponent component) {
         final AssemblyComponent newComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
         newComponent.setSignature(component.getSignature());

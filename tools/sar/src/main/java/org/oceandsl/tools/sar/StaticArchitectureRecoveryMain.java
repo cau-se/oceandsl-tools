@@ -22,15 +22,17 @@ import java.nio.file.Path;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.common.exception.ConfigurationException;
+
 import teetime.framework.Configuration;
 import teetime.framework.Execution;
+
+import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 
 /**
  * Architecture analysis main class.
@@ -67,34 +69,34 @@ public class StaticArchitectureRecoveryMain {
         final StaticArchitectureRecoveryMain main = new StaticArchitectureRecoveryMain();
         try {
             final int exitCode = main.run("static architecture recovery", "sar", args, new Settings());
-            java.lang.System.exit(exitCode);
+            System.exit(exitCode);
         } catch (final IllegalArgumentException e) {
             LoggerFactory.getLogger(StaticArchitectureRecoveryMain.class).error("Configuration error: {}",
                     e.getLocalizedMessage());
-            java.lang.System.exit(1);
+            System.exit(1);
         }
     }
 
     /**
      * Execute the tool.
      *
-     * @param commander
-     *            command line parter JCommander
      * @param label
      *            printed to the debug log about what application is running.
      */
-    private void execute(final JCommander commander, final String label) throws ConfigurationException {
-    	this.repository = ArchitectureModelManagementUtils.createModelRepository(
-                this.settings.getExperimentName(), this.settings.getComponentMapFiles() != null);
-    	
-        if (this.settings.getOperationCallInputFile() != null)
-        	this.executeConfiguration("call", label, this.createTeetimeCallConfiguration());
-        if (this.settings.getDataflowInputFile() != null)
-        	this.executeConfiguration("dataflow", label, this.createTeetimeDataflowConfiguration());
+    private void execute(final String label) throws ConfigurationException {
+        this.repository = ArchitectureModelManagementUtils.createModelRepository(this.settings.getExperimentName(),
+                this.settings.getComponentMapFiles() != null);
+
+        if (this.settings.getOperationCallInputFile() != null) {
+            this.executeConfiguration("call", label, this.createTeetimeCallConfiguration());
+        }
+        if (this.settings.getDataflowInputFile() != null) {
+            this.executeConfiguration("dataflow", label, this.createTeetimeDataflowConfiguration());
+        }
 
         this.shutdownService();
 
-        this.logger.debug("Done");
+        this.logger.info("Done");
     }
 
     private <T extends Configuration> void executeConfiguration(final String type, final String label,
@@ -114,6 +116,7 @@ public class StaticArchitectureRecoveryMain {
      *
      * @param execution
      *            teetime execution
+     * @return shutdown thread
      */
     private Thread shutdownHook(final Execution<?> execution) {
         final Thread shutdownThread = new Thread(new Runnable() { // NOPMD is not a web app
@@ -151,10 +154,10 @@ public class StaticArchitectureRecoveryMain {
     }
 
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-    	if (this.settings.getOperationCallInputFile() == null && this.settings.getDataflowInputFile() == null) {
-    		this.logger.error("You need at least operation calls or dataflow as input.");
-    		return false;
-    	}
+        if (this.settings.getOperationCallInputFile() == null && this.settings.getDataflowInputFile() == null) {
+            this.logger.error("You need at least operation calls or dataflow as input.");
+            return false;
+        }
         if (!Files.isReadable(this.settings.getOperationCallInputFile())) {
             this.logger.error("Input path {} is not file", this.settings.getOperationCallInputFile());
             return false;
@@ -203,7 +206,7 @@ public class StaticArchitectureRecoveryMain {
                     commander.usage();
                     return StaticArchitectureRecoveryMain.USAGE_EXIT_CODE;
                 } else {
-                    this.execute(commander, label);
+                    this.execute(label);
                     return StaticArchitectureRecoveryMain.SUCCESS_EXIT_CODE;
                 }
             } else {
@@ -223,8 +226,7 @@ public class StaticArchitectureRecoveryMain {
 
     private void shutdownService() {
         try {
-            ArchitectureModelManagementUtils.writeModelRepository(this.settings.getOutputDirectory(),
-                    this.repository);
+            ArchitectureModelManagementUtils.writeModelRepository(this.settings.getOutputDirectory(), this.repository);
         } catch (final IOException e) {
             this.logger.error("Error saving model: {}", e.getLocalizedMessage());
         }

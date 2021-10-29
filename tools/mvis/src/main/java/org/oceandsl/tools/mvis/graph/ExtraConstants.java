@@ -21,6 +21,10 @@ package org.oceandsl.tools.mvis.graph;
  */
 public final class ExtraConstants {
 
-    public static final String FOREGROUND_COLOR = "fg-color";
     public static final String BACKGROUND_COLOR = "bg-color";
+    public static final String FOREGROUND_COLOR = "fg-color";
+
+    private ExtraConstants() {
+        // Utility class
+    }
 }

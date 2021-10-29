@@ -17,6 +17,19 @@ package org.oceandsl.tools.sar;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+
+import kieker.analysis.stage.model.ModelRepository;
+import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.type.TypeModel;
+
+import teetime.framework.Configuration;
+import teetime.framework.OutputPort;
+
 import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 import org.oceandsl.tools.sar.stages.dataflow.AssemblyModelDataflowAssemblerStage;
 import org.oceandsl.tools.sar.stages.dataflow.CSVDataflowReaderStage;
@@ -27,17 +40,6 @@ import org.oceandsl.tools.sar.stages.dataflow.ExecutionModelDataflowAssemblerSta
 import org.oceandsl.tools.sar.stages.dataflow.FileBasedCleanupInDataflowSignatureStage;
 import org.oceandsl.tools.sar.stages.dataflow.MapBasedCleanupInDataflowSignatureStage;
 import org.oceandsl.tools.sar.stages.dataflow.TypeModelDataflowAssemblerStage;
-import org.slf4j.Logger;
-
-import kieker.analysis.stage.model.ModelRepository;
-import kieker.model.analysismodel.assembly.AssemblyModel;
-import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.statistics.StatisticsModel;
-import kieker.model.analysismodel.type.TypeModel;
-import teetime.framework.Configuration;
-import teetime.framework.OutputPort;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -60,15 +62,14 @@ public class TeetimeDataflowConfiguration extends Configuration {
         if (settings.getComponentMapFiles() != null) {
             logger.info("Map based component definition");
             final MapBasedCleanupInDataflowSignatureStage cleanupComponentDataflowSignatureStage = new MapBasedCleanupInDataflowSignatureStage(
-                    settings.getComponentMapFiles(), settings.getMissingMappingFile(), settings.getCallSplitSymbol(),
-                    settings.getCaseInsensitive());
+                    settings.getComponentMapFiles(), settings.getCallSplitSymbol(), settings.isCaseInsensitive());
 
             this.connectPorts(readerDataflowPort, cleanupComponentDataflowSignatureStage.getInputPort());
             readerDataflowPort = cleanupComponentDataflowSignatureStage.getOutputPort();
         } else {
             logger.info("File based component definition");
             final FileBasedCleanupInDataflowSignatureStage cleanupComponentDataflowSignatureStage = new FileBasedCleanupInDataflowSignatureStage(
-                    settings.getCaseInsensitive());
+                    settings.isCaseInsensitive());
 
             this.connectPorts(readerDataflowPort, cleanupComponentDataflowSignatureStage.getInputPort());
 

@@ -30,7 +30,7 @@ import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
  * @author Reiner Jung
  * @since 1.0
  */
-public class Settings {
+public class Settings { // NOPMD
 
     @Parameter(names = { "-i",
             "--input" }, required = true, converter = PathConverter.class, description = "Input model directory")

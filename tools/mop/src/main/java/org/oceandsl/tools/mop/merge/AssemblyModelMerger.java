@@ -32,7 +32,8 @@ public final class AssemblyModelMerger {
     private AssemblyModelMerger() {
     }
 
-    static void mergeAssemblyModel(final TypeModel typeModel, final AssemblyModel model,
+    /* default access */
+    static void mergeAssemblyModel(final TypeModel typeModel, final AssemblyModel model, // NOPMD
             final AssemblyModel mergeModel) {
         // add additional component types if necessary
         for (final AssemblyComponent mergeComponent : mergeModel.getAssemblyComponents().values()) {

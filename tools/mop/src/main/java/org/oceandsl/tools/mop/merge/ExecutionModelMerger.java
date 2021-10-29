@@ -36,10 +36,11 @@ import kieker.model.analysismodel.execution.Tuple;
 public final class ExecutionModelMerger {
 
     private ExecutionModelMerger() {
+        // Utility class
     }
 
-    static void mergeExecutionModel(final DeploymentModel deploymentModel, final ExecutionModel targetModel,
-            final ExecutionModel mergeModel) {
+    /* default */ static void mergeExecutionModel(final DeploymentModel deploymentModel, // NOPMD
+            final ExecutionModel targetModel, final ExecutionModel mergeModel) {
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> entry : mergeModel
                 .getAggregatedInvocations()) {
             if (!ExecutionModelMerger.compareTupleOperationKeys(targetModel.getAggregatedInvocations(),

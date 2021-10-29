@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import teetime.stage.basic.AbstractTransformation;
@@ -37,8 +38,8 @@ public class MapBasedCleanupInDataflowSignatureStage extends AbstractTransformat
     private final boolean caseInsensitive;
     private final Map<String, String> componentMap = new HashMap<>();
 
-    public MapBasedCleanupInDataflowSignatureStage(final List<Path> componentMapFiles, final Path missingMappingFile,
-            final String seperator, final boolean caseInsensitive) throws IOException {
+    public MapBasedCleanupInDataflowSignatureStage(final List<Path> componentMapFiles, final String seperator,
+            final boolean caseInsensitive) throws IOException {
         this.caseInsensitive = caseInsensitive;
         this.setupMap(componentMapFiles, seperator);
     }
@@ -54,7 +55,7 @@ public class MapBasedCleanupInDataflowSignatureStage extends AbstractTransformat
                     // 0 = component name
                     // 1 = file name
                     this.componentMap.put(this.convertToLowerCase(values[1].trim()),
-                            this.convertToLowerCase(values[0].trim().toLowerCase()));
+                            this.convertToLowerCase(values[0].trim().toLowerCase(Locale.ROOT)));
                 } else {
                     this.logger.error("Entry incomplete '{}'", line.trim());
                 }
@@ -73,13 +74,13 @@ public class MapBasedCleanupInDataflowSignatureStage extends AbstractTransformat
     }
 
     private String convertToLowerCase(final String string) {
-        String value;
+        final String value;
         if (string.endsWith("_")) {
             value = string.substring(0, string.length() - 1);
         } else {
             value = string;
         }
-        return this.caseInsensitive ? value.toLowerCase() : value;
+        return this.caseInsensitive ? value.toLowerCase(Locale.ROOT) : value;
     }
 
     private String processSignature(final String signature) {

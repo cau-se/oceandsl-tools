@@ -21,7 +21,12 @@ import org.eclipse.emf.ecore.EObject;
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 
 /**
- * Central node class for graphs
+ * Central node class for graphs.
+ *
+ * @param <T>
+ *            type representing modules
+ * @param <R>
+ *            type representing nodes
  *
  * @author Reiner Jung
  * @since 1.0

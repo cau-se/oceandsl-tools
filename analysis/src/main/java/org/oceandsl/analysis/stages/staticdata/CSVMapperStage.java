@@ -15,9 +15,9 @@
  ***************************************************************************/
 package org.oceandsl.analysis.stages.staticdata;
 
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
-
 import teetime.stage.basic.AbstractFilter;
+
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 /**
  * Make names all lower case when case insensitive is requested.

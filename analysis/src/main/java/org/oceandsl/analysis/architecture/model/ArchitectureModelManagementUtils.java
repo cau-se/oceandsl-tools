@@ -65,8 +65,6 @@ import kieker.model.analysismodel.type.TypePackage;
  */
 public final class ArchitectureModelManagementUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArchitectureModelManagementUtils.class);
-
     public static final String TYPE_MODEL_NAME = "type-model.xmi";
 
     public static final String ASSEMBLY_MODEL_NAME = "assembly-model.xmi";
@@ -78,6 +76,8 @@ public final class ArchitectureModelManagementUtils {
     public static final String STATISTICS_MODEL_NAME = "statistics-model.xmi";
 
     public static final String SOURCES_MODEL_NAME = "sources-model.xmi";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArchitectureModelManagementUtils.class);
 
     private ArchitectureModelManagementUtils() {
         // TODO Auto-generated constructor stub

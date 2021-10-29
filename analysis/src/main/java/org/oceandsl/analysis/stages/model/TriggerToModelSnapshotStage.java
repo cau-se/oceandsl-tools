@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import kieker.analysis.stage.model.ModelRepository;
+
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 

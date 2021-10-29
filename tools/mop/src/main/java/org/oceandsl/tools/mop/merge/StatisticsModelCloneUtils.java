@@ -27,7 +27,11 @@ import kieker.model.analysismodel.statistics.StatisticsFactory;
  * @author Reiner Jung
  * @since 1.1
  */
-public class StatisticsModelCloneUtils {
+public final class StatisticsModelCloneUtils {
+
+    private StatisticsModelCloneUtils() {
+        // Utility class
+    }
 
     public static Statistics duplicate(final Statistics value) {
         final Statistics newValue = StatisticsFactory.eINSTANCE.createStatistics();
@@ -52,9 +56,9 @@ public class StatisticsModelCloneUtils {
 
     public static Object duplicateObject(final Object value) {
         if (value instanceof Long) {
-            return (((Long) value).longValue());
+            return ((Long) value).longValue();
         } else if (value instanceof Double) {
-            return (((Double) value).doubleValue());
+            return ((Double) value).doubleValue();
         } else {
             throw new InternalError("Unknown type");
         }
@@ -62,7 +66,7 @@ public class StatisticsModelCloneUtils {
 
     public static Object compute(final Object newValue, final Object value) {
         if (newValue instanceof Long) {
-            return ((Long) newValue) + ((Long) value);
+            return (Long) newValue + (Long) value;
         } else {
             throw new InternalError("Unknown type");
         }

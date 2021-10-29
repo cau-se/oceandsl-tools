@@ -32,10 +32,12 @@ import org.mosim.refactorlizar.architecture.evaluation.coupling.HyperGraphInterM
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 import org.mosim.refactorlizar.architecture.evaluation.graphs.SystemGraphUtils;
 import org.mosim.refactorlizar.architecture.evaluation.size.HyperGraphSizeCalculator;
-import org.oceandsl.tools.mvis.stages.metrics.KiekerArchitectureModelSystemGraphUtils;
 
 import kieker.model.analysismodel.deployment.DeployedComponent;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.tools.mvis.stages.metrics.KiekerArchitectureModelSystemGraphUtils;
 
 /**
  * @author Reiner Jung

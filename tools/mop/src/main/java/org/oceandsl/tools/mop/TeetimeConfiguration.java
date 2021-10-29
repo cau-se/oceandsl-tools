@@ -21,9 +21,7 @@ import org.oceandsl.tools.mop.stages.ModelProcessor;
 import org.oceandsl.tools.mop.stages.ModelRepositoryReaderStage;
 import org.oceandsl.tools.mop.stages.ModelSink;
 import org.oceandsl.tools.mop.stages.ModelSource;
-import org.slf4j.Logger;
 
-import kieker.analysis.stage.model.ModelRepository;
 import teetime.framework.Configuration;
 
 /**
@@ -34,8 +32,7 @@ import teetime.framework.Configuration;
  */
 public class TeetimeConfiguration extends Configuration {
 
-    public TeetimeConfiguration(final Logger logger, final Settings parameterConfiguration,
-            final ModelRepository repository) throws IOException {
+    public TeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
 
         final ModelSource modelSource = new ModelSource(parameterConfiguration.getInputModelPaths());
         final ModelRepositoryReaderStage modelReader = new ModelRepositoryReaderStage();

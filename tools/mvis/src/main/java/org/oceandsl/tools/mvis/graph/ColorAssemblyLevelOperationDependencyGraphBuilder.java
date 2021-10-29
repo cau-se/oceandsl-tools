@@ -15,19 +15,17 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
-
-import kieker.analysis.graph.IEdge;
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.graph.IVertex;
 import kieker.analysis.graph.dependency.PropertyConstants;
 import kieker.analysis.graph.dependency.vertextypes.VertexType;
-import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
+
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 /**
  * Dependency graph builder for <strong>operation</strong> dependency graphs at the <strong>assembly
@@ -39,11 +37,6 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
 
     public ColorAssemblyLevelOperationDependencyGraphBuilder(final IGraphElementSelector selector) {
         super(selector);
-    }
-
-    @Override
-    public IGraph build(final ModelRepository repository) {
-        return super.build(repository);
     }
 
     @Override
@@ -75,12 +68,6 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         this.responseTimeDecorator.decorate(operationVertex, operation);
 
         return operationVertex;
-    }
-
-    @Override
-    protected IEdge addEdge(final IVertex source, final IVertex target, final long calls) {
-        final IEdge edge = super.addEdge(source, target, calls);
-        return edge;
     }
 
     @Override

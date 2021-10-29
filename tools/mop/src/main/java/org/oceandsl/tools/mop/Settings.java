@@ -27,7 +27,7 @@ import com.beust.jcommander.converters.PathConverter;
  * @author Reiner Jung
  * @since 1.1
  */
-public class Settings {
+public class Settings { // NOPMD data class
 
     @Parameter(names = { "-i",
             "--input" }, required = true, variableArity = true, converter = PathConverter.class, description = "Input architecture model directories")

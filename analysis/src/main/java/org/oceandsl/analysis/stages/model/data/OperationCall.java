@@ -45,11 +45,16 @@ public class OperationCall {
     public boolean equals(final Object object) {
         if (object instanceof OperationCall) {
             final OperationCall otherCall = (OperationCall) object;
-            return (otherCall.getSourceOperation().equals(this.getSourceOperation())
-                    && otherCall.getTargetOperation().equals(this.getTargetOperation()));
+            return otherCall.getSourceOperation().equals(this.getSourceOperation())
+                    && otherCall.getTargetOperation().equals(this.getTargetOperation());
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.sourceOperation.hashCode() ^ this.targetOperation.hashCode();
     }
 
 }

@@ -19,6 +19,7 @@ import kieker.analysis.graph.IGraph;
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
+
 import teetime.stage.basic.AbstractTransformation;
 
 /**
@@ -73,6 +74,8 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
                             graph.getVertex(invocation.getTarget().getComponent()));
                 }
                 break;
+            default:
+                throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
             }
         }
 

@@ -40,9 +40,10 @@ public final class SourceModelMerger {
     private final static Logger LOGGER = LoggerFactory.getLogger(SourceModelMerger.class);
 
     private SourceModelMerger() {
+        // Utility class
     }
 
-    static void mergeSourceModel(final TypeModel typeModel, final AssemblyModel assemblyModel,
+    /* default */ static void mergeSourceModel(final TypeModel typeModel, final AssemblyModel assemblyModel, // NOPMD
             final DeploymentModel deploymentModel, final ExecutionModel executionModel, final SourceModel model,
             final SourceModel mergeModel) {
         for (final Entry<EObject, EList<String>> mergeSource : mergeModel.getSources()) {

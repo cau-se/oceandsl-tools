@@ -75,7 +75,7 @@ public class TeetimeConfiguration extends Configuration {
         if (parameterConfiguration.getModelExecutable() != null) {
             final RewriteBeforeAndAfterEventsStage rewriteBeforeAndAfterEventsStage = new RewriteBeforeAndAfterEventsStage(
                     parameterConfiguration.getAddrlineExecutable(), parameterConfiguration.getModelExecutable(),
-                    parameterConfiguration.getCaseInsensitive());
+                    parameterConfiguration.isCaseInsensitive());
             this.connectPorts(reader.getOutputPort(), rewriteBeforeAndAfterEventsStage.getInputPort());
             readerPort = rewriteBeforeAndAfterEventsStage.getOutputPort();
         } else {
@@ -88,14 +88,14 @@ public class TeetimeConfiguration extends Configuration {
         if (parameterConfiguration.getComponentMapFiles() != null) {
             logger.info("Map based component definition");
             componentSignatureCleaner = new MapBasedSignatureCleaner(parameterConfiguration.getComponentMapFiles(),
-                    parameterConfiguration.getCaseInsensitive(), ";");
+                    parameterConfiguration.isCaseInsensitive(), ";");
             operationSignatureCleaner = new MapBasedOperationSignatureCleaner(
-                    parameterConfiguration.getCaseInsensitive());
+                    parameterConfiguration.isCaseInsensitive());
         } else {
             logger.info("File based component definition");
-            componentSignatureCleaner = new FileBasedSignatureCleaner(parameterConfiguration.getCaseInsensitive());
+            componentSignatureCleaner = new FileBasedSignatureCleaner(parameterConfiguration.isCaseInsensitive());
             operationSignatureCleaner = new FileBasedOperationSignatureCleaner(
-                    parameterConfiguration.getCaseInsensitive());
+                    parameterConfiguration.isCaseInsensitive());
         }
 
         final InstanceOfFilter<IMonitoringRecord, IFlowRecord> instanceOfFilter = new InstanceOfFilter<>(

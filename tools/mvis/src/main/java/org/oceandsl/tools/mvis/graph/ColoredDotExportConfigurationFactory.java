@@ -136,7 +136,7 @@ public class ColoredDotExportConfigurationFactory {
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "oval");
 
-        builder.addNodeAttribute(DotNodeAttribute.SHAPE, v -> {
+        builder.addNodeAttribute(DotNodeAttribute.SHAPE, v -> { // NOCS return count
             final VertexType type = this.getProperty(v, PropertyConstants.TYPE, VertexType.class);
             switch (type) {
             case ASSEMBLY_OPERATION:
@@ -153,7 +153,7 @@ public class ColoredDotExportConfigurationFactory {
         builder.addNodeAttribute(DotNodeAttribute.FILLCOLOR, v -> {
             return this.createBackgroundColorFromVertex(v);
         });
-        builder.addNodeAttribute(DotNodeAttribute.LABEL, v -> {
+        builder.addNodeAttribute(DotNodeAttribute.LABEL, v -> { // NOCS return count
             final VertexType type = this.getProperty(v, PropertyConstants.TYPE, VertexType.class);
             if (type == VertexType.ENTRY) {
                 return ColoredDotExportConfigurationFactory.ENTRY_LABEL;

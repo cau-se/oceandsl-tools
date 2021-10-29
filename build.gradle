@@ -8,6 +8,8 @@
 plugins {
 	id 'java'
 	id "com.diffplug.spotless" version "5.17.1"
+	id 'checkstyle'
+	id 'pmd'
 }
 
 repositories {
@@ -51,11 +53,49 @@ subprojects {
 		testImplementation 'junit:junit:4.13'
 	}
 
+	apply plugin: 'pmd'
+	pmd {    // is represented by the groovy class "PmdExtension"
+		// the used PMD version should be the same version as the PMD Eclipse plugin (https://marketplace.eclipse.org/content/eclipse-pmd) uses
+		toolVersion = pmdVersion
+		ignoreFailures = true
+		consoleOutput = true
+
+		// Clear the rule set first. Otherwise we would have a lot of additional rules in our rule set.
+		ruleSets = []
+		ruleSetFiles = files(rootProject.file("qa-configurations/pmdrules.xml"))
+	}
+
+	tasks.withType(Pmd) {
+		reports {
+			xml.enabled = true
+			html.enabled = true
+		}
+	}
+
+
+	apply plugin: 'checkstyle'
+	checkstyle {
+		toolVersion = checkstyleVersion
+		ignoreFailures = true
+		showViolations = false
+
+		configFile = rootProject.file("qa-configurations/checkstyle-rules.xml")
+		configDirectory = rootProject.file("qa-configurations")
+	}
+
+	tasks.withType(Checkstyle) {
+		reports {
+			xml.enabled true
+			html.enabled true
+			// html.stylesheet resources.text.fromFile(rootProject.projectDir.path + '/config/checkstyle-noframes-severity-sorted.xsl')
+		}
+	}
+
 	spotless {
 		format 'misc', {
 			// define the files to apply `misc` to
 			target '*.gradle', '*.md', '.gitignore'
-	
+
 			// define the steps to apply to those files
 			trimTrailingWhitespace()
 			indentWithTabs() // or spaces. Takes an integer argument if you don't like 4

@@ -44,11 +44,11 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
         final DynamicArchitectureRecoveryMain main = new DynamicArchitectureRecoveryMain();
         try {
             final int exitCode = main.run("dynamic architecture recovery", "dar", args, new Settings());
-            java.lang.System.exit(exitCode);
+            System.exit(exitCode);
         } catch (final IllegalArgumentException e) {
             LoggerFactory.getLogger(DynamicArchitectureRecoveryMain.class).error("Configuration error: {}",
                     e.getLocalizedMessage());
-            java.lang.System.exit(1);
+            System.exit(1);
         }
     }
 

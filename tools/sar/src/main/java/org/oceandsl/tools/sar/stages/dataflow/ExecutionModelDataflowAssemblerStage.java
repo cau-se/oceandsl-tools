@@ -67,18 +67,17 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
             this.addObjectToSource(aggregatedStorageAccess);
         } else {
             final EDirection newDirection = this.convertDirection(element.getDirection());
-            if (aggregatedStorageAccess.getDirection() == EDirection.READ) {
-                if ((newDirection == EDirection.WRITE) || (newDirection == EDirection.BOTH)) {
-                    aggregatedStorageAccess.setDirection(EDirection.BOTH);
-                }
-            } else if (aggregatedStorageAccess.getDirection() == EDirection.WRITE) {
-                if ((newDirection == EDirection.READ) || (newDirection == EDirection.BOTH)) {
-                    aggregatedStorageAccess.setDirection(EDirection.BOTH);
-                }
+            if (aggregatedStorageAccess.getDirection() == EDirection.READ
+                    && (newDirection == EDirection.WRITE || newDirection == EDirection.BOTH)) {
+                aggregatedStorageAccess.setDirection(EDirection.BOTH);
+            } else if (aggregatedStorageAccess.getDirection() == EDirection.WRITE
+                    && (newDirection == EDirection.READ || newDirection == EDirection.BOTH)) {
+                aggregatedStorageAccess.setDirection(EDirection.BOTH);
             }
         }
 
         this.outputPort.send(element);
+
     }
 
     private EDirection convertDirection(final org.oceandsl.tools.sar.stages.dataflow.EDirection direction) {
@@ -89,8 +88,9 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
             return EDirection.WRITE;
         case BOTH:
             return EDirection.BOTH;
+        default:
+            throw new InternalError("Unknown direction type found " + direction.name());
         }
-        return null;
     }
 
     private DeployedStorage findStorage(final DeploymentContext context, final String name) {

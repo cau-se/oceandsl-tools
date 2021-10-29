@@ -4,10 +4,11 @@ import java.io.IOException;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 
 import teetime.framework.test.StageTester;
+
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 
 public class FileBasedCleanupComponentSignatureStageTest {
 
