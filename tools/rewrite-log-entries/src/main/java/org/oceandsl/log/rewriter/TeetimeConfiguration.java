@@ -5,7 +5,7 @@ package org.oceandsl.log.rewriter;
 
 import java.io.IOException;
 
-import org.oceandsl.analysis.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.analysis.stages.dynamic.RewriteBeforeAndAfterEventsStage;
 
 import kieker.analysis.sink.DataSinkStage;
 import kieker.tools.source.LogsReaderCompositeStage;

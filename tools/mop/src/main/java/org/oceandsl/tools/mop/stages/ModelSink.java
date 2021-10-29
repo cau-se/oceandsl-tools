@@ -17,7 +17,7 @@ package org.oceandsl.tools.mop.stages;
 
 import java.nio.file.Path;
 
-import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
+import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
 
 import kieker.analysis.stage.model.ModelRepository;
 import teetime.framework.AbstractConsumerStage;
@@ -36,7 +36,7 @@ public class ModelSink extends AbstractConsumerStage<ModelRepository> {
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
-        ArchitectureModelManagementFactory.writeModelRepository(this.outputPath, element);
+        ArchitectureModelManagementUtils.writeModelRepository(this.outputPath, element);
     }
 
 }

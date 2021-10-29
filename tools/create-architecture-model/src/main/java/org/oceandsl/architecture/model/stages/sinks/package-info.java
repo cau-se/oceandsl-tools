@@ -1,1 +1,0 @@
-package org.oceandsl.architecture.model.stages.sinks;

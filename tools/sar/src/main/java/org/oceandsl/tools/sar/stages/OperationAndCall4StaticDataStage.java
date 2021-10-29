@@ -17,7 +17,7 @@ package org.oceandsl.tools.sar.stages;
 
 import java.time.Duration;
 
-import org.oceandsl.analysis.CallerCallee;
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 import kieker.analysis.stage.model.data.CallEvent;
 import kieker.analysis.stage.model.data.OperationEvent;
@@ -25,6 +25,11 @@ import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
 /**
+ * Transform @{link CallerCallee}s to @{link OperationEvent}s and @{CallEvent}s on model level. The
+ * stage outputs two @{link OperationEvent}s and one @{link CallEvent}s for each @{CallerCallee}
+ * event. It is used to convert static caller-callee data to operation and call data compatible with
+ * the dynamic architecture reconstruction.
+ *
  * @author Reiner Jung
  * @since 1.1
  */

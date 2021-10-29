@@ -21,8 +21,8 @@ import java.nio.file.Files;
 
 import com.beust.jcommander.JCommander;
 
-import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
-import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
+import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 import org.slf4j.LoggerFactory;
 
 import kieker.analysis.stage.model.ModelRepository;
@@ -55,7 +55,7 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            this.repository = ArchitectureModelManagementFactory.createModelRepository(
+            this.repository = ArchitectureModelManagementUtils.createModelRepository(
                     this.parameterConfiguration.getExperimentName(),
                     this.parameterConfiguration.getComponentMapFiles() != null);
 
@@ -105,7 +105,7 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
     @Override
     protected void shutdownService() {
         try {
-            ArchitectureModelManagementFactory.writeModelRepository(this.parameterConfiguration.getOutputDirectory(),
+            ArchitectureModelManagementUtils.writeModelRepository(this.parameterConfiguration.getOutputDirectory(),
                     this.repository);
         } catch (final IOException e) {
             this.logger.error("Error saving model: {}", e.getLocalizedMessage());

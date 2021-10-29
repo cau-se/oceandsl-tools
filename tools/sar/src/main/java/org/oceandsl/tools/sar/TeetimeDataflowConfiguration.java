@@ -17,7 +17,7 @@ package org.oceandsl.tools.sar;
 
 import java.io.IOException;
 
-import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 import org.oceandsl.tools.sar.stages.dataflow.AssemblyModelDataflowAssemblerStage;
 import org.oceandsl.tools.sar.stages.dataflow.CSVDataflowReaderStage;
 import org.oceandsl.tools.sar.stages.dataflow.CountUniqueDataflowCallsStage;

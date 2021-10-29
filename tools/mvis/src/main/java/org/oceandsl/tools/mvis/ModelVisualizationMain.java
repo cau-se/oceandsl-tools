@@ -21,7 +21,7 @@ import java.nio.file.Files;
 
 import com.beust.jcommander.JCommander;
 
-import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
 import org.slf4j.LoggerFactory;
 

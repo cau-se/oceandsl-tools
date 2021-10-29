@@ -15,7 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -25,7 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
+import org.oceandsl.analysis.utils.MapFileReader;
+import org.oceandsl.analysis.utils.StringValueConverter;
 
 /**
  * @author Reiner Jung
@@ -46,31 +47,11 @@ public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupCompo
         }
         for (final Path componentMapFile : componentMapFiles) {
             this.logger.info("Reading map file {}", componentMapFile.toString());
-            final BufferedReader reader = Files.newBufferedReader(componentMapFile);
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final String[] values = line.split(separator);
-                if (values.length == 2) {
-                    // 0 = component name
-                    // 1 = file name
-                    this.componentMap.put(this.convertToLowerCase(values[1].trim()),
-                            this.convertToLowerCase(values[0].trim().toLowerCase()));
-                } else {
-                    this.logger.error("Entry incomplete '{}'", line.trim());
-                }
-            }
-            reader.close();
+            final MapFileReader<String, String> mapFileReader = new MapFileReader<String, String>(componentMapFile,
+                    separator, this.componentMap, new StringValueConverter(caseInsensitive, 1),
+                    new StringValueConverter(caseInsensitive, 0));
+            mapFileReader.read();
         }
-    }
-
-    private String convertToLowerCase(final String string) {
-        String value;
-        if (string.endsWith("_")) {
-            value = string.substring(0, string.length() - 1);
-        } else {
-            value = string;
-        }
-        return this.caseInsensitive ? value.toLowerCase() : value;
     }
 
     @Override
@@ -79,8 +60,8 @@ public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupCompo
             return signature;
         } else {
             final Path path = Paths.get(signature);
-            final String filename = this.convertToLowerCase(path.getName(path.getNameCount() - 1).toString());
-            final String result = this.componentMap.get(filename);
+            final String filename = path.getName(path.getNameCount() - 1).toString();
+            final String result = this.componentMap.get(this.caseInsensitive ? filename.toLowerCase() : filename);
             if (result != null) {
                 return result;
             } else {

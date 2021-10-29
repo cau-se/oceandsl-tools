@@ -19,12 +19,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.oceandsl.analysis.CSVFunctionCallReaderStage;
-import org.oceandsl.analysis.CallerCallee;
-import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
-import org.oceandsl.architecture.model.stages.CSVMapperStage;
-import org.oceandsl.architecture.model.stages.CountUniqueCallsStage;
-import org.oceandsl.architecture.model.stages.OperationCallFixPathStage;
+import org.oceandsl.analysis.stages.model.CountUniqueCallsStage;
+import org.oceandsl.analysis.stages.staticdata.CSVFunctionCallReaderStage;
+import org.oceandsl.analysis.stages.staticdata.CSVMapperStage;
+import org.oceandsl.analysis.stages.staticdata.OperationCallFixPathStage;
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;

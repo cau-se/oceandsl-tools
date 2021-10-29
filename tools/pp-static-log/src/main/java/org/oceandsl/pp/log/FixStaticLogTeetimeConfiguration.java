@@ -17,7 +17,7 @@ package org.oceandsl.pp.log;
 
 import java.io.IOException;
 
-import org.oceandsl.analysis.CSVFunctionCallReaderStage;
+import org.oceandsl.analysis.stages.staticdata.CSVFunctionCallReaderStage;
 
 import teetime.framework.Configuration;
 

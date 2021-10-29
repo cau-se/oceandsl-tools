@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.oceandsl.analysis.CallerCallee;
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 import teetime.framework.AbstractConsumerStage;
 

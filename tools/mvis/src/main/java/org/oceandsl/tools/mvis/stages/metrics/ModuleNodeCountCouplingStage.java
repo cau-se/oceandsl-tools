@@ -15,9 +15,9 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.stages.metrics;
 
-import org.oceandsl.architecture.model.data.table.LongValueHandler;
-import org.oceandsl.architecture.model.data.table.StringValueHandler;
-import org.oceandsl.architecture.model.data.table.Table;
+import org.oceandsl.analysis.stages.staticdata.data.LongValueHandler;
+import org.oceandsl.analysis.stages.staticdata.data.StringValueHandler;
+import org.oceandsl.analysis.stages.staticdata.data.Table;
 
 import kieker.analysis.graph.Direction;
 import kieker.analysis.graph.IEdge;

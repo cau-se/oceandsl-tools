@@ -20,7 +20,7 @@ import java.util.function.Function;
 
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.architecture.model.stages.CountUniqueCallsStage;
+import org.oceandsl.analysis.stages.model.CountUniqueCallsStage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

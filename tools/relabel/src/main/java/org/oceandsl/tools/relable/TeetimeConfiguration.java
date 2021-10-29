@@ -1,6 +1,6 @@
 package org.oceandsl.tools.relable;
 
-import org.oceandsl.architecture.model.stages.ModelRepositoryProducerStage;
+import org.oceandsl.analysis.stages.model.ModelRepositoryProducerStage;
 
 import teetime.framework.Configuration;
 

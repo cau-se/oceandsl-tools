@@ -17,7 +17,7 @@ package org.oceandsl.tools.mop.stages;
 
 import java.nio.file.Path;
 
-import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
+import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
 
 import kieker.analysis.stage.model.ModelRepository;
 import teetime.stage.basic.AbstractTransformation;
@@ -30,7 +30,7 @@ public class ModelRepositoryReaderStage extends AbstractTransformation<Path, Mod
 
     @Override
     protected void execute(final Path element) throws Exception {
-        this.outputPort.send(ArchitectureModelManagementFactory.loadModelRepository(element));
+        this.outputPort.send(ArchitectureModelManagementUtils.loadModelRepository(element));
     }
 
 }

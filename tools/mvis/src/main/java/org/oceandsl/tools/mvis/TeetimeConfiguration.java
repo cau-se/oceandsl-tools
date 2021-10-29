@@ -17,13 +17,13 @@ package org.oceandsl.tools.mvis;
 
 import java.io.IOException;
 
-import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
-import org.oceandsl.architecture.model.stages.ModelRepositoryProducerStage;
-import org.oceandsl.architecture.model.stages.sinks.TableCSVSink;
-import org.oceandsl.architecture.model.stages.utils.DedicatedFileNameMapper;
+import org.oceandsl.analysis.stages.generic.TableCSVSink;
+import org.oceandsl.analysis.stages.model.ModelRepositoryProducerStage;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelComponentDependencyGraphBuilderFactory;
 import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelOperationDependencyGraphBuilderFactory;
 import org.oceandsl.tools.mvis.graph.ColoredDotExportConfigurationFactory;
+import org.oceandsl.tools.mvis.graph.DedicatedFileNameMapper;
 import org.oceandsl.tools.mvis.graph.IColorDependencyGraphBuilderConfiguration;
 import org.oceandsl.tools.mvis.stages.entropy.AllenDeployedArchitectureGraphStage;
 import org.oceandsl.tools.mvis.stages.entropy.ComputeAllenComplexityMetrics;

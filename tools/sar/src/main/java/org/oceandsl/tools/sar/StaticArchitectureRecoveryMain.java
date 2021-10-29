@@ -22,8 +22,8 @@ import java.nio.file.Path;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-import org.oceandsl.architecture.model.ArchitectureModelManagementFactory;
-import org.oceandsl.architecture.model.data.table.ValueConversionErrorException;
+import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +84,7 @@ public class StaticArchitectureRecoveryMain {
      *            printed to the debug log about what application is running.
      */
     private void execute(final JCommander commander, final String label) throws ConfigurationException {
-    	this.repository = ArchitectureModelManagementFactory.createModelRepository(
+    	this.repository = ArchitectureModelManagementUtils.createModelRepository(
                 this.settings.getExperimentName(), this.settings.getComponentMapFiles() != null);
     	
         if (this.settings.getOperationCallInputFile() != null)
@@ -223,7 +223,7 @@ public class StaticArchitectureRecoveryMain {
 
     private void shutdownService() {
         try {
-            ArchitectureModelManagementFactory.writeModelRepository(this.settings.getOutputDirectory(),
+            ArchitectureModelManagementUtils.writeModelRepository(this.settings.getOutputDirectory(),
                     this.repository);
         } catch (final IOException e) {
             this.logger.error("Error saving model: {}", e.getLocalizedMessage());

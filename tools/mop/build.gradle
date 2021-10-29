@@ -14,7 +14,6 @@ plugins {
 dependencies {
     implementation project(':common')
     implementation project(':analysis')
-    implementation project(':tools:create-architecture-model')
     
     // https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore
     implementation 'org.eclipse.emf:org.eclipse.emf.ecore:2.23.0'
