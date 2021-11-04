@@ -17,19 +17,16 @@ package org.oceandsl.tools.dar;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oceandsl.analysis.stages.dynamic.RewriteBeforeAndAfterEventsStage;
-import org.oceandsl.analysis.stages.generic.CountEventsStage;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 import org.slf4j.Logger;
 
 import kieker.analysis.signature.AbstractSignatureCleaner;
 import kieker.analysis.signature.IComponentSignatureExtractor;
 import kieker.analysis.signature.IOperationSignatureExtractor;
+import kieker.analysis.signature.JavaComponentSignatureExtractor;
+import kieker.analysis.signature.JavaOperationSignatureExtractor;
 import kieker.analysis.stage.model.AssemblyModelAssemblerStage;
 import kieker.analysis.stage.model.CallEvent2OperationCallStage;
 import kieker.analysis.stage.model.DeploymentModelAssemblerStage;
@@ -46,13 +43,16 @@ import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.statistics.StatisticsModel;
-import kieker.model.analysismodel.type.ComponentType;
-import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.tools.source.LogsReaderCompositeStage;
+
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 import teetime.stage.InstanceOfFilter;
+
+import org.oceandsl.analysis.stages.dynamic.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.analysis.stages.generic.CountEventsStage;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -103,33 +103,11 @@ public class TeetimeConfiguration extends Configuration {
 
         final CountEventsStage<IFlowRecord> counter = new CountEventsStage<>(1000000);
 
-        final IComponentSignatureExtractor componentSignatureExtractor = new IComponentSignatureExtractor() {
+        final IComponentSignatureExtractor componentSignatureExtractor = this.selectComponentSignaturExtractor(
+                parameterConfiguration.getSignatureExtractor(), parameterConfiguration.getExperimentName());
+        final IOperationSignatureExtractor operationSignatureExtractor = this.selectOperationSignaturExtractor(
+                parameterConfiguration.getSignatureExtractor());
 
-            @Override
-            public void extract(final ComponentType componentType) {
-                String signature = componentType.getSignature();
-                if (signature == null) {
-                    signature = "-- none --";
-                }
-                final Path path = Paths.get(signature);
-                final String name = path.getName(path.getNameCount() - 1).toString();
-                final String rest = path.getParent() != null
-                        ? parameterConfiguration.getExperimentName() + "." + path.getParent().toString()
-                        : parameterConfiguration.getExperimentName();
-                componentType.setName(name);
-                componentType.setPackage(rest);
-            }
-        };
-        final IOperationSignatureExtractor operationSignatureExtractor = new IOperationSignatureExtractor() {
-
-            @Override
-            public void extract(final OperationType operationType) {
-                final String name = operationType.getSignature();
-                operationType.setName(name);
-                operationType.setReturnType("unknown");
-            }
-
-        };
         final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
                 parameterConfiguration.getSourceLabel(), componentSignatureExtractor, operationSignatureExtractor);
@@ -155,9 +133,8 @@ public class TeetimeConfiguration extends Configuration {
         /** connecting ports. */
         this.connectPorts(readerPort, instanceOfFilter.getInputPort());
         this.connectPorts(instanceOfFilter.getMatchedOutputPort(), counter.getInputPort());
-        this.connectPorts(counter.getOutputPort(),
+        this.connectPorts(counter.getOutputPort(), operationAndCallStage.getInputPort());
 
-                operationAndCallStage.getInputPort());
         this.connectPorts(operationAndCallStage.getOperationOutputPort(), typeModelAssemblerStage.getInputPort());
         this.connectPorts(typeModelAssemblerStage.getOutputPort(), assemblyModelAssemblerStage.getInputPort());
         this.connectPorts(assemblyModelAssemblerStage.getOutputPort(), deploymentModelAssemblerStage.getInputPort());
@@ -165,5 +142,32 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(operationAndCallStage.getCallOutputPort(), callEvent2OperationCallStage.getInputPort());
         this.connectPorts(callEvent2OperationCallStage.getOutputPort(), executionModelGenerationStage.getInputPort());
         this.connectPorts(executionModelGenerationStage.getOutputPort(), callStatisticsStage.getInputPort());
+    }
+
+    private IComponentSignatureExtractor selectComponentSignaturExtractor(final ESignatureExtractor signatureExtractor,
+            final String experimentName) {
+        switch (signatureExtractor) {
+        case ELF:
+            return new ELFComponentSignatureExtractor(experimentName);
+        case PYTHON:
+            return new PythonComponentSignatureExtractor();
+        case JAVA:
+            return new JavaComponentSignatureExtractor();
+        default:
+            return null;
+        }
+    }
+
+    private IOperationSignatureExtractor selectOperationSignaturExtractor(final ESignatureExtractor signatureExtractor) {
+        switch (signatureExtractor) {
+        case ELF:
+            return new ELFOperationSignatureExtractor();
+        case PYTHON:
+            return new PythonOperationSignatureExtractor();
+        case JAVA:
+            return new JavaOperationSignatureExtractor();
+        default:
+            return null;
+        }
     }
 }

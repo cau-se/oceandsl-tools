@@ -21,14 +21,15 @@ import java.nio.file.Files;
 
 import com.beust.jcommander.JCommander;
 
-import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 import org.slf4j.LoggerFactory;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
+
+import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 
 /**
  * Architecture analysis main class.
@@ -95,9 +96,20 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
                 return false;
             }
         }
-        if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory().getParent())) {
-            this.logger.error("Output path {} is not a directory", this.parameterConfiguration.getOutputDirectory());
-            return false;
+        if (this.parameterConfiguration.getOutputDirectory() != null) {
+            if (this.parameterConfiguration.getOutputDirectory().getParent() == null) {
+                if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory())) {
+                    this.logger.error("Output path {} is not a directory",
+                            this.parameterConfiguration.getOutputDirectory());
+                    return false;
+                }
+            } else {
+                if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory().getParent())) {
+                    this.logger.error("Output path {} is not a directory",
+                            this.parameterConfiguration.getOutputDirectory());
+                    return false;
+                }
+            }
         }
         return true;
     }

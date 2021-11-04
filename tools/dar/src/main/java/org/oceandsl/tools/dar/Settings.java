@@ -61,6 +61,10 @@ public class Settings { // NOPMD data class
     @Parameter(names = { "-E", "--experiment-name" }, required = true, description = "Name of the experiment")
     private String experimentName;
 
+    @Parameter(names = { "-s",
+            "--signature-extractor" }, required = true, converter = ESignatureExtractorConverter.class, description = "Type of extractor used for component and operation signatures")
+    private ESignatureExtractor signatureExtractor;
+
     public Path getInputFile() {
         return this.inputFile;
     }
@@ -91,5 +95,9 @@ public class Settings { // NOPMD data class
 
     public String getExperimentName() {
         return this.experimentName;
+    }
+
+    public ESignatureExtractor getSignatureExtractor() {
+        return this.signatureExtractor;
     }
 }
