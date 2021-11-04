@@ -15,10 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.stages.metrics;
 
-import org.oceandsl.analysis.stages.staticdata.data.LongValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.StringValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.Table;
-
 import kieker.analysis.graph.Direction;
 import kieker.analysis.graph.IEdge;
 import kieker.analysis.graph.IGraph;
@@ -27,7 +23,12 @@ import kieker.common.exception.ConfigurationException;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.type.ComponentType;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.stages.staticdata.data.LongValueHandler;
+import org.oceandsl.analysis.stages.staticdata.data.StringValueHandler;
+import org.oceandsl.analysis.stages.staticdata.data.Table;
 
 /**
  * Counts the incoming and outgoing edges for each node. Where nodes represent modules/components in

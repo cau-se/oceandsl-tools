@@ -19,16 +19,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.oceandsl.analysis.stages.model.CountUniqueCallsStage;
-import org.oceandsl.analysis.stages.staticdata.CSVFunctionCallReaderStage;
-import org.oceandsl.analysis.stages.staticdata.CSVMapperStage;
-import org.oceandsl.analysis.stages.staticdata.OperationCallFixPathStage;
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
-import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
-import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
-import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
-import org.oceandsl.tools.sar.stages.StringFileWriterSink;
 import org.slf4j.Logger;
 
 import kieker.analysis.signature.IComponentSignatureExtractor;
@@ -48,8 +38,20 @@ import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypeModel;
+
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
+
+import org.oceandsl.analysis.stages.model.CountUniqueCallsStage;
+import org.oceandsl.analysis.stages.staticdata.CSVFunctionCallReaderStage;
+import org.oceandsl.analysis.stages.staticdata.CSVMapperStage;
+import org.oceandsl.analysis.stages.staticdata.OperationCallFixPathStage;
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
+import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
+import org.oceandsl.tools.sar.stages.StringFileWriterSink;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -81,7 +83,7 @@ public class TeetimeCallConfiguration extends Configuration {
             this.connectPorts(readerPort, fixPathStage.getInputPort());
             readerPort = fixPathStage.getOutputPort();
         }
-        final CSVMapperStage mapperStage = new CSVMapperStage(settings.getCaseInsensitive());
+        final CSVMapperStage mapperStage = new CSVMapperStage(settings.isCaseInsensitive());
         this.connectPorts(readerPort, mapperStage.getInputPort());
         readerPort = mapperStage.getOutputPort();
 
@@ -89,14 +91,14 @@ public class TeetimeCallConfiguration extends Configuration {
             logger.info("Map based component definition");
             final MapBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new MapBasedCleanupComponentSignatureStage(
                     settings.getComponentMapFiles(), settings.getMissingMappingFile(), settings.getCallSplitSymbol(),
-                    settings.getCaseInsensitive());
+                    settings.isCaseInsensitive());
 
             this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
             readerPort = cleanupComponentSignatureStage.getOutputPort();
         } else {
             logger.info("File based component definition");
             final FileBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new FileBasedCleanupComponentSignatureStage(
-                    settings.getCaseInsensitive());
+                    settings.isCaseInsensitive());
 
             this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
 

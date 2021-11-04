@@ -29,9 +29,10 @@ import kieker.model.analysismodel.type.TypeModel;
 public final class TypeModelMerger {
 
     private TypeModelMerger() {
+        // Utility class
     }
 
-    static void mergeTypeModel(final TypeModel model, final TypeModel mergeModel) {
+    /* default */ static void mergeTypeModel(final TypeModel model, final TypeModel mergeModel) { // NOPMD
         // add additional component types if necessary
         for (final ComponentType mergeType : mergeModel.getComponentTypes().values()) {
             if (!model.getComponentTypes().containsKey(mergeType.getSignature())) {

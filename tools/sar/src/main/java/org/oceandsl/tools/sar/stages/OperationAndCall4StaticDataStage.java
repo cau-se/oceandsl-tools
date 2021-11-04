@@ -17,12 +17,13 @@ package org.oceandsl.tools.sar.stages;
 
 import java.time.Duration;
 
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
-
 import kieker.analysis.stage.model.data.CallEvent;
 import kieker.analysis.stage.model.data.OperationEvent;
+
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
+
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 /**
  * Transform @{link CallerCallee}s to @{link OperationEvent}s and @{CallEvent}s on model level. The

@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
-
 import teetime.framework.AbstractProducerStage;
+
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 /**
  * Reads an 3 or 4 column CSV file containing calls.
@@ -34,18 +34,19 @@ import teetime.framework.AbstractProducerStage;
 public class CSVFunctionCallReaderStage extends AbstractProducerStage<CallerCallee> {
 
     private final BufferedReader reader;
-	private String splitSymbol;
+    private final String splitSymbol;
 
     /**
      * Read a single CSV file.
      *
      * @param path
      *            file path
-     * @param splitSymbol string containing the split symbol
+     * @param splitSymbol
+     *            string containing the split symbol
      * @throws IOException
      *             when a stream could not be opened.
      */
-    public CSVFunctionCallReaderStage(final Path path, String splitSymbol) throws IOException {
+    public CSVFunctionCallReaderStage(final Path path, final String splitSymbol) throws IOException {
         this.reader = Files.newBufferedReader(path);
         this.splitSymbol = splitSymbol;
     }
@@ -56,7 +57,7 @@ public class CSVFunctionCallReaderStage extends AbstractProducerStage<CallerCall
         this.reader.readLine();
         String line;
         while ((line = this.reader.readLine()) != null) {
-            final String[] values = line.split(splitSymbol);
+            final String[] values = line.split(this.splitSymbol);
             if (values.length == 4) {
                 this.outputPort
                         .send(new CallerCallee(values[0].trim(), values[1].trim(), values[2].trim(), values[3].trim()));

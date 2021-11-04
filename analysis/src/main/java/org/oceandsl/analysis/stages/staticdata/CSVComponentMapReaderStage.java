@@ -20,10 +20,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import teetime.framework.AbstractProducerStage;
+
 import org.oceandsl.analysis.stages.staticdata.data.StringValueHandler;
 import org.oceandsl.analysis.stages.staticdata.data.Table;
-
-import teetime.framework.AbstractProducerStage;
 
 /**
  * Read a CSV file containing a component map.

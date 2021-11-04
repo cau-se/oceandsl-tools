@@ -24,23 +24,24 @@ import teetime.framework.AbstractProducerStage;
 
 /**
  * @author Reiner Jung
- *
+ * @since 1.1
  */
 public class CSVDataflowReaderStage extends AbstractProducerStage<DataAccess> {
 
     private final BufferedReader reader;
-	private String splitSymbol;
+    private final String splitSymbol;
 
     /**
      * Read a single CSV file.
      *
      * @param path
      *            file path
-     * @param splitSymbol string containing the split symbol for the CSV file
+     * @param splitSymbol
+     *            string containing the split symbol for the CSV file
      * @throws IOException
      *             when a stream could not be opened.
      */
-    public CSVDataflowReaderStage(final Path path, String splitSymbol) throws IOException {
+    public CSVDataflowReaderStage(final Path path, final String splitSymbol) throws IOException {
         this.reader = Files.newBufferedReader(path);
         this.splitSymbol = splitSymbol;
     }
@@ -56,7 +57,7 @@ public class CSVDataflowReaderStage extends AbstractProducerStage<DataAccess> {
                 try {
                     this.outputPort.send(new DataAccess(values[0].trim(), values[1].trim(),
                             EDirection.getValue(values[2].trim()), values[3].trim()));
-                } catch (final Exception e) {
+                } catch (final InternalError e) {
                     this.logger.error("Line format error '{}', {}", line, e.getMessage());
                 }
             } else {

@@ -41,10 +41,11 @@ public final class StatisticsModelMerger {
     private final static Logger LOGGER = LoggerFactory.getLogger(StatisticsModelMerger.class);
 
     private StatisticsModelMerger() {
+        // Utility class
     }
 
-    static void mergeStatisticsModel(final ExecutionModel executionModel, final StatisticsModel targetModel,
-            final StatisticsModel mergeModel) {
+    /* default */ static void mergeStatisticsModel(final ExecutionModel executionModel, // NOPMD
+            final StatisticsModel targetModel, final StatisticsModel mergeModel) {
         for (final Entry<EObject, Statistics> mergeStatistic : mergeModel.getStatistics()) {
             /*
              * Unfortunately the map function containsKey does not match the correct keys, as the

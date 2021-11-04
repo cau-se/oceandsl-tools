@@ -40,9 +40,13 @@ import kieker.model.analysismodel.type.StorageType;
 
 /**
  * @author Reiner Jung
- *
+ * @since 1.1
  */
-public class ModelUtils {
+public final class ModelUtils {
+
+    private ModelUtils() {
+        // Utility class
+    }
 
     public static boolean areObjectsEqual(final EObject left, final EObject right) {
         if (left.getClass().equals(right.getClass())) {
@@ -75,7 +79,7 @@ public class ModelUtils {
             } else if (left instanceof Tuple) {
                 return ModelUtils.isEqual((Tuple<?, ?>) left, (Tuple<?, ?>) right);
             } else {
-                System.err.println("Missing support for " + left.getClass().getCanonicalName());
+                throw new InternalError("Missing support for " + left.getClass().getCanonicalName());
             }
         }
         return false;
@@ -194,17 +198,17 @@ public class ModelUtils {
 
     public static void printTree(final EObject object, final String indent) {
         final EList<EAttribute> attributes = object.eClass().getEAllAttributes();
-        System.err.println(String.format("%s%s", indent, object.getClass().getName()));
+        System.err.println(String.format("%s%s", indent, object.getClass().getName())); // NOPMD
         for (final EAttribute attribute : attributes) {
             final Object result = object.eGet(attribute);
-            System.err.println(String.format("%s  %s:%s = %s", indent, attribute.getEType().getName(),
+            System.err.println(String.format("%s  %s:%s = %s", indent, attribute.getEType().getName(), // NOPMD
                     attribute.getName(), result));
         }
 
         final EList<EReference> containments = object.eClass().getEAllContainments();
         for (final EReference containment : containments) {
             final Object result = object.eGet(containment);
-            System.err.println(String.format("%s  %s", indent, containment.getName()));
+            System.err.println(String.format("%s  %s", indent, containment.getName())); // NOPMD
             if (result instanceof EcoreEMap) {
                 ModelUtils.printMap((EcoreEMap<?, ?>) result, indent + "  ");
             } else if (result instanceof EObject) {
@@ -215,7 +219,7 @@ public class ModelUtils {
 
     private static void printMap(final EcoreEMap<?, ?> map, final String indent) {
         for (final Entry<?, ?> entry : map) {
-            System.err.println(String.format("%s%s :", indent, entry.getKey().toString()));
+            System.err.println(String.format("%s%s :", indent, entry.getKey().toString())); // NOPMD
             ModelUtils.printTree((EObject) entry.getValue(), indent + "  ");
         }
     }

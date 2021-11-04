@@ -1,6 +1,18 @@
-/**
+/***************************************************************************
+ * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
  *
- */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package org.oceandsl.log.rewriter;
 
 import java.io.IOException;
@@ -12,16 +24,26 @@ import kieker.tools.source.LogsReaderCompositeStage;
 import teetime.framework.Configuration;
 
 /**
- * @author reiner
- *
+ * @author Reiner Jung
+ * @since 1.0
  */
 public class TeetimeConfiguration extends Configuration {
 
-    public TeetimeConfiguration(final LogRewriterSettings parameterConfiguration) throws IOException {
+    public TeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
+        final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(parameterConfiguration.getInputFiles(),
+                false, 8192);
+        final RewriteBeforeAndAfterEventsStage processor = new RewriteBeforeAndAfterEventsStage(
+                parameterConfiguration.getAddrlineExecutable(), parameterConfiguration.getModelExecutable(), false);
+        final DataSinkStage writer = new DataSinkStage(this.createConfiguration(parameterConfiguration));
 
+        this.connectPorts(reader.getOutputPort(), processor.getInputPort());
+        this.connectPorts(processor.getOutputPort(), writer.getInputPort());
+    }
+
+    private kieker.common.configuration.Configuration createConfiguration(final Settings parameterConfiguration)
+            throws IOException {
+        // Configuration for the data sink stage
         final kieker.common.configuration.Configuration configuration = new kieker.common.configuration.Configuration();
-        configuration.setProperty(LogsReaderCompositeStage.LOG_DIRECTORIES,
-                parameterConfiguration.getInputFile().getCanonicalPath());
         configuration.setProperty("kieker.monitoring.name", "KIEKER");
         configuration.setProperty("kieker.monitoring.enabled", "true");
         configuration.setProperty("kieker.monitoring.initialExperimentId", "transcoded");
@@ -60,14 +82,6 @@ public class TeetimeConfiguration extends Configuration {
         configuration.setProperty("kieker.monitoring.writer.filesystem.BinaryFileWriter.compression",
                 kieker.monitoring.writer.compression.NoneCompressionFilter.class.getCanonicalName());
 
-        final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(configuration);
-
-        final RewriteBeforeAndAfterEventsStage processor = new RewriteBeforeAndAfterEventsStage(
-                parameterConfiguration.getAddrlineExecutable(), parameterConfiguration.getModelExecutable(), false);
-
-        final DataSinkStage writer = new DataSinkStage(configuration);
-
-        this.connectPorts(reader.getOutputPort(), processor.getInputPort());
-        this.connectPorts(processor.getOutputPort(), writer.getInputPort());
+        return configuration;
     }
 }

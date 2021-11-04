@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
-
 import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractFilter;
+
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 /**
  * This stage receives an {@link CallerCallee} object and checks whether the file path for caller
@@ -46,7 +46,7 @@ import teetime.stage.basic.AbstractFilter;
  */
 public class OperationCallFixPathStage extends AbstractFilter<CallerCallee> {
 
-    Map<String, String> operationToFileMap = new HashMap<>();
+    private final Map<String, String> operationToFileMap = new HashMap<>();
     private final OutputPort<String> missingOperationOutputPort = this.createOutputPort(String.class);
     private final List<String> missingOperationNames = new ArrayList<>();
 

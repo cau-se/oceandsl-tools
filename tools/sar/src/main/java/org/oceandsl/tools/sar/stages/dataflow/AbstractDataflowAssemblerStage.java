@@ -20,9 +20,17 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.model.analysismodel.sources.SourceModel;
+
 import teetime.stage.basic.AbstractTransformation;
 
 /**
+ * Assembler stage based on dataflow events.
+ *
+ * @param <I>
+ *            Input data type
+ * @param <O>
+ *            Output data type
+ *
  * @author Reiner Jung
  * @since 1.1
  */

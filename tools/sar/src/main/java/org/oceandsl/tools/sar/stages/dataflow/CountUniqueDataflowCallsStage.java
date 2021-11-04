@@ -18,9 +18,7 @@ package org.oceandsl.tools.sar.stages.dataflow;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.analysis.stages.model.CountUniqueCallsStage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +32,11 @@ import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.statistics.EPredefinedUnits;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 
+import org.oceandsl.analysis.stages.model.CountUniqueCallsStage;
+
 /**
  * @author Reiner Jung
- *
+ * @since 1.1
  */
 public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<DataAccess> {
 
@@ -49,7 +49,6 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
             final ExecutionModel executionModel) {
         return dataAccess -> {
             final AggregatedStorageAccess result = CountUniqueDataflowCallsStage.getValue(executionModel,
-                    executionModel.getAggregatedStorageAccesses(),
                     CountUniqueDataflowCallsStage.getKeyTuple(dataAccess, executionModel));
 
             if (result == null) {
@@ -79,7 +78,6 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
     }
 
     private static AggregatedStorageAccess getValue(final ExecutionModel executionModel,
-            final EMap<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> aggregatedSorageAccesses,
             final Tuple<DeployedOperation, DeployedStorage> key) {
         for (final Entry<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> ag : executionModel
                 .getAggregatedStorageAccesses()) {

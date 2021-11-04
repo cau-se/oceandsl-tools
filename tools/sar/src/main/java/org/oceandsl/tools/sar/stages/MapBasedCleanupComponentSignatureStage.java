@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
@@ -43,12 +44,12 @@ public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupCompo
         if (missingMappingFile != null) {
             this.missingMappingWriter = new PrintWriter(Files.newBufferedWriter(missingMappingFile));
         } else {
-            this.missingMappingWriter = null;
+            this.missingMappingWriter = null; // NOPMD null assignment necessary
         }
         for (final Path componentMapFile : componentMapFiles) {
             this.logger.info("Reading map file {}", componentMapFile.toString());
-            final MapFileReader<String, String> mapFileReader = new MapFileReader<String, String>(componentMapFile,
-                    separator, this.componentMap, new StringValueConverter(caseInsensitive, 1),
+            final MapFileReader<String, String> mapFileReader = new MapFileReader<>(componentMapFile, separator,
+                    this.componentMap, new StringValueConverter(caseInsensitive, 1),
                     new StringValueConverter(caseInsensitive, 0));
             mapFileReader.read();
         }
@@ -61,7 +62,8 @@ public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupCompo
         } else {
             final Path path = Paths.get(signature);
             final String filename = path.getName(path.getNameCount() - 1).toString();
-            final String result = this.componentMap.get(this.caseInsensitive ? filename.toLowerCase() : filename);
+            final String result = this.componentMap
+                    .get(this.caseInsensitive ? filename.toLowerCase(Locale.ROOT) : filename);
             if (result != null) {
                 return result;
             } else {

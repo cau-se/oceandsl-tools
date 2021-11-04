@@ -19,10 +19,6 @@ import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.analysis.architecture.model.RepositoryUtils;
-import org.oceandsl.analysis.stages.staticdata.data.LongValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.StringValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.Table;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -34,7 +30,13 @@ import kieker.model.analysismodel.statistics.EPropertyType;
 import kieker.model.analysismodel.statistics.StatisticRecord;
 import kieker.model.analysismodel.statistics.Statistics;
 import kieker.model.analysismodel.statistics.StatisticsModel;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.architecture.model.RepositoryUtils;
+import org.oceandsl.analysis.stages.staticdata.data.LongValueHandler;
+import org.oceandsl.analysis.stages.staticdata.data.StringValueHandler;
+import org.oceandsl.analysis.stages.staticdata.data.Table;
 
 /**
  * @author Reiner Jung
@@ -43,6 +45,7 @@ import teetime.stage.basic.AbstractTransformation;
 public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, Table> {
 
     public NumberOfCallsStage() {
+        super();
     }
 
     @Override

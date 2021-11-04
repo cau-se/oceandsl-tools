@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.flow.trace.operation.AfterOperationEvent;
 import kieker.common.record.flow.trace.operation.BeforeOperationEvent;
+
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
@@ -87,7 +88,7 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
 
             new BufferedReader(new InputStreamReader(process.getInputStream())).lines().forEach(new Consumer<String>() {
 
-                final Pattern pattern = Pattern.compile("^(\\w+) at ([\\w\\?/\\.\\-]+):([\\d\\?]*)( .*)?$");
+                private final Pattern pattern = Pattern.compile("^(\\w+) at ([\\w\\?/\\.\\-]+):([\\d\\?]*)( .*)?$");
 
                 @Override
                 public void accept(final String string) {
@@ -114,6 +115,10 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
         } else {
             return addrOutput;
         }
+    }
+
+    public OutputPort<IMonitoringRecord> getOutputPort() {
+        return this.outputPort;
     }
 
     class AddrOutput {
@@ -144,10 +149,6 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
         public String toString() {
             return String.format("%s:%d -- %s", this.filename, this.linenumber, this.name);
         }
-    }
-
-    public OutputPort<IMonitoringRecord> getOutputPort() {
-        return this.outputPort;
     }
 
 }

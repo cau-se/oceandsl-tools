@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis;
 
+import java.util.Locale;
+
 import com.beust.jcommander.IStringConverter;
 
 import org.oceandsl.tools.mvis.graph.selector.AllSelector;
@@ -33,9 +35,9 @@ public class SelectorKindConverter implements IStringConverter<IGraphElementSele
 
     @Override
     public IGraphElementSelector convert(final String value) {
-        final String parts[] = value.split(":");
+        final String[] parts = value.split(":");
         final String command = parts[0];
-        final ESelectorKind selectorKind = ESelectorKind.valueOf(command.toUpperCase());
+        final ESelectorKind selectorKind = ESelectorKind.valueOf(command.toUpperCase(Locale.ROOT));
         switch (selectorKind) {
         case ALL:
             return new AllSelector();

@@ -19,8 +19,3 @@ Current tools:
 - mop (model operation) merge, diff, diff-tag, subtract, subtract-tag models
 - mvis (model visualization) visualize and compute metrics for a given architecture model
 - pp-static-log
-
-
-
-
-

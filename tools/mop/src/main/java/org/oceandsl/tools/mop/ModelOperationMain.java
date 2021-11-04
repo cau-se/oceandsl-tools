@@ -22,7 +22,6 @@ import com.beust.jcommander.JCommander;
 
 import org.slf4j.LoggerFactory;
 
-import kieker.analysis.stage.model.ModelRepository;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
@@ -35,23 +34,21 @@ import kieker.tools.common.AbstractService;
  */
 public class ModelOperationMain extends AbstractService<TeetimeConfiguration, Settings> {
 
-    private ModelRepository repository;
-
     public static void main(final String[] args) {
         final ModelOperationMain main = new ModelOperationMain();
         try {
             final int exitCode = main.run("architecture model operations", "mop", args, new Settings());
-            java.lang.System.exit(exitCode);
+            System.exit(exitCode);
         } catch (final IllegalArgumentException e) {
             LoggerFactory.getLogger(ModelOperationMain.class).error("Configuration error: {}", e.getLocalizedMessage());
-            java.lang.System.exit(1);
+            System.exit(1);
         }
     }
 
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            return new TeetimeConfiguration(this.logger, this.parameterConfiguration, this.repository);
+            return new TeetimeConfiguration(this.parameterConfiguration);
         } catch (final IOException e) {
             throw new ConfigurationException(e);
         }
@@ -76,6 +73,6 @@ public class ModelOperationMain extends AbstractService<TeetimeConfiguration, Se
 
     @Override
     protected void shutdownService() {
-
+        // No special operation necessary.
     }
 }

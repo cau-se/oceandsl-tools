@@ -17,6 +17,18 @@ package org.oceandsl.tools.mvis;
 
 import java.io.IOException;
 
+import kieker.analysis.graph.IGraph;
+import kieker.analysis.graph.dependency.DependencyGraphCreatorStage;
+import kieker.analysis.graph.export.dot.DotFileWriterStage;
+import kieker.analysis.graph.export.graphml.GraphMLFileWriterStage;
+import kieker.analysis.graph.util.FileExtension;
+import kieker.analysis.signature.NameBuilder;
+import kieker.analysis.stage.model.ModelRepository;
+
+import teetime.framework.Configuration;
+import teetime.stage.basic.distributor.Distributor;
+import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
+
 import org.oceandsl.analysis.stages.generic.TableCSVSink;
 import org.oceandsl.analysis.stages.model.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
@@ -34,18 +46,6 @@ import org.oceandsl.tools.mvis.stages.graph.OperationCallGraphStage;
 import org.oceandsl.tools.mvis.stages.metrics.ModuleNodeCountCouplingStage;
 import org.oceandsl.tools.mvis.stages.metrics.NumberOfCallsStage;
 import org.oceandsl.tools.mvis.stages.metrics.OperationNodeCountCouplingStage;
-import org.slf4j.Logger;
-
-import kieker.analysis.graph.IGraph;
-import kieker.analysis.graph.dependency.DependencyGraphCreatorStage;
-import kieker.analysis.graph.export.dot.DotFileWriterStage;
-import kieker.analysis.graph.export.graphml.GraphMLFileWriterStage;
-import kieker.analysis.graph.util.FileExtension;
-import kieker.analysis.signature.NameBuilder;
-import kieker.analysis.stage.model.ModelRepository;
-import teetime.framework.Configuration;
-import teetime.stage.basic.distributor.Distributor;
-import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -59,8 +59,7 @@ public class TeetimeConfiguration extends Configuration {
     private static final String DISTINCT_OPERATION_DEGREE_CSV = "distinct-operation-degree.csv";
     private static final String DISTINCT_MODULE_DEGREE_CSV = "distinct-module-degree.csv";
 
-    public TeetimeConfiguration(final Logger logger, final Settings settings)
-            throws IOException, ValueConversionErrorException {
+    public TeetimeConfiguration(final Settings settings) throws IOException, ValueConversionErrorException {
 
         final ModelRepositoryProducerStage readerStage = new ModelRepositoryProducerStage(settings.getInputDirectory());
 

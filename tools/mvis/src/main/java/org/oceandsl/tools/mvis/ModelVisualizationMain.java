@@ -18,16 +18,18 @@ package org.oceandsl.tools.mvis;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Locale;
 
 import com.beust.jcommander.JCommander;
 
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
-import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
 import org.slf4j.LoggerFactory;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
+
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
+import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
 
 /**
  * Architecture analysis main class.
@@ -41,18 +43,18 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
         final ModelVisualizationMain main = new ModelVisualizationMain();
         try {
             final int exitCode = main.run("architecture modeler", "arch-mod", args, new Settings());
-            java.lang.System.exit(exitCode);
+            System.exit(exitCode);
         } catch (final IllegalArgumentException e) {
             LoggerFactory.getLogger(ModelVisualizationMain.class).error("Configuration error: {}",
                     e.getLocalizedMessage());
-            java.lang.System.exit(1);
+            System.exit(1);
         }
     }
 
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            return new TeetimeConfiguration(this.logger, this.parameterConfiguration);
+            return new TeetimeConfiguration(this.parameterConfiguration);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
@@ -97,9 +99,9 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
         String list = null;
         for (final ESelectorKind value : values) {
             if (list == null) {
-                list = value.name().toLowerCase();
+                list = value.name().toLowerCase(Locale.ROOT);
             } else {
-                list += "," + value.name().toLowerCase();
+                list += "," + value.name().toLowerCase(Locale.ROOT);
             }
         }
         return list;
@@ -119,7 +121,7 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
 
     @Override
     protected void shutdownService() {
-
+        // No special shutdown function required
     }
 
 }

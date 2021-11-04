@@ -22,9 +22,6 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
-import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
-import org.oceandsl.tools.mvis.stages.graph.KiekerNode;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
@@ -34,11 +31,16 @@ import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Tuple;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
+import org.oceandsl.tools.mvis.stages.graph.KiekerNode;
 
 /**
  * @author Reiner Jung
- *
+ * @since 1.1
  */
 public class AllenDeployedArchitectureGraphStage
         extends AbstractTransformation<ModelRepository, Graph<Node<DeployedComponent>>> {
@@ -78,7 +80,7 @@ public class AllenDeployedArchitectureGraphStage
                 final Node<DeployedComponent> source = this.findNode(graph, entry.getValue().getSource());
                 final Node<DeployedComponent> target = this.findNode(graph, entry.getValue().getTarget());
 
-                switch (this.graphGeneratioMode) {
+                switch (this.graphGeneratioMode) { // NOPMD
                 case ADD_NODES_FOR_EDGES:
                     graph.putEdge(this.getOrCreateNode(graph, source, entry.getValue().getSource()),
                             this.getOrCreateNode(graph, target, entry.getValue().getTarget()));
@@ -88,6 +90,8 @@ public class AllenDeployedArchitectureGraphStage
                         graph.putEdge(source, target);
                     }
                     break;
+                default:
+                    throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
                 }
             }
         }

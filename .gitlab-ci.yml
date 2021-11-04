@@ -25,6 +25,7 @@ check:
   stage: check
   script:
     - ./gradlew -x test check
+    - ./gradlew -x test checkstyleMain checkstyleTest pmdMain pmdTest
 
 test:
   tags:
@@ -39,6 +40,7 @@ package:
   stage: package
   script:
     - ./gradlew build
+    - ./assemble-tools.sh
   artifacts:
     paths:
-     - ./tools/create-architecture-model/build/distributions/create-architecture-model.zip
+     - ./build/oceandsl-tools.tgz

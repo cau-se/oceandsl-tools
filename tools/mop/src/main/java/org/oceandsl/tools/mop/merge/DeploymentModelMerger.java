@@ -31,12 +31,13 @@ import kieker.model.analysismodel.deployment.DeploymentModel;
  * @author Reiner Jung
  * @since 1.1
  */
-public class DeploymentModelMerger {
+public final class DeploymentModelMerger {
 
     private DeploymentModelMerger() {
+        // Utility class
     }
 
-    static void mergeDeploymentModel(final AssemblyModel assemblyModel, final DeploymentModel model,
+    /* default */ static void mergeDeploymentModel(final AssemblyModel assemblyModel, final DeploymentModel model, // NOPMD
             final DeploymentModel mergeModel) {
         // add additional contexts if necessary
         for (final DeploymentContext mergeDeploymentContext : mergeModel.getDeploymentContexts().values()) {

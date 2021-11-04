@@ -15,8 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
-
 import kieker.analysis.graph.IVertex;
 import kieker.analysis.graph.dependency.PropertyConstants;
 import kieker.analysis.graph.dependency.vertextypes.VertexType;
@@ -25,6 +23,8 @@ import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
+
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung

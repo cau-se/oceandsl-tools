@@ -35,7 +35,7 @@ import kieker.model.analysismodel.type.TypeModel;
  */
 public class TypeModelDataflowAssemblerStage extends AbstractDataflowAssemblerStage<DataAccess, DataAccess> {
 
-    static final String GLOBAL_PACKAGE = "global";
+    static final String GLOBAL_PACKAGE = "global"; // NOPMD must be package global
 
     private static final String UNKOWN_TYPE = "UNKNOWN";
 

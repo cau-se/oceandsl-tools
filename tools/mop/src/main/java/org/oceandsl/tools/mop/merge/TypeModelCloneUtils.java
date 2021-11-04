@@ -29,6 +29,10 @@ import kieker.model.analysismodel.type.TypeFactory;
  */
 public final class TypeModelCloneUtils {
 
+    private TypeModelCloneUtils() {
+        // Utility class
+    }
+
     public static ComponentType duplicate(final ComponentType type) {
         final ComponentType newType = TypeFactory.eINSTANCE.createComponentType();
 

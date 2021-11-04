@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.oceandsl.analysis.utils.MapFileReader;
@@ -45,8 +46,8 @@ public class MapBasedSignatureCleaner extends AbstractSignatureCleaner {
         for (final Path componentMapFile : componentMapFiles) {
             this.logger.info("Reading map file {}", componentMapFile.toString());
 
-            final MapFileReader<String, String> mapFileReader = new MapFileReader<String, String>(componentMapFile,
-                    separator, this.componentMap, new StringValueConverter(caseInsensitive, 1),
+            final MapFileReader<String, String> mapFileReader = new MapFileReader<>(componentMapFile, separator,
+                    this.componentMap, new StringValueConverter(caseInsensitive, 1),
                     new StringValueConverter(caseInsensitive, 0));
             mapFileReader.read();
         }
@@ -64,7 +65,7 @@ public class MapBasedSignatureCleaner extends AbstractSignatureCleaner {
                 return result;
             } else {
                 this.logger.warn("File '{}' has no component mapping. Signature '{}'", filename, signature);
-                return "??" + signature.toLowerCase();
+                return "??" + signature.toLowerCase(Locale.ROOT);
             }
         }
     }

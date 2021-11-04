@@ -20,15 +20,16 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.sources.SourceModel;
 
+import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
+
 /**
  * @author Reiner Jung
- *
+ * @since 1.1
  */
 public class DiffSelector implements IGraphElementSelector {
 

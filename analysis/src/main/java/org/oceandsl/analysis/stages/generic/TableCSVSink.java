@@ -20,9 +20,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.oceandsl.analysis.stages.staticdata.data.Table;
-
 import teetime.framework.AbstractConsumerStage;
+
+import org.oceandsl.analysis.stages.staticdata.data.Table;
 
 /**
  * Save a table as a csv file.
@@ -47,7 +47,7 @@ public class TableCSVSink extends AbstractConsumerStage<Table> {
         for (final Object[] row : table.getRows()) {
             for (int columnCount = 0; columnCount < row.length; columnCount++) {
                 outputStream.write(table.getValueHandler(columnCount).convertToString(row[columnCount]));
-                if (columnCount < (row.length - 1)) {
+                if (columnCount < row.length - 1) {
                     outputStream.write(";");
                 } else {
                     outputStream.write("\n");

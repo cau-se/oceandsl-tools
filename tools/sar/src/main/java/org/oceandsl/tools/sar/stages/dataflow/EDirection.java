@@ -24,10 +24,10 @@ public enum EDirection {
 
     public static EDirection getValue(final String name) throws Exception {
         for (final EDirection value : EDirection.values()) {
-            if (value.name().toLowerCase().equals(name)) {
+            if (value.name().equalsIgnoreCase(name)) {
                 return value;
             }
         }
-        throw new Exception("Illegal data access type.");
+        throw new InternalError("Illegal data access type.");
     }
 }

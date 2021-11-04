@@ -29,7 +29,7 @@ import com.beust.jcommander.converters.PathConverter;
  * @author Reiner Jung
  * @since 1.0
  */
-public class Settings {
+public class Settings { // NOPMD data class
 
     @Parameter(names = { "-i",
             "--input" }, required = true, converter = PathConverter.class, description = "Input Kieker log directory location")
@@ -61,6 +61,10 @@ public class Settings {
     @Parameter(names = { "-E", "--experiment-name" }, required = true, description = "Name of the experiment")
     private String experimentName;
 
+    @Parameter(names = { "-s",
+            "--signature-extractor" }, required = true, converter = ESignatureExtractorConverter.class, description = "Type of extractor used for component and operation signatures")
+    private ESignatureExtractor signatureExtractor;
+
     public Path getInputFile() {
         return this.inputFile;
     }
@@ -81,7 +85,7 @@ public class Settings {
         return this.sourceLabel;
     }
 
-    public boolean getCaseInsensitive() {
+    public boolean isCaseInsensitive() {
         return this.caseInsensitive;
     }
 
@@ -91,5 +95,9 @@ public class Settings {
 
     public String getExperimentName() {
         return this.experimentName;
+    }
+
+    public ESignatureExtractor getSignatureExtractor() {
+        return this.signatureExtractor;
     }
 }

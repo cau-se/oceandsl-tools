@@ -15,14 +15,15 @@
  ***************************************************************************/
 package org.oceandsl.analysis.stages.staticdata;
 
-import org.oceandsl.common.OperationCallEvent;
-
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.flow.IFlowRecord;
 import kieker.common.record.flow.trace.TraceMetadata;
 import kieker.common.record.flow.trace.operation.AfterOperationEvent;
 import kieker.common.record.flow.trace.operation.BeforeOperationEvent;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.common.OperationCallEvent;
 
 /**
  * This filter processes @{link OperationCallEvent} events and transforms them to mini traces which

@@ -33,6 +33,10 @@ import kieker.model.analysismodel.execution.ExecutionFactory;
  */
 public final class ExecutionModelCloneUtils {
 
+    private ExecutionModelCloneUtils() {
+        // Utility class
+    }
+
     public static AggregatedInvocation duplicate(final DeploymentModel deploymentModel,
             final AggregatedInvocation invocation) {
         final AggregatedInvocation newInvocation = ExecutionFactory.eINSTANCE.createAggregatedInvocation();
@@ -72,7 +76,8 @@ public final class ExecutionModelCloneUtils {
                 .get(operation.getAssemblyOperation().getOperationType().getSignature());
     }
 
-    private static DeployedStorage findDeployedStorage(final DeploymentModel targetModel, final DeployedStorage storage) {
+    private static DeployedStorage findDeployedStorage(final DeploymentModel targetModel,
+            final DeployedStorage storage) {
         final EStringToDeployedStorageMapEntryImpl mapStorageEntry = (EStringToDeployedStorageMapEntryImpl) storage
                 .eContainer();
         final DeployedComponent component = (DeployedComponent) mapStorageEntry.eContainer();

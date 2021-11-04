@@ -18,6 +18,7 @@ package org.oceandsl.tools.sar.stages;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 
@@ -35,13 +36,13 @@ public class FileBasedCleanupComponentSignatureStage extends AbstractCleanupComp
     }
 
     private String convertToLowerCase(final String string) {
-        String value;
+        final String value;
         if (string.endsWith("_")) {
             value = string.substring(0, string.length() - 1);
         } else {
             value = string;
         }
-        return this.caseInsensitive ? value.toLowerCase() : value;
+        return this.caseInsensitive ? value.toLowerCase(Locale.ROOT) : value;
     }
 
     @Override
