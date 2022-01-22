@@ -63,7 +63,7 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssembl
         if (assemblyStorage == null) {
             assemblyStorage = AssemblyFactory.eINSTANCE.createAssemblyStorage();
             assemblyStorage.setStorageType(this.findStorageType(element.getSharedData()));
-            assemblyComponent.getAssemblyStorages().put(element.getSharedData(), assemblyStorage);
+            assemblyComponent.getStorages().put(element.getSharedData(), assemblyStorage);
             this.assemblyStorageMap.put(element.getSharedData(), assemblyStorage);
 
             final List<AssemblyComponent> newList = new ArrayList<>();
@@ -87,9 +87,9 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssembl
     private void moveStorageAccessToSeparateComponent(final AssemblyStorage assemblyStorage,
             final AssemblyComponent assemblyComponent) {
         final String name = assemblyStorage.getStorageType().getName();
-        assemblyComponent.getAssemblyStorages().removeKey(name);
+        assemblyComponent.getStorages().removeKey(name);
 
-        this.findOrCreateAssemblyComponent().getAssemblyStorages().put(name, assemblyStorage);
+        this.findOrCreateAssemblyComponent().getStorages().put(name, assemblyStorage);
     }
 
     private AssemblyComponent findOrCreateAssemblyComponent() {
@@ -132,12 +132,12 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssembl
             this.assemblyModel.getAssemblyComponents().put(element.getModule(), assemblyComponent);
             this.addObjectToSource(assemblyComponent);
         }
-        AssemblyOperation operation = assemblyComponent.getAssemblyOperations().get(element.getOperation());
+        AssemblyOperation operation = assemblyComponent.getOperations().get(element.getOperation());
         if (operation == null) {
             operation = AssemblyFactory.eINSTANCE.createAssemblyOperation();
             operation.setOperationType(
                     assemblyComponent.getComponentType().getProvidedOperations().get(element.getOperation()));
-            assemblyComponent.getAssemblyOperations().put(element.getOperation(), operation);
+            assemblyComponent.getOperations().put(element.getOperation(), operation);
             this.addObjectToSource(operation);
         }
         return operation;

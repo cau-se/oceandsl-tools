@@ -13,33 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop.stages;
-
-import java.nio.file.Path;
-import java.util.List;
-
-import teetime.framework.AbstractProducerStage;
-
 /**
- * Send out single model repository paths.
- *
  * @author Reiner Jung
- * @since 1.1
+ *
  */
-public class ModelSource extends AbstractProducerStage<Path> {
-
-    private final List<Path> modelPaths;
-
-    public ModelSource(final List<Path> modelPaths) {
-        this.modelPaths = modelPaths;
-    }
-
-    @Override
-    protected void execute() throws Exception {
-        for (final Path modelPath : this.modelPaths) {
-            this.outputPort.send(modelPath);
-        }
-        this.workCompleted();
-    }
-
-}
+package org.oceandsl.tools.maa;

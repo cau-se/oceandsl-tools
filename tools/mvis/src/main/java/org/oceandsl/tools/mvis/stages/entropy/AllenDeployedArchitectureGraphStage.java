@@ -66,7 +66,7 @@ public class AllenDeployedArchitectureGraphStage
 
         for (final Entry<String, DeploymentContext> context : deploymentModel.getDeploymentContexts()) {
             for (final Entry<String, DeployedComponent> component : context.getValue().getComponents()) {
-                for (final Entry<String, DeployedOperation> operation : component.getValue().getContainedOperations()) {
+                for (final Entry<String, DeployedOperation> operation : component.getValue().getOperations()) {
                     if (this.selector.nodeIsSelected(operation.getValue())) {
                         final Node<DeployedComponent> node = new KiekerNode<>(operation.getValue());
                         graph.addNode(node);

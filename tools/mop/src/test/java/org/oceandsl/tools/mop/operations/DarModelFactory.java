@@ -78,7 +78,7 @@ public class DarModelFactory extends ModelTestFactory {
             final ComponentType type = ModelTestFactory.findType(typeModel, DarModelFactory.DAR_COMPONENT_SIGNATURE);
             final AssemblyComponent component = ModelTestFactory
                     .createAssemblyComponent(DarModelFactory.DAR_ASSEMBLY_SIGNATURE, type);
-            component.getAssemblyOperations().put(ModelTestFactory.OP_SIGNATURE, ModelTestFactory
+            component.getOperations().put(ModelTestFactory.OP_SIGNATURE, ModelTestFactory
                     .createAssemblyOperation(ModelTestFactory.findOperationType(type, ModelTestFactory.OP_SIGNATURE)));
 
             result.getAssemblyComponents().put(DarModelFactory.DAR_ASSEMBLY_SIGNATURE, component);
@@ -88,7 +88,7 @@ public class DarModelFactory extends ModelTestFactory {
             final ComponentType type = ModelTestFactory.findType(typeModel, ModelTestFactory.JOINT_COMPONENT_SIGNATURE);
             final AssemblyComponent component = ModelTestFactory
                     .createAssemblyComponent(ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE, type);
-            component.getAssemblyOperations().put(ModelTestFactory.OP_COMPILE_SIGNATURE,
+            component.getOperations().put(ModelTestFactory.OP_COMPILE_SIGNATURE,
                     ModelTestFactory.createAssemblyOperation(
                             ModelTestFactory.findOperationType(type, ModelTestFactory.OP_COMPILE_SIGNATURE)));
 

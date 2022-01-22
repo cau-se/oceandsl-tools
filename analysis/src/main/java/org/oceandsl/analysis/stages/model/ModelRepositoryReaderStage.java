@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.utils;
+package org.oceandsl.analysis.stages.model;
+
+import java.nio.file.Path;
+
+import kieker.analysis.stage.model.ModelRepository;
+
+import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
 
 /**
- * Create an object from a given set of text input fields.
+ * Loads model repositories based on the paths it receives. Each loaded model is then passed
+ * as @{link ModelRepository} to the next stage.
  *
  * @author Reiner Jung
- * @since 1.1
  *
- * @param <T>
- *            value type
  */
-public interface IValueConverter<T> {
+public class ModelRepositoryReaderStage extends AbstractTransformation<Path, ModelRepository> {
 
-    T createValue(String[] input);
+    @Override
+    protected void execute(final Path element) throws Exception {
+        this.outputPort.send(ArchitectureModelManagementUtils.loadModelRepository(element));
+    }
+
 }

@@ -81,7 +81,7 @@ public class SarModelFactory extends ModelTestFactory {
             final ComponentType type = ModelTestFactory.findType(typeModel, SarModelFactory.SAR_COMPONENT_SIGNATURE);
             final AssemblyComponent component = ModelTestFactory
                     .createAssemblyComponent(SarModelFactory.SAR_ASSEMBLY_SIGNATURE, type);
-            component.getAssemblyOperations().put(ModelTestFactory.OP_SIGNATURE, ModelTestFactory
+            component.getOperations().put(ModelTestFactory.OP_SIGNATURE, ModelTestFactory
                     .createAssemblyOperation(ModelTestFactory.findOperationType(type, ModelTestFactory.OP_SIGNATURE)));
 
             result.getAssemblyComponents().put(SarModelFactory.SAR_ASSEMBLY_SIGNATURE, component);
@@ -91,12 +91,11 @@ public class SarModelFactory extends ModelTestFactory {
             final ComponentType type = ModelTestFactory.findType(typeModel, ModelTestFactory.JOINT_COMPONENT_SIGNATURE);
             final AssemblyComponent component = ModelTestFactory
                     .createAssemblyComponent(ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE, type);
-            component.getAssemblyOperations().put(ModelTestFactory.OP_COMPILE_SIGNATURE,
+            component.getOperations().put(ModelTestFactory.OP_COMPILE_SIGNATURE,
                     ModelTestFactory.createAssemblyOperation(
                             ModelTestFactory.findOperationType(type, ModelTestFactory.OP_COMPILE_SIGNATURE)));
-            component.getAssemblyOperations().put(ModelTestFactory.OP_LINK_SIGNATURE,
-                    ModelTestFactory.createAssemblyOperation(
-                            ModelTestFactory.findOperationType(type, ModelTestFactory.OP_LINK_SIGNATURE)));
+            component.getOperations().put(ModelTestFactory.OP_LINK_SIGNATURE, ModelTestFactory.createAssemblyOperation(
+                    ModelTestFactory.findOperationType(type, ModelTestFactory.OP_LINK_SIGNATURE)));
 
             result.getAssemblyComponents().put(ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE, component);
         }

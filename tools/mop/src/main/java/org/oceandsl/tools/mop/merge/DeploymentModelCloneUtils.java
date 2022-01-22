@@ -56,13 +56,13 @@ public final class DeploymentModelCloneUtils {
         newComponent.setAssemblyComponent(DeploymentModelCloneUtils.findAssemblyComponent(assemblyModel,
                 component.getAssemblyComponent().getSignature()));
 
-        for (final Entry<String, DeployedOperation> operation : component.getContainedOperations()) {
-            newComponent.getContainedOperations().put(operation.getKey(),
+        for (final Entry<String, DeployedOperation> operation : component.getOperations()) {
+            newComponent.getOperations().put(operation.getKey(),
                     DeploymentModelCloneUtils.duplicate(newComponent.getAssemblyComponent(), operation.getValue()));
         }
 
-        for (final Entry<String, DeployedStorage> storage : component.getContainedStorages()) {
-            newComponent.getContainedStorages().put(storage.getKey(),
+        for (final Entry<String, DeployedStorage> storage : component.getStorages()) {
+            newComponent.getStorages().put(storage.getKey(),
                     DeploymentModelCloneUtils.duplicate(newComponent.getAssemblyComponent(), storage.getValue()));
         }
 
@@ -85,12 +85,12 @@ public final class DeploymentModelCloneUtils {
     }
 
     private static AssemblyStorage findAssemblyStorage(final AssemblyComponent assemblyComponent, final String name) {
-        return assemblyComponent.getAssemblyStorages().get(name);
+        return assemblyComponent.getStorages().get(name);
     }
 
     private static AssemblyOperation findAssemblyOperation(final AssemblyComponent assemblyComponent,
             final String signature) {
-        return assemblyComponent.getAssemblyOperations().get(signature);
+        return assemblyComponent.getOperations().get(signature);
     }
 
     private static AssemblyComponent findAssemblyComponent(final AssemblyModel assemblyModel, final String signature) {

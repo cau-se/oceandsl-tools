@@ -82,7 +82,7 @@ public class CreateGraph4AllenMetricStage
         final List<DeployedOperation> operations = new ArrayList<>();
         for (final DeploymentContext context : deploymentModel.getDeploymentContexts().values()) {
             for (final DeployedComponent component : context.getComponents().values()) {
-                for (final DeployedOperation operation : component.getContainedOperations().values()) {
+                for (final DeployedOperation operation : component.getOperations().values()) {
                     operations.add(operation);
                 }
             }

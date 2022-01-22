@@ -118,8 +118,8 @@ public class ModelTestFactory {
         deployedComponent.setSignature(assemblySignature);
 
         for (final DeployedOperation operation : operations) {
-            deployedComponent.getContainedOperations()
-                    .put(operation.getAssemblyOperation().getOperationType().getSignature(), operation);
+            deployedComponent.getOperations().put(operation.getAssemblyOperation().getOperationType().getSignature(),
+                    operation);
         }
 
         return deployedComponent;
@@ -138,7 +138,7 @@ public class ModelTestFactory {
 
     private static AssemblyOperation findOperation(final AssemblyComponent assemblyComponent,
             final String operationSignature) {
-        return assemblyComponent.getAssemblyOperations().get(operationSignature);
+        return assemblyComponent.getOperations().get(operationSignature);
     }
 
     public static DeployedComponent findDeployedComponent(final DeploymentModel deploymentModel,
@@ -154,7 +154,7 @@ public class ModelTestFactory {
             final String componentName, final String operationName) {
         final DeployedComponent darComponent = ModelTestFactory.findDeployedComponent(deploymentModel, context,
                 componentName);
-        return darComponent.getContainedOperations().get(operationName);
+        return darComponent.getOperations().get(operationName);
     }
 
     public static void createAggregatedInvocation(
@@ -190,22 +190,22 @@ public class ModelTestFactory {
 
         /** type */
         typeModel.eAllContents().forEachRemaining(item -> {
-            if ((item instanceof ComponentType) || (item instanceof OperationType)) {
+            if (item instanceof ComponentType || item instanceof OperationType) {
                 result.getSources().put(item, ModelTestFactory.createList(source));
             }
         });
 
         /** assembly */
         assemblyModel.eAllContents().forEachRemaining(item -> {
-            if ((item instanceof AssemblyComponent) || (item instanceof AssemblyOperation)) {
+            if (item instanceof AssemblyComponent || item instanceof AssemblyOperation) {
                 result.getSources().put(item, ModelTestFactory.createList(source));
             }
         });
 
         /** deployment */
         deploymentModel.eAllContents().forEachRemaining(item -> {
-            if ((item instanceof DeploymentContext) || (item instanceof DeployedComponent)
-                    || (item instanceof DeployedOperation)) {
+            if (item instanceof DeploymentContext || item instanceof DeployedComponent
+                    || item instanceof DeployedOperation) {
                 result.getSources().put(item, ModelTestFactory.createList(source));
             }
         });

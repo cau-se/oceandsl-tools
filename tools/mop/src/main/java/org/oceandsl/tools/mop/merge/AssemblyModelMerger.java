@@ -46,8 +46,8 @@ public final class AssemblyModelMerger {
         for (final AssemblyComponent component : model.getAssemblyComponents().values()) {
             final AssemblyComponent mergeComponent = mergeModel.getAssemblyComponents().get(component.getSignature());
             if (mergeComponent != null) {
-                AssemblyModelMerger.mergeAssemblyOperations(component, mergeComponent.getAssemblyOperations());
-                AssemblyModelMerger.mergeAssemblyStorages(component, mergeComponent.getAssemblyStorages());
+                AssemblyModelMerger.mergeAssemblyOperations(component, mergeComponent.getOperations());
+                AssemblyModelMerger.mergeAssemblyStorages(component, mergeComponent.getStorages());
             }
         }
     }
@@ -55,8 +55,8 @@ public final class AssemblyModelMerger {
     private static void mergeAssemblyOperations(final AssemblyComponent component,
             final EMap<String, AssemblyOperation> assemblyOperations) {
         for (final AssemblyOperation mergeOperation : assemblyOperations.values()) {
-            if (!component.getAssemblyOperations().containsKey(mergeOperation.getOperationType().getSignature())) {
-                component.getAssemblyOperations().put(mergeOperation.getOperationType().getSignature(),
+            if (!component.getOperations().containsKey(mergeOperation.getOperationType().getSignature())) {
+                component.getOperations().put(mergeOperation.getOperationType().getSignature(),
                         AssemblyModelCloneUtils.duplicate(component.getComponentType(), mergeOperation));
             }
         }
@@ -65,8 +65,8 @@ public final class AssemblyModelMerger {
     private static void mergeAssemblyStorages(final AssemblyComponent component,
             final EMap<String, AssemblyStorage> mergeAssemblyStorages) {
         for (final AssemblyStorage mergeStorage : mergeAssemblyStorages.values()) {
-            if (!component.getAssemblyStorages().containsKey(mergeStorage.getStorageType().getName())) {
-                component.getAssemblyStorages().put(mergeStorage.getStorageType().getName(),
+            if (!component.getStorages().containsKey(mergeStorage.getStorageType().getName())) {
+                component.getStorages().put(mergeStorage.getStorageType().getName(),
                         AssemblyModelCloneUtils.duplicate(component.getComponentType(), mergeStorage));
             }
         }

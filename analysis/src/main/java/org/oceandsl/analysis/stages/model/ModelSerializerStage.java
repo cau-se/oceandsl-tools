@@ -132,8 +132,7 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
             assemblyComponentMap.put("component-type", assemblyComponent.getComponentType().getSignature());
 
             final Map<String, Object> assemblyOperationsMap = new HashMap<>();
-            for (final Entry<String, AssemblyOperation> assemblyOperationEntry : assemblyComponent
-                    .getAssemblyOperations()) {
+            for (final Entry<String, AssemblyOperation> assemblyOperationEntry : assemblyComponent.getOperations()) {
                 final AssemblyOperation assemblyOperation = assemblyOperationEntry.getValue();
                 final Map<String, Object> assemblyOperationMap = new HashMap<>();
 
@@ -166,7 +165,7 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
                         deployedComponent.getAssemblyComponent().getComponentType().getSignature());
                 final Map<String, Object> containedOperationsMap = new HashMap<>();
                 for (final Entry<String, DeployedOperation> containedOperationEntry : deployedComponent
-                        .getContainedOperations()) {
+                        .getOperations()) {
                     final DeployedOperation containedOperation = containedOperationEntry.getValue();
                     final Map<String, Object> containedOperationMap = new HashMap<>();
 

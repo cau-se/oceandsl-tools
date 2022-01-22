@@ -72,8 +72,7 @@ public final class ExecutionModelCloneUtils {
         final DeploymentContext newContext = targetModel.getDeploymentContexts().get(context.getName());
         final DeployedComponent newComponent = newContext.getComponents().get(component.getSignature());
 
-        return newComponent.getContainedOperations()
-                .get(operation.getAssemblyOperation().getOperationType().getSignature());
+        return newComponent.getOperations().get(operation.getAssemblyOperation().getOperationType().getSignature());
     }
 
     private static DeployedStorage findDeployedStorage(final DeploymentModel targetModel,
@@ -88,7 +87,7 @@ public final class ExecutionModelCloneUtils {
 
         final DeploymentContext newContext = targetModel.getDeploymentContexts().get(context.getName());
         final DeployedComponent newComponent = newContext.getComponents().get(component.getSignature());
-        return newComponent.getContainedStorages().get(storage.getAssemblyStorage().getStorageType().getName());
+        return newComponent.getStorages().get(storage.getAssemblyStorage().getStorageType().getName());
     }
 
 }

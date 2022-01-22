@@ -19,7 +19,6 @@ import java.util.Map.Entry;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
@@ -34,6 +33,8 @@ import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeModel;
+
+import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
 
 /**
  * @author Reiner Jung
@@ -88,16 +89,15 @@ public class ModelRepositoryMergerTest {
                     .get(component.getComponentType().getSignature());
 
             if (SarModelFactory.SAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
-                Assert.assertEquals("Number of operation", 1, component.getAssemblyOperations().size());
-                final AssemblyOperation operation = component.getAssemblyOperations()
-                        .get(ModelTestFactory.OP_SIGNATURE);
+                Assert.assertEquals("Number of operation", 1, component.getOperations().size());
+                final AssemblyOperation operation = component.getOperations().get(ModelTestFactory.OP_SIGNATURE);
                 Assert.assertTrue("Operation not found " + ModelTestFactory.OP_SIGNATURE, operation != null);
                 Assert.assertTrue("Wrong operation type", operation.getOperationType() == componentType
                         .getProvidedOperations().get(ModelTestFactory.OP_SIGNATURE));
             } else if (ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
-                Assert.assertEquals("Number of operation", 2, component.getAssemblyOperations().size());
+                Assert.assertEquals("Number of operation", 2, component.getOperations().size());
             } else if (DarModelFactory.DAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
-                Assert.assertEquals("Number of operation", 1, component.getAssemblyOperations().size());
+                Assert.assertEquals("Number of operation", 1, component.getOperations().size());
             } else {
                 Assert.fail("Unkown assembly component " + entry.getKey());
             }
@@ -178,9 +178,9 @@ public class ModelRepositoryMergerTest {
 
     private void checkDeployedOperation(final DeployedComponent deployedComponent,
             final AssemblyComponent assemblyComponent, final String operationSignature) {
-        final DeployedOperation deployedOperation = deployedComponent.getContainedOperations().get(operationSignature);
-        Assert.assertTrue("Wrong assembly operation for " + operationSignature, deployedOperation
-                .getAssemblyOperation() == assemblyComponent.getAssemblyOperations().get(operationSignature));
+        final DeployedOperation deployedOperation = deployedComponent.getOperations().get(operationSignature);
+        Assert.assertTrue("Wrong assembly operation for " + operationSignature,
+                deployedOperation.getAssemblyOperation() == assemblyComponent.getOperations().get(operationSignature));
     }
 
     private ModelRepository createSarModel() {

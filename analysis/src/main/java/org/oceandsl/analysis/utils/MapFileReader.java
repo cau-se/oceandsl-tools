@@ -30,6 +30,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author Reiner Jung
  * @since 1.1
+ *
+ * @param <T>
+ *            key value class
+ * @param <R>
+ *            value value class
  */
 public class MapFileReader<T, R> {
 

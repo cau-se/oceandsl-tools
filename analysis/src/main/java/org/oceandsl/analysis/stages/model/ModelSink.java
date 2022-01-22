@@ -13,24 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop.stages;
+package org.oceandsl.analysis.stages.model;
 
 import java.nio.file.Path;
 
+import kieker.analysis.stage.model.ModelRepository;
+
+import teetime.framework.AbstractConsumerStage;
+
 import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
 
-import kieker.analysis.stage.model.ModelRepository;
-import teetime.stage.basic.AbstractTransformation;
-
 /**
- * @author Reiner Jung
+ * Write an in memory model into an output directory.
  *
+ * @author Reiner Jung
+ * @since 1.1
  */
-public class ModelRepositoryReaderStage extends AbstractTransformation<Path, ModelRepository> {
+public class ModelSink extends AbstractConsumerStage<ModelRepository> {
+
+    private final Path outputPath;
+
+    public ModelSink(final Path outputPath) {
+        this.outputPath = outputPath;
+    }
 
     @Override
-    protected void execute(final Path element) throws Exception {
-        this.outputPort.send(ArchitectureModelManagementUtils.loadModelRepository(element));
+    protected void execute(final ModelRepository element) throws Exception {
+        ArchitectureModelManagementUtils.writeModelRepository(this.outputPath, element);
     }
 
 }
