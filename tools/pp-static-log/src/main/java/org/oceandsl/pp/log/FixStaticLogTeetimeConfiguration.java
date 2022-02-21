@@ -17,9 +17,9 @@ package org.oceandsl.pp.log;
 
 import java.io.IOException;
 
-import org.oceandsl.analysis.stages.staticdata.CSVFunctionCallReaderStage;
-
 import teetime.framework.Configuration;
+
+import org.oceandsl.analysis.stages.staticdata.CSVFunctionCallReaderStage;
 
 /**
  * Pipe and Filter configuration for the static log preprocessor.

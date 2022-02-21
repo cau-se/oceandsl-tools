@@ -46,21 +46,23 @@ import kieker.model.analysismodel.type.TypeModel;
 
 /**
  * @author Reiner Jung
- *
+ * @since 1.2
  */
-public class ModelTestFactory {
+public abstract class AbstractModelTestFactory { // NOCS cannot be final, NOPMD no abstract method
 
-    static final String HOSTNAME = "test";
+    public static final String HOSTNAME = "test";
 
-    static final String PACKAGE = "application";
-    static final String JOINT_COMPONENT = "joint-component";
-    static final String JOINT_COMPONENT_SIGNATURE = ModelTestFactory.PACKAGE + "." + ModelTestFactory.JOINT_COMPONENT;
+    public static final String PACKAGE = "application";
+    public static final String JOINT_COMPONENT = "joint-component";
+    public static final String JOINT_COMPONENT_SIGNATURE = AbstractModelTestFactory.PACKAGE + "."
+            + AbstractModelTestFactory.JOINT_COMPONENT;
 
-    static final String OP_SIGNATURE = "void operation()";
-    static final String OP_COMPILE_SIGNATURE = "Model compile(Model in)";
-    static final String OP_LINK_SIGNATURE = "Model link(Model in)";
+    public static final String OP_SIGNATURE = "void operation()";
+    public static final String OP_COMPILE_SIGNATURE = "Model compile(Model in)";
+    public static final String OP_LINK_SIGNATURE = "Model link(Model in)";
 
-    static final String JOINT_ASSEMBLY_SIGNATURE = ModelTestFactory.PACKAGE + "." + ModelTestFactory.JOINT_COMPONENT;
+    public static final String JOINT_ASSEMBLY_SIGNATURE = AbstractModelTestFactory.PACKAGE + "."
+            + AbstractModelTestFactory.JOINT_COMPONENT;
 
     protected static OperationType createOperationType(final String name, final String returnType,
             final String signature) {
@@ -118,8 +120,8 @@ public class ModelTestFactory {
         deployedComponent.setSignature(assemblySignature);
 
         for (final DeployedOperation operation : operations) {
-            deployedComponent.getContainedOperations()
-                    .put(operation.getAssemblyOperation().getOperationType().getSignature(), operation);
+            deployedComponent.getOperations().put(operation.getAssemblyOperation().getOperationType().getSignature(),
+                    operation);
         }
 
         return deployedComponent;
@@ -127,7 +129,7 @@ public class ModelTestFactory {
 
     public static DeployedOperation createDeployedOperation(final String operationSignature,
             final AssemblyComponent assemblyComponent) {
-        final AssemblyOperation assemblyOperation = ModelTestFactory.findOperation(assemblyComponent,
+        final AssemblyOperation assemblyOperation = AbstractModelTestFactory.findOperation(assemblyComponent,
                 operationSignature);
 
         final DeployedOperation operation = DeploymentFactory.eINSTANCE.createDeployedOperation();
@@ -138,7 +140,7 @@ public class ModelTestFactory {
 
     private static AssemblyOperation findOperation(final AssemblyComponent assemblyComponent,
             final String operationSignature) {
-        return assemblyComponent.getAssemblyOperations().get(operationSignature);
+        return assemblyComponent.getOperations().get(operationSignature);
     }
 
     public static DeployedComponent findDeployedComponent(final DeploymentModel deploymentModel,
@@ -152,9 +154,9 @@ public class ModelTestFactory {
 
     public static DeployedOperation findOperation(final DeploymentModel deploymentModel, final String context,
             final String componentName, final String operationName) {
-        final DeployedComponent darComponent = ModelTestFactory.findDeployedComponent(deploymentModel, context,
+        final DeployedComponent darComponent = AbstractModelTestFactory.findDeployedComponent(deploymentModel, context,
                 componentName);
-        return darComponent.getContainedOperations().get(operationName);
+        return darComponent.getOperations().get(operationName);
     }
 
     public static void createAggregatedInvocation(
@@ -190,30 +192,30 @@ public class ModelTestFactory {
 
         /** type */
         typeModel.eAllContents().forEachRemaining(item -> {
-            if ((item instanceof ComponentType) || (item instanceof OperationType)) {
-                result.getSources().put(item, ModelTestFactory.createList(source));
+            if (item instanceof ComponentType || item instanceof OperationType) {
+                result.getSources().put(item, AbstractModelTestFactory.createList(source));
             }
         });
 
         /** assembly */
         assemblyModel.eAllContents().forEachRemaining(item -> {
-            if ((item instanceof AssemblyComponent) || (item instanceof AssemblyOperation)) {
-                result.getSources().put(item, ModelTestFactory.createList(source));
+            if (item instanceof AssemblyComponent || item instanceof AssemblyOperation) {
+                result.getSources().put(item, AbstractModelTestFactory.createList(source));
             }
         });
 
         /** deployment */
         deploymentModel.eAllContents().forEachRemaining(item -> {
-            if ((item instanceof DeploymentContext) || (item instanceof DeployedComponent)
-                    || (item instanceof DeployedOperation)) {
-                result.getSources().put(item, ModelTestFactory.createList(source));
+            if (item instanceof DeploymentContext || item instanceof DeployedComponent
+                    || item instanceof DeployedOperation) {
+                result.getSources().put(item, AbstractModelTestFactory.createList(source));
             }
         });
 
         /** execution */
         executionModel.eAllContents().forEachRemaining(item -> {
             if (item instanceof AggregatedInvocation) {
-                result.getSources().put(item, ModelTestFactory.createList(source));
+                result.getSources().put(item, AbstractModelTestFactory.createList(source));
             }
         });
 

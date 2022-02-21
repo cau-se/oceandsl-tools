@@ -36,17 +36,17 @@ public final class RepositoryUtils {
     }
 
     public static void print(final ModelRepository repository) {
-        System.out.println("Print models");
+        System.out.println("Print models"); // NOPMD testing tool
         for (final EObject model : repository.getModels().values()) {
-            System.out.println("\n\n---------------------");
+            System.out.println("\n\n---------------------"); // NOPMD testing tool
             RepositoryUtils.print(model, "");
         }
-        System.out.println("---------------------");
+        System.out.println("---------------------"); // NOPMD testing tool
     }
 
     public static void print(final EObject object, final String offset) {
         object.eCrossReferences();
-        System.out.println(offset + object.getClass().getCanonicalName());
+        System.out.println(offset + object.getClass().getCanonicalName()); // NOPMD testing tool
         RepositoryUtils.printAttributes(object, offset + "  ");
         RepositoryUtils.printContainments(object, offset + "  ");
         RepositoryUtils.printReferences(object, offset + "  ");
@@ -58,24 +58,23 @@ public final class RepositoryUtils {
                 final Object result = object.eGet(reference, true);
                 if (result instanceof List<?>) {
                     final List<?> list = (List<?>) result;
-                    System.out.println(String.format("%sref %s = {", offset, reference.getName()));
+                    System.out.printf("%sref %s = {\n", offset, reference.getName()); // NOPMD
                     for (final Object element : list) {
                         if (element instanceof EObject) {
                             ((EObject) element).eCrossReferences();
                             final boolean proxy = ((EObject) element).eIsProxy();
-                            System.out.println(String.format("%s %b %s", offset, proxy,
-                                    RepositoryUtils.getName((EObject) element)));
+                            System.out.printf("%s %b %s\n", offset, proxy, RepositoryUtils.getName((EObject) element)); // NOPMD
                         }
                     }
-                    System.out.println(offset + "}");
+                    System.out.printf("%s}\n", offset); // NOPMD testing tool
                 } else {
                     if (result instanceof EObject) {
                         ((EObject) result).eCrossReferences();
                         final boolean proxy = ((EObject) result).eIsProxy();
-                        System.out.println(String.format("%sref %s = %b %s", offset, reference.getName(), proxy,
-                                RepositoryUtils.getName((EObject) result)));
+                        System.out.printf("%sref %s = %b %s\n", offset, reference.getName(), proxy, // NOPMD
+                                RepositoryUtils.getName((EObject) result));
                     } else {
-                        System.out.println(offset + "ERROR");
+                        System.out.printf("%sERROR\n", offset); // NOPMD
                     }
                 }
             }
@@ -107,19 +106,19 @@ public final class RepositoryUtils {
             final Object result = object.eGet(contained, true);
             if (result instanceof List<?>) {
                 final List<?> list = (List<?>) result;
-                System.out.println(String.format("%s%s = {", offset, contained.getName()));
+                System.out.printf("%s%s = {\n", offset, contained.getName()); // NOPMD
                 for (final Object element : list) {
                     if (element instanceof EObject) {
                         RepositoryUtils.print((EObject) element, "  " + offset);
                     }
                 }
-                System.out.println(offset + "}");
+                System.out.printf("%s}\n", offset); // NOPMD
             } else {
                 if (result instanceof EObject) {
-                    System.out.println(String.format("%s%s = ", offset, contained.getName()));
+                    System.out.printf("%s%s = \n", offset, contained.getName()); // NOPMD
                     RepositoryUtils.print((EObject) result, "  " + offset);
                 } else {
-                    System.out.println(offset + "ERROR");
+                    System.out.printf("%sERROR\n", offset); // NOPMD
                 }
             }
         }
@@ -129,9 +128,9 @@ public final class RepositoryUtils {
         for (final EAttribute attribute : object.eClass().getEAllAttributes()) {
             final Object value = object.eGet(attribute);
             if (value != null) {
-                System.out.println(String.format("%s%s = '%s'", offset, attribute.getName(), value.toString()));
+                System.out.printf("%s%s = '%s'\n", offset, attribute.getName(), value.toString()); // NOPMD
             } else {
-                System.out.println(String.format("%s%s = null", offset, attribute.getName()));
+                System.out.printf("%s%s = null\n", offset, attribute.getName()); // NOPMD
             }
 
         }

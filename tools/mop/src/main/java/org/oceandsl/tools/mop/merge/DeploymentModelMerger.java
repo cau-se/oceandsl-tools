@@ -68,9 +68,9 @@ public final class DeploymentModelMerger {
                 final DeployedComponent component = deploymentContext.getComponents()
                         .get(mergeComponent.getSignature());
                 DeploymentModelMerger.mergeDeploymentOperations(component.getAssemblyComponent(), component,
-                        mergeComponent.getContainedOperations());
+                        mergeComponent.getOperations());
                 DeploymentModelMerger.mergeDeploymentStorages(component.getAssemblyComponent(), component,
-                        mergeComponent.getContainedStorages());
+                        mergeComponent.getStorages());
             }
         }
     }
@@ -78,8 +78,8 @@ public final class DeploymentModelMerger {
     private static void mergeDeploymentOperations(final AssemblyComponent assemblyComponent,
             final DeployedComponent component, final EMap<String, DeployedOperation> containedOperations) {
         for (final Entry<String, DeployedOperation> mergeOperation : containedOperations) {
-            if (!component.getContainedOperations().containsKey(mergeOperation.getKey())) {
-                component.getContainedOperations().put(mergeOperation.getKey(),
+            if (!component.getOperations().containsKey(mergeOperation.getKey())) {
+                component.getOperations().put(mergeOperation.getKey(),
                         DeploymentModelCloneUtils.duplicate(assemblyComponent, mergeOperation.getValue()));
             }
         }
@@ -88,8 +88,8 @@ public final class DeploymentModelMerger {
     private static void mergeDeploymentStorages(final AssemblyComponent assemblyComponent,
             final DeployedComponent component, final EMap<String, DeployedStorage> containedStorages) {
         for (final Entry<String, DeployedStorage> mergeStorage : containedStorages) {
-            if (!component.getContainedStorages().containsKey(mergeStorage.getKey())) {
-                component.getContainedStorages().put(mergeStorage.getKey(),
+            if (!component.getStorages().containsKey(mergeStorage.getKey())) {
+                component.getStorages().put(mergeStorage.getKey(),
                         DeploymentModelCloneUtils.duplicate(assemblyComponent, mergeStorage.getValue()));
             }
         }

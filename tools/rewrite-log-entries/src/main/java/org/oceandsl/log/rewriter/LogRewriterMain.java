@@ -33,8 +33,7 @@ import kieker.tools.common.AbstractService;
 public class LogRewriterMain extends AbstractService<TeetimeConfiguration, Settings> {
 
     public static void main(final String[] args) {
-        java.lang.System
-                .exit(new LogRewriterMain().run("Kieker Log ELF Rewriter", "log-rewriter", args, new Settings()));
+        System.exit(new LogRewriterMain().run("Kieker Log ELF Rewriter", "log-rewriter", args, new Settings()));
     }
 
     @Override

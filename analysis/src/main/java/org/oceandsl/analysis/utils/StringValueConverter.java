@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.analysis.utils;
 
+import java.util.Locale;
+
 /**
  * Select and convert a string for the @{link MapFileReader}.
  *
@@ -33,6 +35,6 @@ public class StringValueConverter implements IValueConverter<String> {
 
     @Override
     public String createValue(final String[] input) {
-        return this.caseInsensitive ? input[this.column].toLowerCase() : input[this.column];
+        return this.caseInsensitive ? input[this.column].toLowerCase(Locale.ROOT) : input[this.column];
     }
 }

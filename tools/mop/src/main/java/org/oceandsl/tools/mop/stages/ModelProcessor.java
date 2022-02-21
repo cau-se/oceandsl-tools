@@ -15,16 +15,17 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.stages;
 
-import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
-import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
-
 import kieker.analysis.stage.model.ModelRepository;
+
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
+import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
+import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
+
 /**
  * @author Reiner Jung
- *
+ * @since 1.2
  */
 public class ModelProcessor extends AbstractConsumerStage<ModelRepository> {
 

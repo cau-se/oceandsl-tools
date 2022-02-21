@@ -16,13 +16,14 @@
 package org.oceandsl.pp.log;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 import teetime.framework.AbstractStage;
 import teetime.framework.InputPort;
 import teetime.framework.OutputPort;
+
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 /**
  * Read process caller callee events and fills in the callee's file name.
@@ -45,10 +46,6 @@ public class CorrectCallsStage extends AbstractStage {
     private final Map<String, String> learnedFileMap = new HashMap<>();
     private CallerCallee unprocessedInvocation;
 
-    public CorrectCallsStage() {
-        super();
-    }
-
     @Override
     protected void execute() throws Exception {
         if (this.unprocessedInvocation == null) {
@@ -56,11 +53,12 @@ public class CorrectCallsStage extends AbstractStage {
         }
         if (this.unprocessedInvocation != null) {
             this.learnedFileMap.put(this.unprocessedInvocation.getCaller(), this.unprocessedInvocation.getSourcePath());
-            final String calleeFile = this.functionFileMap.get(this.unprocessedInvocation.getCallee().toLowerCase());
+            final String calleeFile = this.functionFileMap
+                    .get(this.unprocessedInvocation.getCallee().toLowerCase(Locale.ROOT));
             if (calleeFile != null) {
                 this.unprocessedInvocation.setTargetPath(calleeFile);
                 this.outputPort.send(this.unprocessedInvocation);
-                this.unprocessedInvocation = null;
+                this.unprocessedInvocation = null; // NOPMD NullAssignment
             } else {
                 if (this.functionFileMap.size() > 0) {
                     this.logger.warn("No match found for function {}", this.unprocessedInvocation.getCallee());
@@ -72,7 +70,7 @@ public class CorrectCallsStage extends AbstractStage {
                                 .setTargetPath(String.format("no file for %s", this.unprocessedInvocation.getCallee()));
                     }
                     this.outputPort.send(this.unprocessedInvocation);
-                    this.unprocessedInvocation = null;
+                    this.unprocessedInvocation = null; // NOPMD
                 }
             }
         }

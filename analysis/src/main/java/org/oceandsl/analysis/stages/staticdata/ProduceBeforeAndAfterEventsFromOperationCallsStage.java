@@ -36,7 +36,7 @@ public class ProduceBeforeAndAfterEventsFromOperationCallsStage
         extends AbstractTransformation<IMonitoringRecord, IFlowRecord> {
 
     private long traceId = 1;
-    private long now = 0;
+    private long now;
     private final String hostname;
 
     public ProduceBeforeAndAfterEventsFromOperationCallsStage(final String hostname) {

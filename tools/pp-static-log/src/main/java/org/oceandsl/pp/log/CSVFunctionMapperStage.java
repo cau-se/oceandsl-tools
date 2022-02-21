@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import teetime.framework.AbstractProducerStage;
@@ -48,7 +49,7 @@ public class CSVFunctionMapperStage extends AbstractProducerStage<Map<String, St
             while ((line = reader.readLine()) != null) {
                 final String[] values = line.split(",");
                 if (values.length == 2) {
-                    functionMap.put(values[1].trim().toLowerCase(), values[0].trim());
+                    functionMap.put(values[1].trim().toLowerCase(Locale.ROOT), values[0].trim());
                 }
             }
             reader.close();

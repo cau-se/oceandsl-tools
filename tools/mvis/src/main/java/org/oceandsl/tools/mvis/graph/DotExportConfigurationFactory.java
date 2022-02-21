@@ -37,6 +37,7 @@ import kieker.analysis.signature.NameBuilder;
 public class DotExportConfigurationFactory {
 
     private static final String ENTRY_LABEL = "'Entry'";
+    private static final char NEWLINE = '\n';
 
     private final NameBuilder nameBuilder;
     private final IVertexTypeMapper vertexTypeMapper;
@@ -87,8 +88,9 @@ public class DotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return DotExportConfigurationFactory.ENTRY_LABEL;
             } else {
-                return new StringBuilder().append(this.createOperationLabelFromVertex(v)).append("\\n")
-                        .append(this.createStatisticsFromVertex(v)).toString();
+                return new StringBuilder().append(this.createOperationLabelFromVertex(v))
+                        .append(DotExportConfigurationFactory.NEWLINE).append(this.createStatisticsFromVertex(v))
+                        .toString();
             }
         });
 
@@ -107,8 +109,9 @@ public class DotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return DotExportConfigurationFactory.ENTRY_LABEL;
             } else {
-                return new StringBuilder().append(this.createComponentLabelFromVertex(v)).append("\\n")
-                        .append(this.createStatisticsFromVertex(v)).toString();
+                return new StringBuilder().append(this.createComponentLabelFromVertex(v))
+                        .append(DotExportConfigurationFactory.NEWLINE).append(this.createStatisticsFromVertex(v))
+                        .toString();
             }
         });
 
@@ -125,7 +128,8 @@ public class DotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return DotExportConfigurationFactory.ENTRY_LABEL;
             } else {
-                return new StringBuilder().append(this.createOperationLabelFromVertex(v)).append("\\n")
+                return new StringBuilder().append(this.createOperationLabelFromVertex(v))
+                        .append(DotExportConfigurationFactory.NEWLINE)
                         .append(vertexStatistics ? this.createStatisticsFromVertex(v) : "").toString();
             }
         });
@@ -145,7 +149,8 @@ public class DotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return DotExportConfigurationFactory.ENTRY_LABEL;
             } else {
-                return new StringBuilder().append(this.createComponentLabelFromVertex(v)).append("\\n")
+                return new StringBuilder().append(this.createComponentLabelFromVertex(v))
+                        .append(DotExportConfigurationFactory.NEWLINE)
                         .append(vertexStatistics ? this.createStatisticsFromVertex(v) : "").toString();
             }
         });
@@ -163,8 +168,9 @@ public class DotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return DotExportConfigurationFactory.ENTRY_LABEL;
             } else {
-                return new StringBuilder().append(this.createOperationLabelFromVertex(v)).append("\\n")
-                        .append(this.createStatisticsFromVertex(v)).toString();
+                return new StringBuilder().append(this.createOperationLabelFromVertex(v))
+                        .append(DotExportConfigurationFactory.NEWLINE).append(this.createStatisticsFromVertex(v))
+                        .toString();
             }
         });
 
@@ -194,8 +200,9 @@ public class DotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return DotExportConfigurationFactory.ENTRY_LABEL;
             } else {
-                return new StringBuilder().append(this.createComponentLabelFromVertex(v)).append("\\n")
-                        .append(this.createStatisticsFromVertex(v)).toString();
+                return new StringBuilder().append(this.createComponentLabelFromVertex(v))
+                        .append(DotExportConfigurationFactory.NEWLINE).append(this.createStatisticsFromVertex(v))
+                        .toString();
             }
         });
 
@@ -243,7 +250,7 @@ public class DotExportConfigurationFactory {
         final String name = this.getProperty(vertex, PropertyConstants.NAME, String.class);
         final String packageName = this.getProperty(vertex, PropertyConstants.PACKAGE_NAME, String.class);
 
-        return new StringBuilder().append(this.createType(type)).append("\\n")
+        return new StringBuilder().append(this.createType(type)).append(DotExportConfigurationFactory.NEWLINE)
                 .append(this.nameBuilder.getComponentNameBuilder().build(packageName, name));
     }
 
@@ -251,7 +258,8 @@ public class DotExportConfigurationFactory {
         final VertexType type = this.getProperty(vertex, PropertyConstants.TYPE, VertexType.class);
         final String name = this.getProperty(vertex, PropertyConstants.NAME, String.class);
 
-        return new StringBuilder().append(this.createType(type)).append("\\n").append(name);
+        return new StringBuilder().append(this.createType(type)).append(DotExportConfigurationFactory.NEWLINE)
+                .append(name);
     }
 
     private StringBuilder createStatisticsFromVertex(final IVertex vertex) {

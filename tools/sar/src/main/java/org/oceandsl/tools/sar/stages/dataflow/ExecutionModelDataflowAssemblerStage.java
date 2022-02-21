@@ -47,7 +47,7 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
     protected void execute(final DataAccess element) throws Exception {
         final DeploymentContext context = this.deploymentModel.getDeploymentContexts().get(0).getValue();
         final DeployedComponent callerComponent = context.getComponents().get(element.getModule());
-        final DeployedOperation callerOperation = callerComponent.getContainedOperations().get(element.getOperation());
+        final DeployedOperation callerOperation = callerComponent.getOperations().get(element.getOperation());
         final DeployedStorage accessedStorage = this.findStorage(context, element.getSharedData());
 
         // TODO this must check whether an access already exists.
@@ -95,7 +95,7 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
 
     private DeployedStorage findStorage(final DeploymentContext context, final String name) {
         for (final DeployedComponent component : context.getComponents().values()) {
-            final DeployedStorage storage = component.getContainedStorages().get(name);
+            final DeployedStorage storage = component.getStorages().get(name);
             if (storage != null) {
                 return storage;
             }

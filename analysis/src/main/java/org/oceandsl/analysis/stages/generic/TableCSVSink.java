@@ -16,13 +16,16 @@
 package org.oceandsl.analysis.stages.generic;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import teetime.framework.AbstractConsumerStage;
 
+import org.oceandsl.analysis.stages.staticdata.data.IValueHandler;
 import org.oceandsl.analysis.stages.staticdata.data.Table;
+import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 
 /**
  * Save a table as a csv file.
@@ -34,27 +37,54 @@ public class TableCSVSink extends AbstractConsumerStage<Table> {
 
     private final Path filePath;
     private final String filename;
+    private final boolean header;
 
-    public TableCSVSink(final Path filePath, final String filename) {
+    public TableCSVSink(final Path filePath, final String filename, final boolean header) {
         this.filePath = filePath;
         this.filename = filename;
+        this.header = header;
+    }
+
+    public TableCSVSink(final Path filePath, final String filename) {
+        this(filePath, filename, false);
     }
 
     @Override
-    protected void execute(final Table table) throws Exception {
-        final BufferedWriter outputStream = Files.newBufferedWriter(
-                this.filePath.resolve(String.format("%s-%s", table.getName(), this.filename)), StandardCharsets.UTF_8);
+    protected void execute(final Table table) throws IOException, ValueConversionErrorException {
+        try (BufferedWriter outputStream = Files.newBufferedWriter(
+                this.filePath.resolve(String.format("%s-%s", table.getName(), this.filename)),
+                StandardCharsets.UTF_8)) {
+            if (this.header) {
+                this.printHeader(outputStream, table);
+            }
+
+            this.printRows(outputStream, table);
+        }
+    }
+
+    private void printHeader(final BufferedWriter outputStream, final Table table) throws IOException {
+        final IValueHandler<?>[] valueHandlers = table.getValueHandlers();
+        for (int i = 0; i < valueHandlers.length; i++) {
+            outputStream.write(valueHandlers[i].getLabel());
+            if (i < valueHandlers.length - 1) {
+                outputStream.write(";");
+            } else {
+                outputStream.write("\n");
+            }
+        }
+    }
+
+    private void printRows(final BufferedWriter outputStream, final Table table)
+            throws IOException, ValueConversionErrorException {
         for (final Object[] row : table.getRows()) {
-            for (int columnCount = 0; columnCount < row.length; columnCount++) {
-                outputStream.write(table.getValueHandler(columnCount).convertToString(row[columnCount]));
-                if (columnCount < row.length - 1) {
+            for (int i = 0; i < row.length; i++) {
+                outputStream.write(table.getValueHandler(i).convertToString(row[i]));
+                if (i < row.length - 1) {
                     outputStream.write(";");
                 } else {
                     outputStream.write("\n");
                 }
             }
         }
-        outputStream.close();
     }
-
 }

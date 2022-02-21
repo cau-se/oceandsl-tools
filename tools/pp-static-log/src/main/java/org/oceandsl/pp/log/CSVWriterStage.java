@@ -21,9 +21,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
-
 import teetime.framework.AbstractConsumerStage;
+
+import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 
 /**
  * @author Reiner Jung
@@ -32,7 +32,7 @@ import teetime.framework.AbstractConsumerStage;
  */
 public class CSVWriterStage extends AbstractConsumerStage<CallerCallee> {
 
-    final BufferedWriter writer;
+    private final BufferedWriter writer;
 
     public CSVWriterStage(final Path outputPath) throws IOException {
         this.writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);

@@ -44,10 +44,6 @@ import org.oceandsl.analysis.stages.staticdata.data.Table;
  */
 public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, Table> {
 
-    public NumberOfCallsStage() {
-        super();
-    }
-
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
         final ExecutionModel executionModel = (ExecutionModel) repository.getModels().get(ExecutionModel.class);

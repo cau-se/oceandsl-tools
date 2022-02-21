@@ -33,7 +33,7 @@ public class PythonComponentSignatureExtractor implements IComponentSignatureExt
             signature = "-- none --";
         }
 
-        if (signature.equals("<unknown>")) {
+        if ("<unknown>".equals(signature)) {
             componentType.setName(signature);
             componentType.setPackage("none");
         } else {

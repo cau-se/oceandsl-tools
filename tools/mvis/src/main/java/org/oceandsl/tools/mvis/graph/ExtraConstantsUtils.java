@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop.stages;
-
-import java.nio.file.Path;
-
-import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
-
-import kieker.analysis.stage.model.ModelRepository;
-import teetime.stage.basic.AbstractTransformation;
+package org.oceandsl.tools.mvis.graph;
 
 /**
  * @author Reiner Jung
- *
+ * @since 1.0
  */
-public class ModelRepositoryReaderStage extends AbstractTransformation<Path, ModelRepository> {
+public final class ExtraConstantsUtils {
 
-    @Override
-    protected void execute(final Path element) throws Exception {
-        this.outputPort.send(ArchitectureModelManagementUtils.loadModelRepository(element));
+    public static final String BACKGROUND_COLOR = "bg-color";
+    public static final String FOREGROUND_COLOR = "fg-color";
+
+    private ExtraConstantsUtils() {
+        // Utility class
     }
-
 }

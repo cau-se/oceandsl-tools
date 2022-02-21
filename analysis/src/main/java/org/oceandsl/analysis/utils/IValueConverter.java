@@ -20,6 +20,9 @@ package org.oceandsl.analysis.utils;
  *
  * @author Reiner Jung
  * @since 1.1
+ *
+ * @param <T>
+ *            value type
  */
 public interface IValueConverter<T> {
 

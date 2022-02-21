@@ -194,8 +194,16 @@ public final class ModelUtils {
         return leftDeploymentContext.getName().equals(deploymentContext.getName());
     }
 
-    /** -- debug output -- */
+    /** -- debug output. -- */
 
+    /**
+     * Print a model tree starting with the given object.
+     *
+     * @param object
+     *            root element
+     * @param indent
+     *            indent
+     */
     public static void printTree(final EObject object, final String indent) {
         final EList<EAttribute> attributes = object.eClass().getEAllAttributes();
         System.err.println(String.format("%s%s", indent, object.getClass().getName())); // NOPMD

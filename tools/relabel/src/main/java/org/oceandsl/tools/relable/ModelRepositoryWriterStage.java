@@ -17,10 +17,11 @@ package org.oceandsl.tools.relable;
 
 import java.nio.file.Path;
 
-import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
-
 import kieker.analysis.stage.model.ModelRepository;
+
 import teetime.framework.AbstractConsumerStage;
+
+import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
 
 /**
  * Write model to repository.

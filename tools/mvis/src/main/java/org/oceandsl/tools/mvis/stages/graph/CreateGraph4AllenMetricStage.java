@@ -43,10 +43,6 @@ import teetime.stage.basic.AbstractTransformation;
 public class CreateGraph4AllenMetricStage
         extends AbstractTransformation<ModelRepository, Graph<Node<DeployedComponent>>> {
 
-    public CreateGraph4AllenMetricStage() {
-        // TODO Auto-generated constructor stub
-    }
-
     @Override
     protected void execute(final ModelRepository element) throws Exception {
         final Graph<Node<DeployedComponent>> graph = this.computeGraph(element);
@@ -82,7 +78,7 @@ public class CreateGraph4AllenMetricStage
         final List<DeployedOperation> operations = new ArrayList<>();
         for (final DeploymentContext context : deploymentModel.getDeploymentContexts().values()) {
             for (final DeployedComponent component : context.getComponents().values()) {
-                for (final DeployedOperation operation : component.getContainedOperations().values()) {
+                for (final DeployedOperation operation : component.getOperations().values()) {
                     operations.add(operation);
                 }
             }

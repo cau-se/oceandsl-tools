@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 
 import teetime.framework.AbstractProducerStage;
 
@@ -62,7 +63,8 @@ public class CSVComponentMapReaderStage extends AbstractProducerStage<Table> {
         while ((line = this.reader.readLine()) != null) {
             final String[] values = line.split(this.seperator);
             if (values.length == 3) {
-                resultTable.addRow(values[0].trim(), values[1].trim().toLowerCase(), values[2].trim().toLowerCase());
+                resultTable.addRow(values[0].trim(), values[1].trim().toLowerCase(Locale.ROOT),
+                        values[2].trim().toLowerCase(Locale.ROOT));
             } else {
                 this.logger.error("Entry incomplete '{}'", line.trim());
             }

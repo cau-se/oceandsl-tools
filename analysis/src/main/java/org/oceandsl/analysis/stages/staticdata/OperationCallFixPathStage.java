@@ -52,12 +52,13 @@ public class OperationCallFixPathStage extends AbstractFilter<CallerCallee> {
 
     public OperationCallFixPathStage(final List<Path> functionMapPaths, final String splitSymbol) throws IOException {
         for (final Path functionMapPath : functionMapPaths) {
-            final BufferedReader reader = Files.newBufferedReader(functionMapPath);
-            String line = reader.readLine();
-            while ((line = reader.readLine()) != null) {
-                final String[] values = line.split(splitSymbol);
-                if (values.length >= 2) {
-                    this.operationToFileMap.put(values[1].trim(), values[0].trim());
+            try (BufferedReader reader = Files.newBufferedReader(functionMapPath)) {
+                String line = reader.readLine();
+                while ((line = reader.readLine()) != null) {
+                    final String[] values = line.split(splitSymbol);
+                    if (values.length >= 2) {
+                        this.operationToFileMap.put(values[1].trim(), values[0].trim());
+                    }
                 }
             }
         }

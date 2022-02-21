@@ -39,6 +39,12 @@ public class ColoredDotExportConfigurationFactory {
 
     private static final String ENTRY_LABEL = "'Entry'";
 
+    private static final String SHAPE_OVAL = "oval";
+    private static final String SHAPE_BOX = "box";
+    private static final String SHAPE_CIRCLE = "circle";
+
+    private static final char NEWLINE = '\n';
+
     private final NameBuilder nameBuilder;
     private final IVertexTypeMapper vertexTypeMapper;
 
@@ -82,7 +88,7 @@ public class ColoredDotExportConfigurationFactory {
     public DotExportConfiguration createForTypeLevelOperationDependencyGraph() {
         final DotExportConfiguration.Builder builder = this.createBaseBuilder();
 
-        builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "oval");
+        builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> ColoredDotExportConfigurationFactory.SHAPE_OVAL);
 
         builder.addNodeAttribute(DotNodeAttribute.COLOR, v -> {
             return this.createForegroundColorFromVertex(v);
@@ -96,8 +102,9 @@ public class ColoredDotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return ColoredDotExportConfigurationFactory.ENTRY_LABEL;
             } else {
-                return new StringBuilder().append(this.createOperationLabelFromVertex(v)).append("\\n")
-                        .append(this.createStatisticsFromVertex(v)).toString();
+                return new StringBuilder().append(this.createOperationLabelFromVertex(v))
+                        .append(ColoredDotExportConfigurationFactory.NEWLINE).append(this.createStatisticsFromVertex(v))
+                        .toString();
             }
         });
 
@@ -109,7 +116,7 @@ public class ColoredDotExportConfigurationFactory {
     public DotExportConfiguration createForTypeLevelComponentDependencyGraph() {
         final DotExportConfiguration.Builder builder = this.createBaseBuilder();
 
-        builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "box");
+        builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> ColoredDotExportConfigurationFactory.SHAPE_BOX);
 
         builder.addNodeAttribute(DotNodeAttribute.COLOR, v -> {
             return this.createForegroundColorFromVertex(v);
@@ -123,8 +130,9 @@ public class ColoredDotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return ColoredDotExportConfigurationFactory.ENTRY_LABEL;
             } else {
-                return new StringBuilder().append(this.createComponentLabelFromVertex(v)).append("\\n")
-                        .append(this.createStatisticsFromVertex(v)).toString();
+                return new StringBuilder().append(this.createComponentLabelFromVertex(v))
+                        .append(ColoredDotExportConfigurationFactory.NEWLINE).append(this.createStatisticsFromVertex(v))
+                        .toString();
             }
         });
 
@@ -134,17 +142,17 @@ public class ColoredDotExportConfigurationFactory {
     public DotExportConfiguration createForAssemblyLevelOperationDependencyGraph(final boolean vertexStatistics) {
         final DotExportConfiguration.Builder builder = this.createBaseBuilder();
 
-        builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "oval");
+        builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> ColoredDotExportConfigurationFactory.SHAPE_OVAL);
 
         builder.addNodeAttribute(DotNodeAttribute.SHAPE, v -> { // NOCS return count
             final VertexType type = this.getProperty(v, PropertyConstants.TYPE, VertexType.class);
             switch (type) {
             case ASSEMBLY_OPERATION:
-                return "oval";
+                return ColoredDotExportConfigurationFactory.SHAPE_OVAL;
             case ASSEMBLY_STORAGE:
-                return "box";
+                return ColoredDotExportConfigurationFactory.SHAPE_BOX;
             default:
-                return "circle";
+                return ColoredDotExportConfigurationFactory.SHAPE_CIRCLE;
             }
         });
         builder.addNodeAttribute(DotNodeAttribute.COLOR, v -> {
@@ -158,10 +166,12 @@ public class ColoredDotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return ColoredDotExportConfigurationFactory.ENTRY_LABEL;
             } else if (type == VertexType.ASSEMBLY_OPERATION) {
-                return new StringBuilder().append(this.createOperationLabelFromVertex(v)).append("\\n")
+                return new StringBuilder().append(this.createOperationLabelFromVertex(v))
+                        .append(ColoredDotExportConfigurationFactory.NEWLINE)
                         .append(vertexStatistics ? this.createStatisticsFromVertex(v) : "").toString();
             } else if (type == VertexType.ASSEMBLY_STORAGE) {
-                return new StringBuilder().append(this.createStorageLabelFromVertex(v)).append("\\n")
+                return new StringBuilder().append(this.createStorageLabelFromVertex(v))
+                        .append(ColoredDotExportConfigurationFactory.NEWLINE)
                         .append(vertexStatistics ? this.createStatisticsFromVertex(v) : "").toString();
             } else {
                 return "unsupported verttext type " + type.name();
@@ -176,7 +186,7 @@ public class ColoredDotExportConfigurationFactory {
     public DotExportConfiguration createForAssemblyLevelComponentDependencyGraph(final boolean vertexStatistics) {
         final DotExportConfiguration.Builder builder = this.createBaseBuilder();
 
-        builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "box");
+        builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> ColoredDotExportConfigurationFactory.SHAPE_BOX);
 
         builder.addNodeAttribute(DotNodeAttribute.COLOR, v -> {
             return this.createForegroundColorFromVertex(v);
@@ -189,7 +199,8 @@ public class ColoredDotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return ColoredDotExportConfigurationFactory.ENTRY_LABEL;
             } else {
-                return new StringBuilder().append(this.createComponentLabelFromVertex(v)).append("\\n")
+                return new StringBuilder().append(this.createComponentLabelFromVertex(v))
+                        .append(ColoredDotExportConfigurationFactory.NEWLINE)
                         .append(vertexStatistics ? this.createStatisticsFromVertex(v) : "").toString();
             }
         });
@@ -213,8 +224,9 @@ public class ColoredDotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return ColoredDotExportConfigurationFactory.ENTRY_LABEL;
             } else {
-                return new StringBuilder().append(this.createOperationLabelFromVertex(v)).append("\\n")
-                        .append(this.createStatisticsFromVertex(v)).toString();
+                return new StringBuilder().append(this.createOperationLabelFromVertex(v))
+                        .append(ColoredDotExportConfigurationFactory.NEWLINE).append(this.createStatisticsFromVertex(v))
+                        .toString();
             }
         });
 
@@ -237,7 +249,7 @@ public class ColoredDotExportConfigurationFactory {
     public DotExportConfiguration createForDeploymentLevelComponentDependencyGraph() {
         final DotExportConfiguration.Builder builder = this.createBaseBuilder();
 
-        builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "box");
+        builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> ColoredDotExportConfigurationFactory.SHAPE_BOX);
 
         builder.addNodeAttribute(DotNodeAttribute.COLOR, v -> {
             return this.createForegroundColorFromVertex(v);
@@ -251,8 +263,9 @@ public class ColoredDotExportConfigurationFactory {
             if (type == VertexType.ENTRY) {
                 return ColoredDotExportConfigurationFactory.ENTRY_LABEL;
             } else {
-                return new StringBuilder().append(this.createComponentLabelFromVertex(v)).append("\\n")
-                        .append(this.createStatisticsFromVertex(v)).toString();
+                return new StringBuilder().append(this.createComponentLabelFromVertex(v))
+                        .append(ColoredDotExportConfigurationFactory.NEWLINE).append(this.createStatisticsFromVertex(v))
+                        .toString();
             }
         });
 
@@ -312,7 +325,7 @@ public class ColoredDotExportConfigurationFactory {
         final String name = this.getProperty(vertex, PropertyConstants.NAME, String.class);
         final String packageName = this.getProperty(vertex, PropertyConstants.PACKAGE_NAME, String.class);
 
-        return new StringBuilder().append(this.createType(type)).append("\\n")
+        return new StringBuilder().append(this.createType(type)).append(ColoredDotExportConfigurationFactory.NEWLINE)
                 .append(this.nameBuilder.getComponentNameBuilder().build(packageName, name));
     }
 
@@ -320,20 +333,21 @@ public class ColoredDotExportConfigurationFactory {
         final VertexType type = this.getProperty(vertex, PropertyConstants.TYPE, VertexType.class);
         final String name = this.getProperty(vertex, PropertyConstants.NAME, String.class);
 
-        return new StringBuilder().append(this.createType(type)).append("\\n").append(name);
+        return new StringBuilder().append(this.createType(type)).append(ColoredDotExportConfigurationFactory.NEWLINE)
+                .append(name);
     }
 
     private String createForegroundColorFromVertex(final IVertex vertex) {
-        if (vertex.getProperty(ExtraConstants.FOREGROUND_COLOR) != null) {
-            return this.getProperty(vertex, ExtraConstants.FOREGROUND_COLOR, String.class);
+        if (vertex.getProperty(ExtraConstantsUtils.FOREGROUND_COLOR) != null) {
+            return this.getProperty(vertex, ExtraConstantsUtils.FOREGROUND_COLOR, String.class);
         } else {
             return "#f0f0f0";
         }
     }
 
     private String createBackgroundColorFromVertex(final IVertex vertex) {
-        if (vertex.getProperty(ExtraConstants.BACKGROUND_COLOR) != null) {
-            return this.getProperty(vertex, ExtraConstants.BACKGROUND_COLOR, String.class);
+        if (vertex.getProperty(ExtraConstantsUtils.BACKGROUND_COLOR) != null) {
+            return this.getProperty(vertex, ExtraConstantsUtils.BACKGROUND_COLOR, String.class);
         } else {
             return "#f0f0f0";
         }

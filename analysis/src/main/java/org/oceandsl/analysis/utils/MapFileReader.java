@@ -30,10 +30,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author Reiner Jung
  * @since 1.1
+ *
+ * @param <T>
+ *            key value class
+ * @param <R>
+ *            value value class
  */
 public class MapFileReader<T, R> {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapFileReader.class);
 
     private final BufferedReader reader;
     private final Map<T, R> map;
@@ -57,12 +62,12 @@ public class MapFileReader<T, R> {
         while ((line = this.reader.readLine()) != null) {
             final String[] values = line.split(this.separator);
             if (values.length >= 2) {
-                for (final String value : values) {
-                    value.trim();
+                for (int i = 0; i < values.length; i++) {
+                    values[i] = values[i].trim();
                 }
                 this.map.put(this.keyConverter.createValue(values), this.valueConverter.createValue(values));
             } else {
-                this.logger.error("Entry incomplete '{}'", line.trim());
+                MapFileReader.LOGGER.error("Entry incomplete '{}'", line.trim());
             }
         }
         this.reader.close();

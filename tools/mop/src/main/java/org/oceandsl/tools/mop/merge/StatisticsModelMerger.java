@@ -38,7 +38,7 @@ import kieker.model.analysismodel.statistics.StatisticsModel;
  */
 public final class StatisticsModelMerger {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(StatisticsModelMerger.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsModelMerger.class);
 
     private StatisticsModelMerger() {
         // Utility class

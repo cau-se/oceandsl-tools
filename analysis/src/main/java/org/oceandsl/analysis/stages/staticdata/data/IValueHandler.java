@@ -18,6 +18,9 @@ package org.oceandsl.analysis.stages.staticdata.data;
 /**
  * @author Reiner Jung
  * @since 1.1
+ *
+ * @param <T>
+ *            value type
  */
 public interface IValueHandler<T> {
 

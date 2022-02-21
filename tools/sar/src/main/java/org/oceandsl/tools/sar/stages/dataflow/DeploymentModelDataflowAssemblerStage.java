@@ -66,7 +66,7 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
         if (deployedStorage == null) {
             deployedStorage = DeploymentFactory.eINSTANCE.createDeployedStorage();
             deployedStorage.setAssemblyStorage(this.findAssemblyStorage(element.getSharedData()));
-            deployedComponent.getContainedStorages().put(element.getSharedData(), deployedStorage);
+            deployedComponent.getStorages().put(element.getSharedData(), deployedStorage);
             this.deployedStorageMap.put(element.getSharedData(), deployedStorage);
 
             final List<DeployedComponent> newList = new ArrayList<>();
@@ -88,7 +88,7 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
 
     private AssemblyStorage findAssemblyStorage(final String sharedData) {
         for (final AssemblyComponent assemblyComponent : this.assemblyModel.getAssemblyComponents().values()) {
-            final AssemblyStorage assemblyStorage = assemblyComponent.getAssemblyStorages().get(sharedData);
+            final AssemblyStorage assemblyStorage = assemblyComponent.getStorages().get(sharedData);
             if (assemblyStorage != null) {
                 return assemblyStorage;
             }
@@ -111,16 +111,15 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
                 deployedContext.getComponents().put(element.getModule(), deployedComponent);
                 this.addObjectToSource(deployedComponent);
             }
-            DeployedOperation deployedOperation = deployedComponent.getContainedOperations()
-                    .get(element.getOperation());
+            DeployedOperation deployedOperation = deployedComponent.getOperations().get(element.getOperation());
             if (deployedOperation == null) {
                 final AssemblyComponent assemblyComponent = this.assemblyModel.getAssemblyComponents()
                         .get(element.getModule());
-                final AssemblyOperation assemblyOperation = assemblyComponent.getAssemblyOperations()
+                final AssemblyOperation assemblyOperation = assemblyComponent.getOperations()
                         .get(element.getOperation());
                 deployedOperation = DeploymentFactory.eINSTANCE.createDeployedOperation();
                 deployedOperation.setAssemblyOperation(assemblyOperation);
-                deployedComponent.getContainedOperations().put(element.getOperation(), deployedOperation);
+                deployedComponent.getOperations().put(element.getOperation(), deployedOperation);
                 this.addObjectToSource(deployedOperation);
             }
             return deployedOperation;
@@ -130,7 +129,7 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
     private void moveStorageAccessToSeparateComponent(final DeployedStorage deployedStorage,
             final DeployedComponent deployedComponent) {
         final String name = deployedStorage.getAssemblyStorage().getStorageType().getName();
-        deployedComponent.getContainedStorages().removeKey(name);
+        deployedComponent.getStorages().removeKey(name);
 
         final DeploymentContext context = deployedComponent.getDeploymentContext();
 
@@ -142,12 +141,12 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
             newDeployedComponent
                     .setAssemblyComponent(this.findAssemblyComponent(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE));
             newDeployedComponent.setSignature(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
-            newDeployedComponent.getContainedStorages().put(name, deployedStorage);
+            newDeployedComponent.getStorages().put(name, deployedStorage);
 
             this.addObjectToSource(newDeployedComponent);
             context.getComponents().put(newDeployedComponent.getSignature(), newDeployedComponent);
         } else {
-            existingComponent.getContainedStorages().put(name, deployedStorage);
+            existingComponent.getStorages().put(name, deployedStorage);
         }
     }
 

@@ -17,17 +17,21 @@ package org.oceandsl.log.rewriter;
 
 import java.io.IOException;
 
-import org.oceandsl.analysis.stages.dynamic.RewriteBeforeAndAfterEventsStage;
-
 import kieker.analysis.sink.DataSinkStage;
 import kieker.tools.source.LogsReaderCompositeStage;
+
 import teetime.framework.Configuration;
+
+import org.oceandsl.analysis.stages.dynamic.RewriteBeforeAndAfterEventsStage;
 
 /**
  * @author Reiner Jung
  * @since 1.0
  */
 public class TeetimeConfiguration extends Configuration {
+
+    private static final String TRUE_VALUE = "true";
+    private static final String FALSE_VALUE = "false";
 
     public TeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
         final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(parameterConfiguration.getInputFiles(),
@@ -45,12 +49,12 @@ public class TeetimeConfiguration extends Configuration {
         // Configuration for the data sink stage
         final kieker.common.configuration.Configuration configuration = new kieker.common.configuration.Configuration();
         configuration.setProperty("kieker.monitoring.name", "KIEKER");
-        configuration.setProperty("kieker.monitoring.enabled", "true");
+        configuration.setProperty("kieker.monitoring.enabled", TeetimeConfiguration.TRUE_VALUE);
         configuration.setProperty("kieker.monitoring.initialExperimentId", "transcoded");
-        configuration.setProperty("kieker.monitoring.metadata", "true");
-        configuration.setProperty("kieker.monitoring.setLoggingTimestamp", "true");
-        configuration.setProperty("kieker.monitoring.useShutdownHook", "true");
-        configuration.setProperty("kieker.monitoring.jmx", "false");
+        configuration.setProperty("kieker.monitoring.metadata", TeetimeConfiguration.TRUE_VALUE);
+        configuration.setProperty("kieker.monitoring.setLoggingTimestamp", TeetimeConfiguration.TRUE_VALUE);
+        configuration.setProperty("kieker.monitoring.useShutdownHook", TeetimeConfiguration.TRUE_VALUE);
+        configuration.setProperty("kieker.monitoring.jmx", TeetimeConfiguration.FALSE_VALUE);
 
         configuration.setProperty("kieker.monitoring.timer",
                 kieker.monitoring.timer.SystemNanoTimer.class.getCanonicalName());
@@ -70,14 +74,16 @@ public class TeetimeConfiguration extends Configuration {
         configuration.setProperty("kieker.monitoring.writer.filesystem.FileWriter.maxLogFiles", "-1");
         configuration.setProperty("kieker.monitoring.writer.filesystem.FileWriter.mapFileHandler",
                 kieker.monitoring.writer.filesystem.TextMapFileHandler.class.getCanonicalName());
-        configuration.setProperty("kieker.monitoring.writer.filesystem.TextMapFileHandler.flush", "true");
+        configuration.setProperty("kieker.monitoring.writer.filesystem.TextMapFileHandler.flush",
+                TeetimeConfiguration.TRUE_VALUE);
         configuration.setProperty("kieker.monitoring.writer.filesystem.TextMapFileHandler.compression",
                 kieker.monitoring.writer.compression.NoneCompressionFilter.class.getCanonicalName());
         configuration.setProperty("kieker.monitoring.writer.filesystem.FileWriter.logFilePoolHandler",
                 kieker.monitoring.writer.filesystem.RotatingLogFilePoolHandler.class.getCanonicalName());
         configuration.setProperty("kieker.monitoring.writer.filesystem.FileWriter.logStreamHandler",
                 kieker.monitoring.writer.filesystem.TextLogStreamHandler.class.getCanonicalName());
-        configuration.setProperty("kieker.monitoring.writer.filesystem.FileWriter.flush", "true");
+        configuration.setProperty("kieker.monitoring.writer.filesystem.FileWriter.flush",
+                TeetimeConfiguration.TRUE_VALUE);
         configuration.setProperty("kieker.monitoring.writer.filesystem.BinaryFileWriter.bufferSize", "8192");
         configuration.setProperty("kieker.monitoring.writer.filesystem.BinaryFileWriter.compression",
                 kieker.monitoring.writer.compression.NoneCompressionFilter.class.getCanonicalName());

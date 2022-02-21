@@ -13,30 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop.stages;
-
-import java.nio.file.Path;
-
-import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
-
-import kieker.analysis.stage.model.ModelRepository;
-import teetime.framework.AbstractConsumerStage;
-
 /**
  * @author Reiner Jung
- * @since 1.1
+ *
  */
-public class ModelSink extends AbstractConsumerStage<ModelRepository> {
-
-    private final Path outputPath;
-
-    public ModelSink(final Path outputPath) {
-        this.outputPath = outputPath;
-    }
-
-    @Override
-    protected void execute(final ModelRepository element) throws Exception {
-        ArchitectureModelManagementUtils.writeModelRepository(this.outputPath, element);
-    }
-
-}
+package org.oceandsl.tools.maa.stages;

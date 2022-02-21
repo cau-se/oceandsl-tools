@@ -36,7 +36,9 @@ public class DiffSelector implements IGraphElementSelector {
     private SourceModel sourceModel;
     private final List<String> groupA;
     private final List<String> groupB;
-    private String filePrefix;
+    private String filePrefix; // NOPMD ImmutableField, however this does not work, as the
+                               // constructor reassign values
+                               // constructor
 
     public DiffSelector(final String[] groupA, final String[] groupB) {
         this.groupA = Arrays.asList(groupA);
@@ -91,7 +93,7 @@ public class DiffSelector implements IGraphElementSelector {
 
     private boolean isGroupSelected(final EList<String> sources, final List<String> group) {
         if (sources.size() == group.size()) {
-            if (sources.stream().allMatch(source -> group.stream().anyMatch(element -> element.equals(source)))) {
+            if (sources.stream().allMatch(source -> group.stream().anyMatch(element -> element.equals(source)))) { // NOPMD
                 return true;
             }
         }

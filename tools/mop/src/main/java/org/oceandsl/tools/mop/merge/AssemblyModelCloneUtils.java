@@ -49,13 +49,13 @@ public final class AssemblyModelCloneUtils {
         newComponent.setComponentType(
                 AssemblyModelCloneUtils.findComponentType(typeModel, component.getComponentType().getSignature()));
 
-        for (final Entry<String, AssemblyOperation> operation : component.getAssemblyOperations()) {
-            newComponent.getAssemblyOperations().put(operation.getKey(),
+        for (final Entry<String, AssemblyOperation> operation : component.getOperations()) {
+            newComponent.getOperations().put(operation.getKey(),
                     AssemblyModelCloneUtils.duplicate(newComponent.getComponentType(), operation.getValue()));
         }
 
-        for (final Entry<String, AssemblyStorage> storage : component.getAssemblyStorages()) {
-            newComponent.getAssemblyStorages().put(storage.getKey(),
+        for (final Entry<String, AssemblyStorage> storage : component.getStorages()) {
+            newComponent.getStorages().put(storage.getKey(),
                     AssemblyModelCloneUtils.duplicate(newComponent.getComponentType(), storage.getValue()));
         }
 

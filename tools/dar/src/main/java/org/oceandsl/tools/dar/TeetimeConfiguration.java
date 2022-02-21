@@ -65,7 +65,7 @@ public class TeetimeConfiguration extends Configuration {
     public TeetimeConfiguration(final Logger logger, final Settings parameterConfiguration,
             final ModelRepository repository) throws IOException, ValueConversionErrorException {
 
-        OutputPort<? extends IMonitoringRecord> readerPort;
+        final OutputPort<? extends IMonitoringRecord> readerPort;
 
         logger.info("Processing Kieker log");
         final List<File> files = new ArrayList<>();
@@ -105,8 +105,8 @@ public class TeetimeConfiguration extends Configuration {
 
         final IComponentSignatureExtractor componentSignatureExtractor = this.selectComponentSignaturExtractor(
                 parameterConfiguration.getSignatureExtractor(), parameterConfiguration.getExperimentName());
-        final IOperationSignatureExtractor operationSignatureExtractor = this.selectOperationSignaturExtractor(
-                parameterConfiguration.getSignatureExtractor());
+        final IOperationSignatureExtractor operationSignatureExtractor = this
+                .selectOperationSignaturExtractor(parameterConfiguration.getSignatureExtractor());
 
         final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
@@ -158,7 +158,8 @@ public class TeetimeConfiguration extends Configuration {
         }
     }
 
-    private IOperationSignatureExtractor selectOperationSignaturExtractor(final ESignatureExtractor signatureExtractor) {
+    private IOperationSignatureExtractor selectOperationSignaturExtractor(
+            final ESignatureExtractor signatureExtractor) {
         switch (signatureExtractor) {
         case ELF:
             return new ELFOperationSignatureExtractor();

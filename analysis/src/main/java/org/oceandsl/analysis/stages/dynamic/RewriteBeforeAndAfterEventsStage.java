@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -97,8 +98,8 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
                         final Integer linenumber = matcher.group(3).equals("?") ? null
                                 : Integer.parseInt(matcher.group(3));
                         final AddrOutput addrOutput = RewriteBeforeAndAfterEventsStage.this.caseInsensitive
-                                ? new AddrOutput(matcher.group(1).toLowerCase(), matcher.group(2).toLowerCase(),
-                                        linenumber)
+                                ? new AddrOutput(matcher.group(1).toLowerCase(Locale.ROOT),
+                                        matcher.group(2).toLowerCase(Locale.ROOT), linenumber)
                                 : new AddrOutput(matcher.group(1), matcher.group(2), linenumber);
                         RewriteBeforeAndAfterEventsStage.this.addressMap.put(address, addrOutput);
                     } else if ("?? ??:0".equals(string)) {
@@ -121,7 +122,7 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
         return this.outputPort;
     }
 
-    class AddrOutput {
+    private class AddrOutput {
 
         private final String name;
         private final String filename;

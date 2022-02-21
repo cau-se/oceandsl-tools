@@ -47,20 +47,20 @@ public class MapBasedCleanupInDataflowSignatureStage extends AbstractTransformat
     private void setupMap(final List<Path> componentMapFiles, final String separator) throws IOException {
         for (final Path componentMapFile : componentMapFiles) {
             this.logger.info("Reading map file {}", componentMapFile.toString());
-            final BufferedReader reader = Files.newBufferedReader(componentMapFile);
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final String[] values = line.split(separator);
-                if (values.length == 2) {
-                    // 0 = component name
-                    // 1 = file name
-                    this.componentMap.put(this.convertToLowerCase(values[1].trim()),
-                            this.convertToLowerCase(values[0].trim().toLowerCase(Locale.ROOT)));
-                } else {
-                    this.logger.error("Entry incomplete '{}'", line.trim());
+            try (BufferedReader reader = Files.newBufferedReader(componentMapFile)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    final String[] values = line.split(separator);
+                    if (values.length == 2) {
+                        // 0 = component name
+                        // 1 = file name
+                        this.componentMap.put(this.convertToLowerCase(values[1].trim()),
+                                this.convertToLowerCase(values[0].trim().toLowerCase(Locale.ROOT)));
+                    } else {
+                        this.logger.error("Entry incomplete '{}'", line.trim());
+                    }
                 }
             }
-            reader.close();
         }
     }
 
