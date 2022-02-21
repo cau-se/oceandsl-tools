@@ -34,7 +34,7 @@ public class ReplacementConverter implements IStringConverter<Replacement> {
             final List<String> sources = Arrays.asList(rule[0].split(","));
             return new Replacement(sources, rule[1]);
         } else {
-            System.err.printf("Format of replacement rule is not supported: %s", value);
+            System.err.printf("Format of replacement rule is not supported: %s", value); // NOPMD
             return null;
         }
     }

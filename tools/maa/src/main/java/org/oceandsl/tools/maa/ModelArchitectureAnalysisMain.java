@@ -76,8 +76,7 @@ public class ModelArchitectureAnalysisMain extends AbstractService<TeetimeConfig
 
     @Override
     protected void shutdownService() {
-        // TODO Auto-generated method stub
-
+        // nothing to be done here
     }
 
 }

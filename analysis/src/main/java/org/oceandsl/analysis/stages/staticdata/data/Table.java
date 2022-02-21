@@ -28,7 +28,8 @@ public class Table {
     private final List<Object[]> rows = new ArrayList<>();
     private final String name;
 
-    public Table(final String name, final IValueHandler<?>... valueHandlers) {
+    public Table(final String name, final IValueHandler<?>... valueHandlers) { // NOPMD
+                                                                               // ArrayIsStoredDirectly
         this.valueHandlers = valueHandlers;
         this.name = name;
     }
@@ -49,6 +50,10 @@ public class Table {
 
     public IValueHandler<?> getValueHandler(final int column) {
         return this.valueHandlers[column];
+    }
+
+    public IValueHandler<?>[] getValueHandlers() {
+        return this.valueHandlers; // NOPMD exposing internal state necessary
     }
 
     public String getName() {

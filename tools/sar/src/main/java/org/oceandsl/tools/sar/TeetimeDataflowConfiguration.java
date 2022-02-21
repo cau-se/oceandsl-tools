@@ -50,6 +50,7 @@ import org.oceandsl.tools.sar.stages.dataflow.TypeModelDataflowAssemblerStage;
 public class TeetimeDataflowConfiguration extends Configuration {
     public TeetimeDataflowConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
             throws IOException, ValueConversionErrorException {
+        super();
 
         OutputPort<DataAccess> readerDataflowPort;
 
@@ -59,20 +60,20 @@ public class TeetimeDataflowConfiguration extends Configuration {
 
         readerDataflowPort = readDataflowStage.getOutputPort();
 
-        if (settings.getComponentMapFiles() != null) {
-            logger.info("Map based component definition");
-            final MapBasedCleanupInDataflowSignatureStage cleanupComponentDataflowSignatureStage = new MapBasedCleanupInDataflowSignatureStage(
-                    settings.getComponentMapFiles(), settings.getCallSplitSymbol(), settings.isCaseInsensitive());
-
-            this.connectPorts(readerDataflowPort, cleanupComponentDataflowSignatureStage.getInputPort());
-            readerDataflowPort = cleanupComponentDataflowSignatureStage.getOutputPort();
-        } else {
+        if (settings.getComponentMapFiles() == null) {
             logger.info("File based component definition");
             final FileBasedCleanupInDataflowSignatureStage cleanupComponentDataflowSignatureStage = new FileBasedCleanupInDataflowSignatureStage(
                     settings.isCaseInsensitive());
 
             this.connectPorts(readerDataflowPort, cleanupComponentDataflowSignatureStage.getInputPort());
 
+            readerDataflowPort = cleanupComponentDataflowSignatureStage.getOutputPort();
+        } else {
+            logger.info("Map based component definition");
+            final MapBasedCleanupInDataflowSignatureStage cleanupComponentDataflowSignatureStage = new MapBasedCleanupInDataflowSignatureStage(
+                    settings.getComponentMapFiles(), settings.getCallSplitSymbol(), settings.isCaseInsensitive());
+
+            this.connectPorts(readerDataflowPort, cleanupComponentDataflowSignatureStage.getInputPort());
             readerDataflowPort = cleanupComponentDataflowSignatureStage.getOutputPort();
         }
 

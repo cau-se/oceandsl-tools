@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.stages.model;
+package org.oceandsl.analysis.stages.model; // NOPMD excessiveImports
 
 import java.io.File;
 import java.io.IOException;

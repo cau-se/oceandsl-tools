@@ -37,7 +37,7 @@ import kieker.model.analysismodel.type.TypeModel;
  */
 public final class SourceModelMerger {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(SourceModelMerger.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SourceModelMerger.class);
 
     private SourceModelMerger() {
         // Utility class

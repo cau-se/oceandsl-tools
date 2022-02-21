@@ -24,7 +24,7 @@ import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.TypeModel;
 
 /**
- * Merge two different model repositories
+ * Merge two different model repositories.
  *
  * @author Reiner Jung
  * @since 1.1

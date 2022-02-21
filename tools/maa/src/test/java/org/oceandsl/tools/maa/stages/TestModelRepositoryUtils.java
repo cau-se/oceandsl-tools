@@ -40,32 +40,32 @@ import kieker.model.analysismodel.type.TypeModel;
  */
 public final class TestModelRepositoryUtils {
 
-    static final String PACKAGE_NAME = "a.generic.package";
+    public static final String PACKAGE_NAME = "a.generic.package";
 
-    static final String COMPONENT_A = "component-A";
-    static final String FQN_COMPONENT_A = TestModelRepositoryUtils.PACKAGE_NAME + "."
+    public static final String COMPONENT_A = "component-A";
+    public static final String FQN_COMPONENT_A = TestModelRepositoryUtils.PACKAGE_NAME + "."
             + TestModelRepositoryUtils.COMPONENT_A;
-    static final String COMPONENT_B = "component-B";
-    static final String FQN_COMPONENT_B = TestModelRepositoryUtils.PACKAGE_NAME + "."
+    public static final String COMPONENT_B = "component-B";
+    public static final String FQN_COMPONENT_B = TestModelRepositoryUtils.PACKAGE_NAME + "."
             + TestModelRepositoryUtils.COMPONENT_B;
-    static final String COMPONENT_C = "component-C";
-    static final String FQN_COMPONENT_C = TestModelRepositoryUtils.PACKAGE_NAME + "."
+    public static final String COMPONENT_C = "component-C";
+    public static final String FQN_COMPONENT_C = TestModelRepositoryUtils.PACKAGE_NAME + "."
             + TestModelRepositoryUtils.COMPONENT_C;
 
-    static final String OP_A_NAME_MAIN = "main";
-    static final String OP_A_NAME_SECOND = "second";
-    static final String OP_RETURN = "Type";
-    static final String OP_A_NAME_MAIN_SIGNATURE = String.format("%s %s (Type a)", TestModelRepositoryUtils.OP_RETURN,
-            TestModelRepositoryUtils.OP_A_NAME_MAIN);
-    static final String OP_A_NAME_SECOND_SIGNATURE = String.format("%s %s (Type a)", TestModelRepositoryUtils.OP_RETURN,
-            TestModelRepositoryUtils.OP_A_NAME_SECOND);
-    static final String OP_B_NAME = "doB";
-    static final String OP_B_NAME_SIGNATURE = String.format("%s %s (Type b)", TestModelRepositoryUtils.OP_RETURN,
+    public static final String OP_A_NAME_MAIN = "main";
+    public static final String OP_A_NAME_SECOND = "second";
+    public static final String OP_RETURN = "Type";
+    public static final String OP_A_NAME_MAIN_SIGNATURE = String.format("%s %s (Type a)",
+            TestModelRepositoryUtils.OP_RETURN, TestModelRepositoryUtils.OP_A_NAME_MAIN);
+    public static final String OP_A_NAME_SECOND_SIGNATURE = String.format("%s %s (Type a)",
+            TestModelRepositoryUtils.OP_RETURN, TestModelRepositoryUtils.OP_A_NAME_SECOND);
+    public static final String OP_B_NAME = "doB";
+    public static final String OP_B_NAME_SIGNATURE = String.format("%s %s (Type b)", TestModelRepositoryUtils.OP_RETURN,
             TestModelRepositoryUtils.OP_B_NAME);
-    static final String OP_C_NAME = "doC";
-    static final String OP_C_NAME_SIGNATURE = String.format("%s %s (Type c)", TestModelRepositoryUtils.OP_RETURN,
+    public static final String OP_C_NAME = "doC";
+    public static final String OP_C_NAME_SIGNATURE = String.format("%s %s (Type c)", TestModelRepositoryUtils.OP_RETURN,
             TestModelRepositoryUtils.OP_C_NAME);
-    static final String CONTEXT_A = "context";
+    public static final String CONTEXT_A = "context";
 
     private TestModelRepositoryUtils() {
         // utility class for models

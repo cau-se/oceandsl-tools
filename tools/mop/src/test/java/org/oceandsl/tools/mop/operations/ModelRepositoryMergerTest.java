@@ -42,9 +42,7 @@ import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
  */
 public class ModelRepositoryMergerTest {
 
-    public ModelRepositoryMergerTest() {
-        // nothing to do here
-    }
+    private static final String NUMBER_OF_OPERATION = "Number of operation";
 
     /**
      * Test method for
@@ -61,11 +59,14 @@ public class ModelRepositoryMergerTest {
         Assert.assertEquals("Numer of component types", 3, typeModel.getComponentTypes().size());
         for (final Entry<String, ComponentType> type : typeModel.getComponentTypes().entrySet()) {
             if (SarModelFactory.SAR_COMPONENT_SIGNATURE.equals(type.getKey())) {
-                Assert.assertEquals("Number of operation", 1, type.getValue().getProvidedOperations().size());
-            } else if (ModelTestFactory.JOINT_COMPONENT_SIGNATURE.equals(type.getKey())) {
-                Assert.assertEquals("Number of operation", 2, type.getValue().getProvidedOperations().size());
+                Assert.assertEquals(ModelRepositoryMergerTest.NUMBER_OF_OPERATION, 1,
+                        type.getValue().getProvidedOperations().size());
+            } else if (AbstractModelTestFactory.JOINT_COMPONENT_SIGNATURE.equals(type.getKey())) {
+                Assert.assertEquals(ModelRepositoryMergerTest.NUMBER_OF_OPERATION, 2,
+                        type.getValue().getProvidedOperations().size());
             } else if (DarModelFactory.DAR_COMPONENT_SIGNATURE.equals(type.getKey())) {
-                Assert.assertEquals("Number of operation", 1, type.getValue().getProvidedOperations().size());
+                Assert.assertEquals(ModelRepositoryMergerTest.NUMBER_OF_OPERATION, 1,
+                        type.getValue().getProvidedOperations().size());
             } else {
                 Assert.fail("Unkown component type " + type.getKey());
             }
@@ -90,14 +91,15 @@ public class ModelRepositoryMergerTest {
 
             if (SarModelFactory.SAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
                 Assert.assertEquals("Number of operation", 1, component.getOperations().size());
-                final AssemblyOperation operation = component.getOperations().get(ModelTestFactory.OP_SIGNATURE);
-                Assert.assertTrue("Operation not found " + ModelTestFactory.OP_SIGNATURE, operation != null);
+                final AssemblyOperation operation = component.getOperations()
+                        .get(AbstractModelTestFactory.OP_SIGNATURE);
+                Assert.assertTrue("Operation not found " + AbstractModelTestFactory.OP_SIGNATURE, operation != null);
                 Assert.assertTrue("Wrong operation type", operation.getOperationType() == componentType
-                        .getProvidedOperations().get(ModelTestFactory.OP_SIGNATURE));
-            } else if (ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
-                Assert.assertEquals("Number of operation", 2, component.getOperations().size());
+                        .getProvidedOperations().get(AbstractModelTestFactory.OP_SIGNATURE));
+            } else if (AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
+                Assert.assertEquals(ModelRepositoryMergerTest.NUMBER_OF_OPERATION, 2, component.getOperations().size());
             } else if (DarModelFactory.DAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
-                Assert.assertEquals("Number of operation", 1, component.getOperations().size());
+                Assert.assertEquals(ModelRepositoryMergerTest.NUMBER_OF_OPERATION, 1, component.getOperations().size());
             } else {
                 Assert.fail("Unkown assembly component " + entry.getKey());
             }
@@ -116,7 +118,8 @@ public class ModelRepositoryMergerTest {
         final DeploymentModel deploymentModel = darRepo.getModel(DeploymentModel.class);
 
         Assert.assertEquals("Numer of deployment contexts", 1, deploymentModel.getDeploymentContexts().size());
-        final DeploymentContext context = deploymentModel.getDeploymentContexts().get(ModelTestFactory.HOSTNAME);
+        final DeploymentContext context = deploymentModel.getDeploymentContexts()
+                .get(AbstractModelTestFactory.HOSTNAME);
         Assert.assertTrue("No context", context != null);
         for (final Entry<String, DeployedComponent> entry : context.getComponents()) {
             final DeployedComponent deployedComponent = entry.getValue();
@@ -124,13 +127,16 @@ public class ModelRepositoryMergerTest {
                     deployedComponent.getSignature().equals(entry.getKey()));
             final AssemblyComponent assemblyComponent = assemblyModel.getAssemblyComponents().get(entry.getKey());
             if (SarModelFactory.SAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
-                this.checkDeployedOperation(deployedComponent, assemblyComponent, ModelTestFactory.OP_SIGNATURE);
-            } else if (DarModelFactory.DAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
-                this.checkDeployedOperation(deployedComponent, assemblyComponent, ModelTestFactory.OP_SIGNATURE);
-            } else if (ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
                 this.checkDeployedOperation(deployedComponent, assemblyComponent,
-                        ModelTestFactory.OP_COMPILE_SIGNATURE);
-                this.checkDeployedOperation(deployedComponent, assemblyComponent, ModelTestFactory.OP_LINK_SIGNATURE);
+                        AbstractModelTestFactory.OP_SIGNATURE);
+            } else if (DarModelFactory.DAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
+                this.checkDeployedOperation(deployedComponent, assemblyComponent,
+                        AbstractModelTestFactory.OP_SIGNATURE);
+            } else if (AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
+                this.checkDeployedOperation(deployedComponent, assemblyComponent,
+                        AbstractModelTestFactory.OP_COMPILE_SIGNATURE);
+                this.checkDeployedOperation(deployedComponent, assemblyComponent,
+                        AbstractModelTestFactory.OP_LINK_SIGNATURE);
             }
         }
     }
@@ -197,7 +203,7 @@ public class ModelRepositoryMergerTest {
         repository.register(DeploymentModel.class, deploymentModel);
         repository.register(ExecutionModel.class, executionModel);
         repository.register(StatisticsModel.class, statisticsModel);
-        repository.register(SourceModel.class, ModelTestFactory.createSourceModel(typeModel, assemblyModel,
+        repository.register(SourceModel.class, AbstractModelTestFactory.createSourceModel(typeModel, assemblyModel,
                 deploymentModel, executionModel, "static"));
         return repository;
     }
@@ -215,7 +221,7 @@ public class ModelRepositoryMergerTest {
         repository.register(DeploymentModel.class, deploymentModel);
         repository.register(ExecutionModel.class, executionModel);
         repository.register(StatisticsModel.class, statisticsModel);
-        repository.register(SourceModel.class, ModelTestFactory.createSourceModel(typeModel, assemblyModel,
+        repository.register(SourceModel.class, AbstractModelTestFactory.createSourceModel(typeModel, assemblyModel,
                 deploymentModel, executionModel, "dynamic"));
         return repository;
     }

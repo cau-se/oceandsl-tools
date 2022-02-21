@@ -18,7 +18,8 @@ package org.oceandsl.tools.maa.stages;
 import java.util.Collection;
 
 import org.junit.Assert;
-import org.junit.jupiter.api.Test;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
@@ -37,14 +38,15 @@ import teetime.framework.test.StageTester;
  * @author Reiner Jung
  * @since 1.2
  */
-class ComputeInterfacesStageTest {
+public class ComputeInterfacesStageTest {
 
+    @Ignore
     @Test
-    void noProvidedInterface() {
+    public void noProvidedInterface() {
         final ModelRepository modelRepository = TestModelRepositoryUtils.createThreeComponentModel();
         TestModelInvocationUtils.addInvocations(modelRepository);
 
-        final ComputeInterfacesStage stage = new ComputeInterfacesStage();
+        final CollectConnectionsStage stage = new CollectConnectionsStage();
         StageTester.test(stage).send(modelRepository).to(stage.getInputPort()).start();
         final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
         for (final DeploymentContext context : deploymentModel.getDeploymentContexts().values()) {
@@ -130,12 +132,12 @@ class ComputeInterfacesStageTest {
     }
 
     @Test
-    void noRequiredInterface() {
+    public void noRequiredInterface() {
         final ModelRepository modelRepository = TestModelRepositoryUtils.createThreeComponentModel();
         TestModelInvocationUtils.addProvidedInterfaces(modelRepository);
         TestModelInvocationUtils.addInvocations(modelRepository);
 
-        final ComputeInterfacesStage stage = new ComputeInterfacesStage();
+        final CollectConnectionsStage stage = new CollectConnectionsStage();
         StageTester.test(stage).send(modelRepository).to(stage.getInputPort()).start();
         final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
         for (final DeploymentContext context : deploymentModel.getDeploymentContexts().values()) {

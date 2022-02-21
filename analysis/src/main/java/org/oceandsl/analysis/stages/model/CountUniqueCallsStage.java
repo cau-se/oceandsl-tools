@@ -18,7 +18,6 @@ package org.oceandsl.analysis.stages.model;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +50,7 @@ public class CountUniqueCallsStage extends StatisticsDecoratorStage<OperationCal
             final ExecutionModel executionModel) {
         return operationCall -> {
             final AggregatedInvocation result = CountUniqueCallsStage.getValue(executionModel,
-                    executionModel.getAggregatedInvocations(), operationCall.getOperationCall());
+                    operationCall.getOperationCall());
 
             if (result == null) {
                 final Logger logger = LoggerFactory.getLogger(CountUniqueCallsStage.class);
@@ -67,7 +66,6 @@ public class CountUniqueCallsStage extends StatisticsDecoratorStage<OperationCal
     }
 
     private static AggregatedInvocation getValue(final ExecutionModel executionModel,
-            final EMap<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> aggregatedInvocations,
             final Tuple<DeployedOperation, DeployedOperation> key) {
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> ag : executionModel
                 .getAggregatedInvocations()) {

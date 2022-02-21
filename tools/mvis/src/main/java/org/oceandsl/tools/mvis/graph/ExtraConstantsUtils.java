@@ -13,28 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.utils;
-
-import java.util.Locale;
+package org.oceandsl.tools.mvis.graph;
 
 /**
- * Select and convert a string for the @{link MapFileReader}.
- *
  * @author Reiner Jung
- * @since 1.1
+ * @since 1.0
  */
-public class StringValueConverter implements IValueConverter<String> {
+public final class ExtraConstantsUtils {
 
-    private final boolean caseInsensitive;
-    private final int column;
+    public static final String BACKGROUND_COLOR = "bg-color";
+    public static final String FOREGROUND_COLOR = "fg-color";
 
-    public StringValueConverter(final boolean caseInsenstive, final int column) {
-        this.caseInsensitive = caseInsenstive;
-        this.column = column;
-    }
-
-    @Override
-    public String createValue(final String[] input) {
-        return this.caseInsensitive ? input[this.column].toLowerCase(Locale.ROOT) : input[this.column];
+    private ExtraConstantsUtils() {
+        // Utility class
     }
 }

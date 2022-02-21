@@ -35,7 +35,7 @@ public class SubtractSelector implements IGraphElementSelector {
 
     private SourceModel sourceModel;
     private final List<String> partitions;
-    private String filePrefix;
+    private String filePrefix; // NOPMD ImmutableField, not possible
 
     public SubtractSelector(final String[] partitions) {
         this.partitions = Arrays.asList(partitions);
@@ -64,7 +64,7 @@ public class SubtractSelector implements IGraphElementSelector {
 
     private boolean isSelected(final EList<String> sources) {
         if (sources.size() == this.partitions.size()) {
-            if (sources.stream()
+            if (sources.stream() // NOPMD
                     .allMatch(source -> this.partitions.stream().anyMatch(element -> element.equals(source)))) {
                 return true;
             }
@@ -88,7 +88,7 @@ public class SubtractSelector implements IGraphElementSelector {
 
     private boolean isGroupSelected(final EList<String> sources, final List<String> group) {
         if (sources.size() == group.size()) {
-            if (sources.stream().allMatch(source -> group.stream().anyMatch(element -> element.equals(source)))) {
+            if (sources.stream().allMatch(source -> group.stream().anyMatch(element -> element.equals(source)))) { // NOPMD
                 return true;
             }
         }

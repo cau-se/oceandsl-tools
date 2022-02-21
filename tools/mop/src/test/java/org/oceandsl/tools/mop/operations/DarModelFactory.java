@@ -35,7 +35,7 @@ import kieker.model.analysismodel.type.TypeModel;
  * @author Reiner Jung
  *
  */
-public class DarModelFactory extends ModelTestFactory {
+public final class DarModelFactory extends AbstractModelTestFactory {
 
     private static final String DAR_COMPONENT = "dar-component";
 
@@ -45,6 +45,10 @@ public class DarModelFactory extends ModelTestFactory {
     public static final String DAR_ASSEMBLY_SIGNATURE = DarModelFactory.PACKAGE + "."
             + DarModelFactory.DAR_ASSEMBLY_NAME;
 
+    private DarModelFactory() {
+        // factory
+    }
+
     public static TypeModel createTypeModel() {
         final TypeFactory factory = TypeFactory.eINSTANCE;
 
@@ -52,19 +56,19 @@ public class DarModelFactory extends ModelTestFactory {
 
         final ComponentType component = factory.createComponentType();
         component.setName(DarModelFactory.DAR_COMPONENT);
-        component.setPackage(ModelTestFactory.PACKAGE);
+        component.setPackage(AbstractModelTestFactory.PACKAGE);
         component.setSignature(DarModelFactory.DAR_COMPONENT_SIGNATURE);
-        component.getProvidedOperations().put(ModelTestFactory.OP_SIGNATURE,
-                ModelTestFactory.createOperationType("operation", "void", ModelTestFactory.OP_SIGNATURE));
+        component.getProvidedOperations().put(AbstractModelTestFactory.OP_SIGNATURE, AbstractModelTestFactory
+                .createOperationType("operation", "void", AbstractModelTestFactory.OP_SIGNATURE));
         result.getComponentTypes().put(DarModelFactory.DAR_COMPONENT_SIGNATURE, component);
 
         final ComponentType component2 = factory.createComponentType();
-        component2.setName(ModelTestFactory.JOINT_COMPONENT);
-        component2.setPackage(ModelTestFactory.PACKAGE);
-        component2.setSignature(ModelTestFactory.JOINT_COMPONENT_SIGNATURE);
-        component2.getProvidedOperations().put(ModelTestFactory.OP_COMPILE_SIGNATURE,
-                ModelTestFactory.createOperationType("compile", "Model", ModelTestFactory.OP_COMPILE_SIGNATURE));
-        result.getComponentTypes().put(ModelTestFactory.JOINT_COMPONENT_SIGNATURE, component2);
+        component2.setName(AbstractModelTestFactory.JOINT_COMPONENT);
+        component2.setPackage(AbstractModelTestFactory.PACKAGE);
+        component2.setSignature(AbstractModelTestFactory.JOINT_COMPONENT_SIGNATURE);
+        component2.getProvidedOperations().put(AbstractModelTestFactory.OP_COMPILE_SIGNATURE, AbstractModelTestFactory
+                .createOperationType("compile", "Model", AbstractModelTestFactory.OP_COMPILE_SIGNATURE));
+        result.getComponentTypes().put(AbstractModelTestFactory.JOINT_COMPONENT_SIGNATURE, component2);
 
         return result;
     }
@@ -74,28 +78,22 @@ public class DarModelFactory extends ModelTestFactory {
 
         final AssemblyModel result = factory.createAssemblyModel();
 
-        {
-            final ComponentType type = ModelTestFactory.findType(typeModel, DarModelFactory.DAR_COMPONENT_SIGNATURE);
-            final AssemblyComponent component = ModelTestFactory
-                    .createAssemblyComponent(DarModelFactory.DAR_ASSEMBLY_SIGNATURE, type);
-            component.getOperations().put(ModelTestFactory.OP_SIGNATURE, ModelTestFactory
-                    .createAssemblyOperation(ModelTestFactory.findOperationType(type, ModelTestFactory.OP_SIGNATURE)));
-
-            result.getAssemblyComponents().put(DarModelFactory.DAR_ASSEMBLY_SIGNATURE, component);
-        }
-
-        {
-            final ComponentType type = ModelTestFactory.findType(typeModel, ModelTestFactory.JOINT_COMPONENT_SIGNATURE);
-            final AssemblyComponent component = ModelTestFactory
-                    .createAssemblyComponent(ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE, type);
-            component.getOperations().put(ModelTestFactory.OP_COMPILE_SIGNATURE,
-                    ModelTestFactory.createAssemblyOperation(
-                            ModelTestFactory.findOperationType(type, ModelTestFactory.OP_COMPILE_SIGNATURE)));
-
-            result.getAssemblyComponents().put(ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE, component);
-        }
+        DarModelFactory.createAssemblyComponent(result, typeModel, DarModelFactory.DAR_COMPONENT_SIGNATURE,
+                DarModelFactory.DAR_ASSEMBLY_SIGNATURE, AbstractModelTestFactory.OP_SIGNATURE);
+        DarModelFactory.createAssemblyComponent(result, typeModel, AbstractModelTestFactory.JOINT_COMPONENT_SIGNATURE,
+                AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE, AbstractModelTestFactory.OP_COMPILE_SIGNATURE);
 
         return result;
+    }
+
+    private static void createAssemblyComponent(final AssemblyModel result, final TypeModel typeModel,
+            final String componentSignature, final String assemblySignature, final String operationSignature) {
+        final ComponentType type = AbstractModelTestFactory.findType(typeModel, componentSignature);
+        final AssemblyComponent component = AbstractModelTestFactory.createAssemblyComponent(assemblySignature, type);
+        component.getOperations().put(operationSignature, AbstractModelTestFactory
+                .createAssemblyOperation(AbstractModelTestFactory.findOperationType(type, operationSignature)));
+
+        result.getAssemblyComponents().put(assemblySignature, component);
     }
 
     public static DeploymentModel createDeploymentModel(final AssemblyModel assemblyModel) {
@@ -103,29 +101,27 @@ public class DarModelFactory extends ModelTestFactory {
 
         final DeploymentModel result = factory.createDeploymentModel();
 
-        final DeploymentContext context = ModelTestFactory.createDeploymentContext(ModelTestFactory.HOSTNAME);
+        final DeploymentContext context = AbstractModelTestFactory
+                .createDeploymentContext(AbstractModelTestFactory.HOSTNAME);
 
-        {
-            final AssemblyComponent assemblyComponent = ModelTestFactory.findComponent(assemblyModel,
-                    DarModelFactory.DAR_ASSEMBLY_SIGNATURE);
-            context.getComponents().put(DarModelFactory.DAR_ASSEMBLY_SIGNATURE,
-                    ModelTestFactory.createDeploymentComponent(DarModelFactory.DAR_ASSEMBLY_SIGNATURE,
-                            assemblyComponent, ModelTestFactory.createDeployedOperation(ModelTestFactory.OP_SIGNATURE,
-                                    assemblyComponent)));
-        }
+        DarModelFactory.createDeploymentComponent(context, assemblyModel, DarModelFactory.DAR_ASSEMBLY_SIGNATURE,
+                AbstractModelTestFactory.OP_SIGNATURE);
+        DarModelFactory.createDeploymentComponent(context, assemblyModel,
+                AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE, AbstractModelTestFactory.OP_COMPILE_SIGNATURE);
 
-        {
-            final AssemblyComponent assemblyComponent = ModelTestFactory.findComponent(assemblyModel,
-                    ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE);
-            context.getComponents().put(ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE,
-                    ModelTestFactory.createDeploymentComponent(ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE,
-                            assemblyComponent, ModelTestFactory.createDeployedOperation(
-                                    ModelTestFactory.OP_COMPILE_SIGNATURE, assemblyComponent)));
-        }
-
-        result.getDeploymentContexts().put(ModelTestFactory.HOSTNAME, context);
+        result.getDeploymentContexts().put(AbstractModelTestFactory.HOSTNAME, context);
 
         return result;
+    }
+
+    private static void createDeploymentComponent(final DeploymentContext context, final AssemblyModel assemblyModel,
+            final String assemblySignature, final String operationSignature) {
+        final AssemblyComponent assemblyComponent = AbstractModelTestFactory.findComponent(assemblyModel,
+                assemblySignature);
+        context.getComponents()
+                .put(assemblySignature, AbstractModelTestFactory.createDeploymentComponent(assemblySignature,
+                        assemblyComponent,
+                        AbstractModelTestFactory.createDeployedOperation(operationSignature, assemblyComponent)));
     }
 
     public static ExecutionModel createExecutionModel(final DeploymentModel deploymentModel) {
@@ -133,16 +129,18 @@ public class DarModelFactory extends ModelTestFactory {
 
         final ExecutionModel result = factory.createExecutionModel();
 
-        final DeployedOperation operation = ModelTestFactory.findOperation(deploymentModel, ModelTestFactory.HOSTNAME,
-                DarModelFactory.DAR_ASSEMBLY_SIGNATURE, ModelTestFactory.OP_SIGNATURE);
-        final DeployedOperation compile = ModelTestFactory.findOperation(deploymentModel, ModelTestFactory.HOSTNAME,
-                ModelTestFactory.JOINT_ASSEMBLY_SIGNATURE, ModelTestFactory.OP_COMPILE_SIGNATURE);
+        final DeployedOperation operation = AbstractModelTestFactory.findOperation(deploymentModel,
+                AbstractModelTestFactory.HOSTNAME, DarModelFactory.DAR_ASSEMBLY_SIGNATURE,
+                AbstractModelTestFactory.OP_SIGNATURE);
+        final DeployedOperation compile = AbstractModelTestFactory.findOperation(deploymentModel,
+                AbstractModelTestFactory.HOSTNAME, AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE,
+                AbstractModelTestFactory.OP_COMPILE_SIGNATURE);
 
         // operation -> operation
-        ModelTestFactory.createAggregatedInvocation(result.getAggregatedInvocations(), operation, operation);
+        AbstractModelTestFactory.createAggregatedInvocation(result.getAggregatedInvocations(), operation, operation);
         // operation -> compile
-        ModelTestFactory.createAggregatedInvocation(result.getAggregatedInvocations(), operation, compile);
-        ModelTestFactory.createAggregatedInvocation(result.getAggregatedInvocations(), compile, compile);
+        AbstractModelTestFactory.createAggregatedInvocation(result.getAggregatedInvocations(), operation, compile);
+        AbstractModelTestFactory.createAggregatedInvocation(result.getAggregatedInvocations(), compile, compile);
 
         return result;
     }
@@ -153,7 +151,7 @@ public class DarModelFactory extends ModelTestFactory {
         final StatisticsModel result = factory.createStatisticsModel();
 
         for (final AggregatedInvocation key : executionModel.getAggregatedInvocations().values()) {
-            result.getStatistics().put(key, ModelTestFactory.createStatistics());
+            result.getStatistics().put(key, AbstractModelTestFactory.createStatistics());
         }
 
         return result;

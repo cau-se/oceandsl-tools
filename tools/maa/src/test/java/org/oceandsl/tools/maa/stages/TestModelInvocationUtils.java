@@ -41,7 +41,11 @@ import kieker.model.analysismodel.type.TypeModel;
  * @author Reiner Jung
  *
  */
-public class TestModelInvocationUtils {
+public final class TestModelInvocationUtils {
+
+    private TestModelInvocationUtils() {
+        // utility class
+    }
 
     public static void addInvocations(final ModelRepository modelRepository) {
         final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
@@ -97,11 +101,14 @@ public class TestModelInvocationUtils {
     }
 
     public static void addEmptyProvidedInterfaces(final ModelRepository modelRepository) {
-        TestModelInvocationUtils.createEmptyProvidedInterface(modelRepository, TestModelRepositoryUtils.FQN_COMPONENT_B);
-        TestModelInvocationUtils.createEmptyProvidedInterface(modelRepository, TestModelRepositoryUtils.FQN_COMPONENT_C);
+        TestModelInvocationUtils.createEmptyProvidedInterface(modelRepository,
+                TestModelRepositoryUtils.FQN_COMPONENT_B);
+        TestModelInvocationUtils.createEmptyProvidedInterface(modelRepository,
+                TestModelRepositoryUtils.FQN_COMPONENT_C);
     }
 
-    private static void createEmptyProvidedInterface(final ModelRepository modelRepository, final String componentName) {
+    private static void createEmptyProvidedInterface(final ModelRepository modelRepository,
+            final String componentName) {
         final TypeModel typeModel = modelRepository.getModel(TypeModel.class);
         final AssemblyModel assmeblyModel = modelRepository.getModel(AssemblyModel.class);
         final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);

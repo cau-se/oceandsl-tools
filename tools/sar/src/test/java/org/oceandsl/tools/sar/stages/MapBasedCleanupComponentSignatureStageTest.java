@@ -17,21 +17,31 @@ package org.oceandsl.tools.sar.stages;
 
 import org.junit.Test;
 
+/**
+ * Text Map based cleanup.
+ *
+ * @author Reiner Jung
+ * @since 1.3
+ */
 public class MapBasedCleanupComponentSignatureStageTest {
 
     @Test
     public void cleanupCaseInsensitive() {
+        // TODO implement
     }
 
     @Test
     public void cleanupCaseSensitive() {
+        // TODO implement
     }
 
     @Test
     public void cleanupCaseInsensitiveMissingEntry() {
+        // TODO implement
     }
 
     @Test
     public void cleanupCaseSensitiveMissingEntry() {
+        // TODO implement
     }
 }

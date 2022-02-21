@@ -22,7 +22,7 @@ package org.oceandsl.tools.sar.stages.dataflow;
 public enum EDirection {
     READ, WRITE, BOTH;
 
-    public static EDirection getValue(final String name) throws Exception {
+    public static EDirection getValue(final String name) throws InternalError {
         for (final EDirection value : EDirection.values()) {
             if (value.name().equalsIgnoreCase(name)) {
                 return value;

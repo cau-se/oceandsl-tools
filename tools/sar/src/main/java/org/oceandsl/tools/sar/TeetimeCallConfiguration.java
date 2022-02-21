@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar;
+package org.oceandsl.tools.sar; // NOPMD ExecessiveImports
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.slf4j.Logger;
 
@@ -60,85 +61,31 @@ import org.oceandsl.tools.sar.stages.StringFileWriterSink;
  * @since 1.0
  */
 public class TeetimeCallConfiguration extends Configuration {
+
     public TeetimeCallConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
             throws IOException, ValueConversionErrorException {
-
+        super();
         OutputPort<CallerCallee> readerPort;
 
         logger.info("Processing static call log");
-        final CSVFunctionCallReaderStage readCsvStage = new CSVFunctionCallReaderStage(
-                settings.getOperationCallInputFile(), settings.getCallSplitSymbol());
 
-        readerPort = readCsvStage.getOutputPort();
+        readerPort = this.createReaderStage(settings.getOperationCallInputFile(), settings.getCallSplitSymbol());
 
-        if (settings.getFunctionNameFiles() != null && !settings.getFunctionNameFiles().isEmpty()) {
-            final OperationCallFixPathStage fixPathStage = new OperationCallFixPathStage(
-                    settings.getFunctionNameFiles(), settings.getNamesSplitSymbol());
-            if (settings.getMissingFunctionsFile() != null) {
-                final StringFileWriterSink missingFunctionsListSink = new StringFileWriterSink(
-                        settings.getMissingFunctionsFile());
-                this.connectPorts(fixPathStage.getMissingOperationOutputPort(),
-                        missingFunctionsListSink.getInputPort());
-            }
-            this.connectPorts(readerPort, fixPathStage.getInputPort());
-            readerPort = fixPathStage.getOutputPort();
-        }
+        readerPort = this.createOperationCallFixPath(readerPort, settings.getFunctionNameFiles(),
+                settings.getCallSplitSymbol(), settings.getMissingFunctionsFile());
+
         final CSVMapperStage mapperStage = new CSVMapperStage(settings.isCaseInsensitive());
         this.connectPorts(readerPort, mapperStage.getInputPort());
         readerPort = mapperStage.getOutputPort();
 
-        if (settings.getComponentMapFiles() != null) {
-            logger.info("Map based component definition");
-            final MapBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new MapBasedCleanupComponentSignatureStage(
-                    settings.getComponentMapFiles(), settings.getMissingMappingFile(), settings.getCallSplitSymbol(),
-                    settings.isCaseInsensitive());
-
-            this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
-            readerPort = cleanupComponentSignatureStage.getOutputPort();
-        } else {
-            logger.info("File based component definition");
-            final FileBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new FileBasedCleanupComponentSignatureStage(
-                    settings.isCaseInsensitive());
-
-            this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
-
-            readerPort = cleanupComponentSignatureStage.getOutputPort();
-        }
-
-        final IComponentSignatureExtractor componentSignatureExtractor = new IComponentSignatureExtractor() {
-
-            @Override
-            public void extract(final ComponentType componentType) {
-                String signature = componentType.getSignature();
-                if (signature == null) {
-                    signature = "-- none --";
-                }
-                final Path path = Paths.get(signature);
-                final String name = path.getName(path.getNameCount() - 1).toString();
-                final String rest = path.getParent() != null
-                        ? settings.getExperimentName() + "." + path.getParent().toString()
-                        : settings.getExperimentName();
-                componentType.setName(name);
-                componentType.setPackage(rest);
-            }
-        };
-        final IOperationSignatureExtractor operationSignatureExtractor = new IOperationSignatureExtractor() {
-
-            @Override
-            public void extract(final OperationType operationType) {
-                final String name = operationType.getSignature();
-                operationType.setName(name);
-                operationType.setReturnType("unknown");
-            }
-
-        };
+        readerPort = this.createComponentMapping(readerPort, settings, logger);
 
         final OperationAndCall4StaticDataStage operationAndCallStage = new OperationAndCall4StaticDataStage(
                 settings.getHostname());
         /** -- call based modeling -- */
         final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(SourceModel.class), settings.getSourceLabel(),
-                componentSignatureExtractor, operationSignatureExtractor);
+                this.createComponentSignatureExtractor(settings), this.createOperationSignatureExtractor());
         final AssemblyModelAssemblerStage assemblyModelAssemblerStage = new AssemblyModelAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(AssemblyModel.class),
                 repository.getModel(SourceModel.class), settings.getSourceLabel());
@@ -166,5 +113,82 @@ public class TeetimeCallConfiguration extends Configuration {
         this.connectPorts(callEvent2OperationCallStage.getOutputPort(), executionModelGenerationStage.getInputPort());
 
         this.connectPorts(executionModelGenerationStage.getOutputPort(), countUniqueCalls.getInputPort());
+    }
+
+    private OutputPort<CallerCallee> createComponentMapping(final OutputPort<CallerCallee> readerPort,
+            final Settings settings, final Logger logger) throws IOException, ValueConversionErrorException {
+        if (settings.getComponentMapFiles() == null) {
+            logger.info("File based component definition");
+            final FileBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new FileBasedCleanupComponentSignatureStage(
+                    settings.isCaseInsensitive());
+
+            this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
+
+            return cleanupComponentSignatureStage.getOutputPort();
+        } else {
+            logger.info("Map based component definition");
+            final MapBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new MapBasedCleanupComponentSignatureStage(
+                    settings.getComponentMapFiles(), settings.getMissingMappingFile(), settings.getCallSplitSymbol(),
+                    settings.isCaseInsensitive());
+
+            this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
+            return cleanupComponentSignatureStage.getOutputPort();
+        }
+    }
+
+    private OutputPort<CallerCallee> createOperationCallFixPath(final OutputPort<CallerCallee> readerPort,
+            final List<Path> functionNameFiles, final String namesSplitSymbol, final Path missingFunctionsFile)
+            throws IOException {
+        if (functionNameFiles != null && !functionNameFiles.isEmpty()) {
+            final OperationCallFixPathStage fixPathStage = new OperationCallFixPathStage(functionNameFiles,
+                    namesSplitSymbol);
+            if (missingFunctionsFile != null) {
+                final StringFileWriterSink missingFunctionsListSink = new StringFileWriterSink(missingFunctionsFile);
+                this.connectPorts(fixPathStage.getMissingOperationOutputPort(),
+                        missingFunctionsListSink.getInputPort());
+            }
+            this.connectPorts(readerPort, fixPathStage.getInputPort());
+            return fixPathStage.getOutputPort();
+        }
+        return readerPort;
+    }
+
+    private OutputPort<CallerCallee> createReaderStage(final Path operationCallInputFile, final String callSplitSymbol)
+            throws IOException {
+        final CSVFunctionCallReaderStage readCsvStage = new CSVFunctionCallReaderStage(operationCallInputFile,
+                callSplitSymbol);
+        return readCsvStage.getOutputPort();
+    }
+
+    private IComponentSignatureExtractor createComponentSignatureExtractor(final Settings settings) {
+        return new IComponentSignatureExtractor() {
+
+            @Override
+            public void extract(final ComponentType componentType) {
+                String signature = componentType.getSignature();
+                if (signature == null) {
+                    signature = "-- none --";
+                }
+                final Path path = Paths.get(signature);
+                final String name = path.getName(path.getNameCount() - 1).toString();
+                final String rest = path.getParent() == null ? settings.getExperimentName()
+                        : settings.getExperimentName() + "." + path.getParent().toString();
+                componentType.setName(name);
+                componentType.setPackage(rest);
+            }
+        };
+    }
+
+    private IOperationSignatureExtractor createOperationSignatureExtractor() {
+        return new IOperationSignatureExtractor() {
+
+            @Override
+            public void extract(final OperationType operationType) {
+                final String name = operationType.getSignature();
+                operationType.setName(name);
+                operationType.setReturnType("unknown");
+            }
+
+        };
     }
 }

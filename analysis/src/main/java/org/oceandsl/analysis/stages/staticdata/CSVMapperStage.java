@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.analysis.stages.staticdata;
 
+import java.util.Locale;
+
 import teetime.stage.basic.AbstractFilter;
 
 import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
@@ -43,7 +45,7 @@ public class CSVMapperStage extends AbstractFilter<CallerCallee> {
     }
 
     private String convertToLowerCase(final String string) {
-        return this.caseInsensitive ? string.toLowerCase() : string;
+        return this.caseInsensitive ? string.toLowerCase(Locale.ROOT) : string;
     }
 
 }

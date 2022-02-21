@@ -25,7 +25,7 @@ import com.beust.jcommander.converters.FileConverter;
  * @author Reiner Jung
  * @since 1.0
  */
-public class Settings {
+public class Settings { // NOPMD
 
     @Parameter(names = { "-i",
             "--input" }, required = true, variableArity = true, converter = FileConverter.class, description = "Input Kieker log directories")

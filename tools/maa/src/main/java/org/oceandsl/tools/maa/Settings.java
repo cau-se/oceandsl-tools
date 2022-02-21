@@ -16,6 +16,7 @@
 package org.oceandsl.tools.maa;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
@@ -38,6 +39,10 @@ public class Settings {
             "--compute-interfaces" }, required = false, description = "Compute interfaces based on aggregated invocations")
     private boolean computeInterfaces;
 
+    @Parameter(names = { "-g",
+            "--hierarchy-grouping" }, required = false, description = "Generate a component hierarchy based on a map file")
+    private List<Path> mapFiles;
+
     public Path getInputModelPath() {
         return this.inputModelPath;
     }
@@ -48,6 +53,10 @@ public class Settings {
 
     public boolean isComputeInterfaces() {
         return this.computeInterfaces;
+    }
+
+    public List<Path> getMapFiles() {
+        return this.mapFiles;
     }
 
 }

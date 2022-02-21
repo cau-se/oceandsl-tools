@@ -1,3 +1,18 @@
+/***************************************************************************
+ * Copyright (C) 2022 OceanDSL (https://oceandsl.uni-kiel.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package org.oceandsl.tools.sar.stages;
 
 import java.io.IOException;
@@ -5,11 +20,32 @@ import java.io.IOException;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
+/***************************************************************************
+ * Copyright (C) 2022 OceanDSL (https://oceandsl.uni-kiel.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 import teetime.framework.test.StageTester;
 
 import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
 import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
 
+/**
+ * Text File based cleanup.
+ *
+ * @author Reiner Jung
+ * @since 1.3
+ */
 public class FileBasedCleanupComponentSignatureStageTest {
 
     private static final String SOURCE_PATH = "source/path/First";

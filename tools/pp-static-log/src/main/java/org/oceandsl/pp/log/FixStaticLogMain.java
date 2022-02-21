@@ -37,7 +37,7 @@ public class FixStaticLogMain extends AbstractService<FixStaticLogTeetimeConfigu
         final FixStaticLogMain main = new FixStaticLogMain();
         final int exitCode = main.run("preprocess static log", "pp-static-log", args, new Settings());
 
-        java.lang.System.exit(exitCode);
+        System.exit(exitCode);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class FixStaticLogMain extends AbstractService<FixStaticLogTeetimeConfigu
 
     @Override
     protected void shutdownService() {
-
+        // nothing to do here
     }
 
 }

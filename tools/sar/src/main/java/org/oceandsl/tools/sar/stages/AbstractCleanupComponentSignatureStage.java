@@ -31,6 +31,7 @@ public abstract class AbstractCleanupComponentSignatureStage extends AbstractFil
     protected final boolean caseInsensitive;
 
     public AbstractCleanupComponentSignatureStage(final boolean caseInsensitive) {
+        super();
         this.caseInsensitive = caseInsensitive;
     }
 

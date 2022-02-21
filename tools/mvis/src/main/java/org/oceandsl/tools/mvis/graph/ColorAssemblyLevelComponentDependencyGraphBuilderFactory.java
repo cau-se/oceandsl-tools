@@ -26,10 +26,6 @@ import kieker.analysis.graph.dependency.IDependencyGraphBuilderFactory;
 public class ColorAssemblyLevelComponentDependencyGraphBuilderFactory
         implements IDependencyGraphBuilderFactory<IColorDependencyGraphBuilderConfiguration> {
 
-    public ColorAssemblyLevelComponentDependencyGraphBuilderFactory() {
-        super();
-    }
-
     @Override
     public IDependencyGraphBuilder createDependencyGraphBuilder(
             final IColorDependencyGraphBuilderConfiguration configuration) {

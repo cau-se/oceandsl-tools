@@ -47,8 +47,8 @@ public class ColorAssemblyLevelComponentDependencyGraphBuilder extends AbstractC
         componentVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_COMPONENT);
         componentVertex.setPropertyIfAbsent(PropertyConstants.NAME, component.getComponentType().getName());
         componentVertex.setPropertyIfAbsent(PropertyConstants.PACKAGE_NAME, component.getComponentType().getPackage());
-        componentVertex.setPropertyIfAbsent(ExtraConstants.FOREGROUND_COLOR, this.selectForegroundColor(component));
-        componentVertex.setPropertyIfAbsent(ExtraConstants.BACKGROUND_COLOR, this.selectBackgroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR, this.selectForegroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR, this.selectBackgroundColor(component));
 
         this.responseTimeDecorator.decorate(componentVertex, component);
 
@@ -65,8 +65,8 @@ public class ColorAssemblyLevelComponentDependencyGraphBuilder extends AbstractC
         componentVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_COMPONENT);
         componentVertex.setPropertyIfAbsent(PropertyConstants.NAME, component.getComponentType().getName());
         componentVertex.setPropertyIfAbsent(PropertyConstants.PACKAGE_NAME, component.getComponentType().getPackage());
-        componentVertex.setPropertyIfAbsent(ExtraConstants.FOREGROUND_COLOR, this.selectForegroundColor(component));
-        componentVertex.setPropertyIfAbsent(ExtraConstants.BACKGROUND_COLOR, this.selectBackgroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR, this.selectForegroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR, this.selectBackgroundColor(component));
 
         return componentVertex;
     }

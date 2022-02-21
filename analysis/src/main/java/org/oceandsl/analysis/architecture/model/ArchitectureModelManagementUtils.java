@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.architecture.model;
+package org.oceandsl.analysis.architecture.model; // NOPMD excessiveImports
 
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public final class ArchitectureModelManagementUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArchitectureModelManagementUtils.class);
 
     private ArchitectureModelManagementUtils() {
-        // TODO Auto-generated constructor stub
+        // utility class do not instantiate
     }
 
     public static ModelRepository createModelRepository(final String experimentName, final boolean mapFile) {
@@ -103,9 +103,9 @@ public final class ArchitectureModelManagementUtils {
     public static ModelRepository loadModelRepository(final Path path) throws ConfigurationException {
         final ModelRepository repository = new ModelRepository(path.getFileName().toString());
 
-        final Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
-        final Map<String, Object> m = reg.getExtensionToFactoryMap();
-        m.put("xmi", new XMIResourceFactoryImpl());
+        final Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
+        final Map<String, Object> extensionToFactoryMap = registry.getExtensionToFactoryMap();
+        extensionToFactoryMap.put("xmi", new XMIResourceFactoryImpl());
 
         final ResourceSet resourceSet = new ResourceSetImpl();
 
@@ -148,9 +148,9 @@ public final class ArchitectureModelManagementUtils {
                         error.getLocation(), error.getLine(), error.getMessage());
             }
             repository.register(type, resource.getContents().get(0));
-            final Iterator<EObject> i = resource.getAllContents();
-            while (i.hasNext()) {
-                i.next().eCrossReferences();
+            final Iterator<EObject> iterator = resource.getAllContents();
+            while (iterator.hasNext()) {
+                iterator.next().eCrossReferences();
             }
         } else {
             ArchitectureModelManagementUtils.LOGGER.error("Error reading model file {}. File does not exist.",
@@ -163,9 +163,9 @@ public final class ArchitectureModelManagementUtils {
     public static void writeModelRepository(final Path outputDirectory, final ModelRepository repository)
             throws IOException {
 
-        final Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
-        final Map<String, Object> m = reg.getExtensionToFactoryMap();
-        m.put("xmi", new XMIResourceFactoryImpl());
+        final Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
+        final Map<String, Object> extensionToFactoryMap = registry.getExtensionToFactoryMap();
+        extensionToFactoryMap.put("xmi", new XMIResourceFactoryImpl());
 
         // store models
         final ResourceSet resourceSet = new ResourceSetImpl();

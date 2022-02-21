@@ -49,8 +49,8 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         componentVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_COMPONENT);
         componentVertex.setPropertyIfAbsent(PropertyConstants.NAME, component.getComponentType().getName());
         componentVertex.setPropertyIfAbsent(PropertyConstants.PACKAGE_NAME, component.getComponentType().getPackage());
-        componentVertex.setPropertyIfAbsent(ExtraConstants.FOREGROUND_COLOR, this.selectForegroundColor(component));
-        componentVertex.setPropertyIfAbsent(ExtraConstants.BACKGROUND_COLOR, this.selectBackgroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR, this.selectForegroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR, this.selectBackgroundColor(component));
 
         final IGraph componentSubgraph = componentVertex.addChildGraphIfAbsent();
         final int operationId = this.identifierRegistry.getIdentifier(operation);
@@ -62,8 +62,8 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         operationVertex.setPropertyIfAbsent(PropertyConstants.MODIFIERS, operation.getOperationType().getModifiers());
         operationVertex.setPropertyIfAbsent(PropertyConstants.PARAMETER_TYPES,
                 operation.getOperationType().getParameterTypes());
-        operationVertex.setPropertyIfAbsent(ExtraConstants.FOREGROUND_COLOR, this.selectForegroundColor(operation));
-        operationVertex.setPropertyIfAbsent(ExtraConstants.BACKGROUND_COLOR, this.selectBackgroundColor(operation));
+        operationVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR, this.selectForegroundColor(operation));
+        operationVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR, this.selectBackgroundColor(operation));
 
         this.responseTimeDecorator.decorate(operationVertex, operation);
 
@@ -80,8 +80,8 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         componentVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_COMPONENT);
         componentVertex.setPropertyIfAbsent(PropertyConstants.NAME, component.getComponentType().getName());
         componentVertex.setPropertyIfAbsent(PropertyConstants.PACKAGE_NAME, component.getComponentType().getPackage());
-        componentVertex.setPropertyIfAbsent(ExtraConstants.FOREGROUND_COLOR, this.selectForegroundColor(component));
-        componentVertex.setPropertyIfAbsent(ExtraConstants.BACKGROUND_COLOR, this.selectBackgroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR, this.selectForegroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR, this.selectBackgroundColor(component));
 
         final IGraph componentSubgraph = componentVertex.addChildGraphIfAbsent();
         final int accessId = this.identifierRegistry.getIdentifier(storage);
@@ -89,8 +89,8 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         accessVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_STORAGE);
         accessVertex.setPropertyIfAbsent(PropertyConstants.NAME, storage.getStorageType().getName());
         accessVertex.setPropertyIfAbsent(PropertyConstants.RETURN_TYPE, storage.getStorageType().getType());
-        accessVertex.setPropertyIfAbsent(ExtraConstants.FOREGROUND_COLOR, this.selectForegroundColor(storage));
-        componentVertex.setPropertyIfAbsent(ExtraConstants.BACKGROUND_COLOR, this.selectBackgroundColor(storage));
+        accessVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR, this.selectForegroundColor(storage));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR, this.selectBackgroundColor(storage));
 
         this.responseTimeDecorator.decorate(accessVertex, storage);
 

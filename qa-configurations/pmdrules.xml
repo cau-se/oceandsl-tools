@@ -9,64 +9,60 @@
 	<exclude-pattern>.*/src/gen/.*</exclude-pattern>
 	<exclude-pattern>.*/test/gen/.*</exclude-pattern>
 
-	<!-- We'll use the following rulesets -->
-	<rule ref="rulesets/internal/all-java.xml">
-		<exclude name="AvoidCatchingNPE" />
-		<exclude name="AvoidDuplicateLiterals" />
-		<exclude name="AvoidInstantiatingObjectsInLoops" />
-		<exclude name="AvoidLiteralsInIfCondition" />
-		<exclude name="AvoidThrowingNullPointerException" />
-		<exclude name="AvoidUsingVolatile" />
-		<exclude name="AssignmentInOperand"/>
-		<exclude name="BeanMembersShouldSerialize" />
-		<exclude name="CallSuperInConstructor" />
-		<exclude name="CommentSize" />
-		<exclude name="ConfusingTernary" />
-		<exclude name="CyclomaticComplexity" />
-		<exclude name="DataflowAnomalyAnalysis" />
-		<exclude name="DoNotCallSystemExit" />
-		<exclude name="DoNotUseThreads" />
-		<exclude name="ExcessiveImports" />
-		<exclude name="ExcessiveMethodLength" />
-		<exclude name="ExcessiveParameterList" />
-		<exclude name="GodClass" />
-		<exclude name="LawOfDemeter" />
+
+	<rule ref="category/java/bestpractices.xml">
+		<exclude name="UseVarargs" />
+	</rule>
+	
+	<rule ref="category/java/codestyle.xml">
+		<exclude name="AtLeastOneConstructor"/>
+		<exclude name="AvoidFinalLocalVariable" />
+		<exclude name="CallSuperInConstructor"/>
+		<exclude name="ConfusingTernary"/>
 		<exclude name="LongVariable" />
-		<exclude name="LoosePackageCoupling" />
-		<!-- exclude name="NcssMethodCount" /-->
-		<exclude name="NPathComplexity" />
 		<exclude name="OnlyOneReturn" />
 		<exclude name="PackageCase" />
-		<!-- startsWith is better: it returns false instead of an IndexOutOfBoundsException and its name reflects its purpose -->
-		<exclude name="SimplifyStartsWith" />
 		<exclude name="ShortClassName" />
 		<exclude name="ShortVariable" />
-		<exclude name="SignatureDeclareThrowsException" />
-		<!-- Java automatically compiles to StringBuilder and StringBuffer is unnecessarily synchronized -->
-		<exclude name="UseStringBufferForStringAppends" />
-		<exclude name="TooManyMethods" />
-		<exclude name="UnnecessaryConstructor" />
 		<exclude name="UnnecessaryModifier" />
-		<exclude name="UseObjectForClearerAPI" />
-		<exclude name="UseProperClassLoader" />
 		<exclude name="UselessParentheses" />
-		<exclude name="UseVarargs" />
-		<exclude name="AtLeastOneConstructor"/>
-		<exclude name="UseConcurrentHashMap"/>
+		<exclude name="UseUnderscoresInNumericLiterals" />
 	</rule>
 
-    <rule ref="rulesets/internal/all-java.xml/ConsecutiveLiteralAppends">
-    	<properties>
-    		<property name="threshold" value="2"/>
-    	</properties>
-    </rule>
 
+	<rule ref="category/java/design.xml">
+		<exclude name="AvoidThrowingNullPointerException"/>
+		<exclude name="CyclomaticComplexity"/>
+		<exclude name="DataClass"/>
+		<exclude name="ExcessiveImports" />
+		<exclude name="GodClass" />
+		<exclude name="LawOfDemeter" />
+		<exclude name="LoosePackageCoupling" />
+		<exclude name="NPathComplexity" />
+		<exclude name="SignatureDeclareThrowsException" />
+		<exclude name="TooManyMethods" />
+		<exclude name="UseObjectForClearerAPI" />
+	</rule>
+
+
+	<rule ref="category/java/errorprone.xml">
+		<exclude name="AvoidCatchingNPE" />
+		<exclude name="AvoidLiteralsInIfCondition" />
+		<exclude name="AssignmentInOperand"/>
+		<exclude name="BeanMembersShouldSerialize" />
+		<exclude name="DataflowAnomalyAnalysis" />
+		<exclude name="DoNotCallSystemExit" />
+		<exclude name="UseProperClassLoader" />
+	</rule>
 	<!-- We want to customize this rule a bit, change the message and raise the priority  -->
 	<rule ref="category/java/errorprone.xml/EmptyCatchBlock" message="Must handle exceptions">
 		<priority>2</priority>
 	</rule>
 
-	<!-- ensure comments -->
+
+	<rule ref="category/java/documentation.xml">
+		<exclude name="CommentSize" />
+	</rule>		
 	<rule ref="category/java/documentation.xml/CommentRequired">
 		<!-- <priority>5</priority> -->
 		<properties>
@@ -78,11 +74,23 @@
 		</properties>
 	</rule>
 
-  <!-- Now we'll customize a rule's property value -->
-  <rule ref="category/java/design.xml/CyclomaticComplexity">
-    <properties>
-        <property name="methodReportLevel" value="8"/>
-        <property name="classReportLevel" value="8"/>
-    </properties>
-  </rule>
+
+	<rule ref="category/java/multithreading.xml">
+		<exclude name="DoNotUseThreads" />
+		<exclude name="UseConcurrentHashMap"/>
+	</rule>
+	
+
+	<rule ref="category/java/performance.xml">
+		<exclude name="AvoidInstantiatingObjectsInLoops"/>
+		<exclude name="SimplifyStartsWith" />
+		<exclude name="UseStringBufferForStringAppends" />
+	</rule>
+
+	<rule ref="category/java/performance.xml/ConsecutiveLiteralAppends">
+    		<properties>
+    			<property name="threshold" value="2"/>
+    		</properties>
+    	</rule>
+
 </ruleset>
