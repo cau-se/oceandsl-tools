@@ -17,6 +17,9 @@ package org.oceandsl.tools.maa;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import kieker.analysis.stage.model.ModelRepository;
 
 import teetime.framework.Configuration;
@@ -39,7 +42,9 @@ import org.oceandsl.tools.maa.stages.ProvidedInterfaceTableTransformation;
  */
 public class TeetimeConfiguration extends Configuration {
 
-    public TeetimeConfiguration(final Settings settings) throws IOException {
+    private final static Logger LOGGER = LoggerFactory.getLogger(TeetimeConfiguration.class);
+
+    public TeetimeConfiguration(final Settings settings) {
         final ModelRepositoryProducerStage modelReader = new ModelRepositoryProducerStage(settings.getInputModelPath());
 
         final Distributor<ModelRepository> distributor = new Distributor<>(new CopyByReferenceStrategy());
@@ -64,10 +69,14 @@ public class TeetimeConfiguration extends Configuration {
         }
 
         if (settings.getMapFiles() != null && settings.getMapFiles().size() > 0) {
-            final GroupComponentsHierarchicallyStage groupComponentHierarchicallyStage = new GroupComponentsHierarchicallyStage(
-                    settings.getMapFiles(), ";", false);
-            this.connectPorts(outputPort, groupComponentHierarchicallyStage.getInputPort());
-            outputPort = groupComponentHierarchicallyStage.getOutputPort();
+            try {
+                final GroupComponentsHierarchicallyStage groupComponentHierarchicallyStage = new GroupComponentsHierarchicallyStage(
+                        settings.getMapFiles(), ";", false);
+                this.connectPorts(outputPort, groupComponentHierarchicallyStage.getInputPort());
+                outputPort = groupComponentHierarchicallyStage.getOutputPort();
+            } catch (final IOException ex) {
+                TeetimeConfiguration.LOGGER.error("Error reading map files");
+            }
         }
         this.connectPorts(outputPort, distributor.getInputPort());
         this.connectPorts(distributor.getNewOutputPort(), modelSink.getInputPort());

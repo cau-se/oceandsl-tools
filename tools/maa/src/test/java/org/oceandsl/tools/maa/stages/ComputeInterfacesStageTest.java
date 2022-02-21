@@ -131,6 +131,7 @@ public class ComputeInterfacesStageTest {
         }
     }
 
+    @Ignore
     @Test
     public void noRequiredInterface() {
         final ModelRepository modelRepository = TestModelRepositoryUtils.createThreeComponentModel();
