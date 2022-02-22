@@ -10,20 +10,20 @@ plugins {
 	id 'java'
 	id 'java-library'
 	id 'maven-publish'
-	id 'signing'
+	// id 'signing'
 }
 
 
 dependencies {
-	implementation 'net.kieker-monitoring:kieker:1.15-SNAPSHOT'
+	implementation 'net.kieker-monitoring:kieker:1.16-SNAPSHOT'
 }
 
 sourceSets {
-main {
-	java {
-	srcDirs= [ 'src/main/java', 'src/gen/java' ]
+	main {
+		java {
+		srcDirs= [ 'src/main/java', 'src/gen/java' ]
+		}
 	}
-}
 }
 
 java {
@@ -36,7 +36,12 @@ publishing {
 		mavenJava(MavenPublication) {
 			groupId = 'org.oceandsl'
 			artifactId = 'common'
-			version = '1.1'
+			version = version
+
+			artifact jar
+			artifact sourcesJar
+			artifact javadocJar
+
 			pom {
 				name = 'OceanDSL Common'
 				description = 'Common facilities of the OceanDSL tool chain'
@@ -76,9 +81,9 @@ publishing {
 	}
 }
 
-signing {
-	sign publishing.publications.mavenJava
-}
+//signing {
+//	sign publishing.publications.mavenJava
+//}
 
 
 //javadoc {

@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
 	id 'java-library'
+	id 'maven-publish'
 }
 
 dependencies {
@@ -10,4 +11,48 @@ dependencies {
 	implementation 'org.eclipse.emf:org.eclipse.emf.ecore.xmi:2.16.0'
 
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.0'
+}
+java {
+	// disabled, as there is a strange error referencing "common" in javadoc
+	// withJavadocJar()
+	withSourcesJar()
+}
+
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			groupId = 'org.oceandsl'
+			artifactId = 'analysis'
+			version = version
+
+			artifact jar
+			artifact sourcesJar
+			// artifact javadocJar
+
+			pom {
+				name = 'OceanDSL Analysis'
+				description = 'Analysis stages for model analysis'
+				url = 'http://oceandsl.uni-kiel.de'
+				licenses {
+					license {
+						name = 'The Apache License, Version 2.0'
+						url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+				developers {
+					developer {
+						id = 'rju'
+						name = 'Reiner Jung'
+						email = 'reiner.jung@email.uni-kiel.de'
+					}
+				}
+				scm {
+					connection = 'scm:git:https://git.se.informatik.uni-kiel.de/oceandsl/oceandsl-java-tools.git'
+					developerConnection = 'scm:git:gitlab@git.se.informatik.uni-kiel.de:oceandsl/oceandsl-java-tools.git'
+					url = 'https://git.se.informatik.uni-kiel.de/oceandsl/oceandsl-java-tools/'
+				}
+			}
+		}
+	}
 }

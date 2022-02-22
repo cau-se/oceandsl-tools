@@ -42,7 +42,7 @@ import org.oceandsl.tools.maa.stages.ProvidedInterfaceTableTransformation;
  */
 public class TeetimeConfiguration extends Configuration {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(TeetimeConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TeetimeConfiguration.class);
 
     public TeetimeConfiguration(final Settings settings) {
         final ModelRepositoryProducerStage modelReader = new ModelRepositoryProducerStage(settings.getInputModelPath());
