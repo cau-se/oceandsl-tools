@@ -27,6 +27,10 @@ import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.type.ComponentType;
+import kieker.model.analysismodel.type.TypeFactory;
+import kieker.model.analysismodel.type.TypeModel;
 
 import teetime.stage.basic.AbstractTransformation;
 
@@ -35,7 +39,7 @@ import org.oceandsl.analysis.utils.StringValueConverter;
 
 /**
  * @author Reiner Jung
- *
+ * @since 1.3
  */
 public class GroupComponentsHierarchicallyStage extends AbstractTransformation<ModelRepository, ModelRepository> {
 
@@ -54,28 +58,55 @@ public class GroupComponentsHierarchicallyStage extends AbstractTransformation<M
     }
 
     @Override
-    protected void execute(final ModelRepository element) throws Exception {
-        final AssemblyModel assemblyModel = element.getModel(AssemblyModel.class);
+    protected void execute(final ModelRepository repository) throws Exception {
+        final TypeModel typeModel = repository.getModel(TypeModel.class);
+        final AssemblyModel assemblyModel = repository.getModel(AssemblyModel.class);
+        final DeploymentModel deploymentModel = repository.getModel(DeploymentModel.class);
         this.componentMap.values().forEach(componentName -> {
-            if (!assemblyModel.getAssemblyComponents().containsKey(componentName)) {
-                final AssemblyComponent component = this.createAssemblyComponent(componentName);
-                this.addSubComponents(component, assemblyModel.getAssemblyComponents());
-                assemblyModel.getAssemblyComponents().put(componentName, component);
+            if (!typeModel.getComponentTypes().containsKey(componentName)) {
+                final ComponentType componentType = this.createComponentType(componentName);
+                final AssemblyComponent component = this.createAssemblyComponent(componentName, componentType);
+                this.addSubComponents(componentType, component, assemblyModel.getAssemblyComponents());
+                if (component.getContainedComponents().size() > 0) { // ignore empty main component
+                    typeModel.getComponentTypes().put(componentName, componentType);
+                    assemblyModel.getAssemblyComponents().put(componentName, component);
+                }
             }
         });
+        this.outputPort.send(repository);
     }
 
-    private void addSubComponents(final AssemblyComponent component, final EMap<String, AssemblyComponent> components) {
+    private void addSubComponents(final ComponentType componentType, final AssemblyComponent component,
+            final EMap<String, AssemblyComponent> components) {
         this.componentMap.entrySet().forEach(entry -> {
             if (entry.getValue().equals(component.getSignature())) {
-                component.getContainedComponents().add(components.get(entry.getKey()));
+                final AssemblyComponent subComponent = components.get(entry.getKey());
+                if (subComponent != null) {
+                    componentType.getContainedComponents().add(subComponent.getComponentType());
+                    component.getContainedComponents().add(subComponent);
+                }
             }
         });
     }
 
-    private AssemblyComponent createAssemblyComponent(final String componentName) {
+    private ComponentType createComponentType(final String componentName) {
+        final ComponentType componentType = TypeFactory.eINSTANCE.createComponentType();
+        componentType.setSignature(componentName);
+        final int divider = componentName.lastIndexOf('.');
+        componentType.setName(componentName.substring(divider + 1));
+        if (divider <= 0) {
+            componentType.setPackage("");
+        } else {
+            componentType.setPackage(componentName.substring(0, divider - 1));
+        }
+
+        return componentType;
+    }
+
+    private AssemblyComponent createAssemblyComponent(final String componentName, final ComponentType componentType) {
         final AssemblyComponent component = AssemblyFactory.eINSTANCE.createAssemblyComponent();
         component.setSignature(componentName);
+        component.setComponentType(componentType);
 
         return component;
     }
