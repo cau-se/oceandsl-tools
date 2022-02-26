@@ -71,7 +71,7 @@ public class TeetimeConfiguration extends Configuration {
         if (settings.getMapFiles() != null && settings.getMapFiles().size() > 0) {
             try {
                 final GroupComponentsHierarchicallyStage groupComponentHierarchicallyStage = new GroupComponentsHierarchicallyStage(
-                        settings.getMapFiles(), ";", false);
+                        settings.getMapFiles(), ";", true);
                 this.connectPorts(outputPort, groupComponentHierarchicallyStage.getInputPort());
                 outputPort = groupComponentHierarchicallyStage.getOutputPort();
             } catch (final IOException ex) {

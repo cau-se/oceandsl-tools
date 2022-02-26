@@ -32,14 +32,40 @@ import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils
 public class ModelSink extends AbstractConsumerStage<ModelRepository> {
 
     private final Path outputPath;
+    private final boolean useRepositoryName;
 
+    /**
+     * Create a model sink. In the output directory does not exist, it tries to create it.
+     *
+     * @param outputPath
+     *            path to the directory where the model is stored in
+     */
     public ModelSink(final Path outputPath) {
+        this(outputPath, false);
+    }
+
+    /**
+     * Create a model sink. In the output directory does not exist, it tries to create it.
+     *
+     * @param outputPath
+     *            path to the directory where the model is stored in
+     * @param useRepositoryName
+     *            inf true the outputPath is extended by the repository name
+     */
+    public ModelSink(final Path outputPath, final boolean useRepositoryName) {
         this.outputPath = outputPath;
+        this.useRepositoryName = useRepositoryName;
     }
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
-        ArchitectureModelManagementUtils.writeModelRepository(this.outputPath, element);
+        final Path path;
+        if (this.useRepositoryName) {
+            path = this.outputPath.resolve(element.getName());
+        } else {
+            path = this.outputPath;
+        }
+        ArchitectureModelManagementUtils.writeModelRepository(path, element);
     }
 
 }
