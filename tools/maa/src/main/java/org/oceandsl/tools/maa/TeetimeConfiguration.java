@@ -31,9 +31,11 @@ import org.oceandsl.analysis.stages.generic.TableCSVSink;
 import org.oceandsl.analysis.stages.model.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.stages.model.ModelSink;
 import org.oceandsl.tools.maa.stages.CollectConnectionsStage;
+import org.oceandsl.tools.maa.stages.ComponentStatisticsStage;
 import org.oceandsl.tools.maa.stages.FindDistinctCollectionsStage;
 import org.oceandsl.tools.maa.stages.GenerateProvidedInterfacesStage;
 import org.oceandsl.tools.maa.stages.GroupComponentsHierarchicallyStage;
+import org.oceandsl.tools.maa.stages.OperationCallsStage;
 import org.oceandsl.tools.maa.stages.ProvidedInterfaceTableTransformation;
 
 /**
@@ -68,7 +70,8 @@ public class TeetimeConfiguration extends Configuration {
             outputPort = generateProvidedInterfacesStage.getOutputPort();
         }
 
-        if (settings.getMapFiles() != null && settings.getMapFiles().size() > 0) {
+        final boolean mapFiles = settings.getMapFiles() != null && settings.getMapFiles().size() > 0;
+        if (mapFiles) {
             try {
                 final GroupComponentsHierarchicallyStage groupComponentHierarchicallyStage = new GroupComponentsHierarchicallyStage(
                         settings.getMapFiles(), ";", true);
@@ -78,10 +81,31 @@ public class TeetimeConfiguration extends Configuration {
                 TeetimeConfiguration.LOGGER.error("Error reading map files");
             }
         }
+
         this.connectPorts(outputPort, distributor.getInputPort());
-        this.connectPorts(distributor.getNewOutputPort(), modelSink.getInputPort());
-        this.connectPorts(distributor.getNewOutputPort(), providedInterfaceTableTransformation.getInputPort());
-        this.connectPorts(providedInterfaceTableTransformation.getOutputPort(), providedInterfaceSink.getInputPort());
+
+        if (settings.isComputeInterfaces() || mapFiles) {
+            this.connectPorts(distributor.getNewOutputPort(), modelSink.getInputPort());
+            this.connectPorts(distributor.getNewOutputPort(), providedInterfaceTableTransformation.getInputPort());
+            this.connectPorts(providedInterfaceTableTransformation.getOutputPort(),
+                    providedInterfaceSink.getInputPort());
+        }
+
+        if (settings.isOperationCalls()) {
+            final OperationCallsStage operationCallsStage = new OperationCallsStage();
+            final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputModelPath(),
+                    "operation-calls.csv", true);
+            this.connectPorts(distributor.getNewOutputPort(), operationCallsStage.getInputPort());
+            this.connectPorts(operationCallsStage.getOutputPort(), operationCallSink.getInputPort());
+        }
+
+        if (settings.isComponentStatistics()) {
+            final ComponentStatisticsStage componentStatisticsStage = new ComponentStatisticsStage();
+            final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputModelPath(),
+                    "component-statistics.csv", true);
+            this.connectPorts(distributor.getNewOutputPort(), componentStatisticsStage.getInputPort());
+            this.connectPorts(componentStatisticsStage.getOutputPort(), operationCallSink.getInputPort());
+        }
     }
 
 }

@@ -10,7 +10,7 @@ cd $BASE_DIR/build/oceandsl-tools
 mkdir bin
 mkdir lib
 
-for I in cmi dar mop mvis sar relabel ; do
+for I in cmi dar maa mop mvis sar relabel ; do
 	unzip $BASE_DIR/tools/$I/build/distributions/$I.zip
 	mv $I/lib/* lib/
 	mv $I/bin/* bin/
