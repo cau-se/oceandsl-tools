@@ -21,8 +21,8 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
 
-import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
+import org.oceandsl.analysis.graph.EGraphGenerationMode;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * All settings including command line parameters for the analysis.

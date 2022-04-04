@@ -24,7 +24,7 @@ import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung

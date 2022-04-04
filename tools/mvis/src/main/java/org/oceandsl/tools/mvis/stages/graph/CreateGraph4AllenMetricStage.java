@@ -34,6 +34,8 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 
 import teetime.stage.basic.AbstractTransformation;
 
+import org.oceandsl.analysis.metrics.entropy.KiekerNode;
+
 /**
  * Derive a graph compatible for the Allen metric from the architecture model.
  *

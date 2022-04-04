@@ -37,8 +37,8 @@ import org.junit.Test;
  ***************************************************************************/
 import teetime.framework.test.StageTester;
 
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * Text File based cleanup.

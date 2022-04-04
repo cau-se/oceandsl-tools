@@ -43,6 +43,13 @@ public class Settings {
             "--hierarchy-grouping" }, required = false, description = "Generate a component hierarchy based on a map file")
     private List<Path> mapFiles;
 
+    @Parameter(names = { "-c", "--opetation-calls" }, required = false, description = "Output the list of calls")
+    private boolean operationCalls;
+
+    @Parameter(names = { "-s",
+            "--component-statistics" }, required = false, description = "Output numerous component statistics")
+    private boolean componentStatistics;
+
     public Path getInputModelPath() {
         return this.inputModelPath;
     }
@@ -57,6 +64,14 @@ public class Settings {
 
     public List<Path> getMapFiles() {
         return this.mapFiles;
+    }
+
+    public boolean isOperationCalls() {
+        return this.operationCalls;
+    }
+
+    public boolean isComponentStatistics() {
+        return this.componentStatistics;
     }
 
 }

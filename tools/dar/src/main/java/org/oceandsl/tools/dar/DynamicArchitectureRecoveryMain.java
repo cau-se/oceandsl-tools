@@ -28,8 +28,8 @@ import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
 
-import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * Architecture analysis main class.

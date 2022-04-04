@@ -22,6 +22,9 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 
 import teetime.stage.basic.AbstractTransformation;
 
+import org.oceandsl.analysis.graph.EGraphGenerationMode;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
+
 /**
  * Create a graph based on function calls in the architecture model.
  *

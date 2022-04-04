@@ -23,7 +23,7 @@ import kieker.analysis.stage.model.data.OperationEvent;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
 
 /**
  * Transform @{link CallerCallee}s to @{link OperationEvent}s and @{CallEvent}s on model level. The

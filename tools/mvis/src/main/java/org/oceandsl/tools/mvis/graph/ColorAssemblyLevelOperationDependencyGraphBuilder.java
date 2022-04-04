@@ -25,7 +25,7 @@ import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * Dependency graph builder for <strong>operation</strong> dependency graphs at the <strong>assembly

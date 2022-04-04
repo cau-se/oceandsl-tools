@@ -23,7 +23,7 @@ import teetime.framework.AbstractStage;
 import teetime.framework.InputPort;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
 
 /**
  * Read process caller callee events and fills in the callee's file name.

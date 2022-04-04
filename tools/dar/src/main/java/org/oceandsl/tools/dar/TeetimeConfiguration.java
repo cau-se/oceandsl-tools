@@ -50,9 +50,9 @@ import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 import teetime.stage.InstanceOfFilter;
 
-import org.oceandsl.analysis.stages.dynamic.RewriteBeforeAndAfterEventsStage;
-import org.oceandsl.analysis.stages.generic.CountEventsStage;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.stages.CountEventsStage;
+import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.

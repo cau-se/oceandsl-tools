@@ -31,8 +31,8 @@ import kieker.common.exception.ConfigurationException;
 import teetime.framework.Configuration;
 import teetime.framework.Execution;
 
-import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * Architecture analysis main class.

@@ -43,12 +43,12 @@ import kieker.model.analysismodel.type.TypeModel;
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.analysis.stages.model.CountUniqueCallsStage;
-import org.oceandsl.analysis.stages.staticdata.CSVFunctionCallReaderStage;
-import org.oceandsl.analysis.stages.staticdata.CSVMapperStage;
-import org.oceandsl.analysis.stages.staticdata.OperationCallFixPathStage;
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
+import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
+import org.oceandsl.analysis.code.stages.CSVFunctionCallReaderStage;
+import org.oceandsl.analysis.code.stages.CSVMapperStage;
+import org.oceandsl.analysis.code.stages.OperationCallFixPathStage;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;

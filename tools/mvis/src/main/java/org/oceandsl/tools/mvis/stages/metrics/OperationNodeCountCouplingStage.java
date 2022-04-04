@@ -26,9 +26,9 @@ import kieker.model.analysismodel.type.OperationType;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.stages.staticdata.data.LongValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.StringValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.Table;
+import org.oceandsl.analysis.code.stages.data.LongValueHandler;
+import org.oceandsl.analysis.code.stages.data.StringValueHandler;
+import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
  * Counts the number of incoming and outgoing edges of each node. Nodes represent functions or

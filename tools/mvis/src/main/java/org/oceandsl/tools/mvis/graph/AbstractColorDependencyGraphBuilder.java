@@ -38,7 +38,7 @@ import kieker.model.analysismodel.statistics.StatisticRecord;
 import kieker.model.analysismodel.statistics.Statistics;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung

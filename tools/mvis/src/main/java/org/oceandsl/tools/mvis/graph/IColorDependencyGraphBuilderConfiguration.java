@@ -17,7 +17,7 @@ package org.oceandsl.tools.mvis.graph;
 
 import kieker.analysis.graph.dependency.IDependencyGraphBuilderConfiguration;
 
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung

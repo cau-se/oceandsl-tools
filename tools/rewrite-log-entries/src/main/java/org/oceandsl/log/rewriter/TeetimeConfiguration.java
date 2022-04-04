@@ -22,7 +22,7 @@ import kieker.tools.source.LogsReaderCompositeStage;
 
 import teetime.framework.Configuration;
 
-import org.oceandsl.analysis.stages.dynamic.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
 
 /**
  * @author Reiner Jung

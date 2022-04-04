@@ -11,6 +11,7 @@ dependencies {
 	implementation 'org.eclipse.emf:org.eclipse.emf.ecore.xmi:2.16.0'
 
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.0'
+	implementation 'org.mosim.refactorlizar:architecture-evaluation-tool:0.0.4'
 }
 java {
 	// disabled, as there is a strange error referencing "common" in javadoc
