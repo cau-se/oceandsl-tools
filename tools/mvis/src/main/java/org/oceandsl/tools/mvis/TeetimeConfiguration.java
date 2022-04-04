@@ -17,6 +17,11 @@ package org.oceandsl.tools.mvis;
 
 import java.io.IOException;
 
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Cohesion;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Complexity;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Coupling;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.HyperGraphSize;
+
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.graph.dependency.DependencyGraphCreatorStage;
 import kieker.analysis.graph.export.dot.DotFileWriterStage;
@@ -24,22 +29,24 @@ import kieker.analysis.graph.export.graphml.GraphMLFileWriterStage;
 import kieker.analysis.graph.util.FileExtension;
 import kieker.analysis.signature.NameBuilder;
 import kieker.analysis.stage.model.ModelRepository;
+import kieker.model.analysismodel.deployment.DeployedComponent;
 
 import teetime.framework.Configuration;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
-import org.oceandsl.analysis.stages.generic.TableCSVSink;
-import org.oceandsl.analysis.stages.model.ModelRepositoryProducerStage;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
+import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.stages.TableCSVSink;
+import org.oceandsl.analysis.metrics.entropy.AllenDeployedArchitectureGraphStage;
+import org.oceandsl.analysis.metrics.entropy.ComputeAllenComplexityMetrics;
+import org.oceandsl.analysis.metrics.entropy.KiekerArchitectureModelSystemGraphUtils;
+import org.oceandsl.analysis.metrics.entropy.SaveAllenDataStage;
 import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelComponentDependencyGraphBuilderFactory;
 import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelOperationDependencyGraphBuilderFactory;
 import org.oceandsl.tools.mvis.graph.ColoredDotExportConfigurationFactory;
 import org.oceandsl.tools.mvis.graph.DedicatedFileNameMapper;
 import org.oceandsl.tools.mvis.graph.IColorDependencyGraphBuilderConfiguration;
-import org.oceandsl.tools.mvis.stages.entropy.AllenDeployedArchitectureGraphStage;
-import org.oceandsl.tools.mvis.stages.entropy.ComputeAllenComplexityMetrics;
-import org.oceandsl.tools.mvis.stages.entropy.SaveAllenDataStage;
 import org.oceandsl.tools.mvis.stages.graph.ColorDependencyGraphBuilderConfiguration;
 import org.oceandsl.tools.mvis.stages.graph.ModuleCallGraphStage;
 import org.oceandsl.tools.mvis.stages.graph.OperationCallGraphStage;
@@ -134,7 +141,9 @@ public class TeetimeConfiguration extends Configuration {
         /** setup allen metrics. */
         final AllenDeployedArchitectureGraphStage allenArchitectureModularGraphStage = new AllenDeployedArchitectureGraphStage(
                 settings.getSelector(), settings.getGraphGenerationMode());
-        final ComputeAllenComplexityMetrics computeAllenComplexityStage = new ComputeAllenComplexityMetrics();
+        final ComputeAllenComplexityMetrics<DeployedComponent> computeAllenComplexityStage = new ComputeAllenComplexityMetrics<>(
+                new KiekerArchitectureModelSystemGraphUtils(), HyperGraphSize.class, Complexity.class, Coupling.class,
+                Cohesion.class);
         final SaveAllenDataStage saveAllenDataStage = new SaveAllenDataStage(settings.getOutputDirectory());
 
         /** connect stages. */

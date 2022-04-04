@@ -31,8 +31,8 @@ import kieker.model.analysismodel.type.TypeModel;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.stages.staticdata.data.StringValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.Table;
+import org.oceandsl.analysis.code.stages.data.StringValueHandler;
+import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
  * Generate table for interfaces in component type, interface name, operations.

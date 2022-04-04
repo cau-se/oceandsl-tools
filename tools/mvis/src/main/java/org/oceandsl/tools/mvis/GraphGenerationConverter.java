@@ -17,7 +17,7 @@ package org.oceandsl.tools.mvis;
 
 import com.beust.jcommander.IStringConverter;
 
-import org.oceandsl.tools.mvis.stages.graph.EGraphGenerationMode;
+import org.oceandsl.analysis.graph.EGraphGenerationMode;
 
 /**
  * Convert command line parameter strings to @{link EGraphGenerationMode}s.

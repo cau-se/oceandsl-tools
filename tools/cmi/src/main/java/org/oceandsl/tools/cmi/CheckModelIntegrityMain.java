@@ -45,8 +45,8 @@ import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.type.TypeModel;
 
-import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.architecture.model.RepositoryUtils;
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.architecture.RepositoryUtils;
 
 /**
  * Checks the integrity of architecture models.

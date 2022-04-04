@@ -17,7 +17,7 @@ package org.oceandsl.tools.sar.stages;
 
 import teetime.stage.basic.AbstractFilter;
 
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
 
 /**
  * Sanitize component names in {@link CallerCallee} entries. This is helpful to cleanup names based

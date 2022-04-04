@@ -23,7 +23,7 @@ import java.nio.file.Path;
 
 import teetime.framework.AbstractConsumerStage;
 
-import org.oceandsl.analysis.stages.staticdata.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
 
 /**
  * @author Reiner Jung

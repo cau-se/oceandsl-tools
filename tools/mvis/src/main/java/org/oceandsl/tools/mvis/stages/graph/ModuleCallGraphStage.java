@@ -22,6 +22,9 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 
 import teetime.stage.basic.AbstractTransformation;
 
+import org.oceandsl.analysis.graph.EGraphGenerationMode;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
+
 /**
  * Compute a graph based on the module structure of the architecture limited to nodes and modules
  * which belong to a specific measurement source.

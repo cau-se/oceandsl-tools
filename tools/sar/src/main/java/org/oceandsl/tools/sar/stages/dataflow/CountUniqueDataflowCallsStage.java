@@ -32,7 +32,7 @@ import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.statistics.EPredefinedUnits;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 
-import org.oceandsl.analysis.stages.model.CountUniqueCallsStage;
+import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
 
 /**
  * @author Reiner Jung

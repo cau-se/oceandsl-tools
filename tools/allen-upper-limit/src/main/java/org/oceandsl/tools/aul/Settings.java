@@ -20,7 +20,7 @@ import java.nio.file.Path;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
 
-import org.oceandsl.tools.aul.stages.graph.INetworkCreator;
+import org.oceandsl.tools.aul.stages.INetworkCreator;
 
 /**
  * All settings including command line parameters for the analysis.

@@ -30,7 +30,7 @@ import kieker.model.analysismodel.type.TypeModel;
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.sar.stages.dataflow.AssemblyModelDataflowAssemblerStage;
 import org.oceandsl.tools.sar.stages.dataflow.CSVDataflowReaderStage;
 import org.oceandsl.tools.sar.stages.dataflow.CountUniqueDataflowCallsStage;

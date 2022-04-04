@@ -27,9 +27,9 @@ import teetime.framework.OutputPort;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
-import org.oceandsl.analysis.stages.generic.TableCSVSink;
-import org.oceandsl.analysis.stages.model.ModelRepositoryProducerStage;
-import org.oceandsl.analysis.stages.model.ModelSink;
+import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
+import org.oceandsl.analysis.architecture.stages.ModelSink;
+import org.oceandsl.analysis.generic.stages.TableCSVSink;
 import org.oceandsl.tools.maa.stages.CollectConnectionsStage;
 import org.oceandsl.tools.maa.stages.ComponentStatisticsStage;
 import org.oceandsl.tools.maa.stages.FindDistinctCollectionsStage;

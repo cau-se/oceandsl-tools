@@ -24,10 +24,10 @@ import kieker.model.analysismodel.statistics.StatisticsModel;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.stages.staticdata.data.IntegerValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.StringValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.Table;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
+import org.oceandsl.analysis.code.stages.data.IntegerValueHandler;
+import org.oceandsl.analysis.code.stages.data.StringValueHandler;
+import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * @author Reiner Jung

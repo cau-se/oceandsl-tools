@@ -15,6 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.stages.graph;
 
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 import org.oceandsl.tools.mvis.graph.IColorDependencyGraphBuilderConfiguration;
 
 /**

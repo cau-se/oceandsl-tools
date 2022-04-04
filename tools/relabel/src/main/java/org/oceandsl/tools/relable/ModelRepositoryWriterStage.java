@@ -21,7 +21,7 @@ import kieker.analysis.stage.model.ModelRepository;
 
 import teetime.framework.AbstractConsumerStage;
 
-import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
 
 /**
  * Write model to repository.

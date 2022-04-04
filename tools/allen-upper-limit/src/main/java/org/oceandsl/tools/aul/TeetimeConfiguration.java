@@ -19,6 +19,8 @@ import java.io.IOException;
 
 import com.google.common.graph.Graph;
 
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Complexity;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.HyperGraphSize;
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 
 import kieker.model.analysismodel.deployment.DeployedComponent;
@@ -26,12 +28,14 @@ import kieker.model.analysismodel.deployment.DeployedComponent;
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.analysis.stages.model.ModelRepositoryProducerStage;
-import org.oceandsl.analysis.stages.staticdata.data.ValueConversionErrorException;
-import org.oceandsl.tools.aul.stages.entropy.AllenDeployedArchitectureGraphStage;
-import org.oceandsl.tools.aul.stages.entropy.ComputeAllenComplexityMetrics;
-import org.oceandsl.tools.aul.stages.entropy.SaveAllAllenDataStage;
-import org.oceandsl.tools.aul.stages.graph.CreateArchitectureModularGraphStage;
+import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.stages.NumberGeneratorProducer;
+import org.oceandsl.analysis.metrics.entropy.AllenDeployedMaximalInterconnectedGraphStage;
+import org.oceandsl.analysis.metrics.entropy.ComputeAllenComplexityMetrics;
+import org.oceandsl.analysis.metrics.entropy.KiekerArchitectureModelSystemGraphUtils;
+import org.oceandsl.analysis.metrics.entropy.SaveMultipleResultsAllenMetricSink;
+import org.oceandsl.tools.aul.stages.CreateArchitectureModularGraphStage;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -55,7 +59,7 @@ public class TeetimeConfiguration extends Configuration {
         } else {
             final ModelRepositoryProducerStage readerStage = new ModelRepositoryProducerStage(
                     settings.getInputDirectory());
-            final AllenDeployedArchitectureGraphStage allenArchitectureModularGraphStage = new AllenDeployedArchitectureGraphStage();
+            final AllenDeployedMaximalInterconnectedGraphStage allenArchitectureModularGraphStage = new AllenDeployedMaximalInterconnectedGraphStage();
 
             this.connectPorts(readerStage.getOutputPort(), allenArchitectureModularGraphStage.getInputPort());
 
@@ -63,8 +67,11 @@ public class TeetimeConfiguration extends Configuration {
         }
 
         /** setup allen metrics. */
-        final ComputeAllenComplexityMetrics computeAllenComplexityStage = new ComputeAllenComplexityMetrics();
-        final SaveAllAllenDataStage saveAllenDataStage = new SaveAllAllenDataStage(settings.getOutputDirectory());
+        final ComputeAllenComplexityMetrics<DeployedComponent> computeAllenComplexityStage = new ComputeAllenComplexityMetrics<>(
+                new KiekerArchitectureModelSystemGraphUtils(), HyperGraphSize.class, Complexity.class);
+        final SaveMultipleResultsAllenMetricSink saveAllenDataStage = new SaveMultipleResultsAllenMetricSink(
+                settings.getOutputDirectory().resolve("allen-metrics.csv"), "\n", ";", HyperGraphSize.class,
+                Complexity.class);
 
         this.connectPorts(graphOutputPort, computeAllenComplexityStage.getInputPort());
         this.connectPorts(computeAllenComplexityStage.getOutputPort(), saveAllenDataStage.getInputPort());

@@ -11,10 +11,10 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.stages.staticdata.data.IntegerValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.LongValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.StringValueHandler;
-import org.oceandsl.analysis.stages.staticdata.data.Table;
+import org.oceandsl.analysis.code.stages.data.IntegerValueHandler;
+import org.oceandsl.analysis.code.stages.data.LongValueHandler;
+import org.oceandsl.analysis.code.stages.data.StringValueHandler;
+import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
  * Calculate the size of a component by number of operations, how many of its operations are called

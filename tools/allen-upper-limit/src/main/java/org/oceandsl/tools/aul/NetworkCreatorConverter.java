@@ -17,11 +17,11 @@ package org.oceandsl.tools.aul;
 
 import com.beust.jcommander.IStringConverter;
 
-import org.oceandsl.tools.aul.graph.NullNetworkCreator;
-import org.oceandsl.tools.aul.stages.graph.FullMeshedNetworkCreator;
-import org.oceandsl.tools.aul.stages.graph.INetworkCreator;
-import org.oceandsl.tools.aul.stages.graph.LinearConnectionNetworkCreator;
-import org.oceandsl.tools.aul.stages.graph.StarConnectionNetworkCreator;
+import org.oceandsl.tools.aul.stages.FullMeshedNetworkCreator;
+import org.oceandsl.tools.aul.stages.INetworkCreator;
+import org.oceandsl.tools.aul.stages.LinearConnectionNetworkCreator;
+import org.oceandsl.tools.aul.stages.NullNetworkCreator;
+import org.oceandsl.tools.aul.stages.StarConnectionNetworkCreator;
 
 /**
  * @author Reiner Jung

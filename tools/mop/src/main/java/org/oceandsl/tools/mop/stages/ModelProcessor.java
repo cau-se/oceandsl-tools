@@ -20,7 +20,7 @@ import kieker.analysis.stage.model.ModelRepository;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.analysis.architecture.model.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
 import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
 
 /**

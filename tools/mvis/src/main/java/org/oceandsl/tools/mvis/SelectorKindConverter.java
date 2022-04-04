@@ -19,11 +19,11 @@ import java.util.Locale;
 
 import com.beust.jcommander.IStringConverter;
 
-import org.oceandsl.tools.mvis.graph.selector.AllSelector;
-import org.oceandsl.tools.mvis.graph.selector.DiffSelector;
-import org.oceandsl.tools.mvis.graph.selector.IntersectSelector;
-import org.oceandsl.tools.mvis.graph.selector.SubtractSelector;
-import org.oceandsl.tools.mvis.stages.graph.IGraphElementSelector;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
+import org.oceandsl.analysis.graph.selector.AllSelector;
+import org.oceandsl.analysis.graph.selector.DiffSelector;
+import org.oceandsl.analysis.graph.selector.IntersectSelector;
+import org.oceandsl.analysis.graph.selector.SubtractSelector;
 
 /**
  * Convert string to selector used in graph selection.

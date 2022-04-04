@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import teetime.framework.Configuration;
 
-import org.oceandsl.analysis.stages.staticdata.CSVFunctionCallReaderStage;
+import org.oceandsl.analysis.code.stages.CSVFunctionCallReaderStage;
 
 /**
  * Pipe and Filter configuration for the static log preprocessor.

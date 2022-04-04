@@ -17,7 +17,7 @@ package org.oceandsl.tools.relable;
 
 import teetime.framework.Configuration;
 
-import org.oceandsl.analysis.stages.model.ModelRepositoryProducerStage;
+import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 
 /**
  * Pipe and Filter configuration relabling tool.
