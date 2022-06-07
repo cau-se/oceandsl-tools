@@ -89,7 +89,7 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
 
             new BufferedReader(new InputStreamReader(process.getInputStream())).lines().forEach(new Consumer<String>() {
 
-                private final Pattern pattern = Pattern.compile("^(\\w+) at ([\\w\\?/\\.\\-]+):([\\d\\?]*)( .*)?$");
+                private final Pattern pattern = Pattern.compile("^([\\w.]+) at ([\\w\\?/\\.\\-]+):([\\d\\?]*)( .*)?$");
 
                 @Override
                 public void accept(final String string) {
