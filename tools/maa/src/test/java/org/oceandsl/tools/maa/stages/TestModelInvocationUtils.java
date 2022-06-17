@@ -19,7 +19,6 @@ import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
-import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyProvidedInterface;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -140,17 +139,7 @@ public final class TestModelInvocationUtils {
                 .createProvidedInterfaceType(componentType, operationName);
         final AssemblyProvidedInterface assemblyProvidedInterface = TestModelInvocationUtils
                 .createAssemblyProvidedInterface(assemblyComponent, providedInterfaceType, operationName);
-        TestModelInvocationUtils.createDeployedProvidedInterface(deployedComponent, assemblyProvidedInterface,
-                operationName);
-    }
-
-    private static void createDeployedProvidedInterface(final DeployedComponent deployedComponent,
-            final AssemblyProvidedInterface assemblyProvidedInterface, final String operationSignature) {
-        final DeployedProvidedInterface deployedProvidedInterface = TestModelInvocationUtils
-                .createDeployedProvidedInterface(deployedComponent, assemblyProvidedInterface);
-
-        final DeployedOperation deployedOperation = deployedComponent.getOperations().get(operationSignature);
-        deployedProvidedInterface.getProvidedOperations().put(operationSignature, deployedOperation);
+        TestModelInvocationUtils.createDeployedProvidedInterface(deployedComponent, assemblyProvidedInterface);
     }
 
     private static DeployedProvidedInterface createDeployedProvidedInterface(final DeployedComponent deployedComponent,
@@ -169,9 +158,6 @@ public final class TestModelInvocationUtils {
             final ProvidedInterfaceType providedInterfaceType, final String operationSignature) {
         final AssemblyProvidedInterface assemblyProvidedInterface = TestModelInvocationUtils
                 .createAssemblyProvidedInterface(assemblyComponent, providedInterfaceType);
-
-        final AssemblyOperation assemblyOperation = assemblyComponent.getOperations().get(operationSignature);
-        assemblyProvidedInterface.getProvidedOperations().put(operationSignature, assemblyOperation);
 
         return assemblyProvidedInterface;
     }

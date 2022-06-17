@@ -67,25 +67,26 @@ public class CollectConnectionsStage extends AbstractTransformation<ModelReposit
 
         for (final AggregatedInvocation aggregatedInvocation : aggregatedInvocations) {
             if (!aggregatedInvocation.getSource().getComponent()
-                    .equals(aggregatedInvocation.getTarget().getComponent())) {
+                    .equals(aggregatedInvocation.getTarget().getComponent())) { // only inter
+                                                                                // component edges
                 final Coupling key = CollectionFactory.eINSTANCE.createCoupling();
                 key.setCaller(
                         aggregatedInvocation.getSource().getComponent().getAssemblyComponent().getComponentType());
                 key.setCallee(
                         aggregatedInvocation.getTarget().getComponent().getAssemblyComponent().getComponentType());
 
-                OperationCollection operationCollection = interconnections.getConnections().get(key);
+                OperationCollection calleeOperationCollection = interconnections.getConnections().get(key);
 
-                if (operationCollection == null) {
-                    operationCollection = CollectionFactory.eINSTANCE.createOperationCollection();
-                    operationCollection.setCaller(key.getCaller());
-                    operationCollection.setCallee(key.getCallee());
-                    interconnections.getConnections().put(key, operationCollection);
+                if (calleeOperationCollection == null) {
+                    calleeOperationCollection = CollectionFactory.eINSTANCE.createOperationCollection();
+                    calleeOperationCollection.setCaller(key.getCaller());
+                    calleeOperationCollection.setCallee(key.getCallee());
+                    interconnections.getConnections().put(key, calleeOperationCollection);
                 }
 
-                final OperationType operation = aggregatedInvocation.getTarget().getAssemblyOperation()
+                final OperationType calleeOperation = aggregatedInvocation.getTarget().getAssemblyOperation()
                         .getOperationType();
-                operationCollection.getOperations().put(operation.getSignature(), operation);
+                calleeOperationCollection.getOperations().put(calleeOperation.getSignature(), calleeOperation);
             }
         }
 
