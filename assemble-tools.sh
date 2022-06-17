@@ -14,9 +14,9 @@ mkdir lib
 
 for I in cmi dar maa mop mvis sar relabel ; do
 	unzip $BASE_DIR/tools/$I/build/distributions/$I-$VERSION.zip
-	mv $I/lib/* lib/
-	mv $I/bin/* bin/
-	rm -rf $I
+	mv $I-$VERSION/lib/* lib/
+	mv $I-$VERSION/bin/* bin/
+	rm -rf $I-$VERSION
 done
 
 cd ..
