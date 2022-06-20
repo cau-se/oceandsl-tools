@@ -11,3 +11,5 @@ lib
 **/.project
 **/.settings/**
 
+#Ignore Intellij
+.idea
