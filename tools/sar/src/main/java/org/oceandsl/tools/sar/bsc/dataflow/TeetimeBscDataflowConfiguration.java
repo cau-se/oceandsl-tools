@@ -29,6 +29,11 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
 
         logger.info("Starting to read component file.");
         FunctionLookup functionLookup = writeLookUpFile(settings);
+        if(functionLookup.getSizeOfTable()>0){
+            logger.info("components successfully retrieved.");
+        } else {
+            logger.error("Unable to retrieve component content.");
+        }
 
         /* -- ReaderSetup -- */
         OutputPort<DataTransferObject> readerDataflowPort;
