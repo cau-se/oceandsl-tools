@@ -37,6 +37,14 @@ public class Settings { // NOPMD dataclass - required to contain settings
             "--dataflow-input" }, required = false, converter = PathConverter.class, description = "Dataflow CSV file")
     private Path dataflowInputFile;
 
+    @Parameter(names = { "-bsc-j",
+            "--bsc-dataflow-input" }, required = false, converter = PathConverter.class, description = "Bsc Dataflow CSV file")
+    private Path dataflowBscInputFile;
+
+    @Parameter(names = { "-bsc-c",
+            "--bsc-component-input" }, required = false, converter = PathConverter.class, description = "Bsc Dataflow CSV file")
+    private Path componentBscInputFile;
+
     @Parameter(names = { "-cs",
             "--call-separation-char" }, required = false, description = "Separation character for operation call CSV files, default is comma (,)")
     private String callSplitSymbol;
@@ -143,11 +151,19 @@ public class Settings { // NOPMD dataclass - required to contain settings
         return this.dataflowInputFile;
     }
 
+    public Path getBscDataflowInputFile() {
+        return this.dataflowBscInputFile;
+    }
+
     public Path getMissingFunctionsFile() {
         return this.missingFunctionsFile;
     }
 
     public Path getMissingMappingFile() {
         return this.missingMappingFile;
+    }
+
+    public Path getComponentBscInputFile() {
+        return componentBscInputFile;
     }
 }
