@@ -5,8 +5,8 @@ import kieker.model.analysismodel.sources.SourceModel;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.sar.Settings;
 
+import org.oceandsl.tools.sar.bsc.dataflow.model.ComponentLookup;
 import org.oceandsl.tools.sar.bsc.dataflow.model.DataTransferObject;
-import org.oceandsl.tools.sar.bsc.dataflow.model.FunctionLookup;
 import org.oceandsl.tools.sar.bsc.dataflow.stages.CSVBscDataflowReaderStage;
 import org.oceandsl.tools.sar.bsc.dataflow.stages.PreConfigurationStage;
 import org.slf4j.Logger;
@@ -16,7 +16,6 @@ import teetime.framework.OutputPort;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.List;
 
 public class TeetimeBscDataflowConfiguration extends Configuration {
 
@@ -28,8 +27,8 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
         logger.info("Successfully started a Teetime Config");
 
         logger.info("Starting to read component file.");
-        FunctionLookup functionLookup = writeLookUpFile(settings);
-        if(functionLookup.getSizeOfTable()>0){
+        ComponentLookup componentLookup = writeLookUpFile(settings);
+        if(componentLookup.getSizeOfTable()>0){
             logger.info("components successfully retrieved.");
         } else {
             logger.error("Unable to retrieve component content.");
@@ -41,7 +40,7 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
         readerDataflowPort = readDataflowStage.getOutputPort();
 
         /* -- call based modeling -- */
-        final PreConfigurationStage preConfigurationStage = new PreConfigurationStage(functionLookup, modelRepository.getModel(SourceModel.class), settings.getSourceLabel());
+        final PreConfigurationStage preConfigurationStage = new PreConfigurationStage(componentLookup, modelRepository.getModel(SourceModel.class), settings.getSourceLabel());
 
         /* connecting ports. */
         logger.info("connecting ports");
@@ -49,27 +48,41 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
 
     }
 
-    public FunctionLookup writeLookUpFile(Settings settings){
+    public ComponentLookup writeLookUpFile(Settings settings){
         try{
             //read component csv
             BufferedReader reader = Files.newBufferedReader(settings.getComponentBscInputFile());
             String line;
-            FunctionLookup functionLookup = new FunctionLookup();
+            ComponentLookup componentLookup = new ComponentLookup();
             while((line= reader.readLine())!=null){
                 final String[] values = line.split(";");
-                if(values.length > 1){
-                    functionLookup.putContentToComponent(values[0],values[1]);
+                if(values.length == 3){
+                    switch(values[2]){
+                        case "IMPORTED":
+                            componentLookup.putImportToComponent(values[0],values[1]);
+                            break;
+
+                        case "COMMON":
+                            componentLookup.putCBlockToComponent(values[0],values[1]);
+                            break;
+
+                        case "ROUTINE":
+                            componentLookup.putRoutineToComponent(values[0],values[1]);
+                            break;
+                    }
+                } else {
+                    logger.error("Invalid line '{}'. 3 Values needed ", line);
                 }
             }
             reader.close();
 
             //write properties file
-            File componentsFile = new File("components.properties");
+            /*File componentsFile = new File("components.properties");
             BufferedWriter writer = new BufferedWriter(new FileWriter(componentsFile.getName()));
-            List<String> components = functionLookup.getComponents();
+            List<String> components = componentLookup.getComponents();
             for(String component: components){
                 String out = component + "=";
-                List<String> contents = functionLookup.getContentOfComponent(component);
+                List<String> contents = componentLookup.getContentOfComponent(component);
                 for(String content: contents){
                     out += content + ";";
                 }
@@ -78,8 +91,8 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
             }
 
             writer.close();
-            logger.info("Components located at " + componentsFile.getAbsolutePath());
-            return functionLookup;
+            logger.info("Components located at " + componentsFile.getAbsolutePath());*/
+            return componentLookup;
         }catch(IOException e){
             logger.error("Unable to read Path for component File.");
             return null;
