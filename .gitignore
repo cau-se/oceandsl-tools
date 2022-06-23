@@ -13,3 +13,8 @@ lib
 
 #Ignore Intellij
 .idea
+
+#Ignore test or generated files
+test.csv
+testComponents.csv
+components.properties
