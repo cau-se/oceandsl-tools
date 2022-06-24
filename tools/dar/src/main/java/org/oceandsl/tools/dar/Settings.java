@@ -65,6 +65,10 @@ public class Settings { // NOPMD data class
             "--signature-extractor" }, required = true, converter = ESignatureExtractorConverter.class, description = "Type of extractor used for component and operation signatures")
     private ESignatureExtractor signatureExtractor;
 
+    @Parameter(names = { "-k",
+            "--keep-metadata" }, required = false, description = "Keep the metadata info in memory regardless a trace is considered complete")
+    private boolean keepMetaDataOnCompletedTraces;
+
     public Path getInputFile() {
         return this.inputFile;
     }
@@ -99,5 +103,9 @@ public class Settings { // NOPMD data class
 
     public ESignatureExtractor getSignatureExtractor() {
         return this.signatureExtractor;
+    }
+
+    public boolean isKeepMetaDataOnCompletedTraces() {
+        return this.keepMetaDataOnCompletedTraces;
     }
 }

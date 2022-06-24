@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.dar;
+package org.oceandsl.tools.dar.extractors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import kieker.analysis.signature.IComponentSignatureExtractor;
 import kieker.model.analysismodel.type.ComponentType;
@@ -26,6 +29,8 @@ import kieker.model.analysismodel.type.ComponentType;
  */
 public class PythonComponentSignatureExtractor implements IComponentSignatureExtractor {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PythonComponentSignatureExtractor.class);
+
     @Override
     public void extract(final ComponentType componentType) {
         String signature = componentType.getSignature();
@@ -37,12 +42,15 @@ public class PythonComponentSignatureExtractor implements IComponentSignatureExt
             componentType.setName(signature);
             componentType.setPackage("none");
         } else {
-            final String[] segments = signature.split("\\.");
-            final String rest = signature.substring(0, signature.lastIndexOf('.') - 1);
-
-            componentType.setName(segments[segments.length - 1]);
-            componentType.setPackage(rest);
-
+            final int lastIndex = signature.lastIndexOf('.');
+            if (lastIndex < 0) {
+                componentType.setName(signature);
+                componentType.setPackage("");
+                PythonComponentSignatureExtractor.LOGGER.warn("Component without package name {}", signature);
+            } else {
+                componentType.setName(signature.substring(lastIndex + 1));
+                componentType.setPackage(signature.substring(0, lastIndex - 1));
+            }
         }
     }
 
