@@ -33,7 +33,6 @@ import kieker.analysis.stage.model.DeploymentModelAssemblerStage;
 import kieker.analysis.stage.model.ExecutionModelAssembler;
 import kieker.analysis.stage.model.ExecutionModelAssemblerStage;
 import kieker.analysis.stage.model.ModelRepository;
-import kieker.analysis.stage.model.OperationAndCallGeneratorStage;
 import kieker.analysis.stage.model.TypeModelAssemblerStage;
 import kieker.analysis.statistics.CallStatisticsStage;
 import kieker.common.record.IMonitoringRecord;
@@ -53,6 +52,10 @@ import teetime.stage.InstanceOfFilter;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.stages.CountEventsStage;
 import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.tools.dar.extractors.ELFComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -119,7 +122,8 @@ public class TeetimeConfiguration extends Configuration {
                 repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
 
         final OperationAndCallGeneratorStage operationAndCallStage = new OperationAndCallGeneratorStage(true,
-                componentSignatureCleaner, operationSignatureCleaner);
+                componentSignatureCleaner, operationSignatureCleaner,
+                !parameterConfiguration.isKeepMetaDataOnCompletedTraces());
         final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
                 repository.getModel(DeploymentModel.class));
 
