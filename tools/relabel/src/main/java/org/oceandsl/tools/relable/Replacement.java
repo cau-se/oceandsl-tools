@@ -27,18 +27,18 @@ public class Replacement {
 
     private final List<String> sources;
 
-    private final String target;
+    private final List<String> targets;
 
-    public Replacement(final List<String> sources, final String target) {
+    public Replacement(final List<String> sources, final List<String> targets) {
         this.sources = sources;
-        this.target = target;
+        this.targets = targets;
     }
 
     public List<String> getSources() {
         return this.sources;
     }
 
-    public String getTarget() {
-        return this.target;
+    public List<String> getTargets() {
+        return this.targets;
     }
 }

@@ -16,6 +16,8 @@ Short Long                  Required Description
 -E    --experiment-name     yes      Name of the experiment
 -s    --signature-extractor yes      Type of extractor used for component and operation 
                                      signatures (elf, python, java)
+-k    --keep-metadata                Keep the metadata info in memory regardless a trace
+                                     is considered complete
 ===== ===================== ======== ======================================================
 
 Examples
@@ -36,5 +38,37 @@ module map file with the following format:
 component name, file path, operation name
 
  
+Using Addrline
+--------------
  
+Addrline is a command line tool under Linux and other Unices which is able to
+exctract ELF information on functions in ELF based executable. That are all
+native executable under Linux and similar operating systems. It might work with
+other binaries as well.
+ 
+To be able to work the executable must be linked with debugging symbols, i.e.,
+with gcc this can be achieved with the option -g.
 
+Executable
+----------
+
+When analyzing Kieker logs from Kieker4C the log only contains function
+pointer references. This is suboptimal to understand what is going on.
+Therefore, you can extract names and other information on function with dar
+utilizing addrline automatically.
+
+The executable must be compiled with -g to contain debugging symbols.
+
+Special Trace Cases
+-------------------
+
+Usually a trace is a sequenceo of before and after operation events. Each
+before operation increases the stack and every after operation decreases the
+call stack. Thus, when the call stack is empty again, the **dar** tool removes
+the trace metadata from memory, as the trace is considered complete. However,
+in some contexts this is not the case and the trace continues afterwards.
+Therefore, you can use the option -k. This will keep the trace metadata.
+Regardless the trace seems to be complete. In case you have many small traces
+this migh lead to a memory leak, as all trace metadata is kept until termination
+of the tool.
+ 
