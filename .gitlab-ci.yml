@@ -13,6 +13,8 @@ stages:
 - package
 
 compile:
+  only:
+    - main
   tags:
     - exec-docker
   stage: compile
@@ -20,6 +22,8 @@ compile:
     - ./gradlew compileJava
 
 check:
+  only:
+    - main
   tags:
     - exec-docker
   stage: check
@@ -28,6 +32,8 @@ check:
     - ./gradlew -x test checkstyleMain checkstyleTest pmdMain pmdTest
 
 test:
+  only:
+    - main
   tags:
     - exec-docker
   stage: test
@@ -35,6 +41,8 @@ test:
     - ./gradlew test
 
 package:
+  only:
+    - main
   tags:
     - exec-docker
   stage: package
