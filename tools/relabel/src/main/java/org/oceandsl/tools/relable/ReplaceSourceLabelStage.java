@@ -64,8 +64,10 @@ public class ReplaceSourceLabelStage extends AbstractFilter<ModelRepository> {
             for (final String find : replacement.getSources()) {
                 labels.remove(find);
             }
-            if (!labels.contains(replacement.getTarget())) {
-                labels.add(replacement.getTarget());
+            for (final String target : replacement.getTargets()) {
+                if (!labels.contains(target)) {
+                    labels.add(target);
+                }
             }
         }
     }
