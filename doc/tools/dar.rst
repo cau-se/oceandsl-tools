@@ -3,6 +3,7 @@ Dynamic Architecture Analysis
 
 Read a Kieker log and generate an architecture model from it.
 
+===== ===================== ======== ======================================================
 Short Long                  Required Description
 ===== ===================== ======== ======================================================
 -i    --input               *        Input Kieker log directory location
@@ -15,7 +16,8 @@ Short Long                  Required Description
 -E    --experiment-name     *        Name of the experiment
 -s    --signature-extractor *        Type of extractor used for component and operation 
                                      signatures (elf, python, java)
-                                     
+===== ===================== ======== ======================================================
+
 Examples
 --------
 
