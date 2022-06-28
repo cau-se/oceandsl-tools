@@ -12,13 +12,14 @@ Function call file
 Containing functions calls.
 
 There are two supported formats with 3 and 4 column CSV files.
-- 3 columns: file, caller, callee: In this format the callee lacks the
-  information where the operation is located. Thus, it must be inferred
-  at a later point.
-- 4 columns: caller-file, caller, callee-file, callee
+ - 3 columns: file, caller, callee: In this format the callee lacks the
+   information where the operation is located. Thus, it must be inferred
+   at a later point.
+
+ - 4 columns: caller-file, caller, callee-file, callee
 
 Function call file hs comments
------------------------------
+------------------------------
 
 The fparser-based tools already perform the lookup for the callee in the later
 versions (this information is added in a post-processing step by a bash
@@ -51,7 +52,8 @@ Dataflow is stored in a file with 4 columns:
 caller file, caller, direction, common block
 
 Dataflow file hs comments
-------------------------
+-------------------------
+
 There is an additional column that specifies the index of the variable 
 in the common block. We probably do not need this for the current paper, though.
 The column names from the CSV are a bit different:
