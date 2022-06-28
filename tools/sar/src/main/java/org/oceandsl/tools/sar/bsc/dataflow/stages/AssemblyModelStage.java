@@ -29,6 +29,8 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
     protected void execute(DataTransferObject dataTransferObject) throws Exception {
         AssemblyComponent assemblyComponent = assemblyComponentSetUp(dataTransferObject);
         AssemblyOperation assemblyOperation = addOperation(assemblyComponent,dataTransferObject);
+
+        this.outputPort.send(dataTransferObject);
     }
 
     private AssemblyComponent assemblyComponentSetUp(DataTransferObject dataTransferObject) {
