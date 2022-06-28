@@ -21,18 +21,27 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
 
     @Override
     protected void execute(DataTransferObject dataTransferObject) throws Exception {
-        logger.debug("entering TypeModelStage");
         ComponentType componentType = componentSetUp(dataTransferObject);
         OperationType operationType = addOperation(componentType, dataTransferObject);
-
+        this.outputPort.send(dataTransferObject);
     }
 
     private ComponentType componentSetUp(DataTransferObject dataTransferObject) {
         ComponentType componentType = this.typeModel.getComponentTypes().get(dataTransferObject.getComponent());
         if (componentType == null) {
-            componentType = createComponentType();
+            componentType = createComponentType(dataTransferObject);
         }
         return componentType;
+    }
+
+    private ComponentType createComponentType(DataTransferObject dataTransferObject){
+        final ComponentType newComponentType = TypeFactory.eINSTANCE.createComponentType();
+        newComponentType.setName(dataTransferObject.getComponent());
+        newComponentType.setSignature(dataTransferObject.getComponent());
+        logger.info("Placing Component with name: " + dataTransferObject.getComponent());
+        this.typeModel.getComponentTypes().put(dataTransferObject.getComponent(), newComponentType);
+        this.addObjectToSource(newComponentType);
+        return newComponentType;
     }
 
     private OperationType addOperation(ComponentType componentType, DataTransferObject dataTransferObject){
@@ -44,26 +53,14 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
         return operationType;
     }
 
-    private OperationType createOperation(String operation) {
+    private OperationType createOperation(String operationIdent) {
         final OperationType operationType = TypeFactory.eINSTANCE.createOperationType();
-        operationType.setName(operation);
+        operationType.setName(operationIdent);
         operationType.setReturnType("unknown");
-        operationType.setSignature(operation);
+        operationType.setSignature(operationIdent);
+        logger.info("Placing Operation with name: " + operationIdent);
         this.addObjectToSource(operationType);
 
         return operationType;
-    }
-
-    private ComponentType createComponentType(){
-
-            logger.info("Creating component instance... ");
-            final ComponentType newComponentType = TypeFactory.eINSTANCE.createComponentType();
-            newComponentType.setName(TypeModelStage.GLOBAL_PACKAGE);
-            newComponentType.setPackage(TypeModelStage.GLOBAL_PACKAGE);
-            newComponentType.setSignature(TypeModelStage.GLOBAL_PACKAGE);
-
-            this.typeModel.getComponentTypes().put(newComponentType.getSignature(), newComponentType);
-            this.addObjectToSource(newComponentType);
-            return newComponentType;
     }
 }

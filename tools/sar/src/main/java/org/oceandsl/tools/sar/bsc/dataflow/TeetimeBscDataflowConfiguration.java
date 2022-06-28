@@ -1,6 +1,7 @@
 package org.oceandsl.tools.sar.bsc.dataflow;
 
 import kieker.analysis.stage.model.ModelRepository;
+import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.type.TypeModel;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
@@ -8,9 +9,11 @@ import org.oceandsl.tools.sar.Settings;
 
 import org.oceandsl.tools.sar.bsc.dataflow.model.ComponentLookup;
 import org.oceandsl.tools.sar.bsc.dataflow.model.DataTransferObject;
+import org.oceandsl.tools.sar.bsc.dataflow.stages.AssemblyModelStage;
 import org.oceandsl.tools.sar.bsc.dataflow.stages.CSVBscDataflowReaderStage;
 import org.oceandsl.tools.sar.bsc.dataflow.stages.PreConfigurationStage;
 import org.oceandsl.tools.sar.bsc.dataflow.stages.TypeModelStage;
+import org.oceandsl.tools.sar.stages.dataflow.AssemblyModelDataflowAssemblerStage;
 import org.slf4j.Logger;
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
@@ -44,12 +47,13 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
         /* -- call based modeling -- */
         final PreConfigurationStage preConfigurationStage = new PreConfigurationStage(componentLookup, modelRepository.getModel(SourceModel.class), settings.getSourceLabel());
         final TypeModelStage typeModelStage = new TypeModelStage(modelRepository.getModel(TypeModel.class), modelRepository.getModel(SourceModel.class),settings.getSourceLabel());
+        final AssemblyModelStage assemblyModelStage = new AssemblyModelStage(modelRepository.getModel(TypeModel.class), modelRepository.getModel(AssemblyModel.class), modelRepository.getModel(SourceModel.class), settings.getSourceLabel());
 
         /* connecting ports. */
         logger.info("connecting ports");
         this.connectPorts(readerDataflowPort, preConfigurationStage.getInputPort());
         this.connectPorts(preConfigurationStage.getOutputPort(), typeModelStage.getInputPort());
-
+        this.connectPorts(typeModelStage.getOutputPort(), assemblyModelStage.getInputPort());
     }
 
     public ComponentLookup writeLookUpFile(Settings settings){

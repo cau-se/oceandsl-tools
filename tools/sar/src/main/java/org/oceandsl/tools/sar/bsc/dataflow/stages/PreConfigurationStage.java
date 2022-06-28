@@ -36,7 +36,7 @@ public class PreConfigurationStage extends AbstractDataflowAssemblerStage<DataTr
             }
         }
         if(dataTransferObject.getTargetComponent() == null){
-            logger.error("Unknown component from content: " + targetIdent);
+            //logger.error("Unknown component from content: " + targetIdent);
         }
         this.outputPort.send(dataTransferObject);
     }
