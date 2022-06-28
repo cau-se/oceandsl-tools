@@ -12,5 +12,17 @@ discovery when there never was an architecture planned. Analyzes of the
 architecture models and support for optimizing the architecture.
 
 .. toctree::
- :maxdepth: 2
- 
+  :maxdepth: 2
+
+  tools/allen-upper-limit.rst
+  tools/cmi.rst 
+  tools/dar.rst
+  tools/maa.rst
+  tools/mop.rst
+  tools/mvis.rst
+  tools/pp-static-log.rst 
+  tools/relabel.rst
+  tools/rewrite-log-entries.rst
+  tools/sar.rst
+  tools/static-analysis-formats.rst
+

@@ -1,4 +1,5 @@
-# Replace Log Entries
+Replace Log Entries
+===================
 
 (obsolete)
 
@@ -11,16 +12,4 @@ The parameters:
 -o path where the output kieker log is placed
 -a the location of the addr2line executable to resolve the names
 -m the executable (model) to be analyzed by addr2line
-
-## Build
-
-`./gradlew build`
-
-The build produces an tar and zip archive in its `build/distributions` directory.
-
-## Notes
-
-Currently, the resulting Kieker-log uses textual serialization. This could be
-changed in future implementations.
-
 
