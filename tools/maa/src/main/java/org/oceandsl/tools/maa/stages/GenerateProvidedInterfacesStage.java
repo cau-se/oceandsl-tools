@@ -23,7 +23,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.analysis.util.Tuple;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
@@ -71,7 +71,7 @@ public class GenerateProvidedInterfacesStage extends
 
     private void createDeploymentInterfaces(final DeploymentModel deploymentModel,
             final Map<ProvidedInterfaceType, Set<RequiredInterfaceType>> providedtoRequiredInterfaceTypeMap) {
-        deploymentModel.getDeploymentContexts().values().forEach(context -> {
+        deploymentModel.getContexts().values().forEach(context -> {
             context.getComponents().values().forEach(deployedComponent -> {
                 deployedComponent.getAssemblyComponent().getProvidedInterfaces().values().forEach(providedInterface -> {
                     final DeployedProvidedInterface deployedProvidedInterface = this
@@ -90,7 +90,7 @@ public class GenerateProvidedInterfacesStage extends
             final RequiredInterfaceType requiredInterfaceType,
             final DeployedProvidedInterface deployedProvidedInterface) {
         final ComponentType componentType = (ComponentType) requiredInterfaceType.eContainer();
-        deploymentModel.getDeploymentContexts().values().forEach(context -> {
+        deploymentModel.getContexts().values().forEach(context -> {
             context.getComponents().values().forEach(deployedComponent -> {
                 if (deployedComponent.getAssemblyComponent().getComponentType() == componentType) {
                     final Optional<AssemblyRequiredInterface> assemblyRequiredInterface = deployedComponent
@@ -130,14 +130,14 @@ public class GenerateProvidedInterfacesStage extends
 
     private void createAssemblyInterfaces(final AssemblyModel assemblyModel,
             final Map<ProvidedInterfaceType, Set<RequiredInterfaceType>> providedtoRequiredInterfaceTypeMap) {
-        assemblyModel.getAssemblyComponents().values().forEach(assemblyComponent -> {
+        assemblyModel.getComponents().values().forEach(assemblyComponent -> {
             assemblyComponent.getComponentType().getProvidedInterfaceTypes().forEach(providedInterfaceType -> {
                 final AssemblyProvidedInterface providedInterface = this
                         .createAssemblyProvidedInterface(assemblyComponent, providedInterfaceType);
                 assemblyComponent.getProvidedInterfaces().put(providedInterfaceType.getSignature(), providedInterface);
 
                 providedtoRequiredInterfaceTypeMap.get(providedInterfaceType).forEach(requiredInterfaceType -> {
-                    this.createRequiredInterfaceForAssemblyComponents(assemblyModel.getAssemblyComponents().values(),
+                    this.createRequiredInterfaceForAssemblyComponents(assemblyModel.getComponents().values(),
                             requiredInterfaceType, providedInterface);
                 });
             });

@@ -15,9 +15,9 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
+import kieker.analysis.architecture.dependency.PropertyConstants;
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.graph.IVertex;
-import kieker.analysis.graph.dependency.PropertyConstants;
 import kieker.analysis.graph.dependency.vertextypes.VertexType;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
@@ -42,15 +42,17 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
     @Override
     protected IVertex addVertex(final DeployedOperation deployedOperation) {
         final AssemblyOperation operation = deployedOperation.getAssemblyOperation();
-        final AssemblyComponent component = operation.getAssemblyComponent();
+        final AssemblyComponent component = operation.getComponent();
 
         final int componentId = this.identifierRegistry.getIdentifier(component);
         final IVertex componentVertex = this.graph.addVertexIfAbsent(componentId);
         componentVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_COMPONENT);
         componentVertex.setPropertyIfAbsent(PropertyConstants.NAME, component.getComponentType().getName());
         componentVertex.setPropertyIfAbsent(PropertyConstants.PACKAGE_NAME, component.getComponentType().getPackage());
-        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR, this.selectForegroundColor(component));
-        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR, this.selectBackgroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR,
+                this.selectForegroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR,
+                this.selectBackgroundColor(component));
 
         final IGraph componentSubgraph = componentVertex.addChildGraphIfAbsent();
         final int operationId = this.identifierRegistry.getIdentifier(operation);
@@ -62,8 +64,10 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         operationVertex.setPropertyIfAbsent(PropertyConstants.MODIFIERS, operation.getOperationType().getModifiers());
         operationVertex.setPropertyIfAbsent(PropertyConstants.PARAMETER_TYPES,
                 operation.getOperationType().getParameterTypes());
-        operationVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR, this.selectForegroundColor(operation));
-        operationVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR, this.selectBackgroundColor(operation));
+        operationVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR,
+                this.selectForegroundColor(operation));
+        operationVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR,
+                this.selectBackgroundColor(operation));
 
         this.responseTimeDecorator.decorate(operationVertex, operation);
 
@@ -73,15 +77,17 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
     @Override
     protected IVertex addStorageVertex(final DeployedStorage deployedStorage) {
         final AssemblyStorage storage = deployedStorage.getAssemblyStorage();
-        final AssemblyComponent component = storage.getAssemblyComponent();
+        final AssemblyComponent component = storage.getComponent();
 
         final int componentId = this.identifierRegistry.getIdentifier(component);
         final IVertex componentVertex = this.graph.addVertexIfAbsent(componentId);
         componentVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_COMPONENT);
         componentVertex.setPropertyIfAbsent(PropertyConstants.NAME, component.getComponentType().getName());
         componentVertex.setPropertyIfAbsent(PropertyConstants.PACKAGE_NAME, component.getComponentType().getPackage());
-        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR, this.selectForegroundColor(component));
-        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR, this.selectBackgroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR,
+                this.selectForegroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR,
+                this.selectBackgroundColor(component));
 
         final IGraph componentSubgraph = componentVertex.addChildGraphIfAbsent();
         final int accessId = this.identifierRegistry.getIdentifier(storage);

@@ -122,8 +122,8 @@ public final class ModelUtils {
     public static boolean isEqual(final AssemblyStorage leftAssemblyStorage, final AssemblyStorage assemblyStorage) {
         ModelUtils.check(leftAssemblyStorage, "AssemblyStorage leftAssemblyStorage");
         ModelUtils.check(assemblyStorage, "AssemblyStorage assemblyStorage");
-        return ModelUtils.isEqual(leftAssemblyStorage.getStorageType(), assemblyStorage.getStorageType()) && ModelUtils
-                .isEqual(leftAssemblyStorage.getAssemblyComponent(), assemblyStorage.getAssemblyComponent());
+        return ModelUtils.isEqual(leftAssemblyStorage.getStorageType(), assemblyStorage.getStorageType())
+                && ModelUtils.isEqual(leftAssemblyStorage.getComponent(), assemblyStorage.getComponent());
     }
 
     public static boolean isEqual(final AggregatedInvocation leftInvocation,
@@ -143,8 +143,7 @@ public final class ModelUtils {
 
     public static boolean isEqual(final AssemblyOperation leftAssemblyOperation,
             final AssemblyOperation rightAssemblyOperation) {
-        return ModelUtils.isEqual(leftAssemblyOperation.getAssemblyComponent(),
-                rightAssemblyOperation.getAssemblyComponent())
+        return ModelUtils.isEqual(leftAssemblyOperation.getComponent(), rightAssemblyOperation.getComponent())
                 && ModelUtils.isEqual(leftAssemblyOperation.getOperationType(),
                         rightAssemblyOperation.getOperationType());
     }
@@ -174,7 +173,7 @@ public final class ModelUtils {
 
     public static boolean isEqual(final DeployedComponent leftComponent, final DeployedComponent rightComponent) {
         return ModelUtils.isEqual(leftComponent.getSignature(), rightComponent.getSignature())
-                && ModelUtils.isEqual(leftComponent.getDeploymentContext(), rightComponent.getDeploymentContext());
+                && ModelUtils.isEqual(leftComponent.getContext(), rightComponent.getContext());
     }
 
     public static boolean isEqual(final String leftSignature, final String signature) {

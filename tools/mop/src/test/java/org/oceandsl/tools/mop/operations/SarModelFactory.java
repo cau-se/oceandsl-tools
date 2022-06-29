@@ -54,18 +54,18 @@ public class SarModelFactory extends AbstractModelTestFactory {
         component.setName(SarModelFactory.SAR_COMPONENT);
         component.setPackage(AbstractModelTestFactory.PACKAGE);
         component.setSignature(SarModelFactory.SAR_COMPONENT_SIGNATURE);
-        component.getProvidedOperations().put(AbstractModelTestFactory.OP_SIGNATURE,
-                AbstractModelTestFactory.createOperationType("operation", "void", AbstractModelTestFactory.OP_SIGNATURE));
+        component.getProvidedOperations().put(AbstractModelTestFactory.OP_SIGNATURE, AbstractModelTestFactory
+                .createOperationType("operation", "void", AbstractModelTestFactory.OP_SIGNATURE));
         result.getComponentTypes().put(SarModelFactory.SAR_COMPONENT_SIGNATURE, component);
 
         final ComponentType component2 = factory.createComponentType();
         component2.setName(AbstractModelTestFactory.JOINT_COMPONENT);
         component2.setPackage(AbstractModelTestFactory.PACKAGE);
         component2.setSignature(AbstractModelTestFactory.JOINT_COMPONENT_SIGNATURE);
-        component2.getProvidedOperations().put(AbstractModelTestFactory.OP_COMPILE_SIGNATURE,
-                AbstractModelTestFactory.createOperationType("compile", "Model", AbstractModelTestFactory.OP_COMPILE_SIGNATURE));
-        component2.getProvidedOperations().put(AbstractModelTestFactory.OP_LINK_SIGNATURE,
-                AbstractModelTestFactory.createOperationType("link", "Model", AbstractModelTestFactory.OP_LINK_SIGNATURE));
+        component2.getProvidedOperations().put(AbstractModelTestFactory.OP_COMPILE_SIGNATURE, AbstractModelTestFactory
+                .createOperationType("compile", "Model", AbstractModelTestFactory.OP_COMPILE_SIGNATURE));
+        component2.getProvidedOperations().put(AbstractModelTestFactory.OP_LINK_SIGNATURE, AbstractModelTestFactory
+                .createOperationType("link", "Model", AbstractModelTestFactory.OP_LINK_SIGNATURE));
 
         result.getComponentTypes().put(AbstractModelTestFactory.JOINT_COMPONENT_SIGNATURE, component2);
 
@@ -82,9 +82,11 @@ public class SarModelFactory extends AbstractModelTestFactory {
         final AssemblyComponent component = SarModelFactory.createAssemblyComponent(result, typeModel,
                 AbstractModelTestFactory.JOINT_COMPONENT_SIGNATURE, AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE,
                 AbstractModelTestFactory.OP_COMPILE_SIGNATURE);
-        final ComponentType type = AbstractModelTestFactory.findType(typeModel, AbstractModelTestFactory.JOINT_COMPONENT_SIGNATURE);
-        component.getOperations().put(AbstractModelTestFactory.OP_LINK_SIGNATURE, AbstractModelTestFactory
-                .createAssemblyOperation(AbstractModelTestFactory.findOperationType(type, AbstractModelTestFactory.OP_LINK_SIGNATURE)));
+        final ComponentType type = AbstractModelTestFactory.findType(typeModel,
+                AbstractModelTestFactory.JOINT_COMPONENT_SIGNATURE);
+        component.getOperations().put(AbstractModelTestFactory.OP_LINK_SIGNATURE,
+                AbstractModelTestFactory.createAssemblyOperation(
+                        AbstractModelTestFactory.findOperationType(type, AbstractModelTestFactory.OP_LINK_SIGNATURE)));
 
         return result;
     }
@@ -93,10 +95,10 @@ public class SarModelFactory extends AbstractModelTestFactory {
             final String componentSignature, final String assemblySignature, final String operationSignature) {
         final ComponentType type = AbstractModelTestFactory.findType(typeModel, componentSignature);
         final AssemblyComponent component = AbstractModelTestFactory.createAssemblyComponent(assemblySignature, type);
-        component.getOperations().put(operationSignature,
-                AbstractModelTestFactory.createAssemblyOperation(AbstractModelTestFactory.findOperationType(type, operationSignature)));
+        component.getOperations().put(operationSignature, AbstractModelTestFactory
+                .createAssemblyOperation(AbstractModelTestFactory.findOperationType(type, operationSignature)));
 
-        result.getAssemblyComponents().put(assemblySignature, component);
+        result.getComponents().put(assemblySignature, component);
         return component;
     }
 
@@ -105,13 +107,15 @@ public class SarModelFactory extends AbstractModelTestFactory {
 
         final DeploymentModel result = factory.createDeploymentModel();
 
-        final DeploymentContext context = AbstractModelTestFactory.createDeploymentContext(AbstractModelTestFactory.HOSTNAME);
+        final DeploymentContext context = AbstractModelTestFactory
+                .createDeploymentContext(AbstractModelTestFactory.HOSTNAME);
 
         final AssemblyComponent assemblyComponent = AbstractModelTestFactory.findComponent(assemblyModel,
                 SarModelFactory.SAR_ASSEMBLY_SIGNATURE);
         context.getComponents().put(SarModelFactory.SAR_ASSEMBLY_SIGNATURE,
-                AbstractModelTestFactory.createDeploymentComponent(SarModelFactory.SAR_ASSEMBLY_SIGNATURE, assemblyComponent,
-                        AbstractModelTestFactory.createDeployedOperation(AbstractModelTestFactory.OP_SIGNATURE, assemblyComponent)));
+                AbstractModelTestFactory.createDeploymentComponent(SarModelFactory.SAR_ASSEMBLY_SIGNATURE,
+                        assemblyComponent, AbstractModelTestFactory
+                                .createDeployedOperation(AbstractModelTestFactory.OP_SIGNATURE, assemblyComponent)));
 
         final AssemblyComponent assemblyComponent2 = AbstractModelTestFactory.findComponent(assemblyModel,
                 AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE);
@@ -123,7 +127,7 @@ public class SarModelFactory extends AbstractModelTestFactory {
                         AbstractModelTestFactory.createDeployedOperation(AbstractModelTestFactory.OP_LINK_SIGNATURE,
                                 assemblyComponent2)));
 
-        result.getDeploymentContexts().put(AbstractModelTestFactory.HOSTNAME, context);
+        result.getContexts().put(AbstractModelTestFactory.HOSTNAME, context);
 
         return result;
     }
@@ -133,12 +137,15 @@ public class SarModelFactory extends AbstractModelTestFactory {
 
         final ExecutionModel result = factory.createExecutionModel();
 
-        final DeployedOperation operation = AbstractModelTestFactory.findOperation(deploymentModel, AbstractModelTestFactory.HOSTNAME,
-                SarModelFactory.SAR_ASSEMBLY_SIGNATURE, AbstractModelTestFactory.OP_SIGNATURE);
-        final DeployedOperation compile = AbstractModelTestFactory.findOperation(deploymentModel, AbstractModelTestFactory.HOSTNAME,
-                AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE, AbstractModelTestFactory.OP_COMPILE_SIGNATURE);
-        final DeployedOperation link = AbstractModelTestFactory.findOperation(deploymentModel, AbstractModelTestFactory.HOSTNAME,
-                AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE, AbstractModelTestFactory.OP_LINK_SIGNATURE);
+        final DeployedOperation operation = AbstractModelTestFactory.findOperation(deploymentModel,
+                AbstractModelTestFactory.HOSTNAME, SarModelFactory.SAR_ASSEMBLY_SIGNATURE,
+                AbstractModelTestFactory.OP_SIGNATURE);
+        final DeployedOperation compile = AbstractModelTestFactory.findOperation(deploymentModel,
+                AbstractModelTestFactory.HOSTNAME, AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE,
+                AbstractModelTestFactory.OP_COMPILE_SIGNATURE);
+        final DeployedOperation link = AbstractModelTestFactory.findOperation(deploymentModel,
+                AbstractModelTestFactory.HOSTNAME, AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE,
+                AbstractModelTestFactory.OP_LINK_SIGNATURE);
         // operation -> operation
         AbstractModelTestFactory.createAggregatedInvocation(result.getAggregatedInvocations(), operation, operation);
         // operation -> compile

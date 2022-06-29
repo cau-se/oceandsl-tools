@@ -26,7 +26,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kieker.analysis.signature.AbstractSignatureCleaner;
+import kieker.analysis.architecture.recovery.signature.AbstractSignatureCleaner;
 
 import org.oceandsl.analysis.utils.MapFileReader;
 import org.oceandsl.analysis.utils.StringValueConverter;

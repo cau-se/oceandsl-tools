@@ -15,7 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.stages;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;

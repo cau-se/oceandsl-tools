@@ -15,7 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.dar.extractors;
 
-import kieker.analysis.signature.IOperationSignatureExtractor;
+import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;
 import kieker.model.analysismodel.type.OperationType;
 
 /**

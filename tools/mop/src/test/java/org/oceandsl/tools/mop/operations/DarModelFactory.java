@@ -93,7 +93,7 @@ public final class DarModelFactory extends AbstractModelTestFactory {
         component.getOperations().put(operationSignature, AbstractModelTestFactory
                 .createAssemblyOperation(AbstractModelTestFactory.findOperationType(type, operationSignature)));
 
-        result.getAssemblyComponents().put(assemblySignature, component);
+        result.getComponents().put(assemblySignature, component);
     }
 
     public static DeploymentModel createDeploymentModel(final AssemblyModel assemblyModel) {
@@ -109,7 +109,7 @@ public final class DarModelFactory extends AbstractModelTestFactory {
         DarModelFactory.createDeploymentComponent(context, assemblyModel,
                 AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE, AbstractModelTestFactory.OP_COMPILE_SIGNATURE);
 
-        result.getDeploymentContexts().put(AbstractModelTestFactory.HOSTNAME, context);
+        result.getContexts().put(AbstractModelTestFactory.HOSTNAME, context);
 
         return result;
     }

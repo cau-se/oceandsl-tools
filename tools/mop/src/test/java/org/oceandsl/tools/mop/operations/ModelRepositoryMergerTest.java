@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 import org.junit.Assert;
 import org.junit.Test;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
@@ -82,8 +82,8 @@ public class ModelRepositoryMergerTest {
         final TypeModel typeModel = darRepo.getModel(TypeModel.class);
         final AssemblyModel assemblyModel = darRepo.getModel(AssemblyModel.class);
 
-        Assert.assertEquals("Numer of component types", 3, assemblyModel.getAssemblyComponents().size());
-        for (final Entry<String, AssemblyComponent> entry : assemblyModel.getAssemblyComponents().entrySet()) {
+        Assert.assertEquals("Numer of component types", 3, assemblyModel.getComponents().size());
+        for (final Entry<String, AssemblyComponent> entry : assemblyModel.getComponents().entrySet()) {
             final AssemblyComponent component = entry.getValue();
 
             final ComponentType componentType = typeModel.getComponentTypes()
@@ -117,15 +117,14 @@ public class ModelRepositoryMergerTest {
         final AssemblyModel assemblyModel = darRepo.getModel(AssemblyModel.class);
         final DeploymentModel deploymentModel = darRepo.getModel(DeploymentModel.class);
 
-        Assert.assertEquals("Numer of deployment contexts", 1, deploymentModel.getDeploymentContexts().size());
-        final DeploymentContext context = deploymentModel.getDeploymentContexts()
-                .get(AbstractModelTestFactory.HOSTNAME);
+        Assert.assertEquals("Numer of deployment contexts", 1, deploymentModel.getContexts().size());
+        final DeploymentContext context = deploymentModel.getContexts().get(AbstractModelTestFactory.HOSTNAME);
         Assert.assertTrue("No context", context != null);
         for (final Entry<String, DeployedComponent> entry : context.getComponents()) {
             final DeployedComponent deployedComponent = entry.getValue();
             Assert.assertTrue("Deployed component has wrong signature",
                     deployedComponent.getSignature().equals(entry.getKey()));
-            final AssemblyComponent assemblyComponent = assemblyModel.getAssemblyComponents().get(entry.getKey());
+            final AssemblyComponent assemblyComponent = assemblyModel.getComponents().get(entry.getKey());
             if (SarModelFactory.SAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
                 this.checkDeployedOperation(deployedComponent, assemblyComponent,
                         AbstractModelTestFactory.OP_SIGNATURE);

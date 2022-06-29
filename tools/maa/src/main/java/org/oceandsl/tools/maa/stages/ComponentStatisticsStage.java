@@ -2,7 +2,7 @@ package org.oceandsl.tools.maa.stages;
 
 import java.util.Collection;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
@@ -34,7 +34,7 @@ public class ComponentStatisticsStage extends AbstractTransformation<ModelReposi
                 new LongValueHandler("required"));
 
         int i = 0;
-        for (final AssemblyComponent component : assemblyModel.getAssemblyComponents().values()) {
+        for (final AssemblyComponent component : assemblyModel.getComponents().values()) {
             table.addRow(String.format("%s::%d", component.getComponentType().getSignature(), i++),
                     component.getOperations().size(),
                     this.countAllProvidedOperations(component, component.getOperations().values(),

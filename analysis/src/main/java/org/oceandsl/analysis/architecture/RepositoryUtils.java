@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 
 /**
@@ -84,8 +84,7 @@ public final class RepositoryUtils {
     public static Object getName(final EObject result) {
         if (result instanceof DeployedOperation) {
             final DeployedOperation operation = (DeployedOperation) result;
-            return String.format("%s::%s::[%s]%s",
-                    RepositoryUtils.getName(operation.getComponent().getDeploymentContext()),
+            return String.format("%s::%s::[%s]%s", RepositoryUtils.getName(operation.getComponent().getContext()),
                     RepositoryUtils.getName(operation.getComponent()), result.getClass().getSimpleName(),
                     RepositoryUtils.getName(operation.getAssemblyOperation().getOperationType()));
 

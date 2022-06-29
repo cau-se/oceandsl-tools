@@ -17,7 +17,7 @@ package org.oceandsl.tools.maa.stages;
 
 import java.util.Collection;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.type.OperationType;

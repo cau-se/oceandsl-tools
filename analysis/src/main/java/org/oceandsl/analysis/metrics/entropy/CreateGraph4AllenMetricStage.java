@@ -24,7 +24,7 @@ import com.google.common.graph.MutableGraph;
 
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
@@ -76,7 +76,7 @@ public class CreateGraph4AllenMetricStage
 
     private List<DeployedOperation> collectAllOperations(final DeploymentModel deploymentModel) {
         final List<DeployedOperation> operations = new ArrayList<>();
-        for (final DeploymentContext context : deploymentModel.getDeploymentContexts().values()) {
+        for (final DeploymentContext context : deploymentModel.getContexts().values()) {
             for (final DeployedComponent component : context.getComponents().values()) {
                 for (final DeployedOperation operation : component.getOperations().values()) {
                     operations.add(operation);

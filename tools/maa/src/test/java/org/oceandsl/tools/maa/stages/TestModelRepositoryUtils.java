@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
@@ -88,7 +88,7 @@ public final class TestModelRepositoryUtils {
     private static DeploymentModel createDeploymentModel(final AssemblyModel assemblyModel) {
         final DeploymentModel deploymentModel = DeploymentFactory.eINSTANCE.createDeploymentModel();
 
-        deploymentModel.getDeploymentContexts().put(TestModelRepositoryUtils.CONTEXT_A,
+        deploymentModel.getContexts().put(TestModelRepositoryUtils.CONTEXT_A,
                 TestModelRepositoryUtils.createDeploymentContext(TestModelRepositoryUtils.CONTEXT_A, assemblyModel));
 
         return deploymentModel;
@@ -98,7 +98,7 @@ public final class TestModelRepositoryUtils {
         final DeploymentContext deploymentContext = DeploymentFactory.eINSTANCE.createDeploymentContext();
         deploymentContext.setName(name);
 
-        for (final Entry<String, AssemblyComponent> entry : assemblyModel.getAssemblyComponents().entrySet()) {
+        for (final Entry<String, AssemblyComponent> entry : assemblyModel.getComponents().entrySet()) {
             deploymentContext.getComponents().put(entry.getKey(),
                     TestModelRepositoryUtils.createDeploymentComponent(entry.getKey(), entry.getValue()));
         }
@@ -129,15 +129,12 @@ public final class TestModelRepositoryUtils {
     private static AssemblyModel createAssemblyModel(final TypeModel typeModel) {
         final AssemblyModel assemblyModel = AssemblyFactory.eINSTANCE.createAssemblyModel();
 
-        assemblyModel.getAssemblyComponents().put(TestModelRepositoryUtils.FQN_COMPONENT_A + ":1",
-                TestModelRepositoryUtils.createAssemblyComponent(typeModel, TestModelRepositoryUtils.FQN_COMPONENT_A,
-                        ":1"));
-        assemblyModel.getAssemblyComponents().put(TestModelRepositoryUtils.FQN_COMPONENT_B + ":1",
-                TestModelRepositoryUtils.createAssemblyComponent(typeModel, TestModelRepositoryUtils.FQN_COMPONENT_B,
-                        ":1"));
-        assemblyModel.getAssemblyComponents().put(TestModelRepositoryUtils.FQN_COMPONENT_C + ":1",
-                TestModelRepositoryUtils.createAssemblyComponent(typeModel, TestModelRepositoryUtils.FQN_COMPONENT_C,
-                        ":1"));
+        assemblyModel.getComponents().put(TestModelRepositoryUtils.FQN_COMPONENT_A + ":1", TestModelRepositoryUtils
+                .createAssemblyComponent(typeModel, TestModelRepositoryUtils.FQN_COMPONENT_A, ":1"));
+        assemblyModel.getComponents().put(TestModelRepositoryUtils.FQN_COMPONENT_B + ":1", TestModelRepositoryUtils
+                .createAssemblyComponent(typeModel, TestModelRepositoryUtils.FQN_COMPONENT_B, ":1"));
+        assemblyModel.getComponents().put(TestModelRepositoryUtils.FQN_COMPONENT_C + ":1", TestModelRepositoryUtils
+                .createAssemblyComponent(typeModel, TestModelRepositoryUtils.FQN_COMPONENT_C, ":1"));
 
         return assemblyModel;
     }
