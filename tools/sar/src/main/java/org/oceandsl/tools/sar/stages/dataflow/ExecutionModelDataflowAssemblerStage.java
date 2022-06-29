@@ -45,7 +45,7 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
 
     @Override
     protected void execute(final DataAccess element) throws Exception {
-        final DeploymentContext context = this.deploymentModel.getDeploymentContexts().get(0).getValue();
+        final DeploymentContext context = this.deploymentModel.getContexts().get(0).getValue();
         final DeployedComponent callerComponent = context.getComponents().get(element.getModule());
         final DeployedOperation callerOperation = callerComponent.getOperations().get(element.getOperation());
         final DeployedStorage accessedStorage = this.findStorage(context, element.getSharedData());

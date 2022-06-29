@@ -22,13 +22,13 @@ import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Complexity;
 import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Coupling;
 import org.mosim.refactorlizar.architecture.evaluation.codemetrics.HyperGraphSize;
 
+import kieker.analysis.architecture.dependency.DependencyGraphCreatorStage;
+import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.recovery.signature.NameBuilder;
 import kieker.analysis.graph.IGraph;
-import kieker.analysis.graph.dependency.DependencyGraphCreatorStage;
 import kieker.analysis.graph.export.dot.DotFileWriterStage;
 import kieker.analysis.graph.export.graphml.GraphMLFileWriterStage;
 import kieker.analysis.graph.util.FileExtension;
-import kieker.analysis.signature.NameBuilder;
-import kieker.analysis.stage.model.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 
 import teetime.framework.Configuration;

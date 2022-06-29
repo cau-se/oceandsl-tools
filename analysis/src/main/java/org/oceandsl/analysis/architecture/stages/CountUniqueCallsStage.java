@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kieker.analysis.stage.model.data.OperationCallDurationEvent;
+import kieker.analysis.architecture.recovery.data.OperationCallDurationEvent;
 import kieker.analysis.statistics.StatisticsDecoratorStage;
 import kieker.analysis.statistics.calculating.CountCalculator;
 import kieker.model.analysismodel.deployment.DeployedOperation;

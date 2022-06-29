@@ -13,34 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.relable;
+package org.oceandsl.tools.relabel;
 
-import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 
-import kieker.analysis.stage.model.ModelRepository;
-
-import teetime.framework.AbstractConsumerStage;
-
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import com.beust.jcommander.IStringConverter;
 
 /**
- * Write model to repository.
  *
  * @author Reiner Jung
  * @since 1.1
- *
  */
-public class ModelRepositoryWriterStage extends AbstractConsumerStage<ModelRepository> {
-
-    private final Path outputDirectory;
-
-    public ModelRepositoryWriterStage(final Path outputDirectory) {
-        this.outputDirectory = outputDirectory;
-    }
+public class ReplacementConverter implements IStringConverter<Replacement> {
 
     @Override
-    protected void execute(final ModelRepository element) throws Exception {
-        ArchitectureModelManagementUtils.writeModelRepository(this.outputDirectory, element);
+    public Replacement convert(final String value) {
+        final String[] rule = value.split(":");
+        if (rule.length == 2) {
+            final List<String> sources = Arrays.asList(rule[0].split(","));
+            final List<String> targets = Arrays.asList(rule[1].split(","));
+            return new Replacement(sources, targets);
+        } else {
+            System.err.printf("Format of replacement rule is not supported: %s", value); // NOPMD
+            return null;
+        }
     }
 
 }

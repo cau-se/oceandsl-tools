@@ -17,9 +17,10 @@ package org.oceandsl.tools.mvis.graph;
 
 import java.util.Collection;
 
+import kieker.analysis.architecture.dependency.PropertyConstants;
+import kieker.analysis.architecture.recovery.signature.NameBuilder;
 import kieker.analysis.graph.IElement;
 import kieker.analysis.graph.IVertex;
-import kieker.analysis.graph.dependency.PropertyConstants;
 import kieker.analysis.graph.dependency.vertextypes.IVertexTypeMapper;
 import kieker.analysis.graph.dependency.vertextypes.VertexType;
 import kieker.analysis.graph.export.dot.DotExportConfiguration;
@@ -27,7 +28,6 @@ import kieker.analysis.graph.util.dot.attributes.DotClusterAttribute;
 import kieker.analysis.graph.util.dot.attributes.DotEdgeAttribute;
 import kieker.analysis.graph.util.dot.attributes.DotGraphAttribute;
 import kieker.analysis.graph.util.dot.attributes.DotNodeAttribute;
-import kieker.analysis.signature.NameBuilder;
 
 /**
  * Based on DotExportConfigurationFactory with support for colored edges.

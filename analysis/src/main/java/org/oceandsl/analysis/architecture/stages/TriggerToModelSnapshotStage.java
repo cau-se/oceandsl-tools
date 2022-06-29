@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;

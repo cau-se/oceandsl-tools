@@ -87,7 +87,7 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
     }
 
     private AssemblyStorage findAssemblyStorage(final String sharedData) {
-        for (final AssemblyComponent assemblyComponent : this.assemblyModel.getAssemblyComponents().values()) {
+        for (final AssemblyComponent assemblyComponent : this.assemblyModel.getComponents().values()) {
             final AssemblyStorage assemblyStorage = assemblyComponent.getStorages().get(sharedData);
             if (assemblyStorage != null) {
                 return assemblyStorage;
@@ -98,7 +98,7 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
     }
 
     private DeployedOperation findOperation(final DataAccess element) {
-        final DeploymentContext deployedContext = this.deploymentModel.getDeploymentContexts().get(0).getValue();
+        final DeploymentContext deployedContext = this.deploymentModel.getContexts().get(0).getValue();
         if (deployedContext == null) {
             this.logger.error("Internal error: Data must contain at least one deployment context.");
             return null;
@@ -113,8 +113,7 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
             }
             DeployedOperation deployedOperation = deployedComponent.getOperations().get(element.getOperation());
             if (deployedOperation == null) {
-                final AssemblyComponent assemblyComponent = this.assemblyModel.getAssemblyComponents()
-                        .get(element.getModule());
+                final AssemblyComponent assemblyComponent = this.assemblyModel.getComponents().get(element.getModule());
                 final AssemblyOperation assemblyOperation = assemblyComponent.getOperations()
                         .get(element.getOperation());
                 deployedOperation = DeploymentFactory.eINSTANCE.createDeployedOperation();
@@ -131,7 +130,7 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
         final String name = deployedStorage.getAssemblyStorage().getStorageType().getName();
         deployedComponent.getStorages().removeKey(name);
 
-        final DeploymentContext context = deployedComponent.getDeploymentContext();
+        final DeploymentContext context = deployedComponent.getContext();
 
         final DeployedComponent existingComponent = context.getComponents()
                 .get(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
@@ -151,7 +150,7 @@ public class DeploymentModelDataflowAssemblerStage extends AbstractDataflowAssem
     }
 
     private AssemblyComponent findAssemblyComponent(final String signature) {
-        return this.assemblyModel.getAssemblyComponents().get(signature);
+        return this.assemblyModel.getComponents().get(signature);
     }
 
 }

@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.EMap;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
@@ -66,10 +66,10 @@ public class GroupComponentsHierarchicallyStage extends AbstractTransformation<M
             if (!typeModel.getComponentTypes().containsKey(componentName)) {
                 final ComponentType componentType = this.createComponentType(componentName);
                 final AssemblyComponent component = this.createAssemblyComponent(componentName, componentType);
-                this.addSubComponents(componentType, component, assemblyModel.getAssemblyComponents());
+                this.addSubComponents(componentType, component, assemblyModel.getComponents());
                 if (component.getContainedComponents().size() > 0) { // ignore empty main component
                     typeModel.getComponentTypes().put(componentName, componentType);
-                    assemblyModel.getAssemblyComponents().put(componentName, component);
+                    assemblyModel.getComponents().put(componentName, component);
                 }
             }
         });

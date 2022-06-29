@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.analysis.util.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
@@ -174,7 +174,8 @@ public class FindDistinctCollectionsStage extends
         return calleeOperationToCallerComponentSetMap;
     }
 
-    private Map<ComponentType, Set<OperationType>> createProvidedComponentToCallerOperationsMap(final Connections connections) {
+    private Map<ComponentType, Set<OperationType>> createProvidedComponentToCallerOperationsMap(
+            final Connections connections) {
         final Map<ComponentType, Set<OperationType>> providedComponentToCallerOperationsMap = new HashMap<>();
         for (final OperationCollection connection : connections.getConnections().values()) {
             for (final OperationType caller : connection.getOperations().values()) {

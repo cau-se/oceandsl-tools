@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.analysis.util.stage.trigger.Trigger;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
@@ -124,8 +124,7 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
     private Map<String, Object> createAssemblyModel() {
         final Map<String, Object> assemblyModelMap = new HashMap<>();
 
-        for (final Entry<String, AssemblyComponent> assemblyComponentEntry : this.assemblyModel
-                .getAssemblyComponents()) {
+        for (final Entry<String, AssemblyComponent> assemblyComponentEntry : this.assemblyModel.getComponents()) {
             final AssemblyComponent assemblyComponent = assemblyComponentEntry.getValue();
             final Map<String, Object> assemblyComponentMap = new HashMap<>();
 
@@ -150,8 +149,7 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
     private Map<String, Object> createDeplyomentModel() {
         final Map<String, Object> deploymentModelMap = new HashMap<>();
 
-        for (final Entry<String, DeploymentContext> deploymentContextEntry : this.deploymentModel
-                .getDeploymentContexts()) {
+        for (final Entry<String, DeploymentContext> deploymentContextEntry : this.deploymentModel.getContexts()) {
             final DeploymentContext deploymentContext = deploymentContextEntry.getValue();
             final Map<String, Object> deploymentContextMap = new HashMap<>();
 
@@ -198,7 +196,7 @@ public class ModelSerializerStage extends AbstractConsumerStage<Trigger> {
     private String createReference(final EObject key) {
         if (key instanceof DeployedComponent) {
             final DeployedComponent component = (DeployedComponent) key;
-            return String.format("%s::%s", component.getDeploymentContext().getName(),
+            return String.format("%s::%s", component.getContext().getName(),
                     this.createReference(component.getAssemblyComponent()));
         } else if (key instanceof DeployedOperation) {
             final DeployedOperation operation = (DeployedOperation) key;

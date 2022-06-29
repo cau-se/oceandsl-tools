@@ -42,7 +42,7 @@ subprojects {
 	}
 
 	dependencies {
-		implementation 'net.kieker-monitoring:kieker:1.16-SNAPSHOT'
+		implementation 'net.kieker-monitoring:kieker:2.0.0-SNAPSHOT'
 		implementation 'net.sourceforge.teetime:teetime:3.1-SNAPSHOT'
 		implementation 'com.beust:jcommander:1.78'
 		implementation 'ch.qos.logback:logback-classic:1.1.7'

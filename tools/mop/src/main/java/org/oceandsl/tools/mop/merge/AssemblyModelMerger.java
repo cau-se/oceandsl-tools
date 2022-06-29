@@ -36,15 +36,15 @@ public final class AssemblyModelMerger {
     static void mergeAssemblyModel(final TypeModel typeModel, final AssemblyModel model, // NOPMD
             final AssemblyModel mergeModel) {
         // add additional component types if necessary
-        for (final AssemblyComponent mergeComponent : mergeModel.getAssemblyComponents().values()) {
-            if (!model.getAssemblyComponents().containsKey(mergeComponent.getSignature())) {
-                model.getAssemblyComponents().put(mergeComponent.getSignature(),
+        for (final AssemblyComponent mergeComponent : mergeModel.getComponents().values()) {
+            if (!model.getComponents().containsKey(mergeComponent.getSignature())) {
+                model.getComponents().put(mergeComponent.getSignature(),
                         AssemblyModelCloneUtils.duplicate(typeModel, mergeComponent));
             }
         }
         // now merge operations
-        for (final AssemblyComponent component : model.getAssemblyComponents().values()) {
-            final AssemblyComponent mergeComponent = mergeModel.getAssemblyComponents().get(component.getSignature());
+        for (final AssemblyComponent component : model.getComponents().values()) {
+            final AssemblyComponent mergeComponent = mergeModel.getComponents().get(component.getSignature());
             if (mergeComponent != null) {
                 AssemblyModelMerger.mergeAssemblyOperations(component, mergeComponent.getOperations());
                 AssemblyModelMerger.mergeAssemblyStorages(component, mergeComponent.getStorages());

@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.ProvidedInterfaceType;

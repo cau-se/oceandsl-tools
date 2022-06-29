@@ -40,16 +40,15 @@ public final class DeploymentModelMerger {
     /* default */ static void mergeDeploymentModel(final AssemblyModel assemblyModel, final DeploymentModel model, // NOPMD
             final DeploymentModel mergeModel) {
         // add additional contexts if necessary
-        for (final DeploymentContext mergeDeploymentContext : mergeModel.getDeploymentContexts().values()) {
-            if (!model.getDeploymentContexts().containsKey(mergeDeploymentContext.getName())) {
-                model.getDeploymentContexts().put(mergeDeploymentContext.getName(),
+        for (final DeploymentContext mergeDeploymentContext : mergeModel.getContexts().values()) {
+            if (!model.getContexts().containsKey(mergeDeploymentContext.getName())) {
+                model.getContexts().put(mergeDeploymentContext.getName(),
                         DeploymentModelCloneUtils.duplicate(assemblyModel, mergeDeploymentContext));
             }
         }
         // now merge operations
-        for (final DeploymentContext deploymentContext : model.getDeploymentContexts().values()) {
-            final DeploymentContext mergeDeploymentContext = mergeModel.getDeploymentContexts()
-                    .get(deploymentContext.getName());
+        for (final DeploymentContext deploymentContext : model.getContexts().values()) {
+            final DeploymentContext mergeDeploymentContext = mergeModel.getContexts().get(deploymentContext.getName());
             if (mergeDeploymentContext != null) {
                 DeploymentModelMerger.mergeDepolymentComponents(assemblyModel, deploymentContext,
                         mergeDeploymentContext.getComponents());

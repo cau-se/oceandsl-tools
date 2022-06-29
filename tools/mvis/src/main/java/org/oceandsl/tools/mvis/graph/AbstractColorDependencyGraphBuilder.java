@@ -21,11 +21,11 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 
+import kieker.analysis.architecture.dependency.AbstractDependencyGraphBuilder;
+import kieker.analysis.architecture.dependency.ResponseTimeDecorator;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.analysis.graph.IGraph;
 import kieker.analysis.graph.IVertex;
-import kieker.analysis.graph.dependency.AbstractDependencyGraphBuilder;
-import kieker.analysis.graph.dependency.ResponseTimeDecorator;
-import kieker.analysis.stage.model.ModelRepository;
 import kieker.analysis.util.ObjectIdentifierRegistry;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.execution.AggregatedInvocation;

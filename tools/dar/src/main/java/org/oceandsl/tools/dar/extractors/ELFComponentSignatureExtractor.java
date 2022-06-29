@@ -18,7 +18,7 @@ package org.oceandsl.tools.dar.extractors;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import kieker.analysis.signature.IComponentSignatureExtractor;
+import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
 import kieker.model.analysismodel.type.ComponentType;
 
 /**

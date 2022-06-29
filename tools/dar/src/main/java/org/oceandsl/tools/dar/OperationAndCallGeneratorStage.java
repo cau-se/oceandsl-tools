@@ -21,10 +21,10 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
-import kieker.analysis.signature.AbstractSignatureCleaner;
-import kieker.analysis.signature.NullSignatureCleaner;
-import kieker.analysis.stage.model.data.CallEvent;
-import kieker.analysis.stage.model.data.OperationEvent;
+import kieker.analysis.architecture.recovery.data.CallEvent;
+import kieker.analysis.architecture.recovery.data.OperationEvent;
+import kieker.analysis.architecture.recovery.signature.AbstractSignatureCleaner;
+import kieker.analysis.architecture.recovery.signature.NullSignatureCleaner;
 import kieker.common.record.flow.IFlowRecord;
 import kieker.common.record.flow.trace.TraceMetadata;
 import kieker.common.record.flow.trace.operation.AfterOperationEvent;

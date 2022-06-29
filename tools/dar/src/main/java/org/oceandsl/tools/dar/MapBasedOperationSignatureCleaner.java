@@ -15,7 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.dar;
 
-import kieker.analysis.signature.AbstractSignatureCleaner;
+import kieker.analysis.architecture.recovery.signature.AbstractSignatureCleaner;
 
 /**
  * @author Reiner Jung

@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
@@ -66,12 +66,9 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
                 final Long data = (Long) statistics.getStatistics().get(EPredefinedUnits.INVOCATION).getProperties()
                         .get(EPropertyType.COUNT);
 
-                result.addRow(
-                        value.getSource().getAssemblyOperation().getAssemblyComponent().getComponentType()
-                                .getSignature(),
+                result.addRow(value.getSource().getAssemblyOperation().getComponent().getComponentType().getSignature(),
                         value.getSource().getAssemblyOperation().getOperationType().getSignature(),
-                        value.getTarget().getAssemblyOperation().getAssemblyComponent().getComponentType()
-                                .getSignature(),
+                        value.getTarget().getAssemblyOperation().getComponent().getComponentType().getSignature(),
                         value.getTarget().getAssemblyOperation().getOperationType().getSignature(), data);
             } else {
                 this.logger.error("Missing statistics for invocation {} -> {}",
