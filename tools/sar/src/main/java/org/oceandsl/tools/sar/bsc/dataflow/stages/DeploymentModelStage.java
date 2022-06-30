@@ -1,7 +1,6 @@
 package org.oceandsl.tools.sar.bsc.dataflow.stages;
 
 import kieker.model.analysismodel.assembly.AssemblyComponent;
-import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.deployment.*;
@@ -31,7 +30,7 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
     }
 
     private DeployedComponent deployedComponentSetUp(DataTransferObject dataTransferObject) {
-        final DeploymentContext deployedContext = this.deploymentModel.getDeploymentContexts().get(0).getValue();
+        final DeploymentContext deployedContext = this.deploymentModel.getContexts().get(0).getValue();
         if (deployedContext == null) {
             this.logger.error("Internal error: Data must contain at least one deployment context.");
             return null;
@@ -48,7 +47,7 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
         final DeployedComponent newDeployedComponent= DeploymentFactory.eINSTANCE.createDeployedComponent();
 
         newDeployedComponent.setSignature(dataTransferObject.getComponent());
-        newDeployedComponent.setAssemblyComponent(this.assemblyModel.getAssemblyComponents().get(dataTransferObject.getComponent()));
+        newDeployedComponent.setAssemblyComponent(this.assemblyModel.getComponents().get(dataTransferObject.getComponent()));
         deploymentContext.getComponents().put(dataTransferObject.getComponent(), newDeployedComponent);
 
         logger.info("Placing DeployedComponent with name: " + dataTransferObject.getComponent());
@@ -65,7 +64,7 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
     }
 
     private DeployedOperation createOperation(DeployedComponent deployedComponent, DataTransferObject dataTransferObject) {
-        final AssemblyComponent assemblyComponent = this.assemblyModel.getAssemblyComponents().get(dataTransferObject.getComponent());
+        final AssemblyComponent assemblyComponent = this.assemblyModel.getComponents().get(dataTransferObject.getComponent());
         final AssemblyOperation assemblyOperation = assemblyComponent.getOperations().get(assemblyComponent.getOperations().get(dataTransferObject.getSourceIdent()));
 
         final DeployedOperation deployedOperation = DeploymentFactory.eINSTANCE.createDeployedOperation();

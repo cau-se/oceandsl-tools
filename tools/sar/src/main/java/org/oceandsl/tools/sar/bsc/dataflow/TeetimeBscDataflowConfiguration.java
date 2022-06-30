@@ -1,6 +1,6 @@
 package org.oceandsl.tools.sar.bsc.dataflow;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.sources.SourceModel;
@@ -54,7 +54,7 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
         this.connectPorts(readerDataflowPort, preConfigurationStage.getInputPort());
         this.connectPorts(preConfigurationStage.getOutputPort(), typeModelStage.getInputPort());
         this.connectPorts(typeModelStage.getOutputPort(), assemblyModelStage.getInputPort());
-        this.connectPorts(assemblyModelStage.getOutputPort(), deploymentModelStage.getInputPort());
+        //this.connectPorts(assemblyModelStage.getOutputPort(), deploymentModelStage.getInputPort());
     }
 
     public ComponentLookup writeLookUpFile(Settings settings){

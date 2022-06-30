@@ -1,14 +1,10 @@
 package org.oceandsl.tools.sar.bsc.dataflow.stages;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.type.ComponentType;
-import kieker.model.analysismodel.type.OperationType;
-import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
 import org.oceandsl.tools.sar.bsc.dataflow.model.DataTransferObject;
 import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
@@ -34,7 +30,7 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
     }
 
     private AssemblyComponent assemblyComponentSetUp(DataTransferObject dataTransferObject) {
-        AssemblyComponent assemblyComponent = this.assemblyModel.getAssemblyComponents().get(dataTransferObject.getComponent());
+        AssemblyComponent assemblyComponent = this.assemblyModel.getComponents().get(dataTransferObject.getComponent());
         if (assemblyComponent == null) {
             assemblyComponent = createAssemblyComponent(dataTransferObject);
         }
@@ -46,7 +42,7 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         newAssemblyComponent.setComponentType(this.typeModel.getComponentTypes().get(dataTransferObject.getComponent()));
         newAssemblyComponent.setSignature(dataTransferObject.getComponent());
         logger.info("Placing AssemblyComponent with name: " + dataTransferObject.getComponent());
-        this.assemblyModel.getAssemblyComponents().put(dataTransferObject.getComponent(), newAssemblyComponent);
+        this.assemblyModel.getComponents().put(dataTransferObject.getComponent(), newAssemblyComponent);
         this.addObjectToSource(newAssemblyComponent);
         return newAssemblyComponent;
     }
