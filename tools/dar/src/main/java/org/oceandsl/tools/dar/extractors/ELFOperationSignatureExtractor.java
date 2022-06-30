@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.dar;
+package org.oceandsl.tools.dar.extractors;
 
-import kieker.analysis.signature.IOperationSignatureExtractor;
+import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;
 import kieker.model.analysismodel.type.OperationType;
 
 /**
- * Extract and parse python operation names.
+ * Convert operation signature from ELF format.
  *
  * @author Reiner Jung
  * @since 1.2
  */
-public class PythonOperationSignatureExtractor implements IOperationSignatureExtractor {
+public class ELFOperationSignatureExtractor implements IOperationSignatureExtractor {
 
     @Override
     public void extract(final OperationType operationType) {
-        // TODO this will be wrong when other parts are fixed.
         final String name = operationType.getSignature();
         operationType.setName(name);
         operationType.setReturnType("unknown");
     }
-
 }

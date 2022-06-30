@@ -30,7 +30,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.common.exception.ConfigurationException;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.deployment.DeployedComponent;
@@ -130,10 +130,10 @@ public final class CheckModelIntegrityMain {
         final List<String> l = new ArrayList<>();
         for (final AggregatedInvocation invocation : model.getAggregatedInvocations().values()) {
             final String m = String.format("%s:%s:%s -> %s:%s:%s", // NOPMD
-                    invocation.getSource().getComponent().getDeploymentContext().getName(),
+                    invocation.getSource().getComponent().getContext().getName(),
                     invocation.getSource().getComponent().getAssemblyComponent().getSignature(),
                     invocation.getSource().getAssemblyOperation().getOperationType().getSignature(),
-                    invocation.getTarget().getComponent().getDeploymentContext().getName(),
+                    invocation.getTarget().getComponent().getContext().getName(),
                     invocation.getTarget().getComponent().getAssemblyComponent().getSignature(),
                     invocation.getTarget().getAssemblyOperation().getOperationType().getSignature());
             boolean g = false;
@@ -170,8 +170,8 @@ public final class CheckModelIntegrityMain {
                 if (keyComponent != targetComponent) { // NOPMD objects must not be identical
                     System.out.printf("Callee component does not match lookup key component %s ++ %s\n", // NOPMD
                             RepositoryUtils.getName(keyComponent), RepositoryUtils.getName(targetComponent));
-                    final DeploymentContext keyContext = keyComponent.getDeploymentContext();
-                    final DeploymentContext targetContext = targetComponent.getDeploymentContext();
+                    final DeploymentContext keyContext = keyComponent.getContext();
+                    final DeploymentContext targetContext = targetComponent.getContext();
                     if (keyContext != targetContext) { // NOPMD objects must not be identical
                         System.out.printf("Callee context does not match lookup key context %s ++ %s\n", // NOPMD
                                 RepositoryUtils.getName(keyContext), RepositoryUtils.getName(targetContext));

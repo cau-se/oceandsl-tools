@@ -13,30 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.graph;
-
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-
-import kieker.analysis.architecture.recovery.ModelRepository;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-
-/**
- * Interface for a node and edge selector for graphs to realize diff and subtract.
- *
- * @author Reiner Jung
- *
- */
-public interface IGraphElementSelector {
-
-    void setRepository(ModelRepository repository);
-
-    boolean nodeIsSelected(EObject value);
-
-    boolean edgeIsSelected(AggregatedInvocation value);
-
-    String getFilePrefix();
-
-    boolean isColorGroup(EList<String> sources, int group);
-
-}
+package org.oceandsl.tools.relabel;

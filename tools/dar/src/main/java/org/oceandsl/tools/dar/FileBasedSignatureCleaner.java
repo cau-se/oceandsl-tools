@@ -18,7 +18,7 @@ package org.oceandsl.tools.dar;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import kieker.analysis.signature.AbstractSignatureCleaner;
+import kieker.analysis.architecture.recovery.signature.AbstractSignatureCleaner;
 
 /**
  * @author Reiner Jung

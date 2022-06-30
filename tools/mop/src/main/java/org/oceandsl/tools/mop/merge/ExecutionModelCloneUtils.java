@@ -69,7 +69,7 @@ public final class ExecutionModelCloneUtils {
                 .eContainer();
         final DeploymentContext context = (DeploymentContext) mapComponentEntry.eContainer();
 
-        final DeploymentContext newContext = targetModel.getDeploymentContexts().get(context.getName());
+        final DeploymentContext newContext = targetModel.getContexts().get(context.getName());
         final DeployedComponent newComponent = newContext.getComponents().get(component.getSignature());
 
         return newComponent.getOperations().get(operation.getAssemblyOperation().getOperationType().getSignature());
@@ -85,7 +85,7 @@ public final class ExecutionModelCloneUtils {
                 .eContainer();
         final DeploymentContext context = (DeploymentContext) mapComponentEntry.eContainer();
 
-        final DeploymentContext newContext = targetModel.getDeploymentContexts().get(context.getName());
+        final DeploymentContext newContext = targetModel.getContexts().get(context.getName());
         final DeployedComponent newComponent = newContext.getComponents().get(component.getSignature());
         return newComponent.getStorages().get(storage.getAssemblyStorage().getStorageType().getName());
     }

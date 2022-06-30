@@ -15,8 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
+import kieker.analysis.architecture.dependency.PropertyConstants;
 import kieker.analysis.graph.IVertex;
-import kieker.analysis.graph.dependency.PropertyConstants;
 import kieker.analysis.graph.dependency.vertextypes.VertexType;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
@@ -40,15 +40,17 @@ public class ColorAssemblyLevelComponentDependencyGraphBuilder extends AbstractC
     @Override
     protected IVertex addVertex(final DeployedOperation deployedOperation) {
         final AssemblyOperation operation = deployedOperation.getAssemblyOperation();
-        final AssemblyComponent component = operation.getAssemblyComponent();
+        final AssemblyComponent component = operation.getComponent();
 
         final int componentId = this.identifierRegistry.getIdentifier(component);
         final IVertex componentVertex = this.graph.addVertexIfAbsent(componentId);
         componentVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_COMPONENT);
         componentVertex.setPropertyIfAbsent(PropertyConstants.NAME, component.getComponentType().getName());
         componentVertex.setPropertyIfAbsent(PropertyConstants.PACKAGE_NAME, component.getComponentType().getPackage());
-        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR, this.selectForegroundColor(component));
-        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR, this.selectBackgroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR,
+                this.selectForegroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR,
+                this.selectBackgroundColor(component));
 
         this.responseTimeDecorator.decorate(componentVertex, component);
 
@@ -58,15 +60,17 @@ public class ColorAssemblyLevelComponentDependencyGraphBuilder extends AbstractC
     @Override
     protected IVertex addStorageVertex(final DeployedStorage deployedStorage) {
         final AssemblyStorage storage = deployedStorage.getAssemblyStorage();
-        final AssemblyComponent component = storage.getAssemblyComponent();
+        final AssemblyComponent component = storage.getComponent();
 
         final int componentId = this.identifierRegistry.getIdentifier(component);
         final IVertex componentVertex = this.graph.addVertexIfAbsent(componentId);
         componentVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_COMPONENT);
         componentVertex.setPropertyIfAbsent(PropertyConstants.NAME, component.getComponentType().getName());
         componentVertex.setPropertyIfAbsent(PropertyConstants.PACKAGE_NAME, component.getComponentType().getPackage());
-        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR, this.selectForegroundColor(component));
-        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR, this.selectBackgroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.FOREGROUND_COLOR,
+                this.selectForegroundColor(component));
+        componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR,
+                this.selectBackgroundColor(component));
 
         return componentVertex;
     }

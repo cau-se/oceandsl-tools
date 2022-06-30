@@ -94,7 +94,7 @@ public final class DeploymentModelCloneUtils {
     }
 
     private static AssemblyComponent findAssemblyComponent(final AssemblyModel assemblyModel, final String signature) {
-        return assemblyModel.getAssemblyComponents().get(signature);
+        return assemblyModel.getComponents().get(signature);
     }
 
 }

@@ -15,7 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
-import kieker.analysis.graph.dependency.IDependencyGraphBuilderConfiguration;
+import kieker.analysis.architecture.dependency.IDependencyGraphBuilderConfiguration;
 
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 

@@ -15,7 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.maa.stages;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
@@ -62,7 +62,7 @@ public class OperationCallsStage extends AbstractTransformation<ModelRepository,
     }
 
     private String getComponentName(final DeployedOperation caller) {
-        final DeploymentContext context = caller.getComponent().getDeploymentContext();
+        final DeploymentContext context = caller.getComponent().getContext();
         return String.format("%s:%s::%d", context.getName(),
                 caller.getComponent().getAssemblyComponent().getComponentType().getSignature(),
                 this.getPosition(context, caller.getComponent()));

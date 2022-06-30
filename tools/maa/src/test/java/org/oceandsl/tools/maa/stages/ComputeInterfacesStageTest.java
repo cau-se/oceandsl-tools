@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyProvidedInterface;
 import kieker.model.analysismodel.deployment.DeployedComponent;
@@ -49,7 +49,7 @@ public class ComputeInterfacesStageTest {
         final CollectConnectionsStage stage = new CollectConnectionsStage();
         StageTester.test(stage).send(modelRepository).to(stage.getInputPort()).start();
         final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
-        for (final DeploymentContext context : deploymentModel.getDeploymentContexts().values()) {
+        for (final DeploymentContext context : deploymentModel.getContexts().values()) {
             final DeployedComponent componentA = context.getComponents()
                     .get(TestModelRepositoryUtils.FQN_COMPONENT_A + ":1");
             final DeployedComponent componentB = context.getComponents()
@@ -78,7 +78,8 @@ public class ComputeInterfacesStageTest {
             final DeployedProvidedInterface[] deployedProvidedInterface = providedInterfaces
                     .toArray(new DeployedProvidedInterface[1]);
             for (final String signature : providedSignatures) {
-                if (!deployedProvidedInterface[0].getProvidedOperations().containsKey(signature)) {
+                if (!deployedProvidedInterface[0].getProvidedInterface().getProvidedInterfaceType()
+                        .getProvidedOperationTypes().containsKey(signature)) {
                     Assert.fail(String.format("%s: deployed operation %s missing from interface %s", label, signature,
                             deployedProvidedInterface[0].getProvidedInterface().getProvidedInterfaceType()
                                     .getSignature()));
@@ -102,7 +103,8 @@ public class ComputeInterfacesStageTest {
             final AssemblyProvidedInterface[] assemblyProvidedInterface = assemblyProvidedInterfaces
                     .toArray(new AssemblyProvidedInterface[1]);
             for (final String signature : providedSignatures) {
-                if (!assemblyProvidedInterface[0].getProvidedOperations().containsKey(signature)) {
+                if (!assemblyProvidedInterface[0].getProvidedInterfaceType().getProvidedOperationTypes()
+                        .containsKey(signature)) {
                     Assert.fail(String.format("%s: assembly operation %s missing from interface %s", label, signature,
                             assemblyProvidedInterface[0].getProvidedInterfaceType().getSignature()));
                 }
@@ -141,7 +143,7 @@ public class ComputeInterfacesStageTest {
         final CollectConnectionsStage stage = new CollectConnectionsStage();
         StageTester.test(stage).send(modelRepository).to(stage.getInputPort()).start();
         final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
-        for (final DeploymentContext context : deploymentModel.getDeploymentContexts().values()) {
+        for (final DeploymentContext context : deploymentModel.getContexts().values()) {
             final DeployedComponent componentA = context.getComponents()
                     .get(TestModelRepositoryUtils.FQN_COMPONENT_A + ":1");
             final DeployedComponent componentB = context.getComponents()

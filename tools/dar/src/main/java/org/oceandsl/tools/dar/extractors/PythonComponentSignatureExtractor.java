@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.dar;
+package org.oceandsl.tools.dar.extractors;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import kieker.analysis.signature.IComponentSignatureExtractor;
+import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
 import kieker.model.analysismodel.type.ComponentType;
 
 /**
+ * Extract component signatures from Python classnames.
+ *
  * @author Reiner Jung
  * @since 1.2
- *
  */
-public class ELFComponentSignatureExtractor implements IComponentSignatureExtractor {
+public class PythonComponentSignatureExtractor implements IComponentSignatureExtractor {
 
-    private final String experimentName;
-
-    public ELFComponentSignatureExtractor(final String experimentName) {
-        this.experimentName = experimentName;
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(PythonComponentSignatureExtractor.class);
 
     @Override
     public void extract(final ComponentType componentType) {
@@ -40,12 +37,21 @@ public class ELFComponentSignatureExtractor implements IComponentSignatureExtrac
         if (signature == null) {
             signature = "-- none --";
         }
-        final Path path = Paths.get(signature);
-        final String name = path.getName(path.getNameCount() - 1).toString();
-        final String rest = path.getParent() != null ? this.experimentName + "." + path.getParent().toString()
-                : this.experimentName;
-        componentType.setName(name);
-        componentType.setPackage(rest);
+
+        if ("<unknown>".equals(signature)) {
+            componentType.setName(signature);
+            componentType.setPackage("none");
+        } else {
+            final int lastIndex = signature.lastIndexOf('.');
+            if (lastIndex < 0) {
+                componentType.setName(signature);
+                componentType.setPackage("");
+                PythonComponentSignatureExtractor.LOGGER.warn("Component without package name {}", signature);
+            } else {
+                componentType.setName(signature.substring(lastIndex + 1));
+                componentType.setPackage(signature.substring(0, lastIndex - 1));
+            }
+        }
     }
 
 }

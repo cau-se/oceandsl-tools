@@ -22,19 +22,18 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
-import kieker.analysis.signature.AbstractSignatureCleaner;
-import kieker.analysis.signature.IComponentSignatureExtractor;
-import kieker.analysis.signature.IOperationSignatureExtractor;
-import kieker.analysis.signature.JavaComponentSignatureExtractor;
-import kieker.analysis.signature.JavaOperationSignatureExtractor;
-import kieker.analysis.stage.model.AssemblyModelAssemblerStage;
-import kieker.analysis.stage.model.CallEvent2OperationCallStage;
-import kieker.analysis.stage.model.DeploymentModelAssemblerStage;
-import kieker.analysis.stage.model.ExecutionModelAssembler;
-import kieker.analysis.stage.model.ExecutionModelAssemblerStage;
-import kieker.analysis.stage.model.ModelRepository;
-import kieker.analysis.stage.model.OperationAndCallGeneratorStage;
-import kieker.analysis.stage.model.TypeModelAssemblerStage;
+import kieker.analysis.architecture.recovery.AssemblyModelAssemblerStage;
+import kieker.analysis.architecture.recovery.CallEvent2OperationCallStage;
+import kieker.analysis.architecture.recovery.DeploymentModelAssemblerStage;
+import kieker.analysis.architecture.recovery.ExecutionModelAssembler;
+import kieker.analysis.architecture.recovery.ExecutionModelAssemblerStage;
+import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.recovery.TypeModelAssemblerStage;
+import kieker.analysis.architecture.recovery.signature.AbstractSignatureCleaner;
+import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
+import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;
+import kieker.analysis.architecture.recovery.signature.JavaComponentSignatureExtractor;
+import kieker.analysis.architecture.recovery.signature.JavaOperationSignatureExtractor;
 import kieker.analysis.statistics.CallStatisticsStage;
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.flow.IFlowRecord;
@@ -53,6 +52,10 @@ import teetime.stage.InstanceOfFilter;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.stages.CountEventsStage;
 import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.tools.dar.extractors.ELFComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -119,7 +122,8 @@ public class TeetimeConfiguration extends Configuration {
                 repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
 
         final OperationAndCallGeneratorStage operationAndCallStage = new OperationAndCallGeneratorStage(true,
-                componentSignatureCleaner, operationSignatureCleaner);
+                componentSignatureCleaner, operationSignatureCleaner,
+                !parameterConfiguration.isKeepMetaDataOnCompletedTraces());
         final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
                 repository.getModel(DeploymentModel.class));
 

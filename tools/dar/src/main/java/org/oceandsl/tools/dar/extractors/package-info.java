@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2022 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,32 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.relable;
-
-import java.util.List;
-
-/**
- * Description for one replacement rule.
- *
- * @author Reiner Jung
- * @since 1.1
- */
-public class Replacement {
-
-    private final List<String> sources;
-
-    private final String target;
-
-    public Replacement(final List<String> sources, final String target) {
-        this.sources = sources;
-        this.target = target;
-    }
-
-    public List<String> getSources() {
-        return this.sources;
-    }
-
-    public String getTarget() {
-        return this.target;
-    }
-}
+package org.oceandsl.tools.dar.extractors;

@@ -18,7 +18,7 @@ package org.oceandsl.tools.aul.stages;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 
 /**

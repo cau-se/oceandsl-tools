@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.relable;
+package org.oceandsl.tools.relabel;
 
 import java.nio.file.Path;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 
 import teetime.framework.AbstractConsumerStage;
 

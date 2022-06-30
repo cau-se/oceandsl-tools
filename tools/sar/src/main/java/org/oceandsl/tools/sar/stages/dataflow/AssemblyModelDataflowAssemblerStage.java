@@ -51,7 +51,7 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssembl
     @Override
     protected void execute(final DataAccess element) throws Exception {
         final AssemblyOperation operation = this.findOperation(element);
-        final AssemblyStorage assemblyStorage = this.findOrCreateDataStorage(element, operation.getAssemblyComponent());
+        final AssemblyStorage assemblyStorage = this.findOrCreateDataStorage(element, operation.getComponent());
 
         this.addObjectToSource(assemblyStorage);
         this.outputPort.send(element);
@@ -93,7 +93,7 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssembl
     }
 
     private AssemblyComponent findOrCreateAssemblyComponent() {
-        final AssemblyComponent existingAssemblyComponent = this.assemblyModel.getAssemblyComponents()
+        final AssemblyComponent existingAssemblyComponent = this.assemblyModel.getComponents()
                 .get(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
         if (existingAssemblyComponent == null) {
             final AssemblyComponent newAssemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
@@ -101,7 +101,7 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssembl
                     .setComponentType(this.findComponentType(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE));
             newAssemblyComponent.setSignature(TypeModelDataflowAssemblerStage.GLOBAL_PACKAGE);
             this.addObjectToSource(newAssemblyComponent);
-            this.assemblyModel.getAssemblyComponents().put(newAssemblyComponent.getSignature(), newAssemblyComponent);
+            this.assemblyModel.getComponents().put(newAssemblyComponent.getSignature(), newAssemblyComponent);
             return newAssemblyComponent;
         } else {
             return existingAssemblyComponent;
@@ -124,12 +124,12 @@ public class AssemblyModelDataflowAssemblerStage extends AbstractDataflowAssembl
     }
 
     private AssemblyOperation findOperation(final DataAccess element) {
-        AssemblyComponent assemblyComponent = this.assemblyModel.getAssemblyComponents().get(element.getModule());
+        AssemblyComponent assemblyComponent = this.assemblyModel.getComponents().get(element.getModule());
         if (assemblyComponent == null) {
             assemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
             assemblyComponent.setComponentType(this.findComponentType(element.getModule()));
             assemblyComponent.setSignature(element.getModule());
-            this.assemblyModel.getAssemblyComponents().put(element.getModule(), assemblyComponent);
+            this.assemblyModel.getComponents().put(element.getModule(), assemblyComponent);
             this.addObjectToSource(assemblyComponent);
         }
         AssemblyOperation operation = assemblyComponent.getOperations().get(element.getOperation());

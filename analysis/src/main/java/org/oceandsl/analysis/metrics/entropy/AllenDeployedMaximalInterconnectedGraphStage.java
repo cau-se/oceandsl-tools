@@ -23,7 +23,7 @@ import com.google.common.graph.MutableGraph;
 
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
@@ -50,7 +50,7 @@ public class AllenDeployedMaximalInterconnectedGraphStage
         final ExecutionModel executionModel = repository.getModel(ExecutionModel.class);
         final MutableGraph<Node<DeployedComponent>> graph = GraphBuilder.undirected().allowsSelfLoops(true).build();
 
-        for (final Entry<String, DeploymentContext> context : deploymentModel.getDeploymentContexts()) {
+        for (final Entry<String, DeploymentContext> context : deploymentModel.getContexts()) {
             for (final Entry<String, DeployedComponent> component : context.getValue().getComponents()) {
                 for (final Entry<String, DeployedOperation> operation : component.getValue().getOperations()) {
                     final Node<DeployedComponent> node = new KiekerNode<>(operation.getValue());

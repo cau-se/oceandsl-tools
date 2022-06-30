@@ -13,4 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.relable;
+package org.oceandsl.tools.relabel;
+
+import java.util.List;
+
+/**
+ * Description for one replacement rule.
+ *
+ * @author Reiner Jung
+ * @since 1.1
+ */
+public class Replacement {
+
+    private final List<String> sources;
+
+    private final List<String> targets;
+
+    public Replacement(final List<String> sources, final List<String> targets) {
+        this.sources = sources;
+        this.targets = targets;
+    }
+
+    public List<String> getSources() {
+        return this.sources;
+    }
+
+    public List<String> getTargets() {
+        return this.targets;
+    }
+}

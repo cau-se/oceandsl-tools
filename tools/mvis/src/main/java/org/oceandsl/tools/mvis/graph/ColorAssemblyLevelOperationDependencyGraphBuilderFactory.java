@@ -15,8 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
-import kieker.analysis.graph.dependency.IDependencyGraphBuilder;
-import kieker.analysis.graph.dependency.IDependencyGraphBuilderFactory;
+import kieker.analysis.architecture.dependency.IDependencyGraphBuilder;
+import kieker.analysis.architecture.dependency.IDependencyGraphBuilderFactory;
 
 /**
  * Factory for colored assembly level operation dependency graphs.

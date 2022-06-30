@@ -17,7 +17,7 @@ package org.oceandsl.analysis.architecture.stages;
 
 import java.nio.file.Path;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 
 import teetime.framework.AbstractProducerStage;
 

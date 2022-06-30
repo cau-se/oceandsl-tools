@@ -13,18 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.dar;
+package org.oceandsl.tools.dar.extractors;
 
-import kieker.analysis.signature.IComponentSignatureExtractor;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
 import kieker.model.analysismodel.type.ComponentType;
 
 /**
- * Extract component signatures from Python classnames.
- *
  * @author Reiner Jung
  * @since 1.2
+ *
  */
-public class PythonComponentSignatureExtractor implements IComponentSignatureExtractor {
+public class ELFComponentSignatureExtractor implements IComponentSignatureExtractor {
+
+    private final String experimentName;
+
+    public ELFComponentSignatureExtractor(final String experimentName) {
+        this.experimentName = experimentName;
+    }
 
     @Override
     public void extract(final ComponentType componentType) {
@@ -32,18 +40,12 @@ public class PythonComponentSignatureExtractor implements IComponentSignatureExt
         if (signature == null) {
             signature = "-- none --";
         }
-
-        if ("<unknown>".equals(signature)) {
-            componentType.setName(signature);
-            componentType.setPackage("none");
-        } else {
-            final String[] segments = signature.split("\\.");
-            final String rest = signature.substring(0, signature.lastIndexOf('.') - 1);
-
-            componentType.setName(segments[segments.length - 1]);
-            componentType.setPackage(rest);
-
-        }
+        final Path path = Paths.get(signature);
+        final String name = path.getName(path.getNameCount() - 1).toString();
+        final String rest = path.getParent() != null ? this.experimentName + "." + path.getParent().toString()
+                : this.experimentName;
+        componentType.setName(name);
+        componentType.setPackage(rest);
     }
 
 }

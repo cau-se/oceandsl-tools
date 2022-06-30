@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.relable;
+package org.oceandsl.tools.relabel;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +32,8 @@ public class ReplacementConverter implements IStringConverter<Replacement> {
         final String[] rule = value.split(":");
         if (rule.length == 2) {
             final List<String> sources = Arrays.asList(rule[0].split(","));
-            return new Replacement(sources, rule[1]);
+            final List<String> targets = Arrays.asList(rule[1].split(","));
+            return new Replacement(sources, targets);
         } else {
             System.err.printf("Format of replacement rule is not supported: %s", value); // NOPMD
             return null;

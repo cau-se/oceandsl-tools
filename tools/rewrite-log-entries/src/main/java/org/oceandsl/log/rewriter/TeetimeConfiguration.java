@@ -17,7 +17,7 @@ package org.oceandsl.log.rewriter;
 
 import java.io.IOException;
 
-import kieker.analysis.sink.DataSinkStage;
+import kieker.analysis.generic.sink.DataSinkStage;
 import kieker.tools.source.LogsReaderCompositeStage;
 
 import teetime.framework.Configuration;

@@ -15,11 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.tools.maa.stages;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
-import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyProvidedInterface;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -56,8 +55,7 @@ public final class TestModelInvocationUtils {
     private static ExecutionModel createExecutions(final DeploymentModel deploymentModel) {
         final ExecutionModel executionModel = ExecutionFactory.eINSTANCE.createExecutionModel();
 
-        final DeploymentContext context = deploymentModel.getDeploymentContexts()
-                .get(TestModelRepositoryUtils.CONTEXT_A);
+        final DeploymentContext context = deploymentModel.getContexts().get(TestModelRepositoryUtils.CONTEXT_A);
 
         final DeployedComponent componentA = context.getComponents()
                 .get(TestModelRepositoryUtils.FQN_COMPONENT_A + ":1");
@@ -114,8 +112,8 @@ public final class TestModelInvocationUtils {
         final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
 
         final ComponentType componentType = typeModel.getComponentTypes().get(componentName);
-        final AssemblyComponent assemblyComponent = assmeblyModel.getAssemblyComponents().get(componentName + ":1");
-        final DeployedComponent deployedComponent = deploymentModel.getDeploymentContexts()
+        final AssemblyComponent assemblyComponent = assmeblyModel.getComponents().get(componentName + ":1");
+        final DeployedComponent deployedComponent = deploymentModel.getContexts()
                 .get(TestModelRepositoryUtils.CONTEXT_A).getComponents().get(componentName + ":1");
 
         final ProvidedInterfaceType providedInterfaceType = TestModelInvocationUtils
@@ -132,25 +130,15 @@ public final class TestModelInvocationUtils {
         final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
 
         final ComponentType componentType = typeModel.getComponentTypes().get(componentName);
-        final AssemblyComponent assemblyComponent = assmeblyModel.getAssemblyComponents().get(componentName + ":1");
-        final DeployedComponent deployedComponent = deploymentModel.getDeploymentContexts()
+        final AssemblyComponent assemblyComponent = assmeblyModel.getComponents().get(componentName + ":1");
+        final DeployedComponent deployedComponent = deploymentModel.getContexts()
                 .get(TestModelRepositoryUtils.CONTEXT_A).getComponents().get(componentName + ":1");
 
         final ProvidedInterfaceType providedInterfaceType = TestModelInvocationUtils
                 .createProvidedInterfaceType(componentType, operationName);
         final AssemblyProvidedInterface assemblyProvidedInterface = TestModelInvocationUtils
                 .createAssemblyProvidedInterface(assemblyComponent, providedInterfaceType, operationName);
-        TestModelInvocationUtils.createDeployedProvidedInterface(deployedComponent, assemblyProvidedInterface,
-                operationName);
-    }
-
-    private static void createDeployedProvidedInterface(final DeployedComponent deployedComponent,
-            final AssemblyProvidedInterface assemblyProvidedInterface, final String operationSignature) {
-        final DeployedProvidedInterface deployedProvidedInterface = TestModelInvocationUtils
-                .createDeployedProvidedInterface(deployedComponent, assemblyProvidedInterface);
-
-        final DeployedOperation deployedOperation = deployedComponent.getOperations().get(operationSignature);
-        deployedProvidedInterface.getProvidedOperations().put(operationSignature, deployedOperation);
+        TestModelInvocationUtils.createDeployedProvidedInterface(deployedComponent, assemblyProvidedInterface);
     }
 
     private static DeployedProvidedInterface createDeployedProvidedInterface(final DeployedComponent deployedComponent,
@@ -169,9 +157,6 @@ public final class TestModelInvocationUtils {
             final ProvidedInterfaceType providedInterfaceType, final String operationSignature) {
         final AssemblyProvidedInterface assemblyProvidedInterface = TestModelInvocationUtils
                 .createAssemblyProvidedInterface(assemblyComponent, providedInterfaceType);
-
-        final AssemblyOperation assemblyOperation = assemblyComponent.getOperations().get(operationSignature);
-        assemblyProvidedInterface.getProvidedOperations().put(operationSignature, assemblyOperation);
 
         return assemblyProvidedInterface;
     }

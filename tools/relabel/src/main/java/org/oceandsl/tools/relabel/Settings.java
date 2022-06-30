@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.relable;
+package org.oceandsl.tools.relabel;
 
 /***************************************************************************
  * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
@@ -46,7 +46,7 @@ import com.beust.jcommander.converters.PathConverter;
 public class Settings {
 
     @Parameter(names = { "-i",
-            "--call-input" }, required = false, converter = PathConverter.class, description = "Directory for the input model")
+            "--input" }, required = true, converter = PathConverter.class, description = "Directory for the input model")
     private Path inputDirectory;
 
     @Parameter(names = { "-o",
@@ -54,7 +54,7 @@ public class Settings {
     private Path outputDirectory;
 
     @Parameter(names = { "-r",
-            "--replacements" }, required = true, variableArity = true, converter = ReplacementConverter.class, description = "Replacement for labels s1,s2:target")
+            "--replacements" }, required = true, variableArity = true, converter = ReplacementConverter.class, description = "Replacement for labels s1,...,sn:t1,...,tm")
     private List<Replacement> replacements;
 
     public Path getOutputDirectory() {

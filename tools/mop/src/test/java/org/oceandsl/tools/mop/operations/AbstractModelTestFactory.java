@@ -110,7 +110,7 @@ public abstract class AbstractModelTestFactory { // NOCS cannot be final, NOPMD 
     }
 
     public static AssemblyComponent findComponent(final AssemblyModel assemblyModel, final String assemblySignature) {
-        return assemblyModel.getAssemblyComponents().get(assemblySignature);
+        return assemblyModel.getComponents().get(assemblySignature);
     }
 
     public static DeployedComponent createDeploymentComponent(final String assemblySignature,
@@ -145,7 +145,7 @@ public abstract class AbstractModelTestFactory { // NOCS cannot be final, NOPMD 
 
     public static DeployedComponent findDeployedComponent(final DeploymentModel deploymentModel,
             final String contextName, final String componentSignature) {
-        final DeploymentContext context = deploymentModel.getDeploymentContexts().get(contextName);
+        final DeploymentContext context = deploymentModel.getContexts().get(contextName);
         assert context != null;
         final DeployedComponent component = context.getComponents().get(componentSignature);
         assert component != null;

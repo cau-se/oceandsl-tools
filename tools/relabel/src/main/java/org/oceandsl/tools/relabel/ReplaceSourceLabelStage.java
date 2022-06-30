@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.relable;
+package org.oceandsl.tools.relabel;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
-import kieker.analysis.stage.model.ModelRepository;
+import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.model.analysismodel.sources.SourceModel;
 
 import teetime.stage.basic.AbstractFilter;
@@ -64,8 +64,10 @@ public class ReplaceSourceLabelStage extends AbstractFilter<ModelRepository> {
             for (final String find : replacement.getSources()) {
                 labels.remove(find);
             }
-            if (!labels.contains(replacement.getTarget())) {
-                labels.add(replacement.getTarget());
+            for (final String target : replacement.getTargets()) {
+                if (!labels.contains(target)) {
+                    labels.add(target);
+                }
             }
         }
     }
