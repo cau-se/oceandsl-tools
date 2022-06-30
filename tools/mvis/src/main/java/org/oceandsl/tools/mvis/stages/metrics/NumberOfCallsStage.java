@@ -19,8 +19,12 @@ import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
+import org.oceandsl.analysis.architecture.RepositoryUtils;
+import org.oceandsl.analysis.code.stages.data.LongValueHandler;
+import org.oceandsl.analysis.code.stages.data.StringValueHandler;
+import org.oceandsl.analysis.code.stages.data.Table;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
@@ -30,13 +34,7 @@ import kieker.model.analysismodel.statistics.EPropertyType;
 import kieker.model.analysismodel.statistics.StatisticRecord;
 import kieker.model.analysismodel.statistics.Statistics;
 import kieker.model.analysismodel.statistics.StatisticsModel;
-
 import teetime.stage.basic.AbstractTransformation;
-
-import org.oceandsl.analysis.architecture.RepositoryUtils;
-import org.oceandsl.analysis.code.stages.data.LongValueHandler;
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
-import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
  * @author Reiner Jung

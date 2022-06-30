@@ -20,29 +20,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.slf4j.Logger;
-
-import kieker.analysis.architecture.recovery.AssemblyModelAssemblerStage;
-import kieker.analysis.architecture.recovery.CallEvent2OperationCallStage;
-import kieker.analysis.architecture.recovery.DeploymentModelAssemblerStage;
-import kieker.analysis.architecture.recovery.ExecutionModelAssembler;
-import kieker.analysis.architecture.recovery.ExecutionModelAssemblerStage;
-import kieker.analysis.architecture.recovery.ModelRepository;
-import kieker.analysis.architecture.recovery.TypeModelAssemblerStage;
-import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
-import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;
-import kieker.model.analysismodel.assembly.AssemblyModel;
-import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.statistics.StatisticsModel;
-import kieker.model.analysismodel.type.ComponentType;
-import kieker.model.analysismodel.type.OperationType;
-import kieker.model.analysismodel.type.TypeModel;
-
-import teetime.framework.Configuration;
-import teetime.framework.OutputPort;
-
 import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
 import org.oceandsl.analysis.code.stages.CSVFunctionCallReaderStage;
 import org.oceandsl.analysis.code.stages.CSVMapperStage;
@@ -53,6 +30,27 @@ import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
 import org.oceandsl.tools.sar.stages.StringFileWriterSink;
+import org.slf4j.Logger;
+
+import kieker.analysis.architecture.recovery.AssemblyModelAssemblerStage;
+import kieker.analysis.architecture.recovery.CallEvent2OperationCallStage;
+import kieker.analysis.architecture.recovery.DeploymentModelAssemblerStage;
+import kieker.analysis.architecture.recovery.ExecutionModelAssembler;
+import kieker.analysis.architecture.recovery.ExecutionModelAssemblerStage;
+import kieker.analysis.architecture.recovery.TypeModelAssemblerStage;
+import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
+import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;
+import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.type.ComponentType;
+import kieker.model.analysismodel.type.OperationType;
+import kieker.model.analysismodel.type.TypeModel;
+import teetime.framework.Configuration;
+import teetime.framework.OutputPort;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -139,7 +137,7 @@ public class TeetimeCallConfiguration extends Configuration {
     private OutputPort<CallerCallee> createOperationCallFixPath(final OutputPort<CallerCallee> readerPort,
             final List<Path> functionNameFiles, final String namesSplitSymbol, final Path missingFunctionsFile)
             throws IOException {
-        if (functionNameFiles != null && !functionNameFiles.isEmpty()) {
+        if ((functionNameFiles != null) && !functionNameFiles.isEmpty()) {
             final OperationCallFixPathStage fixPathStage = new OperationCallFixPathStage(functionNameFiles,
                     namesSplitSymbol);
             if (missingFunctionsFile != null) {

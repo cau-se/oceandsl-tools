@@ -20,6 +20,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.stages.CountEventsStage;
+import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.tools.dar.extractors.ELFComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
 import org.slf4j.Logger;
 
 import kieker.analysis.architecture.recovery.AssemblyModelAssemblerStage;
@@ -27,13 +34,13 @@ import kieker.analysis.architecture.recovery.CallEvent2OperationCallStage;
 import kieker.analysis.architecture.recovery.DeploymentModelAssemblerStage;
 import kieker.analysis.architecture.recovery.ExecutionModelAssembler;
 import kieker.analysis.architecture.recovery.ExecutionModelAssemblerStage;
-import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.analysis.architecture.recovery.TypeModelAssemblerStage;
 import kieker.analysis.architecture.recovery.signature.AbstractSignatureCleaner;
 import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
 import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;
 import kieker.analysis.architecture.recovery.signature.JavaComponentSignatureExtractor;
 import kieker.analysis.architecture.recovery.signature.JavaOperationSignatureExtractor;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.statistics.CallStatisticsStage;
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.flow.IFlowRecord;
@@ -44,18 +51,9 @@ import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.tools.source.LogsReaderCompositeStage;
-
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 import teetime.stage.InstanceOfFilter;
-
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.generic.stages.CountEventsStage;
-import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
-import org.oceandsl.tools.dar.extractors.ELFComponentSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.

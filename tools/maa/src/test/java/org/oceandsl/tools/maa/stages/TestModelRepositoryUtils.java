@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;

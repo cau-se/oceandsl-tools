@@ -17,12 +17,11 @@ package org.oceandsl.log.rewriter;
 
 import java.io.IOException;
 
-import kieker.analysis.generic.sink.DataSinkStage;
-import kieker.tools.source.LogsReaderCompositeStage;
-
-import teetime.framework.Configuration;
-
 import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
+
+import kieker.analysis.generic.sink.DataSink;
+import kieker.tools.source.LogsReaderCompositeStage;
+import teetime.framework.Configuration;
 
 /**
  * @author Reiner Jung
@@ -38,7 +37,7 @@ public class TeetimeConfiguration extends Configuration {
                 false, 8192);
         final RewriteBeforeAndAfterEventsStage processor = new RewriteBeforeAndAfterEventsStage(
                 parameterConfiguration.getAddrlineExecutable(), parameterConfiguration.getModelExecutable(), false);
-        final DataSinkStage writer = new DataSinkStage(this.createConfiguration(parameterConfiguration));
+        final DataSink writer = new DataSink(this.createConfiguration(parameterConfiguration));
 
         this.connectPorts(reader.getOutputPort(), processor.getInputPort());
         this.connectPorts(processor.getOutputPort(), writer.getInputPort());

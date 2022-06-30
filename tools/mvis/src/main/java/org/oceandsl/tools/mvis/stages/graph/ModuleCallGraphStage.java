@@ -15,15 +15,21 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.stages.graph;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
-import kieker.analysis.graph.IGraph;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.ExecutionModel;
-
-import teetime.stage.basic.AbstractTransformation;
+import java.util.Optional;
 
 import org.oceandsl.analysis.graph.EGraphGenerationMode;
 import org.oceandsl.analysis.graph.IGraphElementSelector;
+import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
+
+import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.graph.GraphFactory;
+import kieker.analysis.graph.IEdge;
+import kieker.analysis.graph.IGraph;
+import kieker.analysis.graph.INode;
+import kieker.model.analysismodel.deployment.DeployedComponent;
+import kieker.model.analysismodel.execution.AggregatedInvocation;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import teetime.stage.basic.AbstractTransformation;
 
 /**
  * Compute a graph based on the module structure of the architecture limited to nodes and modules
@@ -32,7 +38,7 @@ import org.oceandsl.analysis.graph.IGraphElementSelector;
  * @author Reiner Jung
  * @since 1.1
  */
-public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository, IGraph> {
+public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository, IGraph<INode, IEdge>> {
 
     private final IGraphElementSelector selector;
     private final EGraphGenerationMode graphGeneratioMode;
@@ -46,35 +52,32 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
     protected void execute(final ModelRepository repository) throws Exception {
         final ExecutionModel executionModel = (ExecutionModel) repository.getModels().get(ExecutionModel.class);
 
-        final IGraph graph = IGraph.create();
-        graph.setName(repository.getName());
+        final IGraph<INode, IEdge> graph = GraphFactory.createGraph(repository.getName());
 
         for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
             final boolean sourceSelected = this.selector.nodeIsSelected(invocation.getSource().getComponent());
             final boolean targetSelected = this.selector.nodeIsSelected(invocation.getTarget().getComponent());
             if (sourceSelected) {
-                graph.addVertexIfAbsent(invocation.getSource().getComponent());
+                this.addVertexIfAbsent(graph, invocation.getSource().getComponent());
             }
             if (targetSelected) {
-                graph.addVertexIfAbsent(invocation.getTarget().getComponent());
+                this.addVertexIfAbsent(graph, invocation.getTarget().getComponent());
             }
             switch (this.graphGeneratioMode) {
             case ONLY_EDGES_FOR_NODES:
                 if (sourceSelected && targetSelected && this.selector.edgeIsSelected(invocation)) {
-                    graph.addEdge(invocation, graph.getVertex(invocation.getSource().getComponent()),
-                            graph.getVertex(invocation.getTarget().getComponent()));
+                    this.addEdge(graph, invocation.getSource().getComponent(), invocation.getTarget().getComponent());
                 }
                 break;
             case ADD_NODES_FOR_EDGES:
                 if (this.selector.edgeIsSelected(invocation)) {
                     if (!sourceSelected) {
-                        graph.addVertexIfAbsent(invocation.getSource().getComponent());
+                        this.addVertexIfAbsent(graph, invocation.getSource().getComponent());
                     }
                     if (!targetSelected) {
-                        graph.addVertexIfAbsent(invocation.getTarget().getComponent());
+                        this.addVertexIfAbsent(graph, invocation.getTarget().getComponent());
                     }
-                    graph.addEdge(invocation, graph.getVertex(invocation.getSource().getComponent()),
-                            graph.getVertex(invocation.getTarget().getComponent()));
+                    this.addEdge(graph, invocation.getSource().getComponent(), invocation.getTarget().getComponent());
                 }
                 break;
             default:
@@ -83,6 +86,27 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
         }
 
         this.outputPort.send(graph);
+    }
+
+    private void addEdge(final IGraph<INode, IEdge> graph, final DeployedComponent source,
+            final DeployedComponent target) {
+        final Optional<INode> sourceNode = this.findNode(graph, source);
+        final Optional<INode> targetNode = this.findNode(graph, target);
+        graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
+    }
+
+    private Optional<INode> findNode(final IGraph<INode, IEdge> graph, final DeployedComponent component) {
+        final String fullyQualifiedName = FullyQualifiedNamesFactory.createFullyQualifiedName(component);
+        return graph.getGraph().nodes().stream().filter(node -> fullyQualifiedName.equals(node.getId())).findFirst();
+    }
+
+    private void addVertexIfAbsent(final IGraph<INode, IEdge> graph, final DeployedComponent component) {
+        final Optional<INode> node = this.findNode(graph, component);
+        if (!node.isPresent()) {
+            final INode newNode = GraphFactory
+                    .createNode(FullyQualifiedNamesFactory.createFullyQualifiedName(component));
+            graph.getGraph().addNode(newNode);
+        }
     }
 
 }

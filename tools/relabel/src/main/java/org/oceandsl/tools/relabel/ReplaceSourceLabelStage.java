@@ -21,9 +21,8 @@ import java.util.Map.Entry;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.sources.SourceModel;
-
 import teetime.stage.basic.AbstractFilter;
 
 /**

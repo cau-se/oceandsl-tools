@@ -22,13 +22,12 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.util.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.collection.Connections;
 import kieker.model.collection.OperationCollection;
-
 import teetime.stage.basic.AbstractTransformation;
 
 /**

@@ -19,8 +19,9 @@ import java.util.Map.Entry;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
@@ -33,8 +34,6 @@ import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeModel;
-
-import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
 
 /**
  * @author Reiner Jung

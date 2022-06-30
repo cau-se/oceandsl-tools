@@ -21,15 +21,14 @@ import java.nio.file.Files;
 
 import com.beust.jcommander.JCommander;
 
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.slf4j.LoggerFactory;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
-
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * Architecture analysis main class.

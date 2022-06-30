@@ -23,7 +23,7 @@ import com.google.common.graph.MutableGraph;
 
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
@@ -31,7 +31,6 @@ import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Tuple;
-
 import teetime.stage.basic.AbstractTransformation;
 
 /**
@@ -63,7 +62,7 @@ public class AllenDeployedMaximalInterconnectedGraphStage
             final Node<DeployedComponent> source = this.findNode(graph, entry.getValue().getSource());
             final Node<DeployedComponent> target = this.findNode(graph, entry.getValue().getTarget());
 
-            if (source != null && target != null) {
+            if ((source != null) && (target != null)) {
                 graph.putEdge(source, target);
             }
         }
