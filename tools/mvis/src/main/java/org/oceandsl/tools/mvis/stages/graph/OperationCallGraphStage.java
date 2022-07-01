@@ -17,19 +17,19 @@ package org.oceandsl.tools.mvis.stages.graph;
 
 import java.util.Optional;
 
-import org.oceandsl.analysis.graph.EGraphGenerationMode;
-import org.oceandsl.analysis.graph.IGraphElementSelector;
-import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
-
 import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.analysis.graph.GraphFactory;
-import kieker.analysis.graph.IEdge;
-import kieker.analysis.graph.IGraph;
-import kieker.analysis.graph.INode;
+import kieker.analysis.generic.graph.GraphFactory;
+import kieker.analysis.generic.graph.IGraph;
+import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.graph.EGraphGenerationMode;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
+import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
 
 /**
  * Create a graph based on function calls in the architecture model.
@@ -37,7 +37,7 @@ import teetime.stage.basic.AbstractTransformation;
  * @author Reiner Jung
  * @since 1.1
  */
-public class OperationCallGraphStage extends AbstractTransformation<ModelRepository, IGraph<INode, IEdge>> {
+public class OperationCallGraphStage extends AbstractTransformation<ModelRepository, IGraph> {
 
     private final IGraphElementSelector selector;
     private final EGraphGenerationMode graphGeneratioMode;
@@ -52,7 +52,7 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
     protected void execute(final ModelRepository element) throws Exception {
         final ExecutionModel executionModel = (ExecutionModel) element.getModels().get(ExecutionModel.class);
 
-        final IGraph<INode, IEdge> graph = GraphFactory.createGraph(element.getName());
+        final IGraph graph = GraphFactory.createGraph(element.getName());
 
         for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
             final boolean sourceSelected = this.selector.nodeIsSelected(invocation.getTarget().getComponent());
@@ -88,19 +88,18 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
         this.outputPort.send(graph);
     }
 
-    private void addEdge(final IGraph<INode, IEdge> graph, final DeployedOperation source,
-            final DeployedOperation target) {
+    private void addEdge(final IGraph graph, final DeployedOperation source, final DeployedOperation target) {
         final Optional<INode> sourceNode = this.findNode(graph, source);
         final Optional<INode> targetNode = this.findNode(graph, target);
         graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
     }
 
-    private Optional<INode> findNode(final IGraph<INode, IEdge> graph, final DeployedOperation operation) {
+    private Optional<INode> findNode(final IGraph graph, final DeployedOperation operation) {
         final String fullyQualifiedName = FullyQualifiedNamesFactory.createFullyQualifiedName(operation);
-        return graph.getGraph().nodes().stream().filter(node -> fullyQualifiedName.equals(node.getId())).findFirst();
+        return graph.findNode(fullyQualifiedName);
     }
 
-    private void addVertexIfAbsent(final IGraph<INode, IEdge> graph, final DeployedOperation operation) {
+    private void addVertexIfAbsent(final IGraph graph, final DeployedOperation operation) {
         final Optional<INode> node = this.findNode(graph, operation);
         if (!node.isPresent()) {
             final INode newNode = GraphFactory

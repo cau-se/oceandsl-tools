@@ -18,19 +18,16 @@ package org.oceandsl.tools.mvis.graph;
 import java.nio.file.Path;
 import java.util.function.Function;
 
-import kieker.analysis.graph.IEdge;
-import kieker.analysis.graph.IGraph;
-import kieker.analysis.graph.INode;
-import kieker.analysis.graph.util.FileExtension;
+import kieker.analysis.generic.graph.IGraph;
 
 /**
  * @author Reiner Jung
  * @since 1.0
  */
-public class DedicatedFileNameMapper implements Function<IGraph<INode, IEdge>, Path> {
+public class DedicatedFileNameMapper implements Function<IGraph, Path> {
 
     private final Path outputDirectory;
-    private final FileExtension fileExtension;
+    private final String fileExtension;
     private final String outputFilename;
 
     /**
@@ -44,14 +41,14 @@ public class DedicatedFileNameMapper implements Function<IGraph<INode, IEdge>, P
      *            file extension for the graph
      */
     public DedicatedFileNameMapper(final Path outputDirectory, final String outputFilename,
-            final FileExtension fileExtension) {
+            final String fileExtension) {
         this.outputDirectory = outputDirectory;
         this.outputFilename = outputFilename;
         this.fileExtension = fileExtension;
     }
 
     @Override
-    public Path apply(final IGraph<INode, IEdge> graph) {
+    public Path apply(final IGraph graph) {
         return this.outputDirectory
                 .resolve(String.format("%s-%s.%s", graph.getLabel(), this.outputFilename, this.fileExtension));
     }
