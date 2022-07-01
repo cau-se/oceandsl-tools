@@ -15,18 +15,18 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.stages.metrics;
 
-import org.oceandsl.analysis.code.stages.data.LongValueHandler;
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
-import org.oceandsl.analysis.code.stages.data.Table;
-
-import kieker.analysis.graph.IEdge;
-import kieker.analysis.graph.IGraph;
-import kieker.analysis.graph.INode;
+import kieker.analysis.generic.graph.IGraph;
+import kieker.analysis.generic.graph.INode;
 import kieker.common.exception.ConfigurationException;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.type.ComponentType;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.code.stages.data.LongValueHandler;
+import org.oceandsl.analysis.code.stages.data.StringValueHandler;
+import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
  * Counts the incoming and outgoing edges for each node. Where nodes represent modules/components in
@@ -35,10 +35,10 @@ import teetime.stage.basic.AbstractTransformation;
  * @author Reiner Jung
  * @since 1.1
  */
-public class ModuleNodeCountCouplingStage extends AbstractTransformation<IGraph<INode, IEdge>, Table> {
+public class ModuleNodeCountCouplingStage extends AbstractTransformation<IGraph, Table> {
 
     @Override
-    protected void execute(final IGraph<INode, IEdge> graph) throws Exception {
+    protected void execute(final IGraph graph) throws Exception {
         final Table result = new Table(graph.getLabel(), new StringValueHandler("module"),
                 new LongValueHandler("in-edges"), new LongValueHandler("out-edges"));
 

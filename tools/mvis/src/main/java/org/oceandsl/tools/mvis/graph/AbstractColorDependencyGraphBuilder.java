@@ -20,16 +20,13 @@ import java.time.temporal.ChronoUnit;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 import kieker.analysis.architecture.dependency.AbstractDependencyGraphBuilder;
 import kieker.analysis.architecture.dependency.ResponseTimeDecorator;
 import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.analysis.graph.GraphFactory;
-import kieker.analysis.graph.IEdge;
-import kieker.analysis.graph.IGraph;
-import kieker.analysis.graph.INode;
-import kieker.analysis.util.ObjectIdentifierRegistry;
+import kieker.analysis.generic.graph.GraphFactory;
+import kieker.analysis.generic.graph.IGraph;
+import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.AggregatedStorageAccess;
@@ -40,6 +37,8 @@ import kieker.model.analysismodel.statistics.EPropertyType;
 import kieker.model.analysismodel.statistics.StatisticRecord;
 import kieker.model.analysismodel.statistics.Statistics;
 import kieker.model.analysismodel.statistics.StatisticsModel;
+
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung
@@ -91,13 +90,12 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
     }
 
     @Override
-    public IGraph<INode, IEdge> build(final ModelRepository repository) {
+    public IGraph build(final ModelRepository repository) {
         this.graph = GraphFactory.createGraph(repository.getName());
 
         this.sourcesModel = repository.getModel(SourceModel.class);
         this.executionModel = repository.getModel(ExecutionModel.class);
         this.statisticsModel = repository.getModel(StatisticsModel.class);
-        this.identifierRegistry = new ObjectIdentifierRegistry();
         this.responseTimeDecorator = new ResponseTimeDecorator(this.statisticsModel, ChronoUnit.NANOS);
         for (final AggregatedInvocation invocation : this.executionModel.getAggregatedInvocations().values()) {
             this.handleInvocation(invocation);

@@ -17,20 +17,19 @@ package org.oceandsl.tools.mvis.graph;
 
 import java.util.Optional;
 
-import org.oceandsl.analysis.graph.IGraphElementSelector;
-import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
-
 import kieker.analysis.architecture.dependency.PropertyConstants;
-import kieker.analysis.graph.GraphFactory;
-import kieker.analysis.graph.IEdge;
-import kieker.analysis.graph.IGraph;
-import kieker.analysis.graph.INode;
-import kieker.analysis.graph.dependency.vertextypes.VertexType;
+import kieker.analysis.architecture.dependency.VertexType;
+import kieker.analysis.generic.graph.GraphFactory;
+import kieker.analysis.generic.graph.IGraph;
+import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
+
+import org.oceandsl.analysis.graph.IGraphElementSelector;
+import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
 
 /**
  * Dependency graph builder for <strong>operation</strong> dependency graphs at the <strong>assembly
@@ -58,7 +57,7 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR,
                 this.selectBackgroundColor(component));
 
-        final IGraph<INode, IEdge> componentSubgraph = this.addChildGraphIfAbsent(componentVertex);
+        final IGraph componentSubgraph = this.addChildGraphIfAbsent(componentVertex);
         final INode operationVertex = this.addVertexIfAbsent(componentSubgraph, operation);
         operationVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_OPERATION);
         operationVertex.setPropertyIfAbsent(PropertyConstants.NAME, operation.getOperationType().getName());
@@ -91,7 +90,7 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         componentVertex.setPropertyIfAbsent(ExtraConstantsUtils.BACKGROUND_COLOR,
                 this.selectBackgroundColor(component));
 
-        final IGraph<INode, IEdge> componentSubgraph = this.addChildGraphIfAbsent(componentVertex);
+        final IGraph componentSubgraph = this.addChildGraphIfAbsent(componentVertex);
         final INode accessVertex = this.addVertexIfAbsent(componentSubgraph, storage);
         accessVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_STORAGE);
         accessVertex.setPropertyIfAbsent(PropertyConstants.NAME, storage.getStorageType().getName());
@@ -104,7 +103,7 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         return accessVertex;
     }
 
-    protected INode addVertexIfAbsent(final IGraph<INode, IEdge> localGraph, final AssemblyComponent component) {
+    protected INode addVertexIfAbsent(final IGraph localGraph, final AssemblyComponent component) {
         final String name = FullyQualifiedNamesFactory.createFullyQualifiedName(component);
         final Optional<INode> nodeOptional = localGraph.getGraph().nodes().stream()
                 .filter(node -> name.equals(node.getId())).findFirst();
@@ -116,7 +115,7 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         return nodeOptional.get();
     }
 
-    protected INode addVertexIfAbsent(final IGraph<INode, IEdge> localGraph, final AssemblyOperation operation) {
+    protected INode addVertexIfAbsent(final IGraph localGraph, final AssemblyOperation operation) {
         final String name = FullyQualifiedNamesFactory.createFullyQualifiedName(operation);
         final Optional<INode> nodeOptional = localGraph.getGraph().nodes().stream()
                 .filter(node -> name.equals(node.getId())).findFirst();
@@ -128,10 +127,9 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
         return nodeOptional.get();
     }
 
-    protected INode addVertexIfAbsent(final IGraph<INode, IEdge> localGraph, final AssemblyStorage storage) {
+    protected INode addVertexIfAbsent(final IGraph localGraph, final AssemblyStorage storage) {
         final String name = FullyQualifiedNamesFactory.createFullyQualifiedName(storage);
-        final Optional<INode> nodeOptional = localGraph.getGraph().nodes().stream()
-                .filter(node -> name.equals(node.getId())).findFirst();
+        final Optional<INode> nodeOptional = localGraph.findNode(name);
         if (nodeOptional.isEmpty()) {
             final INode node = GraphFactory.createNode(name);
             localGraph.getGraph().addNode(node);
