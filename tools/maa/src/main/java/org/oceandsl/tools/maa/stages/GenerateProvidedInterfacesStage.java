@@ -23,7 +23,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.util.Tuple;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
@@ -40,7 +40,6 @@ import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.ProvidedInterfaceType;
 import kieker.model.analysismodel.type.RequiredInterfaceType;
 import kieker.model.analysismodel.type.TypeFactory;
-
 import teetime.stage.basic.AbstractTransformation;
 
 /**

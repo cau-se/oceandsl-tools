@@ -17,7 +17,7 @@ package org.oceandsl.tools.maa.stages;
 
 import java.util.Collection;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.type.OperationType;
@@ -25,7 +25,6 @@ import kieker.model.collection.CollectionFactory;
 import kieker.model.collection.Connections;
 import kieker.model.collection.Coupling;
 import kieker.model.collection.OperationCollection;
-
 import teetime.stage.basic.AbstractTransformation;
 
 /**

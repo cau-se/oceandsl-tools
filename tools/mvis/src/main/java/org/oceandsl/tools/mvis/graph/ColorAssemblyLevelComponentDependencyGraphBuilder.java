@@ -15,16 +15,20 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
+import java.util.Optional;
+
+import org.oceandsl.analysis.graph.IGraphElementSelector;
+import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
+
 import kieker.analysis.architecture.dependency.PropertyConstants;
-import kieker.analysis.graph.IVertex;
+import kieker.analysis.graph.GraphFactory;
+import kieker.analysis.graph.INode;
 import kieker.analysis.graph.dependency.vertextypes.VertexType;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
-
-import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung
@@ -38,12 +42,11 @@ public class ColorAssemblyLevelComponentDependencyGraphBuilder extends AbstractC
     }
 
     @Override
-    protected IVertex addVertex(final DeployedOperation deployedOperation) {
+    protected INode addVertex(final DeployedOperation deployedOperation) {
         final AssemblyOperation operation = deployedOperation.getAssemblyOperation();
         final AssemblyComponent component = operation.getComponent();
 
-        final int componentId = this.identifierRegistry.getIdentifier(component);
-        final IVertex componentVertex = this.graph.addVertexIfAbsent(componentId);
+        final INode componentVertex = this.addVertexIfAbsent(component);
         componentVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_COMPONENT);
         componentVertex.setPropertyIfAbsent(PropertyConstants.NAME, component.getComponentType().getName());
         componentVertex.setPropertyIfAbsent(PropertyConstants.PACKAGE_NAME, component.getComponentType().getPackage());
@@ -58,12 +61,11 @@ public class ColorAssemblyLevelComponentDependencyGraphBuilder extends AbstractC
     }
 
     @Override
-    protected IVertex addStorageVertex(final DeployedStorage deployedStorage) {
+    protected INode addStorageVertex(final DeployedStorage deployedStorage) {
         final AssemblyStorage storage = deployedStorage.getAssemblyStorage();
         final AssemblyComponent component = storage.getComponent();
 
-        final int componentId = this.identifierRegistry.getIdentifier(component);
-        final IVertex componentVertex = this.graph.addVertexIfAbsent(componentId);
+        final INode componentVertex = this.addVertexIfAbsent(component);
         componentVertex.setPropertyIfAbsent(PropertyConstants.TYPE, VertexType.ASSEMBLY_COMPONENT);
         componentVertex.setPropertyIfAbsent(PropertyConstants.NAME, component.getComponentType().getName());
         componentVertex.setPropertyIfAbsent(PropertyConstants.PACKAGE_NAME, component.getComponentType().getPackage());
@@ -73,6 +75,18 @@ public class ColorAssemblyLevelComponentDependencyGraphBuilder extends AbstractC
                 this.selectBackgroundColor(component));
 
         return componentVertex;
+    }
+
+    protected INode addVertexIfAbsent(final AssemblyComponent component) {
+        final String name = FullyQualifiedNamesFactory.createFullyQualifiedName(component);
+        final Optional<INode> nodeOptional = this.graph.getGraph().nodes().stream()
+                .filter(node -> name.equals(node.getId())).findFirst();
+        if (nodeOptional.isEmpty()) {
+            final INode node = GraphFactory.createNode(name);
+            this.graph.getGraph().addNode(node);
+            return node;
+        }
+        return nodeOptional.get();
     }
 
 }

@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.util.stage.trigger.Trigger;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
@@ -49,7 +49,6 @@ import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypeModel;
-
 import teetime.framework.AbstractConsumerStage;
 
 /**

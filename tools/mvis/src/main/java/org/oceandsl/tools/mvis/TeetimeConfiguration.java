@@ -21,20 +21,6 @@ import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Cohesion;
 import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Complexity;
 import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Coupling;
 import org.mosim.refactorlizar.architecture.evaluation.codemetrics.HyperGraphSize;
-
-import kieker.analysis.architecture.dependency.DependencyGraphCreatorStage;
-import kieker.analysis.architecture.recovery.ModelRepository;
-import kieker.analysis.architecture.recovery.signature.NameBuilder;
-import kieker.analysis.graph.IGraph;
-import kieker.analysis.graph.export.dot.DotFileWriterStage;
-import kieker.analysis.graph.export.graphml.GraphMLFileWriterStage;
-import kieker.analysis.graph.util.FileExtension;
-import kieker.model.analysismodel.deployment.DeployedComponent;
-
-import teetime.framework.Configuration;
-import teetime.stage.basic.distributor.Distributor;
-import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
-
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.stages.TableCSVSink;
@@ -53,6 +39,20 @@ import org.oceandsl.tools.mvis.stages.graph.OperationCallGraphStage;
 import org.oceandsl.tools.mvis.stages.metrics.ModuleNodeCountCouplingStage;
 import org.oceandsl.tools.mvis.stages.metrics.NumberOfCallsStage;
 import org.oceandsl.tools.mvis.stages.metrics.OperationNodeCountCouplingStage;
+
+import kieker.analysis.architecture.dependency.DependencyGraphCreatorStage;
+import kieker.analysis.architecture.recovery.signature.NameBuilder;
+import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.graph.IEdge;
+import kieker.analysis.graph.IGraph;
+import kieker.analysis.graph.INode;
+import kieker.analysis.graph.export.dot.DotFileWriterStage;
+import kieker.analysis.graph.export.graphml.GraphMLFileWriterStage;
+import kieker.analysis.graph.util.FileExtension;
+import kieker.model.analysismodel.deployment.DeployedComponent;
+import teetime.framework.Configuration;
+import teetime.stage.basic.distributor.Distributor;
+import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -109,7 +109,8 @@ public class TeetimeConfiguration extends Configuration {
                 || settings.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
             final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
                     configuration, new ColorAssemblyLevelOperationDependencyGraphBuilderFactory());
-            final Distributor<IGraph> graphsDistributor = new Distributor<>(new CopyByReferenceStrategy());
+            final Distributor<IGraph<INode, IEdge>> graphsDistributor = new Distributor<>(
+                    new CopyByReferenceStrategy());
 
             this.connectPorts(triggerDistributor.getNewOutputPort(),
                     operationDependencyGraphCreatorStage.getInputPort());
