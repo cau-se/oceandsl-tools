@@ -40,7 +40,7 @@ public class ComponentLookup {
         } else {
             components.add(componentIdent);
             ComponentStoreObject newComponent = new ComponentStoreObject(componentIdent);
-            newComponent.addCommontoCommons(componentIdent);
+            newComponent.addCommontoCommons(cblockIdent);
             lookupTable.put(componentIdent,newComponent);
         }
     }
@@ -62,9 +62,16 @@ public class ComponentLookup {
     }
 
     public boolean isPartOfComponent(String componentIdent, String maybeContent){
+        return callsOperation(componentIdent, maybeContent) || callsCommon(componentIdent, maybeContent);
+    }
+
+    public boolean callsOperation(String componentIdent, String content){
         List<String> routines = lookupTable.get(componentIdent).getImplementedRoutines();
+        return routines.contains(content);
+    }
+    public boolean callsCommon(String componentIdent, String content){
         List<String> cblocks = lookupTable.get(componentIdent).getImplementedCommonBlocks();
-        return routines.contains(maybeContent) || cblocks.contains(maybeContent);
+        return cblocks.contains(content);
     }
 
     public int getSizeOfTable(){

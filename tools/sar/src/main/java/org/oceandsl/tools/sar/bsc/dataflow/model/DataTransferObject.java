@@ -10,6 +10,8 @@ public class DataTransferObject {
     private String targetIdent;
     private String targetComponent;
     private boolean callByValue;
+    private boolean callsOperation = false;
+    private boolean callsCommon = false;
 
     public DataTransferObject(String component, String sourceIdent, EDirection rw_action, String targetIdent, String callByValue){
 
@@ -68,4 +70,18 @@ public class DataTransferObject {
         this.callByValue = callByValue;
     }
 
+    public boolean callsOperation() {
+        return callsOperation;
+    }
+
+    public void setCallsOperation(boolean callsOperation) {
+        this.callsOperation = callsOperation;
+    }
+    public void setCallsCommon(boolean callsCommon) {
+        this.callsCommon = callsCommon;
+    }
+
+    public boolean callsCommon() {
+        return callsCommon;
+    }
 }

@@ -1,19 +1,27 @@
 package org.oceandsl.tools.sar.bsc.dataflow.stages;
 
-import kieker.model.analysismodel.assembly.AssemblyComponent;
-import kieker.model.analysismodel.assembly.AssemblyFactory;
-import kieker.model.analysismodel.assembly.AssemblyModel;
-import kieker.model.analysismodel.assembly.AssemblyOperation;
+import kieker.model.analysismodel.assembly.*;
 import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.type.ComponentType;
+import kieker.model.analysismodel.type.StorageType;
 import kieker.model.analysismodel.type.TypeModel;
 import org.oceandsl.tools.sar.bsc.dataflow.model.DataTransferObject;
 import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTransferObject,DataTransferObject> {
 
 
     private final TypeModel typeModel;
     private final AssemblyModel assemblyModel;
+    private final Map<String, AssemblyStorage> assemblyStorageMap = new HashMap<>();
+    private final Map<AssemblyStorage, List<AssemblyComponent>> assemblyStorageAccessMap = new HashMap<>();
+
+
     public AssemblyModelStage(final TypeModel typeModel, final AssemblyModel assemblyModel,
                                                final SourceModel sourceModel, final String sourceLabel) {
         super(sourceModel, sourceLabel);
@@ -24,7 +32,13 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
     @Override
     protected void execute(DataTransferObject dataTransferObject) throws Exception {
         AssemblyComponent assemblyComponent = assemblyComponentSetUp(dataTransferObject);
-        AssemblyOperation assemblyOperation = addOperation(assemblyComponent,dataTransferObject);
+        if(dataTransferObject.callsOperation()){
+            AssemblyOperation assemblyOperation = addOperation(assemblyComponent,dataTransferObject);
+        } else if(dataTransferObject.callsCommon()){
+            AssemblyStorage assemblyStorage = addStorage(assemblyComponent,dataTransferObject);
+        } else {
+            logger.error("Failed to setup Dataflow, due to an earlier error.");
+        }
 
         this.outputPort.send(dataTransferObject);
     }
@@ -61,5 +75,39 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         logger.info("Placing AssemblyOperation with name: " + operationIdent);
         this.addObjectToSource(assemblyOperation);
         return assemblyOperation;
+    }
+
+    private AssemblyStorage addStorage(AssemblyComponent assemblyComponent, final DataTransferObject dataTransferObject){
+        AssemblyStorage assemblyStorage = this.assemblyStorageMap.get(dataTransferObject.getTargetIdent());
+        if(assemblyStorage == null){
+            assemblyStorage = createAssemblyStorage(dataTransferObject);
+            assemblyComponent.getStorages().put(dataTransferObject.getTargetIdent(), assemblyStorage);
+            this.assemblyStorageMap.put(dataTransferObject.getTargetComponent(), assemblyStorage);
+
+            final List<AssemblyComponent> newList = new ArrayList<>();
+            newList.add(assemblyComponent);
+            logger.info("Placing Storage with name: " + assemblyStorage.getStorageType().getName());
+            this.assemblyStorageAccessMap.put(assemblyStorage, newList);
+            this.addObjectToSource(assemblyStorage);
+        }
+
+        return assemblyStorage;
+    }
+
+    private AssemblyStorage createAssemblyStorage(DataTransferObject dataTransferObject) {
+        AssemblyStorage assemblyStorage = AssemblyFactory.eINSTANCE.createAssemblyStorage();
+        assemblyStorage.setStorageType(this.findStorageType(dataTransferObject.getTargetIdent()));
+        return assemblyStorage;
+    }
+
+    private StorageType findStorageType(final String sharedData) {
+        for (final ComponentType type : this.typeModel.getComponentTypes().values()) {
+            final StorageType storageType = type.getProvidedStorages().get(sharedData);
+            if (storageType != null) {
+                return storageType;
+            }
+        }
+        this.logger.error("Intternal error: Missing storage type for given data access element {}", sharedData);
+        return null;
     }
 }

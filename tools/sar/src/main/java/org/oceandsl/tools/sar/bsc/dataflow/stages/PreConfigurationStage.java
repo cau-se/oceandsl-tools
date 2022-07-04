@@ -21,22 +21,38 @@ public class PreConfigurationStage extends AbstractDataflowAssemblerStage<DataTr
         if(targetIdent.contains(",")){
             String[] packages = dataTransferObject.getTargetIdent().split(",");
             targetIdent = packages[0];
+            dataTransferObject.setTargetIdent(packages[0]);
 
-            //check own component
+
+            //Nothing found in own component -> check in imported components
+            for (int i = 1; i < packages.length; i++) {
+                if(componentLookup.isPartOfComponent(packages[i], targetIdent )){
+                    dataTransferObject.setTargetComponent(packages[i]);
+                    break;
+                }
+            }
+
+        } else {
             if(componentLookup.isPartOfComponent(dataTransferObject.getComponent(), targetIdent )){
                 dataTransferObject.setTargetComponent(dataTransferObject.getComponent());
             } else {
-                //Nothing found in own component -> check in imported components
-                for (int i = 1; i < packages.length; i++) {
-                    if(componentLookup.isPartOfComponent(packages[i], targetIdent )){
-                        dataTransferObject.setTargetComponent(packages[i]);
-                        break;
-                    }
-                }
+                dataTransferObject.setTargetComponent("");
+                logger.error("Unknown Component found. Cannot Identify its origin due to invalid analysis files.");
             }
         }
+
+        if(componentLookup.callsCommon(dataTransferObject.getTargetComponent(), targetIdent)){
+            logger.info("Dataflow to Common saved");
+            dataTransferObject.setCallsCommon(true);
+        } else if(componentLookup.callsOperation(dataTransferObject.getTargetComponent(), targetIdent)){
+            logger.info("Dataflow to Operation saved");
+            dataTransferObject.setCallsOperation(true);
+        } else {
+            logger.error("Invalid Dataflow detected. No Valid Connection from " + dataTransferObject.getSourceIdent() + " to Ident " + dataTransferObject.getTargetIdent() + ". Please make sure its either a common block or subroutine and it is mentioned as such in analysis files!");
+        }
+
         if(dataTransferObject.getTargetComponent() == null){
-            //logger.error("Unknown component from content: " + targetIdent);
+            logger.error("Unknown component from content: " + targetIdent);
         }
         this.outputPort.send(dataTransferObject);
     }
