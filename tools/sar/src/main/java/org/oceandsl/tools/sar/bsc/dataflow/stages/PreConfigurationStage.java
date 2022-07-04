@@ -41,14 +41,23 @@ public class PreConfigurationStage extends AbstractDataflowAssemblerStage<DataTr
             }
         }
 
-        if(componentLookup.callsCommon(dataTransferObject.getTargetComponent(), targetIdent)){
-            logger.info("Dataflow to Common saved");
-            dataTransferObject.setCallsCommon(true);
-        } else if(componentLookup.callsOperation(dataTransferObject.getTargetComponent(), targetIdent)){
-            logger.info("Dataflow to Operation saved");
-            dataTransferObject.setCallsOperation(true);
-        } else {
-            logger.error("Invalid Dataflow detected. No Valid Connection from " + dataTransferObject.getSourceIdent() + " to Ident " + dataTransferObject.getTargetIdent() + ". Please make sure its either a common block or subroutine and it is mentioned as such in analysis files!");
+        try{
+
+            if(componentLookup.callsCommon(dataTransferObject.getTargetComponent(), targetIdent)){
+                logger.info("Dataflow to Common saved");
+                dataTransferObject.setCallsCommon(true);
+            } else if(componentLookup.callsOperation(dataTransferObject.getTargetComponent(), targetIdent)){
+                logger.info("Dataflow to Operation saved");
+                dataTransferObject.setCallsOperation(true);
+            } else {
+                logger.error("Invalid Dataflow detected. No Valid Connection from " + dataTransferObject.getSourceIdent() + " to Ident " + dataTransferObject.getTargetIdent() + ". Please make sure its either a common block or subroutine and it is mentioned as such in analysis files!");
+            }
+        }catch(NullPointerException e){
+            logger.error("Unknown origin component from content: " + targetIdent);
+            logger.info("datatransferobject: component=" + dataTransferObject.getComponent() +
+                                            " sourceIdent="+ dataTransferObject.getSourceIdent() +
+                                            " targetIdent="+ dataTransferObject.getTargetIdent());
+
         }
 
         if(dataTransferObject.getTargetComponent() == null){

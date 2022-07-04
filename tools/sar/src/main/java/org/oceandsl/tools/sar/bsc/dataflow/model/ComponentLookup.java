@@ -25,7 +25,7 @@ public class ComponentLookup {
         } else {
             components.add(componentIdent);
             ComponentStoreObject newComponent = new ComponentStoreObject(componentIdent);
-            newComponent.addRoutinetoRoutines(componentIdent);
+            newComponent.addRoutinetoRoutines(routineIdent);
             lookupTable.put(componentIdent,newComponent);
         }
     }
@@ -56,7 +56,7 @@ public class ComponentLookup {
         } else {
             components.add(componentIdent);
             ComponentStoreObject newComponent = new ComponentStoreObject(componentIdent);
-            newComponent.addImportToImports(componentIdent);
+            newComponent.addImportToImports(importIdent);
             lookupTable.put(componentIdent,newComponent);
         }
     }
