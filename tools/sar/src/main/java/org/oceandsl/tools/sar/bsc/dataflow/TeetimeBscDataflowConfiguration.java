@@ -6,6 +6,7 @@ import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentFactory;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.deployment.impl.DeploymentFactoryImpl;
+import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.type.TypeModel;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
@@ -58,6 +59,7 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
         final TypeModelStage typeModelStage = new TypeModelStage(modelRepository.getModel(TypeModel.class), modelRepository.getModel(SourceModel.class),settings.getSourceLabel());
         final AssemblyModelStage assemblyModelStage = new AssemblyModelStage(modelRepository.getModel(TypeModel.class), modelRepository.getModel(AssemblyModel.class), modelRepository.getModel(SourceModel.class), settings.getSourceLabel());
         final DeploymentModelStage deploymentModelStage = new DeploymentModelStage(modelRepository.getModel(AssemblyModel.class), deploymentModel, modelRepository.getModel(SourceModel.class), settings.getSourceLabel());
+        final ExecutionModelStage executionModelStage = new ExecutionModelStage(modelRepository.getModel(ExecutionModel.class), deploymentModel,modelRepository.getModel(SourceModel.class), settings.getSourceLabel());
 
         /* connecting ports. */
         logger.info("connecting ports");
@@ -65,6 +67,7 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
         this.connectPorts(preConfigurationStage.getOutputPort(), typeModelStage.getInputPort());
         this.connectPorts(typeModelStage.getOutputPort(), assemblyModelStage.getInputPort());
         this.connectPorts(assemblyModelStage.getOutputPort(), deploymentModelStage.getInputPort());
+        this.connectPorts(deploymentModelStage.getOutputPort(), executionModelStage.getInputPort());
     }
 
     public ComponentLookup writeLookUpFile(Settings settings){

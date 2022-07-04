@@ -39,7 +39,7 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
         } else {
             logger.error("Failed to setup Dataflow, due to an earlier error.");
         }
-
+        this.outputPort.send(dataTransferObject);
     }
 
     private DeployedStorage addStorage(DeployedComponent deployedComponent, DataTransferObject dataTransferObject) {
