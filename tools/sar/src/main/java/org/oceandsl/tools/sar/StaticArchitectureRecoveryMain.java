@@ -27,7 +27,7 @@ import org.oceandsl.tools.sar.bsc.dataflow.TeetimeBscDataflowConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.exception.ConfigurationException;
 
 import teetime.framework.Configuration;

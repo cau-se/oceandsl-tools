@@ -27,7 +27,7 @@ import kieker.analysis.architecture.recovery.CallEvent2OperationCallStage;
 import kieker.analysis.architecture.recovery.DeploymentModelAssemblerStage;
 import kieker.analysis.architecture.recovery.ExecutionModelAssembler;
 import kieker.analysis.architecture.recovery.ExecutionModelAssemblerStage;
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.architecture.recovery.TypeModelAssemblerStage;
 import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
 import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;

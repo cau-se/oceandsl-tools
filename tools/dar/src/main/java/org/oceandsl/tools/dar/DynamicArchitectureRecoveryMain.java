@@ -23,7 +23,7 @@ import com.beust.jcommander.JCommander;
 
 import org.slf4j.LoggerFactory;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;

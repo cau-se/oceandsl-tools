@@ -23,7 +23,7 @@ import com.google.common.graph.MutableGraph;
 
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
