@@ -20,13 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.generic.stages.CountEventsStage;
-import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
-import org.oceandsl.tools.dar.extractors.ELFComponentSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
 import org.slf4j.Logger;
 
 import kieker.analysis.architecture.recovery.AssemblyModelAssemblerStage;
@@ -35,7 +28,7 @@ import kieker.analysis.architecture.recovery.DeploymentModelAssemblerStage;
 import kieker.analysis.architecture.recovery.ExecutionModelAssembler;
 import kieker.analysis.architecture.recovery.ExecutionModelAssemblerStage;
 import kieker.analysis.architecture.recovery.TypeModelAssemblerStage;
-import kieker.analysis.architecture.recovery.signature.AbstractSignatureCleaner;
+import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
 import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
 import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;
 import kieker.analysis.architecture.recovery.signature.JavaComponentSignatureExtractor;
@@ -51,9 +44,22 @@ import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.tools.source.LogsReaderCompositeStage;
+
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 import teetime.stage.InstanceOfFilter;
+
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.stages.CountEventsStage;
+import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.tools.dar.extractors.ELFComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
+import org.oceandsl.tools.dar.signature.processor.FileBasedSignatureProcessor;
+import org.oceandsl.tools.dar.signature.processor.MapBasedSignatureProcessor;
+import org.oceandsl.tools.dar.signature.processor.ModuleSignatureProcessor;
+import org.oceandsl.tools.dar.stages.OperationAndCallGeneratorStage;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -63,40 +69,23 @@ import teetime.stage.InstanceOfFilter;
  */
 public class TeetimeConfiguration extends Configuration {
 
-    public TeetimeConfiguration(final Logger logger, final Settings parameterConfiguration,
-            final ModelRepository repository) throws IOException, ValueConversionErrorException {
+    public TeetimeConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
+            throws IOException, ValueConversionErrorException {
 
         final OutputPort<? extends IMonitoringRecord> readerPort;
 
         logger.info("Processing Kieker log");
         final List<File> files = new ArrayList<>();
-        files.add(parameterConfiguration.getInputFile().toFile());
+        files.add(settings.getInputFile().toFile());
         final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(files, false, 8192);
 
-        if (parameterConfiguration.getModelExecutable() != null) {
+        if (settings.getModelExecutable() != null) {
             final RewriteBeforeAndAfterEventsStage rewriteBeforeAndAfterEventsStage = new RewriteBeforeAndAfterEventsStage(
-                    parameterConfiguration.getAddrlineExecutable(), parameterConfiguration.getModelExecutable(),
-                    parameterConfiguration.isCaseInsensitive());
+                    settings.getAddrlineExecutable(), settings.getModelExecutable(), settings.isCaseInsensitive());
             this.connectPorts(reader.getOutputPort(), rewriteBeforeAndAfterEventsStage.getInputPort());
             readerPort = rewriteBeforeAndAfterEventsStage.getOutputPort();
         } else {
             readerPort = reader.getOutputPort();
-        }
-
-        final AbstractSignatureCleaner componentSignatureCleaner;
-        final AbstractSignatureCleaner operationSignatureCleaner;
-
-        if (parameterConfiguration.getComponentMapFiles() != null) {
-            logger.info("Map based component definition");
-            componentSignatureCleaner = new MapBasedSignatureCleaner(parameterConfiguration.getComponentMapFiles(),
-                    parameterConfiguration.isCaseInsensitive(), ";");
-            operationSignatureCleaner = new MapBasedOperationSignatureCleaner(
-                    parameterConfiguration.isCaseInsensitive());
-        } else {
-            logger.info("File based component definition");
-            componentSignatureCleaner = new FileBasedSignatureCleaner(parameterConfiguration.isCaseInsensitive());
-            operationSignatureCleaner = new FileBasedOperationSignatureCleaner(
-                    parameterConfiguration.isCaseInsensitive());
         }
 
         final InstanceOfFilter<IMonitoringRecord, IFlowRecord> instanceOfFilter = new InstanceOfFilter<>(
@@ -104,30 +93,30 @@ public class TeetimeConfiguration extends Configuration {
 
         final CountEventsStage<IFlowRecord> counter = new CountEventsStage<>(1000000);
 
-        final IComponentSignatureExtractor componentSignatureExtractor = this.selectComponentSignaturExtractor(
-                parameterConfiguration.getSignatureExtractor(), parameterConfiguration.getExperimentName());
+        final IComponentSignatureExtractor componentSignatureExtractor = this
+                .selectComponentSignaturExtractor(settings.getSignatureExtractor(), settings.getExperimentName());
         final IOperationSignatureExtractor operationSignatureExtractor = this
-                .selectOperationSignaturExtractor(parameterConfiguration.getSignatureExtractor());
+                .selectOperationSignaturExtractor(settings.getSignatureExtractor());
 
         final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
-                repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
-                parameterConfiguration.getSourceLabel(), componentSignatureExtractor, operationSignatureExtractor);
+                repository.getModel(TypeModel.class), repository.getModel(SourceModel.class), settings.getSourceLabel(),
+                componentSignatureExtractor, operationSignatureExtractor);
         final AssemblyModelAssemblerStage assemblyModelAssemblerStage = new AssemblyModelAssemblerStage(
                 repository.getModel(TypeModel.class), repository.getModel(AssemblyModel.class),
-                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+                repository.getModel(SourceModel.class), settings.getSourceLabel());
         final DeploymentModelAssemblerStage deploymentModelAssemblerStage = new DeploymentModelAssemblerStage(
                 repository.getModel(AssemblyModel.class), repository.getModel(DeploymentModel.class),
-                repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel());
+                repository.getModel(SourceModel.class), settings.getSourceLabel());
 
         final OperationAndCallGeneratorStage operationAndCallStage = new OperationAndCallGeneratorStage(true,
-                componentSignatureCleaner, operationSignatureCleaner,
-                !parameterConfiguration.isKeepMetaDataOnCompletedTraces());
+                this.createProcessors(settings.getModuleModes(), settings, logger),
+                !settings.isKeepMetaDataOnCompletedTraces());
         final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
                 repository.getModel(DeploymentModel.class));
 
         final ExecutionModelAssemblerStage executionModelGenerationStage = new ExecutionModelAssemblerStage(
                 new ExecutionModelAssembler(repository.getModel(ExecutionModel.class),
-                        repository.getModel(SourceModel.class), parameterConfiguration.getSourceLabel()));
+                        repository.getModel(SourceModel.class), settings.getSourceLabel()));
 
         final CallStatisticsStage callStatisticsStage = new CallStatisticsStage(
                 repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
@@ -144,6 +133,55 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(operationAndCallStage.getCallOutputPort(), callEvent2OperationCallStage.getInputPort());
         this.connectPorts(callEvent2OperationCallStage.getOutputPort(), executionModelGenerationStage.getInputPort());
         this.connectPorts(executionModelGenerationStage.getOutputPort(), callStatisticsStage.getInputPort());
+    }
+
+    private List<AbstractSignatureProcessor> createProcessors(final List<EModuleMode> modes, final Settings settings,
+            final Logger logger) throws IOException {
+        final List<AbstractSignatureProcessor> processors = new ArrayList<>();
+
+        for (final EModuleMode mode : modes) {
+            switch (mode) {
+            case MAP_MODE:
+                processors.add(this.createMapBasedProcessor(logger, settings));
+                break;
+            case MODULE_MODE:
+                processors.add(this.createModuleBasedProcessor(logger, settings));
+                break;
+            case JAVA_CLASS_MODE:
+                break;
+            case PYTHON_CLASS_MODE:
+                break;
+            case FILE_MODE:
+            default:
+                processors.add(this.createFileBasedProcessor(logger, settings));
+                break;
+            }
+        }
+
+        return processors;
+    }
+
+    private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger, final Settings settings) {
+        logger.info("Module based component definition");
+        return new ModuleSignatureProcessor(settings.isCaseInsensitive());
+    }
+
+    private AbstractSignatureProcessor createFileBasedProcessor(final Logger logger,
+            final Settings parameterConfiguration) {
+        logger.info("File based component definition");
+        return new FileBasedSignatureProcessor(parameterConfiguration.isCaseInsensitive());
+    }
+
+    private AbstractSignatureProcessor createMapBasedProcessor(final Logger logger, final Settings settings)
+            throws IOException {
+        if (settings.getComponentMapFiles() != null) {
+            logger.info("Map based component definition");
+            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), settings.isCaseInsensitive(),
+                    settings.getMapFileColumnSeparator());
+        } else {
+            logger.error("Missing map files for component identification.");
+            return null;
+        }
     }
 
     private IComponentSignatureExtractor selectComponentSignaturExtractor(final ESignatureExtractor signatureExtractor,
@@ -173,4 +211,5 @@ public class TeetimeConfiguration extends Configuration {
             return null;
         }
     }
+
 }

@@ -69,6 +69,14 @@ public class Settings { // NOPMD data class
             "--keep-metadata" }, required = false, description = "Keep the metadata info in memory regardless a trace is considered complete")
     private boolean keepMetaDataOnCompletedTraces;
 
+    @Parameter(names = { "-m",
+            "--module-mode" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategy")
+    List<EModuleMode> moduleModes;
+
+    @Parameter(names = { "-ms",
+            "--map-file-separator" }, required = false, description = "Separator character for the mapping file")
+    private String mapFileColumnSeparator;
+
     public Path getInputFile() {
         return this.inputFile;
     }
@@ -107,5 +115,17 @@ public class Settings { // NOPMD data class
 
     public boolean isKeepMetaDataOnCompletedTraces() {
         return this.keepMetaDataOnCompletedTraces;
+    }
+
+    public List<EModuleMode> getModuleModes() {
+        return this.moduleModes;
+    }
+
+    public String getMapFileColumnSeparator() {
+        if (this.mapFileColumnSeparator == null) {
+            return ";";
+        } else {
+            return this.mapFileColumnSeparator;
+        }
     }
 }

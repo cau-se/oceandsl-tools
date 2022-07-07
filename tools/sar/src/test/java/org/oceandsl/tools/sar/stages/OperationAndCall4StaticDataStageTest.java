@@ -20,8 +20,8 @@ import java.time.Duration;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
-import kieker.analysis.architecture.recovery.data.CallEvent;
-import kieker.analysis.architecture.recovery.data.OperationEvent;
+import kieker.analysis.architecture.recovery.events.CallEvent;
+import kieker.analysis.architecture.recovery.events.OperationEvent;
 
 import teetime.framework.test.StageTester;
 
