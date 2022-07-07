@@ -80,10 +80,6 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
                 final String[] values = line.split(";");
                 if(values.length == 3){
                     switch(values[2]){
-                        case "IMPORTED":
-                            componentLookup.putImportToComponent(values[0],values[1]);
-                            break;
-
                         case "COMMON":
                             componentLookup.putCBlockToComponent(values[0],values[1]);
                             break;

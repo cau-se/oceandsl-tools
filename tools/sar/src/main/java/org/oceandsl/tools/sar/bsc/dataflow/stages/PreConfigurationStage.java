@@ -18,29 +18,7 @@ public class PreConfigurationStage extends AbstractDataflowAssemblerStage<DataTr
 
         //If source of our target Content is unknown, look in packages which were import.
         String targetIdent = dataTransferObject.getTargetIdent();
-        if(targetIdent.contains(",")){
-            String[] packages = dataTransferObject.getTargetIdent().split(",");
-            targetIdent = packages[0];
-            dataTransferObject.setTargetIdent(packages[0]);
-
-
-            //Nothing found in own component -> check in imported components
-            for (int i = 1; i < packages.length; i++) {
-                if(componentLookup.isPartOfComponent(packages[i], targetIdent )){
-                    dataTransferObject.setTargetComponent(packages[i]);
-                    break;
-                }
-            }
-
-        } else {
-            if(componentLookup.isPartOfComponent(dataTransferObject.getComponent(), targetIdent )){
-                dataTransferObject.setTargetComponent(dataTransferObject.getComponent());
-            } else {
-                dataTransferObject.setTargetComponent("");
-                logger.error("Unknown Component found. Cannot Identify its origin due to invalid analysis files.");
-            }
-        }
-
+        dataTransferObject.setTargetComponent(componentLookup.getComponentIdent(targetIdent));
         try{
 
             if(componentLookup.callsCommon(dataTransferObject.getTargetComponent(), targetIdent)){

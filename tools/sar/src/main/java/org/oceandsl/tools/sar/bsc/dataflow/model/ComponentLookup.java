@@ -34,29 +34,13 @@ public class ComponentLookup {
         if(component != null){
             List<String> contentNew = new ArrayList<>(component.getImplementedCommonBlocks());
             contentNew.add(cblockIdent);
-            component.setImplementedRoutines(contentNew);
+            component.setImplementedCommonBlocks(contentNew);
             lookupTable.put(componentIdent,component);
 
         } else {
             components.add(componentIdent);
             ComponentStoreObject newComponent = new ComponentStoreObject(componentIdent);
             newComponent.addCommontoCommons(cblockIdent);
-            lookupTable.put(componentIdent,newComponent);
-        }
-    }
-
-    public void putImportToComponent(String componentIdent, String importIdent){
-        ComponentStoreObject component = lookupTable.get(componentIdent);
-        if(component != null){
-            List<String> contentNew = new ArrayList<>(component.getImportedComponent());
-            contentNew.add(importIdent);
-            component.setImplementedRoutines(contentNew);
-            lookupTable.put(componentIdent,component);
-
-        } else {
-            components.add(componentIdent);
-            ComponentStoreObject newComponent = new ComponentStoreObject(componentIdent);
-            newComponent.addImportToImports(importIdent);
             lookupTable.put(componentIdent,newComponent);
         }
     }
@@ -72,6 +56,15 @@ public class ComponentLookup {
     public boolean callsCommon(String componentIdent, String content){
         List<String> cblocks = lookupTable.get(componentIdent).getImplementedCommonBlocks();
         return cblocks.contains(content);
+    }
+
+    public String getComponentIdent(String subroutine){
+        for(String component: components){
+            if(isPartOfComponent(component, subroutine)){
+                return component;
+            }
+        }
+        return "";
     }
 
     public int getSizeOfTable(){

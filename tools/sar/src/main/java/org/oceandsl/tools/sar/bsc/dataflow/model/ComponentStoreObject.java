@@ -22,20 +22,12 @@ public class ComponentStoreObject {
         return implementedRoutines;
     }
 
-    public List<String> getImportedComponent() {
-        return importedComponent;
-    }
-
     public void setImplementedCommonBlocks(List<String> implementedCommonBlocks) {
         this.implementedCommonBlocks = implementedCommonBlocks;
     }
 
     public void setImplementedRoutines(List<String> implementedRoutines) {
         this.implementedRoutines = implementedRoutines;
-    }
-
-    public void setImportedComponent(List<String> importedComponent) {
-        this.importedComponent = importedComponent;
     }
 
     public String getComponentName() {
