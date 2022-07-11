@@ -18,17 +18,19 @@ package org.oceandsl.tools.dar;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 
 import com.beust.jcommander.JCommander;
 
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.slf4j.LoggerFactory;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
+
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * Architecture analysis main class.
@@ -55,14 +57,34 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            this.repository = ArchitectureModelManagementUtils.createModelRepository(
-                    this.parameterConfiguration.getExperimentName(),
-                    this.parameterConfiguration.getComponentMapFiles() != null);
+            this.repository = ArchitectureModelManagementUtils.createModelRepository(this.createRepositoryName(
+                    this.parameterConfiguration.getExperimentName(), this.parameterConfiguration.getModuleModes()));
 
             return new TeetimeConfiguration(this.logger, this.parameterConfiguration, this.repository);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
+        }
+    }
+
+    private String createRepositoryName(final String experimentName, final List<EModuleMode> moduleModes) {
+        return String.format("%s-%s", experimentName, this.createModuleModesString(moduleModes));
+    }
+
+    private String createModuleModesString(final List<EModuleMode> moduleModes) {
+        if (moduleModes.size() > 0) {
+            String modes = null;
+            for (final EModuleMode mode : moduleModes) {
+                final String modeName = mode.name().toLowerCase().substring(0, mode.name().indexOf('_'));
+                if (modes == null) {
+                    modes = modeName;
+                } else {
+                    modes += "-" + modeName;
+                }
+            }
+            return modes;
+        } else {
+            return "ERROR no mode";
         }
     }
 
