@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright 2021 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.dar;
+package org.oceandsl.tools.dar.signature.processor;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import kieker.analysis.architecture.recovery.signature.AbstractSignatureCleaner;
+import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
 
 /**
  * @author Reiner Jung
  * @since 1.1
  */
-public class FileBasedSignatureCleaner extends AbstractSignatureCleaner {
+public class FileBasedSignatureProcessor extends AbstractSignatureProcessor {
 
-    public FileBasedSignatureCleaner(final boolean caseInsensitive) {
+    public FileBasedSignatureProcessor(final boolean caseInsensitive) {
         super(caseInsensitive);
     }
 
     @Override
-    public String processSignature(final String signature) {
-        if ("<<no-file>>".equals(signature)) {
-            return signature;
+    public void processSignatures(final String componentSignature, final String operationSignature) {
+        if ("<<no-file>>".equals(componentSignature)) {
+            this.componentSignature = componentSignature;
         } else {
-            final Path path = Paths.get(signature);
-            return this.convertToLowerCase(
+            final Path path = Paths.get(componentSignature);
+            this.componentSignature = this.convertToLowerCase(
                     this.removeTrailingUnderscore(path.getName(path.getNameCount() - 1).toString()));
         }
+
+        if (this.caseInsensitive) {
+            this.operationSignature = this.convertToLowerCase(this.removeTrailingUnderscore(operationSignature));
+        } else {
+            this.operationSignature = this.removeTrailingUnderscore(operationSignature);
+        }
     }
+
 }

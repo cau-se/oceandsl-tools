@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2022 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,12 @@
  ***************************************************************************/
 package org.oceandsl.tools.dar;
 
-import kieker.analysis.architecture.recovery.signature.AbstractSignatureCleaner;
-
 /**
+ *
  * @author Reiner Jung
- * @since 1.1
+ * @since 1.3.0
+ *
  */
-public class FileBasedOperationSignatureCleaner extends AbstractSignatureCleaner {
-
-    public FileBasedOperationSignatureCleaner(final boolean caseInsensitive) {
-        super(caseInsensitive);
-    }
-
-    @Override
-    public String processSignature(final String signature) {
-        if (this.caseInsensitive) {
-            return this.convertToLowerCase(this.removeTrailingUnderscore(signature));
-        } else {
-            return this.removeTrailingUnderscore(signature);
-        }
-    }
-
+public enum EModuleMode {
+    MAP_MODE, MODULE_MODE, JAVA_CLASS_MODE, PYTHON_CLASS_MODE, FILE_MODE
 }
