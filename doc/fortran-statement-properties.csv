@@ -1,0 +1,69 @@
+Fortran;Construct;purpose;control;data;usage in our models
+77;ACCEPT;reads from standard input;no;yes;no
+95;allocatable;array that will be dynamically allocated;no;yes;swm,mitgcm,uvic
+95;allocate;dynamically creates storage;no;yes;swm,mitgcm,uvic
+77;ASSIGN;assigns label to variable;--;no;no
+77;Assignment;assign an expression to a variable;no;yes;swm,uvic,mitgcm
+77;AUTOMATIC;creates copies of global variables in subroutines/functions;no;yes;no
+77,95;BACKSPACE;moves the file pointer back before the preceeding record;no;no;no
+77,95;BLOCK DATA;can contain types, variables and common blocks;no;yes/no;mitgcm
+77,95;CALL;calls a subroutine;yes;yes;yes
+77,95;CLOSE;disconnects a file from a unit;no;no;swm,uvic,mitgcm
+77,95;COMMON;defines common blocks;no,yes;swm,uvic,mitgcm
+77,95:CONTAINS:separate declaration and implementation;no;no;swm,uvic,mitgcm
+77,95;CONTINUE;a do nothing statement/do loops;yes;no;swm,uvic,mitgcm
+95;CYCLE;statement skips to the next iteration of a DO loop;yes;no;
+77,95;DATA;initializes variables;no,yes;uvic,mitgcm
+95;deallocate;deallocate memory;swm,mitgcm,uvic
+77;DECODE/ENCODE;string parsing;no;yes;no
+77,95;DIMENSION;define the dimension of arrays;no;yes;swm,mitgcm,uvic
+95;DLL_EXPORT;make a subroutine reside in a DLL;yes;no;no
+95;DLL_IMPORT;import subroutines from a DLL;yes;no;no
+77,95;DO;loop;yes;no;no;swm,uvic,mitgcm
+77,95;DO WHILE;loop;yes;no;no;swm,uvic,mitgcm
+77,95;IF,ELSE,ELSE IF,END IF;branching;yes;no;no;swm,uvic,mitgcm
+77,95;END FILE;writes EOF to a file;yes;yes;no
+77,95;ENTRY;alternative entry point for subprograms;yes;no;uvic
+77,95;EQUIVALENCE;specifies that two or more variables share the same memory;no;yes;mitgcm
+95;EXIT;exit a do loop;yes;no;swm,uvic
+77,95;EXTERNAL;function prototypes;yes;no;swm,mitgcm
+95;forall;for all elements;swm
+77,95;FUNCTION;function;yes;no;swm,uvic,mitgcm
+77,95;GO TO;jump;yes;no;uvic,mitgcm
+77,95;IMPLICIT;controls automatic variable types;no;no;swm,uvic,mitgcm
+77,95;INCLUDE;include code;no;no;swm,uvic
+77,95;INQUIRE;return information to a file handle;no;no;mitgcm,uvic
+95,95;intent();declare how a parameter can be used in,out,both;no;yes;swm,mitgcm,uvic
+95;interface;delcare interfaces;no;no;swm
+77,95;INTRINSIC;statement permits a reference to a specific intrinsic function as an actual argument;no;no;no
+77;MAP;data typing;no;no;no
+95;module;module declaration;swm,mitgcm
+77,95;NAMELIST;declaration of list of values to be read or written;no;yes;swm,mitgcm,uvic
+95;nuffily;disassociates a pointer;no;yes;swm
+77,95;OPEN;open a file;no;yes;swm,mitgcm,uvic
+95;optional;;no;no;swm
+77;OPTIONS;override compiler options;no;no;no?
+77,95;PARAMETER;assign a symbolic name to a constant;no;yes;swm,mitgcm,uvic
+77;PAUSE;await user acknowledgment;yes;no;no
+77,95;POINTER;create pointer variables that poitn a the content represented by variables;no;yes;swm,mitgcm
+77,95;PRINT;write something;no;yes;swm,mitgcm,uvic
+77,95;PROGRAM;program;no;no;swm,mitgcm,uvic
+77,95;READ;read data;no;yes;swm,mitgcm,uvic
+77;RECORD;used to create variables from structures;no;yes;???
+77,95;RETURN;return from subprogram;yes;yes;swm,mitgcm,uvic
+77,95;REWIND;rewind file;no;no;mitgcm,uvic
+77,95;SAVE;preserve variables from subprograms after their termination;no;yes;swm,mitgcm,uvic
+95;sequence;specifies a storage sequence for objects of a derived type;no;yes?;mitgcm
+95;select;select,case structure;yes;no;swm,mitgcm
+77,95;Statement Function;function-like declaration, made in a single statement;no;yes;mitgcm??
+77,95;STOP;ends a program;yes;no;swm,mitgcm,uvic
+77;STRUCTURE;declare structured types;no
+77,95;SUBROUTINE;subprogram without a return value;yes;no;swm,mitgcm,uvic
+95;target;specifies that data objects have the target attribute and thus can be associated with a pointer;no;yes;swm
+77,95;TYPE;write to stdout;no;yes;no;unsure
+95;type, end type;create a structured data type;no;yes;swm,mitgcm
+77;UNION;data structure related;no;yes;no
+95;use;use a module;no;no;swm,mitgcm
+77;VIRTUAL;similar to dimension;no;yes;no
+77;VOLATILE;prevents optimizaion;no;no;no
+77;WRITE;write to file;no;yes;swm,mitgcm,uvic
