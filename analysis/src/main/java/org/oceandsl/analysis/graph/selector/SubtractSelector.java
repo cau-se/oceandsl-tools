@@ -20,12 +20,11 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.sources.SourceModel;
-
-import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung

@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EMap;
+import org.oceandsl.analysis.utils.MapFileReader;
+import org.oceandsl.analysis.utils.StringValueConverter;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
@@ -31,11 +33,7 @@ import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
-
 import teetime.stage.basic.AbstractTransformation;
-
-import org.oceandsl.analysis.utils.MapFileReader;
-import org.oceandsl.analysis.utils.StringValueConverter;
 
 /**
  * @author Reiner Jung

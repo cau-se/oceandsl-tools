@@ -17,11 +17,10 @@ package org.oceandsl.analysis.architecture.stages;
 
 import java.nio.file.Path;
 
-import kieker.analysis.architecture.repository.ModelRepository;
-
-import teetime.framework.AbstractProducerStage;
-
 import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+
+import kieker.analysis.architecture.repository.ModelRepository;
+import teetime.framework.AbstractProducerStage;
 
 /**
  * @author Reiner Jung

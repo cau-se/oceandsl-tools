@@ -29,6 +29,8 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.architecture.RepositoryUtils;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.exception.ConfigurationException;
@@ -44,9 +46,6 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.type.TypeModel;
-
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.architecture.RepositoryUtils;
 
 /**
  * Checks the integrity of architecture models.
@@ -101,13 +100,13 @@ public final class CheckModelIntegrityMain {
         CheckModelIntegrityMain.checkForDuplicateInvocations(repository.getModel(ExecutionModel.class));
     }
 
-//    private static void checkForDuplicateDeployedOperations(final DeploymentModel model) {
-//        for (final DeploymentContext context : model.getDeploymentContexts().values()) {
-//            for (final DeployedComponent component : context.getComponents().values()) {
-//                component.getContainedOperations().keySet()
-//            }
-//        }
-//    }
+    // private static void checkForDuplicateDeployedOperations(final DeploymentModel model) {
+    // for (final DeploymentContext context : model.getDeploymentContexts().values()) {
+    // for (final DeployedComponent component : context.getComponents().values()) {
+    // component.getContainedOperations().keySet()
+    // }
+    // }
+    // }
 
     private static void checkForDuplicateInvocations(final ExecutionModel model) {
         System.out.println("Check for duplicate invocations based on DeployedOperation"); // NOPMD

@@ -17,17 +17,17 @@ package org.oceandsl.tools.mvis.graph;
 
 import java.util.Collection;
 
+import kieker.analysis.architecture.dependency.IVertexTypeMapper;
 import kieker.analysis.architecture.dependency.PropertyConstants;
+import kieker.analysis.architecture.dependency.VertexType;
 import kieker.analysis.architecture.recovery.signature.NameBuilder;
-import kieker.analysis.graph.IElement;
-import kieker.analysis.graph.IVertex;
-import kieker.analysis.graph.dependency.vertextypes.IVertexTypeMapper;
-import kieker.analysis.graph.dependency.vertextypes.VertexType;
-import kieker.analysis.graph.export.dot.DotExportConfiguration;
-import kieker.analysis.graph.util.dot.attributes.DotClusterAttribute;
-import kieker.analysis.graph.util.dot.attributes.DotEdgeAttribute;
-import kieker.analysis.graph.util.dot.attributes.DotGraphAttribute;
-import kieker.analysis.graph.util.dot.attributes.DotNodeAttribute;
+import kieker.analysis.generic.graph.IElement;
+import kieker.analysis.generic.graph.INode;
+import kieker.analysis.generic.sink.graph.dot.DotExportMapper;
+import kieker.analysis.generic.sink.graph.dot.attributes.DotClusterAttribute;
+import kieker.analysis.generic.sink.graph.dot.attributes.DotEdgeAttribute;
+import kieker.analysis.generic.sink.graph.dot.attributes.DotGraphAttribute;
+import kieker.analysis.generic.sink.graph.dot.attributes.DotNodeAttribute;
 
 /**
  * Based on DotExportConfigurationFactory with support for colored edges.
@@ -65,8 +65,8 @@ public class ColoredDotExportConfigurationFactory {
         this.vertexTypeMapper = vertexTypeMapper;
     }
 
-    private DotExportConfiguration.Builder createBaseBuilder() {
-        final DotExportConfiguration.Builder builder = new DotExportConfiguration.Builder();
+    private DotExportMapper.Builder createBaseBuilder() {
+        final DotExportMapper.Builder builder = new DotExportMapper.Builder();
 
         builder.addGraphAttribute(DotGraphAttribute.RANKDIR, g -> "LR");
         builder.addDefaultEdgeAttribute(DotEdgeAttribute.STYLE, g -> "solid");
@@ -85,8 +85,8 @@ public class ColoredDotExportConfigurationFactory {
         return builder;
     }
 
-    public DotExportConfiguration createForTypeLevelOperationDependencyGraph() {
-        final DotExportConfiguration.Builder builder = this.createBaseBuilder();
+    public DotExportMapper createForTypeLevelOperationDependencyGraph() {
+        final DotExportMapper.Builder builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> ColoredDotExportConfigurationFactory.SHAPE_OVAL);
 
@@ -113,8 +113,8 @@ public class ColoredDotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportConfiguration createForTypeLevelComponentDependencyGraph() {
-        final DotExportConfiguration.Builder builder = this.createBaseBuilder();
+    public DotExportMapper createForTypeLevelComponentDependencyGraph() {
+        final DotExportMapper.Builder builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> ColoredDotExportConfigurationFactory.SHAPE_BOX);
 
@@ -139,8 +139,8 @@ public class ColoredDotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportConfiguration createForAssemblyLevelOperationDependencyGraph(final boolean vertexStatistics) {
-        final DotExportConfiguration.Builder builder = this.createBaseBuilder();
+    public DotExportMapper createForAssemblyLevelOperationDependencyGraph(final boolean vertexStatistics) {
+        final DotExportMapper.Builder builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> ColoredDotExportConfigurationFactory.SHAPE_OVAL);
 
@@ -183,8 +183,8 @@ public class ColoredDotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportConfiguration createForAssemblyLevelComponentDependencyGraph(final boolean vertexStatistics) {
-        final DotExportConfiguration.Builder builder = this.createBaseBuilder();
+    public DotExportMapper createForAssemblyLevelComponentDependencyGraph(final boolean vertexStatistics) {
+        final DotExportMapper.Builder builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> ColoredDotExportConfigurationFactory.SHAPE_BOX);
 
@@ -208,8 +208,8 @@ public class ColoredDotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportConfiguration createForDeploymentLevelOperationDependencyGraph() {
-        final DotExportConfiguration.Builder builder = this.createBaseBuilder();
+    public DotExportMapper createForDeploymentLevelOperationDependencyGraph() {
+        final DotExportMapper.Builder builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "oval");
 
@@ -246,8 +246,8 @@ public class ColoredDotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportConfiguration createForDeploymentLevelComponentDependencyGraph() {
-        final DotExportConfiguration.Builder builder = this.createBaseBuilder();
+    public DotExportMapper createForDeploymentLevelComponentDependencyGraph() {
+        final DotExportMapper.Builder builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> ColoredDotExportConfigurationFactory.SHAPE_BOX);
 
@@ -274,8 +274,8 @@ public class ColoredDotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportConfiguration createForDeploymentLevelContextDependencyGraph() {
-        final DotExportConfiguration.Builder builder = this.createBaseBuilder();
+    public DotExportMapper createForDeploymentLevelContextDependencyGraph() {
+        final DotExportMapper.Builder builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "box3d");
         builder.addNodeAttribute(DotNodeAttribute.COLOR, v -> {
@@ -300,7 +300,7 @@ public class ColoredDotExportConfigurationFactory {
         return new StringBuilder().append("<<").append(this.vertexTypeMapper.apply(type)).append(">>");
     }
 
-    private StringBuilder createOperationLabelFromVertex(final IVertex vertex) {
+    private StringBuilder createOperationLabelFromVertex(final INode vertex) {
         @SuppressWarnings("unchecked")
         final Collection<String> modifiers = this.getProperty(vertex, PropertyConstants.MODIFIERS, Collection.class);
         final String returnType = this.getProperty(vertex, PropertyConstants.RETURN_TYPE, String.class);
@@ -313,14 +313,14 @@ public class ColoredDotExportConfigurationFactory {
                 this.nameBuilder.getOperationNameBuilder().build(modifiers, returnType, name, parameterTypes));
     }
 
-    private StringBuilder createStorageLabelFromVertex(final IVertex vertex) {
+    private StringBuilder createStorageLabelFromVertex(final INode vertex) {
         final String name = this.getProperty(vertex, PropertyConstants.NAME, String.class);
 
         // TODO Kieker must be extended to support storageNameBuilder
         return new StringBuilder(name);
     }
 
-    private StringBuilder createComponentLabelFromVertex(final IVertex vertex) {
+    private StringBuilder createComponentLabelFromVertex(final INode vertex) {
         final VertexType type = this.getProperty(vertex, PropertyConstants.TYPE, VertexType.class);
         final String name = this.getProperty(vertex, PropertyConstants.NAME, String.class);
         final String packageName = this.getProperty(vertex, PropertyConstants.PACKAGE_NAME, String.class);
@@ -329,7 +329,7 @@ public class ColoredDotExportConfigurationFactory {
                 .append(this.nameBuilder.getComponentNameBuilder().build(packageName, name));
     }
 
-    private StringBuilder createContextLabelFromVertex(final IVertex vertex) {
+    private StringBuilder createContextLabelFromVertex(final INode vertex) {
         final VertexType type = this.getProperty(vertex, PropertyConstants.TYPE, VertexType.class);
         final String name = this.getProperty(vertex, PropertyConstants.NAME, String.class);
 
@@ -337,7 +337,7 @@ public class ColoredDotExportConfigurationFactory {
                 .append(name);
     }
 
-    private String createForegroundColorFromVertex(final IVertex vertex) {
+    private String createForegroundColorFromVertex(final INode vertex) {
         if (vertex.getProperty(ExtraConstantsUtils.FOREGROUND_COLOR) != null) {
             return this.getProperty(vertex, ExtraConstantsUtils.FOREGROUND_COLOR, String.class);
         } else {
@@ -345,7 +345,7 @@ public class ColoredDotExportConfigurationFactory {
         }
     }
 
-    private String createBackgroundColorFromVertex(final IVertex vertex) {
+    private String createBackgroundColorFromVertex(final INode vertex) {
         if (vertex.getProperty(ExtraConstantsUtils.BACKGROUND_COLOR) != null) {
             return this.getProperty(vertex, ExtraConstantsUtils.BACKGROUND_COLOR, String.class);
         } else {
@@ -353,7 +353,7 @@ public class ColoredDotExportConfigurationFactory {
         }
     }
 
-    private StringBuilder createStatisticsFromVertex(final IVertex vertex) {
+    private StringBuilder createStatisticsFromVertex(final INode vertex) {
         final String timeUnit = this.getProperty(vertex, PropertyConstants.TIME_UNIT).toString();
         final String minResponseTime = this.getProperty(vertex, PropertyConstants.MIN_REPSONSE_TIME).toString();
         final String maxResponseTime = this.getProperty(vertex, PropertyConstants.MAX_REPSONSE_TIME).toString();

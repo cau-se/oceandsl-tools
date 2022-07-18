@@ -31,7 +31,6 @@ import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
-
 import teetime.stage.basic.AbstractTransformation;
 
 /**

@@ -15,15 +15,13 @@
  ***************************************************************************/
 package org.oceandsl.analysis.architecture.stages;
 
-import java.util.Map.Entry;
-
+import kieker.analysis.architecture.repository.ModelRepository;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-
-import kieker.analysis.architecture.repository.ModelRepository;
-
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
+
+import java.util.Map.Entry;
 
 /**
  * @param <T>

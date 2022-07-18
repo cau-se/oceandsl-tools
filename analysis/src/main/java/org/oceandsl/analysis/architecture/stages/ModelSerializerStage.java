@@ -49,7 +49,6 @@ import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypeModel;
-
 import teetime.framework.AbstractConsumerStage;
 
 /**

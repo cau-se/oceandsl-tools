@@ -23,10 +23,10 @@ import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.dependency.AbstractDependencyGraphBuilder;
 import kieker.analysis.architecture.dependency.ResponseTimeDecorator;
-import kieker.analysis.architecture.recovery.ModelRepository;
-import kieker.analysis.graph.IGraph;
-import kieker.analysis.graph.IVertex;
-import kieker.analysis.util.ObjectIdentifierRegistry;
+import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.generic.graph.GraphFactory;
+import kieker.analysis.generic.graph.IGraph;
+import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.AggregatedStorageAccess;
@@ -91,13 +91,11 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
 
     @Override
     public IGraph build(final ModelRepository repository) {
-        this.graph = IGraph.create();
-        this.graph.setName(repository.getName());
+        this.graph = GraphFactory.createGraph(repository.getName());
 
         this.sourcesModel = repository.getModel(SourceModel.class);
         this.executionModel = repository.getModel(ExecutionModel.class);
         this.statisticsModel = repository.getModel(StatisticsModel.class);
-        this.identifierRegistry = new ObjectIdentifierRegistry();
         this.responseTimeDecorator = new ResponseTimeDecorator(this.statisticsModel, ChronoUnit.NANOS);
         for (final AggregatedInvocation invocation : this.executionModel.getAggregatedInvocations().values()) {
             this.handleInvocation(invocation);
@@ -110,9 +108,9 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
     }
 
     private void handleInvocation(final AggregatedInvocation invocation) {
-        final IVertex sourceVertex = invocation.getSource() != null ? this.addVertex(invocation.getSource())
+        final INode sourceVertex = invocation.getSource() != null ? this.addVertex(invocation.getSource())
                 : this.addVertexForEntry(); // NOCS (declarative)
-        final IVertex targetVertex = this.addVertex(invocation.getTarget());
+        final INode targetVertex = this.addVertex(invocation.getTarget());
 
         final EMap<EObject, Statistics> statisticsMap = this.statisticsModel.getStatistics();
         final Statistics statistics = statisticsMap.get(invocation);
@@ -125,9 +123,9 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
     }
 
     private void handleStorageAccess(final AggregatedStorageAccess storageAccess) {
-        final IVertex sourceVertex = storageAccess.getCode() != null ? this.addVertex(storageAccess.getCode())
+        final INode sourceVertex = storageAccess.getCode() != null ? this.addVertex(storageAccess.getCode())
                 : this.addVertexForEntry(); // NOCS (declarative)
-        final IVertex targetVertex = this.addStorageVertex(storageAccess.getStorage());
+        final INode targetVertex = this.addStorageVertex(storageAccess.getStorage());
 
         final EMap<EObject, Statistics> statisticsMap = this.statisticsModel.getStatistics();
         final Statistics statistics = statisticsMap.get(storageAccess);
@@ -139,6 +137,5 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
         this.addEdge(sourceVertex, targetVertex, calls);
     }
 
-    protected abstract IVertex addStorageVertex(final DeployedStorage deployedStorage);
-
+    protected abstract INode addStorageVertex(final DeployedStorage deployedStorage);
 }

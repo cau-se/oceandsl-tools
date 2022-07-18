@@ -31,7 +31,6 @@ import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Tuple;
-
 import teetime.stage.basic.AbstractTransformation;
 
 /**
@@ -63,7 +62,7 @@ public class AllenDeployedMaximalInterconnectedGraphStage
             final Node<DeployedComponent> source = this.findNode(graph, entry.getValue().getSource());
             final Node<DeployedComponent> target = this.findNode(graph, entry.getValue().getTarget());
 
-            if (source != null && target != null) {
+            if ((source != null) && (target != null)) {
                 graph.putEdge(source, target);
             }
         }

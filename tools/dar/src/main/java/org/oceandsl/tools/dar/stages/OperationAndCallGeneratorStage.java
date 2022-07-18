@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.dar;
+package org.oceandsl.tools.dar.stages;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
-import kieker.analysis.architecture.recovery.data.CallEvent;
-import kieker.analysis.architecture.recovery.data.OperationEvent;
-import kieker.analysis.architecture.recovery.signature.AbstractSignatureCleaner;
-import kieker.analysis.architecture.recovery.signature.NullSignatureCleaner;
+import kieker.analysis.architecture.recovery.events.CallEvent;
+import kieker.analysis.architecture.recovery.events.OperationEvent;
+import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
 import kieker.common.record.flow.IFlowRecord;
 import kieker.common.record.flow.trace.TraceMetadata;
 import kieker.common.record.flow.trace.operation.AfterOperationEvent;
@@ -51,9 +52,7 @@ public class OperationAndCallGeneratorStage extends AbstractConsumerStage<IFlowR
     private final OutputPort<CallEvent> callOutputPort = this.createOutputPort(CallEvent.class);
     private final boolean createEntryCall;
 
-    private final AbstractSignatureCleaner componentCleaner;
-
-    private final AbstractSignatureCleaner operationCleaner;
+    private final List<AbstractSignatureProcessor> processors;
 
     private final boolean removeMetaDataOnCompletedTraces;
 
@@ -61,12 +60,10 @@ public class OperationAndCallGeneratorStage extends AbstractConsumerStage<IFlowR
      * Create stage.
      */
     public OperationAndCallGeneratorStage(final boolean createEntryCall,
-            final AbstractSignatureCleaner componentCleaner, final AbstractSignatureCleaner operationCleaner,
-            final boolean removeMetaDataOnCompletedTraces) {
+            final List<AbstractSignatureProcessor> processors, final boolean removeMetaDataOnCompletedTraces) {
         super();
         this.createEntryCall = createEntryCall;
-        this.componentCleaner = componentCleaner;
-        this.operationCleaner = operationCleaner;
+        this.processors = processors;
         this.removeMetaDataOnCompletedTraces = removeMetaDataOnCompletedTraces;
     }
 
@@ -75,8 +72,7 @@ public class OperationAndCallGeneratorStage extends AbstractConsumerStage<IFlowR
      */
     public OperationAndCallGeneratorStage(final boolean createEntryCall,
             final boolean removeMetaDataOnCompletedTraces) {
-        this(createEntryCall, new NullSignatureCleaner(false), new NullSignatureCleaner(false),
-                removeMetaDataOnCompletedTraces);
+        this(createEntryCall, new ArrayList<AbstractSignatureProcessor>(), removeMetaDataOnCompletedTraces);
     }
 
     @Override
@@ -108,9 +104,17 @@ public class OperationAndCallGeneratorStage extends AbstractConsumerStage<IFlowR
                     beforeOperationEvent.getClass().getCanonicalName(), beforeOperationEvent.getTraceId(),
                     beforeOperationEvent.getTimestamp());
         } else {
+            String componentSignature = beforeOperationEvent.getClassSignature();
+            String operationSignature = beforeOperationEvent.getOperationSignature();
+
+            for (final AbstractSignatureProcessor processor : this.processors) {
+                processor.processSignatures(componentSignature, operationSignature);
+                componentSignature = processor.getComponentSignature();
+                operationSignature = processor.getOperationSignature();
+            }
+
             final OperationEvent newEvent = new OperationEvent(traceData.getMetadata().getHostname(),
-                    this.componentCleaner.processSignature(beforeOperationEvent.getClassSignature()),
-                    this.operationCleaner.processSignature(beforeOperationEvent.getOperationSignature()));
+                    componentSignature, operationSignature);
             if (!traceData.getOperationStack().empty()) {
                 this.operationOutputPort.send(newEvent);
             } else {
@@ -140,14 +144,20 @@ public class OperationAndCallGeneratorStage extends AbstractConsumerStage<IFlowR
             final Stack<OperationEvent> stack = traceData.getOperationStack();
             if (!stack.isEmpty()) {
                 final OperationEvent lastEvent = stack.pop();
-                if (!lastEvent.getComponentSignature()
-                        .equals(this.componentCleaner.processSignature(afterOperationEvent.getClassSignature()))
-                        || !lastEvent.getOperationSignature().equals(
-                                this.operationCleaner.processSignature(afterOperationEvent.getOperationSignature()))) {
+
+                String componentSignature = afterOperationEvent.getClassSignature();
+                String operationSignature = afterOperationEvent.getOperationSignature();
+
+                for (final AbstractSignatureProcessor processor : this.processors) {
+                    processor.processSignatures(componentSignature, operationSignature);
+                    componentSignature = processor.getComponentSignature();
+                    operationSignature = processor.getOperationSignature();
+                }
+
+                if (!lastEvent.getComponentSignature().equals(componentSignature)
+                        || !lastEvent.getOperationSignature().equals(operationSignature)) {
                     this.logger.error("Broken trace, expected {}:{}, but got {}:{}", lastEvent.getComponentSignature(),
-                            lastEvent.getOperationSignature(),
-                            this.componentCleaner.processSignature(afterOperationEvent.getClassSignature()),
-                            this.operationCleaner.processSignature(afterOperationEvent.getOperationSignature()));
+                            lastEvent.getOperationSignature(), componentSignature, operationSignature);
                 }
                 if (stack.isEmpty()) { // trace is complete
                     if (this.removeMetaDataOnCompletedTraces) {

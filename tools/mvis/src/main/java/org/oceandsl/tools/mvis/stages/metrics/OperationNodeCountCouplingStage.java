@@ -15,10 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.stages.metrics;
 
-import kieker.analysis.graph.Direction;
-import kieker.analysis.graph.IEdge;
-import kieker.analysis.graph.IGraph;
-import kieker.analysis.graph.IVertex;
+import kieker.analysis.generic.graph.IGraph;
+import kieker.analysis.generic.graph.INode;
 import kieker.common.exception.ConfigurationException;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -41,14 +39,13 @@ public class OperationNodeCountCouplingStage extends AbstractTransformation<IGra
 
     @Override
     protected void execute(final IGraph graph) throws Exception {
-        final Table result = new Table(graph.getName(), new StringValueHandler("module"),
+        final Table result = new Table(graph.getLabel(), new StringValueHandler("module"),
                 new StringValueHandler("operation"), new LongValueHandler("in-edges"),
                 new LongValueHandler("out-edges"));
 
-        for (final IVertex vertex : graph.getVertices()) {
-            final long inEdges = this.countEdges(vertex.getEdges(Direction.IN));
-            final long outEdges = this.countEdges(vertex.getEdges(Direction.OUT));
-            result.addRow(this.getFilepath(vertex.getId()), this.getFunction(vertex.getId()), inEdges, outEdges);
+        for (final INode vertex : graph.getGraph().nodes()) {
+            result.addRow(this.getFilepath(vertex.getId()), this.getFunction(vertex.getId()),
+                    graph.getGraph().inDegree(vertex), graph.getGraph().outDegree(vertex));
         }
 
         this.outputPort.send(result);
@@ -72,15 +69,6 @@ public class OperationNodeCountCouplingStage extends AbstractTransformation<IGra
         } else {
             throw new ConfigurationException("Vertex does not relate to a operation.");
         }
-    }
-
-    private long countEdges(final Iterable<IEdge> edges) {
-        long count = 0;
-        for (@SuppressWarnings("unused")
-        final IEdge edge : edges) {
-            count++;
-        }
-        return count;
     }
 
 }

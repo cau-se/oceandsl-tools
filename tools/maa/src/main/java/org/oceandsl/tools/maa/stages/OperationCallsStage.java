@@ -15,19 +15,18 @@
  ***************************************************************************/
 package org.oceandsl.tools.maa.stages;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import org.oceandsl.analysis.code.stages.data.IntegerValueHandler;
+import org.oceandsl.analysis.code.stages.data.StringValueHandler;
+import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.statistics.StatisticsModel;
-
 import teetime.stage.basic.AbstractTransformation;
-
-import org.oceandsl.analysis.code.stages.data.IntegerValueHandler;
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
-import org.oceandsl.analysis.code.stages.data.Table;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * @author Reiner Jung

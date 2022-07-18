@@ -19,7 +19,7 @@ compile:
     - exec-docker
   stage: compile
   script:
-    - ./gradlew compileJava
+    - ./gradlew --refresh-dependencies compileJava
 
 check:
   only:

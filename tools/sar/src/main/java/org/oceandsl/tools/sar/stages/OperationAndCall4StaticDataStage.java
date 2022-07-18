@@ -17,8 +17,8 @@ package org.oceandsl.tools.sar.stages;
 
 import java.time.Duration;
 
-import kieker.analysis.architecture.recovery.data.CallEvent;
-import kieker.analysis.architecture.recovery.data.OperationEvent;
+import kieker.analysis.architecture.recovery.events.CallEvent;
+import kieker.analysis.architecture.recovery.events.OperationEvent;
 
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;

@@ -22,17 +22,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import org.oceandsl.analysis.code.stages.data.StringValueHandler;
+import org.oceandsl.analysis.code.stages.data.Table;
+
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.ProvidedInterfaceType;
 import kieker.model.analysismodel.type.RequiredInterfaceType;
 import kieker.model.analysismodel.type.TypeModel;
-
 import teetime.stage.basic.AbstractTransformation;
-
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
-import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
  * Generate table for interfaces in component type, interface name, operations.

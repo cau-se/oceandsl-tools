@@ -23,12 +23,11 @@ import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Coupling;
 import org.mosim.refactorlizar.architecture.evaluation.codemetrics.HyperGraphSize;
 
 import kieker.analysis.architecture.dependency.DependencyGraphCreatorStage;
-import kieker.analysis.architecture.recovery.ModelRepository;
 import kieker.analysis.architecture.recovery.signature.NameBuilder;
-import kieker.analysis.graph.IGraph;
-import kieker.analysis.graph.export.dot.DotFileWriterStage;
-import kieker.analysis.graph.export.graphml.GraphMLFileWriterStage;
-import kieker.analysis.graph.util.FileExtension;
+import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.generic.graph.IGraph;
+import kieker.analysis.generic.sink.graph.dot.DotFileWriterStage;
+import kieker.analysis.generic.sink.graph.graphml.GraphMLFileWriterStage;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 
 import teetime.framework.Configuration;
@@ -73,7 +72,7 @@ public class TeetimeConfiguration extends Configuration {
         final Distributor<ModelRepository> triggerDistributor = new Distributor<>(new CopyByReferenceStrategy());
 
         final DotFileWriterStage dotFileOperationDependencyWriterStage = new DotFileWriterStage(
-                new DedicatedFileNameMapper(settings.getOutputDirectory(), "operation", FileExtension.DOT),
+                new DedicatedFileNameMapper(settings.getOutputDirectory(), "operation", "dot"),
                 new ColoredDotExportConfigurationFactory(NameBuilder.forJavaShortOperations())
                         .createForAssemblyLevelOperationDependencyGraph(false));
 
@@ -128,7 +127,7 @@ public class TeetimeConfiguration extends Configuration {
             final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> componentDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
                     configuration, new ColorAssemblyLevelComponentDependencyGraphBuilderFactory());
             final DotFileWriterStage componentDependencyDotFileWriterStage = new DotFileWriterStage(
-                    new DedicatedFileNameMapper(settings.getOutputDirectory(), "component", FileExtension.DOT),
+                    new DedicatedFileNameMapper(settings.getOutputDirectory(), "component", "dot"),
                     new ColoredDotExportConfigurationFactory(NameBuilder.forJavaShortOperations())
                             .createForAssemblyLevelComponentDependencyGraph(false));
 

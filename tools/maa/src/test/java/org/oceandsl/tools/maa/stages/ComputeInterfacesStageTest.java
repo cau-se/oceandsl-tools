@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import kieker.analysis.architecture.recovery.ModelRepository;
+import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyProvidedInterface;
 import kieker.model.analysismodel.deployment.DeployedComponent;
@@ -30,7 +30,6 @@ import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.ProvidedInterfaceType;
-
 import teetime.framework.test.StageTester;
 
 /**
