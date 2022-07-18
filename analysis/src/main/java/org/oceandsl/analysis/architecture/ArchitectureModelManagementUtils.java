@@ -15,25 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.analysis.architecture; // NOPMD excessiveImports
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.exception.ConfigurationException;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
@@ -54,6 +35,24 @@ import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Reading and storing model repositories.
@@ -169,6 +168,7 @@ public final class ArchitectureModelManagementUtils {
 
         // store models
         final ResourceSet resourceSet = new ResourceSetImpl();
+        resourceSet.setResourceFactoryRegistry(registry);
 
         if (!Files.exists(outputDirectory)) {
             Files.createDirectory(outputDirectory);
@@ -193,8 +193,8 @@ public final class ArchitectureModelManagementUtils {
         ArchitectureModelManagementUtils.LOGGER.info("Saving model {}", filename);
 
         final File modelFile = ArchitectureModelManagementUtils.createWriteModelFileHandle(outputDirectory, filename);
-
-        final Resource resource = resourceSet.createResource(URI.createURI(modelFile.getAbsolutePath()));
+        final URI uri = URI.createFileURI(modelFile.getAbsolutePath());
+        final Resource resource = resourceSet.createResource(uri);
         resource.getContents().add(model);
 
         try {
