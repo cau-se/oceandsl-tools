@@ -22,6 +22,10 @@ public class DataTransferObject {
         this.callByValue = callByValue.isEmpty();
     }
 
+    public DataTransferObject() {
+
+    }
+
     public String getComponent() {
         return component;
     }

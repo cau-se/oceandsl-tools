@@ -29,6 +29,22 @@ public class ComponentLookup {
             lookupTable.put(componentIdent,newComponent);
         }
     }
+    public void putFunctionToComponent(String componentIdent, String functionIdent){
+        ComponentStoreObject component = lookupTable.get(componentIdent);
+        if(component != null){
+            List<String> contentNew = new ArrayList<>(component.getImplementedFunctions());
+            contentNew.add(functionIdent);
+            component.setImplementedFunctions(contentNew);
+            lookupTable.put(componentIdent,component);
+
+        } else {
+            components.add(componentIdent);
+            ComponentStoreObject newComponent = new ComponentStoreObject(componentIdent);
+            newComponent.addFunctionToFunctions(functionIdent);
+            lookupTable.put(componentIdent,newComponent);
+        }
+    }
+
     public void putCBlockToComponent(String componentIdent, String cblockIdent){
         ComponentStoreObject component = lookupTable.get(componentIdent);
         if(component != null){
@@ -50,17 +66,18 @@ public class ComponentLookup {
     }
 
     public boolean callsOperation(String componentIdent, String content){
-        List<String> routines = lookupTable.get(componentIdent).getImplementedRoutines();
-        return routines.contains(content);
+        List<String> operations = lookupTable.get(componentIdent).getImplementedRoutines();
+        operations.addAll(lookupTable.get(componentIdent).getImplementedFunctions());
+        return operations.contains(content);
     }
     public boolean callsCommon(String componentIdent, String content){
         List<String> cblocks = lookupTable.get(componentIdent).getImplementedCommonBlocks();
         return cblocks.contains(content);
     }
 
-    public String getComponentIdent(String subroutine){
+    public String getComponentIdent(String operation){
         for(String component: components){
-            if(isPartOfComponent(component, subroutine)){
+            if(isPartOfComponent(component, operation)){
                 return component;
             }
         }

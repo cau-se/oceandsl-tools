@@ -80,13 +80,14 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
                 final String[] values = line.split(";");
                 if(values.length == 3){
                     switch(values[2]){
-                        case "COMMON":
-                            componentLookup.putCBlockToComponent(values[0],values[1]);
-                            break;
 
-                        case "ROUTINE":
+                        case "SUBROUTINE":
                             componentLookup.putRoutineToComponent(values[0],values[1]);
                             break;
+
+                        case "FUNCTION":
+                            componentLookup.putFunctionToComponent(values[0],values[1]);
+
                     }
                 } else {
                     logger.error("Invalid line '{}'. 3 Values needed ", line);
@@ -94,22 +95,6 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
             }
             reader.close();
 
-            //write properties file
-            /*File componentsFile = new File("components.properties");
-            BufferedWriter writer = new BufferedWriter(new FileWriter(componentsFile.getName()));
-            List<String> components = componentLookup.getComponents();
-            for(String component: components){
-                String out = component + "=";
-                List<String> contents = componentLookup.getContentOfComponent(component);
-                for(String content: contents){
-                    out += content + ";";
-                }
-                out+= "\n";
-                writer.write(out);
-            }
-
-            writer.close();
-            logger.info("Components located at " + componentsFile.getAbsolutePath());*/
             return componentLookup;
         }catch(IOException e){
             logger.error("Unable to read Path for component File.");

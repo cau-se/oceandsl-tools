@@ -21,7 +21,7 @@ public class PreConfigurationStage extends AbstractDataflowAssemblerStage<DataTr
         dataTransferObject.setTargetComponent(componentLookup.getComponentIdent(targetIdent));
         try{
 
-            if(componentLookup.callsCommon(dataTransferObject.getTargetComponent(), targetIdent)){
+            if(targetIdent.contains("/")){
                 logger.info("Dataflow to Common saved");
                 dataTransferObject.setCallsCommon(true);
             } else if(componentLookup.callsOperation(dataTransferObject.getTargetComponent(), targetIdent)){
@@ -32,6 +32,7 @@ public class PreConfigurationStage extends AbstractDataflowAssemblerStage<DataTr
             }
         }catch(NullPointerException e){
             logger.error("Unknown origin component from content: " + targetIdent);
+            dataTransferObject.setTargetComponent(".unknown");
             logger.info("datatransferobject: component=" + dataTransferObject.getComponent() +
                                             " sourceIdent="+ dataTransferObject.getSourceIdent() +
                                             " targetIdent="+ dataTransferObject.getTargetIdent());

@@ -6,7 +6,7 @@ import java.util.List;
 public class ComponentStoreObject {
 
     private String componentName;
-    private List<String>  importedComponent = new ArrayList<>();
+    private List<String>  implementedFunctions = new ArrayList<>();
     private List<String> implementedRoutines = new ArrayList<>();
     private List<String> implementedCommonBlocks = new ArrayList<>();
 
@@ -22,12 +22,21 @@ public class ComponentStoreObject {
         return implementedRoutines;
     }
 
+    public List<String> getImplementedFunctions() {
+        return implementedFunctions;
+    }
+
+
     public void setImplementedCommonBlocks(List<String> implementedCommonBlocks) {
         this.implementedCommonBlocks = implementedCommonBlocks;
     }
 
     public void setImplementedRoutines(List<String> implementedRoutines) {
         this.implementedRoutines = implementedRoutines;
+    }
+
+    public void setImplementedFunctions(List<String> implementedFunctions){
+        this.implementedFunctions = implementedFunctions;
     }
 
     public String getComponentName() {
@@ -39,7 +48,7 @@ public class ComponentStoreObject {
     public void addCommontoCommons(String commonIdent){
         this.implementedCommonBlocks.add(commonIdent);
     }
-    public void addImportToImports(String importedIdent){
-        this.importedComponent.add(importedIdent);
+    public void addFunctionToFunctions(String funcIdent){
+        this.implementedFunctions.add(funcIdent);
     }
 }

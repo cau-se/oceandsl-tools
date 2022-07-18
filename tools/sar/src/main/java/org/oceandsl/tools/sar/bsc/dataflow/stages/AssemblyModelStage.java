@@ -35,11 +35,19 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         if(dataTransferObject.callsOperation()){
             AssemblyOperation assemblyOperation = addOperation(assemblyComponent,dataTransferObject);
         } else if(dataTransferObject.callsCommon()){
+            assemblyComponent = commonComponentSetUp(); // store common block independent of dataflow component
             AssemblyStorage assemblyStorage = addStorage(assemblyComponent,dataTransferObject);
         } else {
-            logger.error("Failed to setup Dataflow, due to an earlier error.");
-        }
+            AssemblyOperation assemblyOperation = addOperation(assemblyComponent,dataTransferObject);
 
+            logger.warn("Unknown Dataflow detected.");
+            DataTransferObject unknownFlowObject = new DataTransferObject();
+            unknownFlowObject.setComponent("Unknown");
+            unknownFlowObject.setSourceIdent(dataTransferObject.getTargetIdent());
+            AssemblyComponent assemblyComponentUnknown = assemblyComponentSetUp(unknownFlowObject);
+            AssemblyOperation assemblyOperationUnknown = addOperation(assemblyComponentUnknown,unknownFlowObject);
+
+        }
         this.outputPort.send(dataTransferObject);
     }
 
@@ -47,6 +55,20 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         AssemblyComponent assemblyComponent = this.assemblyModel.getComponents().get(dataTransferObject.getComponent());
         if (assemblyComponent == null) {
             assemblyComponent = createAssemblyComponent(dataTransferObject);
+        }
+        return assemblyComponent;
+    }
+
+    private AssemblyComponent commonComponentSetUp() {
+        String commonIdent = "COMMON-Component";
+        AssemblyComponent assemblyComponent = this.assemblyModel.getComponents().get(commonIdent);
+        if (assemblyComponent == null) {
+            assemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
+            assemblyComponent.setComponentType(this.typeModel.getComponentTypes().get(commonIdent));
+            assemblyComponent.setSignature(commonIdent);
+            logger.info("Placing AssemblyComponent with name: " + commonIdent);
+            this.assemblyModel.getComponents().put(commonIdent, assemblyComponent);
+            this.addObjectToSource(assemblyComponent);
         }
         return assemblyComponent;
     }
@@ -78,10 +100,11 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
     }
 
     private AssemblyStorage addStorage(AssemblyComponent assemblyComponent, final DataTransferObject dataTransferObject){
-        AssemblyStorage assemblyStorage = this.assemblyStorageMap.get(dataTransferObject.getTargetIdent());
+        AssemblyStorage assemblyStorage = assemblyComponent.getStorages().get(dataTransferObject.getTargetIdent());
         if(assemblyStorage == null){
             assemblyStorage = createAssemblyStorage(dataTransferObject);
             assemblyComponent.getStorages().put(dataTransferObject.getTargetIdent(), assemblyStorage);
+            this.assemblyModel.getComponents().put(assemblyComponent.getSignature(),assemblyComponent);
             this.assemblyStorageMap.put(dataTransferObject.getTargetComponent(), assemblyStorage);
 
             final List<AssemblyComponent> newList = new ArrayList<>();
@@ -107,7 +130,7 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
                 return storageType;
             }
         }
-        this.logger.error("Intternal error: Missing storage type for given data access element {}", sharedData);
+        this.logger.error("Internal error: Missing storage type for given data access element {}", sharedData);
         return null;
     }
 }

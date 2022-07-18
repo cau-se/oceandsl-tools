@@ -28,14 +28,58 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
     @Override
     protected void execute(DataTransferObject dataTransferObject) throws Exception {
         ComponentType componentType = componentSetUp(dataTransferObject);
+
         if(dataTransferObject.callsCommon()){
+            componentType = commonComponentSetUp(); // store common block independent of dataflow component
+            dataTransferObject.setTargetComponent(componentType.getName());
             StorageType storageType = addStorage(componentType, dataTransferObject);
         } else if(dataTransferObject.callsOperation()){
             OperationType operationType = addOperation(componentType, dataTransferObject);
         } else {
-            logger.error("Failed to setup Dataflow, due to an earlier error.");
+            OperationType operationType = addOperation(componentType, dataTransferObject);
+
+            DataTransferObject unknownFlowObject = new DataTransferObject();
+            unknownFlowObject.setComponent("Unknown");
+            unknownFlowObject.setSourceIdent(dataTransferObject.getTargetIdent());
+
+            logger.warn("Unknown Dataflow detected.");
+            ComponentType componentTypeUnknown = componentSetUp(unknownFlowObject);
+            OperationType operationTypeUnknown = addOperation(componentTypeUnknown, unknownFlowObject);
         }
         this.outputPort.send(dataTransferObject);
+    }
+
+    private ComponentType componentSetUp(DataTransferObject dataTransferObject) {
+        ComponentType componentType = this.typeModel.getComponentTypes().get(dataTransferObject.getComponent());
+        if (componentType == null) {
+            componentType = createComponentType(dataTransferObject);
+        }
+        return componentType;
+    }
+
+    private ComponentType commonComponentSetUp() {
+        String commonIdent = "COMMON-Component";
+        ComponentType componentType = this.typeModel.getComponentTypes().get(commonIdent);
+        if (componentType == null) {
+            componentType = TypeFactory.eINSTANCE.createComponentType();
+            componentType.setName(commonIdent);
+            componentType.setSignature(commonIdent);
+            logger.info("Placing Component with name: " + componentType.getName());
+            this.typeModel.getComponentTypes().put(componentType.getName(), componentType);
+            this.addObjectToSource(componentType);
+            return componentType;
+        }
+        return componentType;
+    }
+
+    private ComponentType createComponentType(DataTransferObject dataTransferObject){
+        final ComponentType newComponentType = TypeFactory.eINSTANCE.createComponentType();
+        newComponentType.setName(dataTransferObject.getComponent());
+        newComponentType.setSignature(dataTransferObject.getComponent());
+        logger.info("Placing Component with name: " + newComponentType.getName());
+        this.typeModel.getComponentTypes().put(dataTransferObject.getComponent(), newComponentType);
+        this.addObjectToSource(newComponentType);
+        return newComponentType;
     }
 
     private StorageType addStorage(ComponentType componentType, DataTransferObject dataTransferObject) {
@@ -43,6 +87,7 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
         if(storageType== null){
             storageType = createStorageType(dataTransferObject);
             componentType.getProvidedStorages().put(storageType.getName(), storageType);
+            this.typeModel.getComponentTypes().put(componentType.getName(), componentType);
             this.storageTypeMap.put(storageType.getName(), storageType);
 
             final List<ComponentType> newList = new ArrayList<>();
@@ -60,24 +105,6 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
         storageType.setType(TypeModelStage.UNKOWN_TYPE);
 
         return storageType;
-    }
-
-    private ComponentType componentSetUp(DataTransferObject dataTransferObject) {
-        ComponentType componentType = this.typeModel.getComponentTypes().get(dataTransferObject.getComponent());
-        if (componentType == null) {
-            componentType = createComponentType(dataTransferObject);
-        }
-        return componentType;
-    }
-
-    private ComponentType createComponentType(DataTransferObject dataTransferObject){
-        final ComponentType newComponentType = TypeFactory.eINSTANCE.createComponentType();
-        newComponentType.setName(dataTransferObject.getComponent());
-        newComponentType.setSignature(dataTransferObject.getComponent());
-        logger.info("Placing Component with name: " + newComponentType.getName());
-        this.typeModel.getComponentTypes().put(dataTransferObject.getComponent(), newComponentType);
-        this.addObjectToSource(newComponentType);
-        return newComponentType;
     }
 
     private OperationType addOperation(ComponentType componentType, DataTransferObject dataTransferObject){

@@ -35,11 +35,68 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
         if(dataTransferObject.callsOperation()){
             DeployedOperation deployedOperation = addOperation(deployedComponent, dataTransferObject);
         } else if(dataTransferObject.callsCommon()){
+            deployedComponent = commonComponentSetUp(); // store common block independent of dataflow component
             DeployedStorage deployedStorage = addStorage(deployedComponent, dataTransferObject);
         } else {
-            logger.error("Failed to setup Dataflow, due to an earlier error.");
+            DeployedOperation deployedOperation = addOperation(deployedComponent, dataTransferObject);
+
+            logger.warn("Unknown Dataflow detected.");
+            DataTransferObject unknownFlowObject = new DataTransferObject();
+            unknownFlowObject.setComponent("Unknown");
+            unknownFlowObject.setSourceIdent(dataTransferObject.getTargetIdent());
+            DeployedComponent deployedComponentUnknown = deployedComponentSetUp(unknownFlowObject);
+            DeployedOperation deployedOperationUnknown = addOperation(deployedComponentUnknown, unknownFlowObject);
+
         }
         this.outputPort.send(dataTransferObject);
+    }
+
+    private DeployedComponent deployedComponentSetUp(DataTransferObject dataTransferObject) {
+        final DeploymentContext deployedContext = this.deploymentModel.getContexts().get(0).getValue();
+        if (deployedContext == null) {
+            this.logger.error("Internal error: Data must contain at least one deployment context.");
+            return null;
+        } else {
+            DeployedComponent deployedComponent = deployedContext.getComponents().get(dataTransferObject.getComponent());
+            if (deployedComponent == null) {
+                deployedComponent = createDeployedComponent(deployedContext, dataTransferObject);
+            }
+            return deployedComponent;
+        }
+    }
+
+    private DeployedComponent commonComponentSetUp() {
+        String commonIdent = "COMMON-Component";
+        final DeploymentContext deploymentContext = this.deploymentModel.getContexts().get(0).getValue();
+        if (deploymentContext == null) {
+            this.logger.error("Internal error: Data must contain at least one deployment context.");
+            return null;
+        } else {
+            DeployedComponent deployedComponent = deploymentContext.getComponents().get(commonIdent);
+            if (deployedComponent == null) {
+                deployedComponent= DeploymentFactory.eINSTANCE.createDeployedComponent();
+
+                deployedComponent.setSignature(commonIdent);
+                deployedComponent.setAssemblyComponent(this.assemblyModel.getComponents().get(commonIdent));
+                deploymentContext.getComponents().put(commonIdent, deployedComponent);
+
+                logger.info("Placing DeployedComponent with name: " + commonIdent);
+                this.addObjectToSource(deployedComponent);
+            }
+            return deployedComponent;
+        }
+    }
+
+    private DeployedComponent createDeployedComponent(DeploymentContext deploymentContext, DataTransferObject dataTransferObject){
+        final DeployedComponent newDeployedComponent= DeploymentFactory.eINSTANCE.createDeployedComponent();
+
+        newDeployedComponent.setSignature(dataTransferObject.getComponent());
+        newDeployedComponent.setAssemblyComponent(this.assemblyModel.getComponents().get(dataTransferObject.getComponent()));
+        deploymentContext.getComponents().put(dataTransferObject.getComponent(), newDeployedComponent);
+
+        logger.info("Placing DeployedComponent with name: " + dataTransferObject.getComponent());
+        this.addObjectToSource(newDeployedComponent);
+        return newDeployedComponent;
     }
 
     private DeployedStorage addStorage(DeployedComponent deployedComponent, DataTransferObject dataTransferObject) {
@@ -47,6 +104,7 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
         if (deployedStorage == null) {
             deployedStorage = createStorage(dataTransferObject);
             deployedComponent.getStorages().put(dataTransferObject.getTargetIdent(), deployedStorage);
+            this.deploymentModel.getContexts().get(0).getValue().getComponents().put(deployedComponent.getSignature(),deployedComponent);
             this.deployedStorageMap.put(dataTransferObject.getTargetIdent(), deployedStorage);
 
             final List<DeployedComponent> newList = new ArrayList<>();
@@ -65,20 +123,6 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
         return deployedStorage;
     }
 
-    private DeployedComponent deployedComponentSetUp(DataTransferObject dataTransferObject) {
-        final DeploymentContext deployedContext = this.deploymentModel.getContexts().get(0).getValue();
-        if (deployedContext == null) {
-            this.logger.error("Internal error: Data must contain at least one deployment context.");
-            return null;
-        } else {
-            DeployedComponent deployedComponent = deployedContext.getComponents().get(dataTransferObject.getComponent());
-            if (deployedComponent == null) {
-                deployedComponent = createDeployedComponent(deployedContext, dataTransferObject);
-            }
-            return deployedComponent;
-        }
-    }
-
     private AssemblyStorage findAssemblyStorage(final String sharedData) {
         for (final AssemblyComponent assemblyComponent : this.assemblyModel.getComponents().values()) {
             final AssemblyStorage assemblyStorage = assemblyComponent.getStorages().get(sharedData);
@@ -88,18 +132,6 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
         }
         this.logger.error("Internal error. Could not find previously defined assembly storage {}", sharedData);
         return null;
-    }
-
-    private DeployedComponent createDeployedComponent(DeploymentContext deploymentContext, DataTransferObject dataTransferObject){
-        final DeployedComponent newDeployedComponent= DeploymentFactory.eINSTANCE.createDeployedComponent();
-
-        newDeployedComponent.setSignature(dataTransferObject.getComponent());
-        newDeployedComponent.setAssemblyComponent(this.assemblyModel.getComponents().get(dataTransferObject.getComponent()));
-        deploymentContext.getComponents().put(dataTransferObject.getComponent(), newDeployedComponent);
-
-        logger.info("Placing DeployedComponent with name: " + dataTransferObject.getComponent());
-        this.addObjectToSource(newDeployedComponent);
-        return newDeployedComponent;
     }
     private DeployedOperation addOperation(DeployedComponent deployedComponent, DataTransferObject dataTransferObject){
         DeployedOperation deployedOperation = deployedComponent.getOperations().get(dataTransferObject.getSourceIdent());
