@@ -17,4 +17,7 @@ lib
 #Ignore test or generated files
 test.csv
 testComponents.csv
+contents.csv
+dataflow.csv
 components.properties
+output
