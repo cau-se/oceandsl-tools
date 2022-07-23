@@ -5,15 +5,11 @@ import kieker.model.analysismodel.type.*;
 import org.oceandsl.tools.sar.bsc.dataflow.model.DataTransferObject;
 import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferObject,DataTransferObject> {
 
     private static final String UNKNOWN_TYPE = "UNKNOWN";
 
     private final TypeModel typeModel;
-    private final Map<String, StorageType> storageTypeMap = new HashMap<>();
 
     public TypeModelStage(final TypeModel typeModel, SourceModel sourceModel, String sourceLabel) {
         super(sourceModel, sourceLabel);
@@ -21,6 +17,7 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
 
     }
 
+    @SuppressWarnings("unused")
     @Override
     protected void execute(DataTransferObject dataTransferObject) throws Exception {
 
@@ -108,7 +105,7 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      * @return the added storage. Useful for DEBUG Reasons
      */
     private StorageType addStorage(ComponentType componentType, DataTransferObject dataTransferObject) {
-        StorageType storageType = this.storageTypeMap.get(dataTransferObject.getTargetIdent()); // common Block init via registration of referencing
+        StorageType storageType = componentType.getProvidedStorages().get(dataTransferObject.getTargetIdent()); // common Block init via registration of referencing
         if(storageType== null){
             storageType = createStorageType(dataTransferObject);
             componentType.getProvidedStorages().put(storageType.getName(), storageType);
@@ -148,6 +145,7 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return target component created and stored in the type model
      */
+    @SuppressWarnings("unused")
     private ComponentType createTargetComponentAndOperation(DataTransferObject dataTransferObject){
         //Create Target Component
         DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
