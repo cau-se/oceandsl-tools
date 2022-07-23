@@ -87,7 +87,6 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return the added operation. Useful for DEBUG Reasons
      */
-
     private AssemblyOperation addOperation(AssemblyComponent assemblyComponent, DataTransferObject dataTransferObject){
         AssemblyOperation operationType = assemblyComponent.getOperations().get(dataTransferObject.getSourceIdent());
         if(operationType == null){
@@ -100,7 +99,7 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
     /**
      * This function adds an AssemblyStorage to a given component.
      *
-     * @param assemblyComponent the operation should be stored in
+     * @param assemblyComponent the storage should be stored in
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return the added operation. Useful for DEBUG Reasons
      */
@@ -158,23 +157,25 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
     }
 
     /**
+     * This function creates an AssemblyOperationObject and stores it in the given source
      *
-     * @param assemblyComponent component where the needed Operation
+     * @param assemblyComponent component where the new operation is stored in
      * @param operationIdent string identifier for operation creation
      * @return created operation
      */
     private AssemblyOperation createOperation(AssemblyComponent assemblyComponent, String operationIdent) {
         final AssemblyOperation assemblyOperation = AssemblyFactory.eINSTANCE.createAssemblyOperation();
         assemblyOperation.setOperationType(assemblyComponent.getComponentType().getProvidedOperations().get(operationIdent));
+
         logger.info("Placing AssemblyOperation with name: " + operationIdent);
         this.addObjectToSource(assemblyOperation);
         return assemblyOperation;
     }
 
     /**
-     *
      * This function creates an AssemblyStorageObject and returns it
-     * @param assemblyComponent component where the referenced componentType is stored in.
+     *
+     * @param assemblyComponent component where the new storage is stored in
      * @param storageIdent string identifier for storage creation
      * @return created storage
      */
