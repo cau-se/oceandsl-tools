@@ -82,7 +82,7 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      */
 
     /**
-     * This function adds an OperationType to a given Component.
+     * This function adds an OperationType to a given component.
      *
      * @param componentType the operation should be stored in
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
@@ -98,7 +98,7 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
     }
 
     /**
-     * This function adds an StorageType to a given Component.
+     * This function adds an StorageType to a given component.
      *
      * @param componentType the storage should be stored in
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
@@ -147,7 +147,7 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      */
     @SuppressWarnings("unused")
     private ComponentType createTargetComponentAndOperation(DataTransferObject dataTransferObject){
-        //Create Target Component
+
         DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
         tempTargetDataTransferObject.setComponent(dataTransferObject.getTargetComponent());
         tempTargetDataTransferObject.setSourceIdent(dataTransferObject.getTargetIdent());

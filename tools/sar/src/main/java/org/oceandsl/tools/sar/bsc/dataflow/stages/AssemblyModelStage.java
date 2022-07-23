@@ -2,24 +2,15 @@ package org.oceandsl.tools.sar.bsc.dataflow.stages;
 
 import kieker.model.analysismodel.assembly.*;
 import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.type.ComponentType;
-import kieker.model.analysismodel.type.StorageType;
 import kieker.model.analysismodel.type.TypeModel;
 import org.oceandsl.tools.sar.bsc.dataflow.model.DataTransferObject;
 import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTransferObject,DataTransferObject> {
 
 
     private final TypeModel typeModel;
     private final AssemblyModel assemblyModel;
-    private final Map<String, AssemblyStorage> assemblyStorageMap = new HashMap<>();
-    private final Map<AssemblyStorage, List<AssemblyComponent>> assemblyStorageAccessMap = new HashMap<>();
 
 
     public AssemblyModelStage(final TypeModel typeModel, final AssemblyModel assemblyModel,
@@ -29,28 +20,35 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         this.assemblyModel = assemblyModel;
     }
 
+    @SuppressWarnings("unused")
     @Override
     protected void execute(DataTransferObject dataTransferObject) throws Exception {
+
         AssemblyComponent assemblyComponent = assemblyComponentSetUp(dataTransferObject);
-        if(dataTransferObject.callsOperation()){
-            AssemblyOperation assemblyOperation = addOperation(assemblyComponent,dataTransferObject);
-        } else if(dataTransferObject.callsCommon()){
-            assemblyComponent = commonComponentSetUp(); // store common block independent of dataflow component
+        AssemblyOperation assemblyOperation = addOperation(assemblyComponent,dataTransferObject);
+
+        if(dataTransferObject.callsCommon()){
+            // store common block independent of component containing functions
+            assemblyComponent = commonComponentSetUp();
             AssemblyStorage assemblyStorage = addStorage(assemblyComponent,dataTransferObject);
         } else {
-            AssemblyOperation assemblyOperation = addOperation(assemblyComponent,dataTransferObject);
-
-            logger.warn("Unknown Dataflow detected.");
-            DataTransferObject unknownFlowObject = new DataTransferObject();
-            unknownFlowObject.setComponent("Unknown");
-            unknownFlowObject.setSourceIdent(dataTransferObject.getTargetIdent());
-            AssemblyComponent assemblyComponentUnknown = assemblyComponentSetUp(unknownFlowObject);
-            AssemblyOperation assemblyOperationUnknown = addOperation(assemblyComponentUnknown,unknownFlowObject);
-
+            //if no storage is referenced, add target operation to target component
+            AssemblyComponent targetComponent = createTargetComponentAndOperation(dataTransferObject);
         }
         this.outputPort.send(dataTransferObject);
     }
 
+    /*
+        SETUP
+     */
+
+    /**
+     * This function retrieves a stored or new created AssemblyComponent. Depending on the given identifier in the transfer-object
+     * a subroutine is called to set up a new AssemblyComponent instance.
+     *
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return component, stored for the given identifier string
+     */
     private AssemblyComponent assemblyComponentSetUp(DataTransferObject dataTransferObject) {
         AssemblyComponent assemblyComponent = this.assemblyModel.getComponents().get(dataTransferObject.getComponent());
         if (assemblyComponent == null) {
@@ -59,6 +57,11 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         return assemblyComponent;
     }
 
+    /**
+     * This function retrieves a stored or new created AssemblyComponent, storing all storages/common blocks.
+     *
+     * @return component containing possible storages/common blocks.
+     */
     private AssemblyComponent commonComponentSetUp() {
         String commonIdent = "COMMON-Component";
         AssemblyComponent assemblyComponent = this.assemblyModel.getComponents().get(commonIdent);
@@ -73,15 +76,18 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         return assemblyComponent;
     }
 
-    private AssemblyComponent createAssemblyComponent(DataTransferObject dataTransferObject){
-        final AssemblyComponent newAssemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
-        newAssemblyComponent.setComponentType(this.typeModel.getComponentTypes().get(dataTransferObject.getComponent()));
-        newAssemblyComponent.setSignature(dataTransferObject.getComponent());
-        logger.info("Placing AssemblyComponent with name: " + dataTransferObject.getComponent());
-        this.assemblyModel.getComponents().put(dataTransferObject.getComponent(), newAssemblyComponent);
-        this.addObjectToSource(newAssemblyComponent);
-        return newAssemblyComponent;
-    }
+    /*
+        ADDING
+     */
+
+    /**
+     * This function adds an AssemblyOperation to a given component.
+     *
+     * @param assemblyComponent the operation should be stored in
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return the added operation. Useful for DEBUG Reasons
+     */
+
     private AssemblyOperation addOperation(AssemblyComponent assemblyComponent, DataTransferObject dataTransferObject){
         AssemblyOperation operationType = assemblyComponent.getOperations().get(dataTransferObject.getSourceIdent());
         if(operationType == null){
@@ -91,6 +97,72 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         return operationType;
     }
 
+    /**
+     * This function adds an AssemblyStorage to a given component.
+     *
+     * @param assemblyComponent the operation should be stored in
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return the added operation. Useful for DEBUG Reasons
+     */
+    private AssemblyStorage addStorage(AssemblyComponent assemblyComponent, final DataTransferObject dataTransferObject){
+        AssemblyStorage assemblyStorage = assemblyComponent.getStorages().get(dataTransferObject.getTargetIdent());
+        if(assemblyStorage == null){
+            assemblyStorage = createAssemblyStorage(assemblyComponent, dataTransferObject.getTargetIdent());
+            assemblyComponent.getStorages().put(dataTransferObject.getTargetIdent(), assemblyStorage);
+            this.assemblyModel.getComponents().put(assemblyComponent.getSignature(),assemblyComponent);
+
+            logger.info("Placing Storage with name: " + assemblyStorage.getStorageType().getName());
+            this.addObjectToSource(assemblyStorage);
+        }
+
+        return assemblyStorage;
+    }
+
+    /*
+        CREATING
+     */
+
+    /**
+     * This function is used to create a new AssemblyComponentObject and store it in the given assembly model.
+     *
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return component created and stored in the assembly model
+     */
+    private AssemblyComponent createAssemblyComponent(DataTransferObject dataTransferObject){
+        final AssemblyComponent newAssemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
+        newAssemblyComponent.setComponentType(this.typeModel.getComponentTypes().get(dataTransferObject.getComponent()));
+        newAssemblyComponent.setSignature(dataTransferObject.getComponent());
+        logger.info("Placing AssemblyComponent with name: " + dataTransferObject.getComponent());
+        this.assemblyModel.getComponents().put(dataTransferObject.getComponent(), newAssemblyComponent);
+        this.addObjectToSource(newAssemblyComponent);
+        return newAssemblyComponent;
+    }
+
+    /**
+     * This function is used to create the matching target component of a given dataflow step. It will use the 'createAssemblyComponent' method
+     * to store the new component in the assembly model. Therefor it creates a new transfer object only used in this method.
+     *
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return component created and stored in the assembly model
+     */
+    @SuppressWarnings("unused")
+    private AssemblyComponent createTargetComponentAndOperation(DataTransferObject dataTransferObject){
+
+        DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
+        tempTargetDataTransferObject.setComponent(dataTransferObject.getTargetComponent());
+        tempTargetDataTransferObject.setSourceIdent(dataTransferObject.getTargetIdent());
+
+        AssemblyComponent targetComponentType = assemblyComponentSetUp(tempTargetDataTransferObject);
+        AssemblyOperation operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
+        return  targetComponentType;
+    }
+
+    /**
+     *
+     * @param assemblyComponent component where the needed Operation
+     * @param operationIdent string identifier for operation creation
+     * @return created operation
+     */
     private AssemblyOperation createOperation(AssemblyComponent assemblyComponent, String operationIdent) {
         final AssemblyOperation assemblyOperation = AssemblyFactory.eINSTANCE.createAssemblyOperation();
         assemblyOperation.setOperationType(assemblyComponent.getComponentType().getProvidedOperations().get(operationIdent));
@@ -99,38 +171,16 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         return assemblyOperation;
     }
 
-    private AssemblyStorage addStorage(AssemblyComponent assemblyComponent, final DataTransferObject dataTransferObject){
-        AssemblyStorage assemblyStorage = assemblyComponent.getStorages().get(dataTransferObject.getTargetIdent());
-        if(assemblyStorage == null){
-            assemblyStorage = createAssemblyStorage(dataTransferObject);
-            assemblyComponent.getStorages().put(dataTransferObject.getTargetIdent(), assemblyStorage);
-            this.assemblyModel.getComponents().put(assemblyComponent.getSignature(),assemblyComponent);
-            this.assemblyStorageMap.put(dataTransferObject.getTargetComponent(), assemblyStorage);
-
-            final List<AssemblyComponent> newList = new ArrayList<>();
-            newList.add(assemblyComponent);
-            logger.info("Placing Storage with name: " + assemblyStorage.getStorageType().getName());
-            this.assemblyStorageAccessMap.put(assemblyStorage, newList);
-            this.addObjectToSource(assemblyStorage);
-        }
-
-        return assemblyStorage;
-    }
-
-    private AssemblyStorage createAssemblyStorage(DataTransferObject dataTransferObject) {
+    /**
+     *
+     * This function creates an AssemblyStorageObject and returns it
+     * @param assemblyComponent component where the referenced componentType is stored in.
+     * @param storageIdent string identifier for storage creation
+     * @return created storage
+     */
+    private AssemblyStorage createAssemblyStorage(AssemblyComponent assemblyComponent, String storageIdent) {
         AssemblyStorage assemblyStorage = AssemblyFactory.eINSTANCE.createAssemblyStorage();
-        assemblyStorage.setStorageType(this.findStorageType(dataTransferObject.getTargetIdent()));
+        assemblyStorage.setStorageType(assemblyComponent.getComponentType().getProvidedStorages().get(storageIdent));
         return assemblyStorage;
-    }
-
-    private StorageType findStorageType(final String sharedData) {
-        for (final ComponentType type : this.typeModel.getComponentTypes().values()) {
-            final StorageType storageType = type.getProvidedStorages().get(sharedData);
-            if (storageType != null) {
-                return storageType;
-            }
-        }
-        this.logger.error("Internal error: Missing storage type for given data access element {}", sharedData);
-        return null;
     }
 }
