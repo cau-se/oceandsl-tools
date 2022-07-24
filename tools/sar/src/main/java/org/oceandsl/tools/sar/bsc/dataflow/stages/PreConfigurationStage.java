@@ -16,7 +16,7 @@ public class PreConfigurationStage extends AbstractDataflowAssemblerStage<DataTr
     @Override
     protected void execute(final DataTransferObject dataTransferObject) throws Exception {
 
-        //If source of our target Content is unknown, look in packages which were import.
+        //target component is empty by default
         String targetIdent = dataTransferObject.getTargetIdent();
         dataTransferObject.setTargetComponent(componentLookup.getComponentIdent(targetIdent));
         try{
@@ -28,20 +28,20 @@ public class PreConfigurationStage extends AbstractDataflowAssemblerStage<DataTr
                 logger.info("Dataflow to Operation saved");
                 dataTransferObject.setCallsOperation(true);
             } else {
-                logger.error("Invalid Dataflow detected. No Valid Connection from " + dataTransferObject.getSourceIdent() + " to Ident " + dataTransferObject.getTargetIdent() + ". Please make sure its either a common block or subroutine and it is mentioned as such in analysis files!");
+                logger.error("Invalid Dataflow detected. No Valid Connection from "
+                        + dataTransferObject.getSourceIdent() + " to Ident " + dataTransferObject.getTargetIdent()
+                        + ". Please make sure its either a common block or subroutine and it is mentioned as such in analysis files!");
             }
+
         }catch(NullPointerException e){
-            logger.error("Unknown origin component from content: " + targetIdent);
+            logger.error("Unknown origin component from Operation: " + targetIdent);
             dataTransferObject.setTargetComponent(".unknown");
-            logger.info("datatransferobject: component=" + dataTransferObject.getComponent() +
-                                            " sourceIdent="+ dataTransferObject.getSourceIdent() +
-                                            " targetIdent="+ dataTransferObject.getTargetIdent());
 
+            // Common Blocks are referenced as "/(...)/" which is evaluated in first if,
+            //therefore all unknown dataflow targets are handled like operations
+            dataTransferObject.setCallsOperation(true);
         }
 
-        if(dataTransferObject.getTargetComponent() == null){
-            logger.error("Unknown component from content: " + targetIdent);
-        }
         this.outputPort.send(dataTransferObject);
     }
 }
