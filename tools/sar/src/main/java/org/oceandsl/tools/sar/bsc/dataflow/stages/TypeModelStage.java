@@ -130,6 +130,7 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
     private ComponentType createComponentType(DataTransferObject dataTransferObject){
         final ComponentType newComponentType = TypeFactory.eINSTANCE.createComponentType();
         newComponentType.setName(dataTransferObject.getComponent());
+        newComponentType.setPackage("GLOBAL");
         newComponentType.setSignature(dataTransferObject.getComponent());
 
         logger.info("Placing Component with name: " + newComponentType.getName());
