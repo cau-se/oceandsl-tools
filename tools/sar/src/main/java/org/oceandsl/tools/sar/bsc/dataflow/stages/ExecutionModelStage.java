@@ -6,6 +6,7 @@ import kieker.model.analysismodel.sources.SourceModel;
 import org.oceandsl.tools.sar.bsc.dataflow.model.DataTransferObject;
 import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
 
+
 public class ExecutionModelStage extends AbstractDataflowAssemblerStage<DataTransferObject, DataTransferObject> {
 
     private final ExecutionModel executionModel;
@@ -49,16 +50,20 @@ public class ExecutionModelStage extends AbstractDataflowAssemblerStage<DataTran
      */
     private void addOperationAccess(DeploymentContext context, DeployedOperation sourceOperation, DataTransferObject dataTransferObject){
         final DeployedComponent targetComponent = context.getComponents().get(dataTransferObject.getTargetComponent());
-        final DeployedOperation targetOperation = targetComponent.getOperations().get(dataTransferObject.getTargetIdent());
+        //filter unkown components
+        if(!targetComponent.getAssemblyComponent().getComponentType().getName().equals(".unknown")){
 
-        final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
-        key.setFirst(sourceOperation);
-        key.setSecond(targetOperation);
-        this.addObjectToSource(key);
+            final DeployedOperation targetOperation = targetComponent.getOperations().get(dataTransferObject.getTargetIdent());
 
-        OperationAccess operationAccess = this.executionModel.getOperationAccess().get(key);
-        if(operationAccess == null){
-            createOperationAccess(key, sourceOperation, targetOperation, dataTransferObject);
+            final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
+            key.setFirst(sourceOperation);
+            key.setSecond(targetOperation);
+            this.addObjectToSource(key);
+
+            OperationAccess operationAccess = this.executionModel.getOperationAccess().get(key);
+            if(operationAccess == null){
+                createOperationAccess(key, sourceOperation, targetOperation, dataTransferObject);
+            } // else fall not necessary, because an operation access from the same source to the same target can not change dataflow types due to function definition.
         }
     }
 
@@ -78,6 +83,18 @@ public class ExecutionModelStage extends AbstractDataflowAssemblerStage<DataTran
         AggregatedStorageAccess aggregatedStorageAccess = this.executionModel.getAggregatedStorageAccesses().get(key);
         if (aggregatedStorageAccess == null) {
             createStorageAccess(key,sourceOperation,accessedStorage,dataTransferObject);
+        } else {
+            checkAndChangeDirectionOfStorage(aggregatedStorageAccess, dataTransferObject);
+        }
+    }
+
+    private void checkAndChangeDirectionOfStorage(AggregatedStorageAccess aggregatedStorageAccess, DataTransferObject dataTransferObject) {
+        EDirection directionAggregatedStorageAccess = aggregatedStorageAccess.getDirection();
+        EDirection directionDataTransferObject = this.convertDirection(dataTransferObject.getRw_action());
+
+        if(directionAggregatedStorageAccess != directionDataTransferObject){
+            aggregatedStorageAccess.setDirection(EDirection.BOTH);
+            this.addObjectToSource(aggregatedStorageAccess);
         }
     }
 
