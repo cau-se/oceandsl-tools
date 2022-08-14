@@ -32,8 +32,8 @@ public class CSVBscDataflowReaderStage extends AbstractProducerStage<DataTransfe
     protected void execute() throws Exception {
         // ignore the header
 
-        String line = this.reader.readLine();
-        String type = line;
+        String line;
+        //String type = line;
 
 
         while ((line = this.reader.readLine()) != null) {
