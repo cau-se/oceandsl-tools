@@ -6,31 +6,33 @@ public class DataTransferObject {
 
     private String component;
     private String sourceIdent;
-    private EDirection rw_action;
+    private EDirection direction;
     private String targetIdent;
     private String targetComponent;
-    private boolean callByValue;
-    private boolean callsOperation = false;
-    private boolean callsCommon = false;
+    private boolean callsOperationFlag;
+    private boolean callsCommonFlag;
 
-    public DataTransferObject(String component, String sourceIdent, EDirection rw_action, String targetIdent, String callByValue){
+    public DataTransferObject(final String component, final String sourceIdent, final EDirection direction, final String targetIdent){
 
         this.component = component;
         this.sourceIdent = sourceIdent;
-        this.rw_action = rw_action;
+        this.direction = direction;
         this.targetIdent = targetIdent;
-        this.callByValue = callByValue.isEmpty();
+        this.callsOperationFlag = false;
+        this.callsCommonFlag = false;
     }
 
-    public DataTransferObject() {
 
+    public DataTransferObject() {
+        this.callsOperationFlag = false;
+        this.callsCommonFlag = false;
     }
 
     public String getComponent() {
         return component;
     }
 
-    public void setComponent(String component) {
+    public void setComponent(final String component) {
         this.component = component;
     }
 
@@ -38,54 +40,36 @@ public class DataTransferObject {
         return sourceIdent;
     }
 
-    public void setSourceIdent(String sourceIdent) {
+    public void setSourceIdent(final String sourceIdent) {
         this.sourceIdent = sourceIdent;
     }
 
-    public EDirection getRw_action() {
-        return rw_action;
-    }
-
-    public void setRw_action(EDirection rw_action) {
-        this.rw_action = rw_action;
-    }
+    public EDirection getDirection() {return direction;}
 
     public String getTargetIdent() {
         return targetIdent;
-    }
-
-    public void setTargetIdent(String targetIdent) {
-        this.targetIdent = targetIdent;
     }
 
     public String getTargetComponent() {
         return targetComponent;
     }
 
-    public void setTargetComponent(String targetComponent) {
+    public void setTargetComponent(final String targetComponent) {
         this.targetComponent = targetComponent;
     }
 
-    public boolean isCallByValue() {
-        return callByValue;
-    }
-
-    public void setCallByValue(boolean callByValue) {
-        this.callByValue = callByValue;
-    }
-
     public boolean callsOperation() {
-        return callsOperation;
+        return callsOperationFlag;
     }
 
-    public void setCallsOperation(boolean callsOperation) {
-        this.callsOperation = callsOperation;
+    public void setCallsOperation(final boolean callsOperation) {
+        this.callsOperationFlag = callsOperation;
     }
-    public void setCallsCommon(boolean callsCommon) {
-        this.callsCommon = callsCommon;
+    public void setCallsCommon(final boolean callsCommon) {
+        this.callsCommonFlag = callsCommon;
     }
 
     public boolean callsCommon() {
-        return callsCommon;
+        return callsCommonFlag;
     }
 }
