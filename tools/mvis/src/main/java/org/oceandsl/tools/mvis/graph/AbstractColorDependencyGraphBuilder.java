@@ -15,12 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
-import java.time.temporal.ChronoUnit;
-
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.EMap;
-import org.eclipse.emf.ecore.EObject;
-
 import kieker.analysis.architecture.dependency.AbstractDependencyGraphBuilder;
 import kieker.analysis.architecture.dependency.ResponseTimeDecorator;
 import kieker.analysis.architecture.repository.ModelRepository;
@@ -29,16 +23,16 @@ import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.statistics.EPredefinedUnits;
-import kieker.model.analysismodel.statistics.EPropertyType;
-import kieker.model.analysismodel.statistics.StatisticRecord;
-import kieker.model.analysismodel.statistics.Statistics;
-import kieker.model.analysismodel.statistics.StatisticsModel;
-
+import kieker.model.analysismodel.statistics.*;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
+import org.eclipse.emf.ecore.EObject;
 import org.oceandsl.analysis.graph.IGraphElementSelector;
+
+import java.time.temporal.ChronoUnit;
 
 /**
  * @author Reiner Jung
@@ -100,7 +94,7 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
         for (final AggregatedInvocation invocation : this.executionModel.getAggregatedInvocations().values()) {
             this.handleInvocation(invocation);
         }
-        for (final AggregatedStorageAccess storageAccess : this.executionModel.getAggregatedStorageAccesses()
+        for (final StorageDataflow storageAccess : this.executionModel.getStorageDataflow()
                 .values()) {
             this.handleStorageAccess(storageAccess);
         }
@@ -122,7 +116,7 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
         this.addEdge(sourceVertex, targetVertex, calls);
     }
 
-    private void handleStorageAccess(final AggregatedStorageAccess storageAccess) {
+    private void handleStorageAccess(final StorageDataflow storageAccess) {
         final INode sourceVertex = storageAccess.getCode() != null ? this.addVertex(storageAccess.getCode())
                 : this.addVertexForEntry(); // NOCS (declarative)
         final INode targetVertex = this.addStorageVertex(storageAccess.getStorage());
