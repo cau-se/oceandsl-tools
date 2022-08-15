@@ -15,7 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.analysis.architecture.stages;
 
-import kieker.analysis.architecture.recovery.data.OperationCallDurationEvent;
+import kieker.analysis.architecture.recovery.events.OperationCallDurationEvent;
 import kieker.analysis.statistics.StatisticsDecoratorStage;
 import kieker.analysis.statistics.calculating.CountCalculator;
 import kieker.model.analysismodel.deployment.DeployedOperation;

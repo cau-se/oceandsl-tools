@@ -15,19 +15,13 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.merge;
 
-import java.util.Map.Entry;
-
-import org.eclipse.emf.common.util.EMap;
-
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
-import kieker.model.analysismodel.execution.EDirection;
-import kieker.model.analysismodel.execution.ExecutionFactory;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.execution.Tuple;
+import kieker.model.analysismodel.execution.*;
+import org.eclipse.emf.common.util.EMap;
+
+import java.util.Map.Entry;
 
 /**
  * @author Reiner Jung
@@ -53,21 +47,21 @@ public final class ExecutionModelMerger {
                 targetModel.getAggregatedInvocations().put(key, value);
             }
         }
-        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> entry : mergeModel
-                .getAggregatedStorageAccesses()) {
+        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> entry : mergeModel
+                .getStorageDataflow()) {
             final Tuple<DeployedOperation, DeployedStorage> targetModelKey = ExecutionModelMerger
-                    .findTupleStorageKeys(targetModel.getAggregatedStorageAccesses(), entry.getKey());
+                    .findTupleStorageKeys(targetModel.getStorageDataflow(), entry.getKey());
             if (targetModelKey == null) {
-                final AggregatedStorageAccess value = ExecutionModelCloneUtils.duplicate(deploymentModel,
+                final StorageDataflow value = ExecutionModelCloneUtils.duplicate(deploymentModel,
                         entry.getValue());
                 final Tuple<DeployedOperation, DeployedStorage> key = ExecutionFactory.eINSTANCE.createTuple();
                 key.setFirst(value.getCode());
                 key.setSecond(value.getStorage());
-                targetModel.getAggregatedStorageAccesses().put(key, value);
+                targetModel.getStorageDataflow().put(key, value);
             } else {
-                final AggregatedStorageAccess targetStorageAccess = targetModel.getAggregatedStorageAccesses()
+                final StorageDataflow targetStorageAccess = targetModel.getStorageDataflow()
                         .get(targetModelKey);
-                final AggregatedStorageAccess sourceStorageAccess = entry.getValue();
+                final StorageDataflow sourceStorageAccess = entry.getValue();
                 switch (sourceStorageAccess.getDirection()) {
                 case READ:
                     if (targetStorageAccess.getDirection() == EDirection.WRITE) {
@@ -86,7 +80,7 @@ public final class ExecutionModelMerger {
                     throw new InternalError(
                             "Found unsupported direction type " + sourceStorageAccess.getDirection().getName());
                 }
-                targetModel.getAggregatedStorageAccesses().put(targetModelKey, targetStorageAccess);
+                targetModel.getStorageDataflow().put(targetModelKey, targetStorageAccess);
             }
         }
 
@@ -105,7 +99,7 @@ public final class ExecutionModelMerger {
     }
 
     private static Tuple<DeployedOperation, DeployedStorage> findTupleStorageKeys(
-            final EMap<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> aggregatedStorageAccesses,
+            final EMap<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> aggregatedStorageAccesses,
             final Tuple<DeployedOperation, DeployedStorage> key) {
         for (final Tuple<DeployedOperation, DeployedStorage> invocationKey : aggregatedStorageAccesses.keySet()) {
             if (ModelUtils.isEqual(invocationKey.getFirst(), key.getFirst())

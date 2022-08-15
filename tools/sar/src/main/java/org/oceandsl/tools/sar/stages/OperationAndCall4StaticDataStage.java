@@ -15,8 +15,9 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages;
 
-import kieker.analysis.architecture.recovery.data.CallEvent;
-import kieker.analysis.architecture.recovery.data.OperationEvent;
+
+import kieker.analysis.architecture.recovery.events.CallEvent;
+import kieker.analysis.architecture.recovery.events.OperationEvent;
 import org.oceandsl.analysis.code.stages.data.CallerCallee;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;

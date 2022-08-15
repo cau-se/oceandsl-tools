@@ -15,14 +15,16 @@
  ***************************************************************************/
 package org.oceandsl.tools.cmi;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.common.exception.ConfigurationException;
+import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.deployment.*;
+import kieker.model.analysismodel.execution.AggregatedInvocation;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.StorageDataflow;
+import kieker.model.analysismodel.execution.Tuple;
+import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.type.TypeModel;
 import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EAttribute;
@@ -32,20 +34,13 @@ import org.eclipse.emf.ecore.EReference;
 import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
 import org.oceandsl.analysis.architecture.RepositoryUtils;
 
-import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.common.exception.ConfigurationException;
-import kieker.model.analysismodel.assembly.AssemblyModel;
-import kieker.model.analysismodel.deployment.DeployedComponent;
-import kieker.model.analysismodel.deployment.DeployedOperation;
-import kieker.model.analysismodel.deployment.DeployedStorage;
-import kieker.model.analysismodel.deployment.DeploymentContext;
-import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.execution.Tuple;
-import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.type.TypeModel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Checks the integrity of architecture models.
@@ -189,20 +184,20 @@ public final class CheckModelIntegrityMain {
 
     private static void checkExecutionStorageAccessIntegrity(final ExecutionModel model) {
         long errors = 0;
-        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> entry : model
-                .getAggregatedStorageAccesses()) {
+        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> entry : model
+                .getStorageDataflow()) {
             final Tuple<DeployedOperation, DeployedStorage> tuple = entry.getKey();
-            final AggregatedStorageAccess storageAccesss = entry.getValue();
-            if (tuple.getFirst() != storageAccesss.getCode()) {
+            final StorageDataflow storageDataflow = entry.getValue();
+            if (tuple.getFirst() != storageDataflow.getCode()) {
                 System.out.printf("Caller does not match %s:%s\n", // NOPMD
-                        RepositoryUtils.getName(storageAccesss.getCode().getComponent()),
-                        RepositoryUtils.getName(storageAccesss.getCode()));
+                        RepositoryUtils.getName(storageDataflow.getCode().getComponent()),
+                        RepositoryUtils.getName(storageDataflow.getCode()));
                 errors++;
             }
-            if (tuple.getSecond() != storageAccesss.getStorage()) {
+            if (tuple.getSecond() != storageDataflow.getStorage()) {
                 System.out.printf("Storage does not match %s:%s\n", // NOPMD
-                        RepositoryUtils.getName(storageAccesss.getStorage().getComponent()),
-                        RepositoryUtils.getName(storageAccesss.getStorage()));
+                        RepositoryUtils.getName(storageDataflow.getStorage().getComponent()),
+                        RepositoryUtils.getName(storageDataflow.getStorage()));
                 errors++;
             }
         }

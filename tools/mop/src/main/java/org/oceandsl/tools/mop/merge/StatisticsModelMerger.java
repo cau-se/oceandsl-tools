@@ -15,22 +15,17 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.merge;
 
-import java.util.Map.Entry;
-
+import kieker.model.analysismodel.execution.AggregatedInvocation;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.StorageDataflow;
+import kieker.model.analysismodel.statistics.*;
 import org.apache.commons.lang3.NotImplementedException;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.statistics.EPredefinedUnits;
-import kieker.model.analysismodel.statistics.EPropertyType;
-import kieker.model.analysismodel.statistics.StatisticRecord;
-import kieker.model.analysismodel.statistics.Statistics;
-import kieker.model.analysismodel.statistics.StatisticsModel;
+import java.util.Map.Entry;
 
 /**
  * @author Reiner Jung
@@ -92,9 +87,9 @@ public final class StatisticsModelMerger {
             }
             StatisticsModelMerger.LOGGER.error("Missing correpsonding {} in the merged model.", key.getClass());
             throw new InternalError(String.format("Missing correpsonding %s in the merged model.", key.getClass()));
-        } else if (key instanceof AggregatedStorageAccess) {
-            for (final AggregatedStorageAccess storageAccess : executionModel.getAggregatedStorageAccesses().values()) {
-                final AggregatedStorageAccess searchForStorageAccess = (AggregatedStorageAccess) key;
+        } else if (key instanceof StorageDataflow) {
+            for (final StorageDataflow storageAccess : executionModel.getStorageDataflow().values()) {
+                final StorageDataflow searchForStorageAccess = (StorageDataflow) key;
                 if (ModelUtils.areObjectsEqual(searchForStorageAccess, storageAccess)) {
                     return storageAccess;
                 }

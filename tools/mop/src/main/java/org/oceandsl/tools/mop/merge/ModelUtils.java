@@ -15,14 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.merge;
 
-import java.util.Map.Entry;
-
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.util.EcoreEMap;
-
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
@@ -31,12 +23,19 @@ import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
 import kieker.model.analysismodel.execution.EDirection;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.StorageType;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.util.EcoreEMap;
+
+import java.util.Map.Entry;
 
 /**
  * @author Reiner Jung
@@ -74,8 +73,8 @@ public final class ModelUtils {
                 return ModelUtils.isEqual((StorageType) left, (StorageType) right);
             } else if (left instanceof AggregatedInvocation) {
                 return ModelUtils.isEqual((AggregatedInvocation) left, (AggregatedInvocation) right);
-            } else if (left instanceof AggregatedStorageAccess) {
-                return ModelUtils.isEqual((AggregatedStorageAccess) left, (AggregatedStorageAccess) right);
+            } else if (left instanceof StorageDataflow) {
+                return ModelUtils.isEqual((StorageDataflow) left, (StorageDataflow) right);
             } else if (left instanceof Tuple) {
                 return ModelUtils.isEqual((Tuple<?, ?>) left, (Tuple<?, ?>) right);
             } else {
@@ -90,10 +89,10 @@ public final class ModelUtils {
                 && ModelUtils.areObjectsEqual((EObject) leftTuple.getSecond(), (EObject) rightTuple.getSecond());
     }
 
-    public static boolean isEqual(final AggregatedStorageAccess leftStorageAccess,
-            final AggregatedStorageAccess rightStorageAccess) {
-        ModelUtils.check(leftStorageAccess, "AggregatedStorageAccess leftStorageAccess");
-        ModelUtils.check(rightStorageAccess, "AggregatedStorageAccess rightStorageAccess");
+    public static boolean isEqual(final StorageDataflow leftStorageAccess,
+            final StorageDataflow rightStorageAccess) {
+        ModelUtils.check(leftStorageAccess, "StorageDataflow leftStorageAccess");
+        ModelUtils.check(rightStorageAccess, "StorageDataflow rightStorageAccess");
         return ModelUtils.isEqual(leftStorageAccess.getCode(), rightStorageAccess.getCode())
                 && ModelUtils.compareDirections(leftStorageAccess.getDirection(), rightStorageAccess.getDirection())
                 && ModelUtils.isEqual(leftStorageAccess.getStorage(), rightStorageAccess.getStorage());

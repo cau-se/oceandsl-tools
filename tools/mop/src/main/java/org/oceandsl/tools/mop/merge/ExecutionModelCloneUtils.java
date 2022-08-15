@@ -24,7 +24,7 @@ import kieker.model.analysismodel.deployment.impl.EStringToDeployedComponentMapE
 import kieker.model.analysismodel.deployment.impl.EStringToDeployedOperationMapEntryImpl;
 import kieker.model.analysismodel.deployment.impl.EStringToDeployedStorageMapEntryImpl;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.ExecutionFactory;
 
 /**
@@ -48,9 +48,9 @@ public final class ExecutionModelCloneUtils {
         return newInvocation;
     }
 
-    public static AggregatedStorageAccess duplicate(final DeploymentModel deploymentModel,
-            final AggregatedStorageAccess access) {
-        final AggregatedStorageAccess newAccess = ExecutionFactory.eINSTANCE.createAggregatedStorageAccess();
+    public static StorageDataflow duplicate(final DeploymentModel deploymentModel,
+            final StorageDataflow access) {
+        final StorageDataflow newAccess = ExecutionFactory.eINSTANCE.createStorageDataflow();
         newAccess.setDirection(access.getDirection());
 
         newAccess.setCode(ExecutionModelCloneUtils.findDeployedOperation(deploymentModel, access.getCode()));
