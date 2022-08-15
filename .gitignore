@@ -15,9 +15,8 @@ lib
 .idea
 
 #Ignore test or generated files
-test.csv
-testComponents.csv
-contents.csv
 dataflow.csv
-components.properties
+dataflow copy.csv
+filecontents.csv
 output
+outputMVIS
