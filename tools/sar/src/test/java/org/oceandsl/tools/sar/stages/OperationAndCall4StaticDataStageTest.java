@@ -15,17 +15,14 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages;
 
-import java.time.Duration;
-
+import kieker.analysis.architecture.recovery.data.CallEvent;
+import kieker.analysis.architecture.recovery.data.OperationEvent;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-
-import kieker.analysis.architecture.recovery.events.CallEvent;
-import kieker.analysis.architecture.recovery.events.OperationEvent;
-
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
 import teetime.framework.test.StageTester;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import java.time.Duration;
 
 /**
  * Tesintg operation and call data stage..

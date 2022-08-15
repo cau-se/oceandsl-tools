@@ -27,7 +27,7 @@ public class ExecutionModelStage extends AbstractDataflowAssemblerStage<DataTran
 
         //distinguish between o2o and o2c Operation. Use created Storages and Operations in last stages to set relations
         if(dataTransferObject.callsOperation()){
-            addOperationAccess(context, sourceOperation, dataTransferObject);
+            addOperationDataflow(context, sourceOperation, dataTransferObject);
         } else if(dataTransferObject.callsCommon()){
             addStorageAccess(context, sourceOperation, dataTransferObject);
         } else {
@@ -42,13 +42,13 @@ public class ExecutionModelStage extends AbstractDataflowAssemblerStage<DataTran
      */
 
     /**
-     * This function adds Dataflow in form of an operation access. It creates a new OperationAccessObject when a new
+     * This function adds Dataflow in form of an operation access. It creates a new OperationDataflowObject when a new
      * dataflow is detected or updates
      * @param context where deploymentComponents are stored in.
      * @param sourceOperation of the dataflow step, stored in Deployment model
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      */
-    private void addOperationAccess(DeploymentContext context, DeployedOperation sourceOperation, DataTransferObject dataTransferObject){
+    private void addOperationDataflow(DeploymentContext context, DeployedOperation sourceOperation, DataTransferObject dataTransferObject){
         final DeployedComponent targetComponent = context.getComponents().get(dataTransferObject.getTargetComponent());
         //filter unkown components
         if(!targetComponent.getAssemblyComponent().getComponentType().getName().equals(".unknown")){
@@ -60,9 +60,9 @@ public class ExecutionModelStage extends AbstractDataflowAssemblerStage<DataTran
             key.setSecond(targetOperation);
             this.addObjectToSource(key);
 
-            OperationAccess operationAccess = this.executionModel.getOperationAccess().get(key);
-            if(operationAccess == null){
-                createOperationAccess(key, sourceOperation, targetOperation, dataTransferObject);
+            OperationDataflow operationDataflow = this.executionModel.getOperationDataflow().get(key);
+            if(operationDataflow == null){
+                createOperationDataflow(key, sourceOperation, targetOperation, dataTransferObject);
             } // else fall not necessary, because an operation access from the same source to the same target can not change dataflow types due to function definition.
         }
     }
@@ -80,7 +80,7 @@ public class ExecutionModelStage extends AbstractDataflowAssemblerStage<DataTran
         key.setSecond(accessedStorage);
         this.addObjectToSource(key);
 
-        AggregatedStorageAccess aggregatedStorageAccess = this.executionModel.getAggregatedStorageAccesses().get(key);
+       StorageDataflow aggregatedStorageAccess = this.executionModel.getStorageDataflow().get(key);
         if (aggregatedStorageAccess == null) {
             createStorageAccess(key,sourceOperation,accessedStorage,dataTransferObject);
         } else {
@@ -88,11 +88,11 @@ public class ExecutionModelStage extends AbstractDataflowAssemblerStage<DataTran
         }
     }
 
-    private void checkAndChangeDirectionOfStorage(AggregatedStorageAccess aggregatedStorageAccess, DataTransferObject dataTransferObject) {
-        EDirection directionAggregatedStorageAccess = aggregatedStorageAccess.getDirection();
+    private void checkAndChangeDirectionOfStorage(StorageDataflow aggregatedStorageAccess, DataTransferObject dataTransferObject) {
+        EDirection directionStorageDataflow = aggregatedStorageAccess.getDirection();
         EDirection directionDataTransferObject = this.convertDirection(dataTransferObject.getRw_action());
 
-        if(directionAggregatedStorageAccess != directionDataTransferObject){
+        if(directionStorageDataflow != directionDataTransferObject){
             aggregatedStorageAccess.setDirection(EDirection.BOTH);
             this.addObjectToSource(aggregatedStorageAccess);
         }
@@ -109,14 +109,14 @@ public class ExecutionModelStage extends AbstractDataflowAssemblerStage<DataTran
      * @param targetOperation of the dataflow step, stored in Deployment model
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      */
-    private void createOperationAccess(Tuple<DeployedOperation, DeployedOperation> key, DeployedOperation sourceOperation, DeployedOperation targetOperation, DataTransferObject dataTransferObject){
-        OperationAccess operationAccess = ExecutionFactory.eINSTANCE.createOperationAccess();
-        operationAccess.setSource(sourceOperation);
-        operationAccess.setTarget(targetOperation);
-        operationAccess.setRWAccess(this.convertDirection(dataTransferObject.getRw_action()));
+    private void createOperationDataflow(Tuple<DeployedOperation, DeployedOperation> key, DeployedOperation sourceOperation, DeployedOperation targetOperation, DataTransferObject dataTransferObject){
+        OperationDataflow operationDataflow = ExecutionFactory.eINSTANCE.createOperationDataflow();
+        operationDataflow.setSource(sourceOperation);
+        operationDataflow.setTarget(targetOperation);
+        operationDataflow.setDirection(this.convertDirection(dataTransferObject.getRw_action()));
         logger.info("Placing Dataflow Operation: " + dataTransferObject.getSourceIdent() + " to " + dataTransferObject.getTargetIdent());
-        this.executionModel.getOperationAccess().put(key, operationAccess);
-        this.addObjectToSource(operationAccess);
+        this.executionModel.getOperationDataflow().put(key, operationDataflow);
+        this.addObjectToSource(operationDataflow);
     }
 
     /**
@@ -127,12 +127,12 @@ public class ExecutionModelStage extends AbstractDataflowAssemblerStage<DataTran
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      */
     private void createStorageAccess(Tuple<DeployedOperation, DeployedStorage> key, DeployedOperation sourceOperation, DeployedStorage accessedStorage, DataTransferObject dataTransferObject){
-        AggregatedStorageAccess aggregatedStorageAccess = ExecutionFactory.eINSTANCE.createAggregatedStorageAccess();
+        StorageDataflow aggregatedStorageAccess = ExecutionFactory.eINSTANCE.createStorageDataflow();
         aggregatedStorageAccess.setCode(sourceOperation);
         aggregatedStorageAccess.setStorage(accessedStorage);
         aggregatedStorageAccess.setDirection(this.convertDirection(dataTransferObject.getRw_action()));
         logger.info("Placing Dataflow Common: " + dataTransferObject.getSourceIdent() + " to " + dataTransferObject.getTargetIdent());
-        this.executionModel.getAggregatedStorageAccesses().put(key, aggregatedStorageAccess);
+        this.executionModel.getStorageDataflow().put(key, aggregatedStorageAccess);
         this.addObjectToSource(aggregatedStorageAccess);
     }
 
