@@ -14,27 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 package org.oceandsl.tools.sar;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
+import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.common.exception.ConfigurationException;
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.tools.sar.bsc.dataflow.TeetimeBscDataflowConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import teetime.framework.Configuration;
+import teetime.framework.Execution;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
-
-import groovyjarjarantlr4.v4.runtime.misc.NotNull;
-import org.oceandsl.tools.sar.bsc.dataflow.TeetimeBscDataflowConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.common.exception.ConfigurationException;
-
-import teetime.framework.Configuration;
-import teetime.framework.Execution;
-
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * Architecture analysis main class.
@@ -200,7 +194,9 @@ public class StaticArchitectureRecoveryMain {
             }
             return true;
         }catch(NullPointerException e){
-            logger.info("no config file at " + p);
+            if(logger.isInfoEnabled()){
+                logger.info("no config file at " + p);
+            }
             return false;
         }
     }

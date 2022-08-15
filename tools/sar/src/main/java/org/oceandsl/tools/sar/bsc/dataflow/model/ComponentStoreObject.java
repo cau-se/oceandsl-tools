@@ -5,12 +5,12 @@ import java.util.List;
 
 public class ComponentStoreObject {
 
-    private String componentName;
+    private final String componentName;
     private List<String>  implementedFunctions = new ArrayList<>();
     private List<String> implementedRoutines = new ArrayList<>();
     private List<String> implementedCommonBlocks = new ArrayList<>();
 
-    public ComponentStoreObject(String componentName){
+    public ComponentStoreObject(final String componentName){
         this.componentName = componentName;
     }
 
@@ -27,28 +27,28 @@ public class ComponentStoreObject {
     }
 
 
-    public void setImplementedCommonBlocks(List<String> implementedCommonBlocks) {
+    public void setImplementedCommonBlocks(final List<String> implementedCommonBlocks) {
         this.implementedCommonBlocks = implementedCommonBlocks;
     }
 
-    public void setImplementedRoutines(List<String> implementedRoutines) {
+    public void setImplementedRoutines(final List<String> implementedRoutines) {
         this.implementedRoutines = implementedRoutines;
     }
 
-    public void setImplementedFunctions(List<String> implementedFunctions){
+    public void setImplementedFunctions(final List<String> implementedFunctions){
         this.implementedFunctions = implementedFunctions;
     }
 
     public String getComponentName() {
         return componentName;
     }
-    public void addRoutinetoRoutines(String routineIdent){
+    public void addRoutinetoRoutines(final String routineIdent){
         this.implementedRoutines.add(routineIdent);
     }
-    public void addCommontoCommons(String commonIdent){
+    public void addCommontoCommons(final String commonIdent){
         this.implementedCommonBlocks.add(commonIdent);
     }
-    public void addFunctionToFunctions(String funcIdent){
+    public void addFunctionToFunctions(final String funcIdent){
         this.implementedFunctions.add(funcIdent);
     }
 }

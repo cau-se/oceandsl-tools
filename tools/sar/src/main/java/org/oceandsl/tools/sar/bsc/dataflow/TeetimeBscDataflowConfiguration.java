@@ -22,26 +22,32 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 
+/**
+ * Configuration File for Bachelor Thesis Model Generation
+ *
+ * @author Yannick Illmann
+ * @since 1.1
+ */
 public class TeetimeBscDataflowConfiguration extends Configuration {
 
-    Logger logger;
+    private final Logger logger;
 
-    public TeetimeBscDataflowConfiguration(Logger logger, Settings settings, ModelRepository modelRepository) throws IOException, ValueConversionErrorException {
+    public TeetimeBscDataflowConfiguration(final Logger logger,final Settings settings,final ModelRepository modelRepository) throws IOException, ValueConversionErrorException {
         super();
         this.logger = logger;
         logger.info("Successfully started a Teetime Config");
 
         logger.info("Starting to read component file.");
-        ComponentLookup componentLookup = writeLookUpFile(settings);
+        final ComponentLookup componentLookup = writeLookUpFile(settings);
         if(componentLookup.getSizeOfTable()>0){
             logger.info("components successfully retrieved.");
         } else {
             logger.error("Unable to retrieve component content.");
         }
 
-        DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
-        DeploymentFactory deploymentFactory = new DeploymentFactoryImpl();
-        DeploymentContext deploymentContext = deploymentFactory.createDeploymentContext();
+        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
+        final DeploymentFactory deploymentFactory = new DeploymentFactoryImpl();
+        final DeploymentContext deploymentContext = deploymentFactory.createDeploymentContext();
         String deploymentContextKey = "bsc-default-hostname";
         if(settings.getHostname()!= null){
             deploymentContextKey = settings.getHostname();
@@ -70,12 +76,12 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
         this.connectPorts(deploymentModelStage.getOutputPort(), executionModelStage.getInputPort());
     }
 
-    public ComponentLookup writeLookUpFile(Settings settings){
+    public ComponentLookup writeLookUpFile(final Settings settings){
         try{
             //read component csv
-            BufferedReader reader = Files.newBufferedReader(settings.getComponentBscInputFile());
+            final BufferedReader reader = Files.newBufferedReader(settings.getComponentBscInputFile());
             String line;
-            ComponentLookup componentLookup = new ComponentLookup();
+            final ComponentLookup componentLookup = new ComponentLookup();
             while((line= reader.readLine())!=null){
                 final String[] values = line.split(";");
                 if(values.length == 3){
@@ -87,6 +93,7 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
 
                         case "FUNCTION":
                             componentLookup.putFunctionToComponent(values[0],values[1]);
+                            break;
 
                     }
                 } else {

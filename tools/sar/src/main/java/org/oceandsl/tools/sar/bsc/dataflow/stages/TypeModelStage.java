@@ -5,13 +5,18 @@ import kieker.model.analysismodel.type.*;
 import org.oceandsl.tools.sar.bsc.dataflow.model.DataTransferObject;
 import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
 
-public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferObject,DataTransferObject> {
+/**
+ * Stage to define a type model according to bachelor thesis ss2022
+ *
+ * @author Yannick Illmann
+ * @since 1.1
+ */public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferObject,DataTransferObject> {
 
     private static final String UNKNOWN_TYPE = "UNKNOWN";
 
     private final TypeModel typeModel;
 
-    public TypeModelStage(final TypeModel typeModel, SourceModel sourceModel, String sourceLabel) {
+    public TypeModelStage(final TypeModel typeModel,final SourceModel sourceModel,final String sourceLabel) {
         super(sourceModel, sourceLabel);
         this.typeModel = typeModel;
 
@@ -19,19 +24,19 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
 
     @SuppressWarnings("unused")
     @Override
-    protected void execute(DataTransferObject dataTransferObject) throws Exception {
+    protected void execute(final DataTransferObject dataTransferObject) throws Exception {
 
         ComponentType componentType = componentSetUp(dataTransferObject);
-        OperationType operationType = addOperation(componentType, dataTransferObject);
+        final OperationType operationType = addOperation(componentType, dataTransferObject);
 
         if(dataTransferObject.callsCommon()){
             // store common block independent of component containing functions
             componentType = commonComponentSetUp();
             dataTransferObject.setTargetComponent(componentType.getName());
-            StorageType storageType = addStorage(componentType, dataTransferObject);
+            final StorageType storageType = addStorage(componentType, dataTransferObject);
         } else {
             //if no storage is referenced, add target operation to target component
-            ComponentType targetComponent = createTargetComponentAndOperation(dataTransferObject);
+            final ComponentType targetComponent = createTargetComponentAndOperation(dataTransferObject);
         }
 
         this.outputPort.send(dataTransferObject);
@@ -48,7 +53,7 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return component, stored for the given identifier string
      */
-    private ComponentType componentSetUp(DataTransferObject dataTransferObject) {
+    private ComponentType componentSetUp(final DataTransferObject dataTransferObject) {
         ComponentType componentType = this.typeModel.getComponentTypes().get(dataTransferObject.getComponent());
         if (componentType == null) {
             componentType = createComponentType(dataTransferObject);
@@ -62,14 +67,16 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      * @return component containing possible storages/common blocks.
      */
     private ComponentType commonComponentSetUp() {
-        String commonIdent = "COMMON-Component";
+        final String commonIdent = "COMMON-Component";
         ComponentType componentType = this.typeModel.getComponentTypes().get(commonIdent);
         if (componentType == null) {
             componentType = TypeFactory.eINSTANCE.createComponentType();
             componentType.setName(commonIdent);
             componentType.setSignature(commonIdent);
 
-            logger.info("Placing Component with name: " + componentType.getName());
+            if(logger.isInfoEnabled()){
+                logger.info("Placing Component with name: " + componentType.getName());
+            }
             this.typeModel.getComponentTypes().put(componentType.getName(), componentType);
             this.addObjectToSource(componentType);
             return componentType;
@@ -88,7 +95,7 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return the added operation. Useful for DEBUG Reasons
      */
-    private OperationType addOperation(ComponentType componentType, DataTransferObject dataTransferObject){
+    private OperationType addOperation(final ComponentType componentType,final DataTransferObject dataTransferObject){
         OperationType operationType = componentType.getProvidedOperations().get(dataTransferObject.getSourceIdent());
         if(operationType == null){
             operationType = createOperation(dataTransferObject.getSourceIdent());
@@ -104,14 +111,16 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return the added storage. Useful for DEBUG Reasons
      */
-    private StorageType addStorage(ComponentType componentType, DataTransferObject dataTransferObject) {
+    private StorageType addStorage(final ComponentType componentType,final DataTransferObject dataTransferObject) {
         StorageType storageType = componentType.getProvidedStorages().get(dataTransferObject.getTargetIdent()); // common Block init via registration of referencing
         if(storageType== null){
             storageType = createStorageType(dataTransferObject);
             componentType.getProvidedStorages().put(storageType.getName(), storageType);
             this.typeModel.getComponentTypes().put(componentType.getName(), componentType);
 
-            logger.info("Placing Storage with name: " + storageType.getName());
+            if(logger.isInfoEnabled()){
+                logger.info("Placing Storage with name: " + storageType.getName());
+            }
             this.addObjectToSource(storageType);
         }
         return storageType;
@@ -127,13 +136,15 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return component created and stored in the type model
      */
-    private ComponentType createComponentType(DataTransferObject dataTransferObject){
+    private ComponentType createComponentType(final DataTransferObject dataTransferObject){
         final ComponentType newComponentType = TypeFactory.eINSTANCE.createComponentType();
         newComponentType.setName(dataTransferObject.getComponent());
         newComponentType.setPackage("GLOBAL");
         newComponentType.setSignature(dataTransferObject.getComponent());
 
-        logger.info("Placing Component with name: " + newComponentType.getName());
+        if(logger.isInfoEnabled()){
+            logger.info("Placing Component with name: " + newComponentType.getName());
+        }
         this.typeModel.getComponentTypes().put(dataTransferObject.getComponent(), newComponentType);
         this.addObjectToSource(newComponentType);
         return newComponentType;
@@ -147,14 +158,14 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      * @return target component created and stored in the type model
      */
     @SuppressWarnings("unused")
-    private ComponentType createTargetComponentAndOperation(DataTransferObject dataTransferObject){
+    private ComponentType createTargetComponentAndOperation(final DataTransferObject dataTransferObject){
 
-        DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
+        final DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
         tempTargetDataTransferObject.setComponent(dataTransferObject.getTargetComponent());
         tempTargetDataTransferObject.setSourceIdent(dataTransferObject.getTargetIdent());
 
-        ComponentType targetComponentType = componentSetUp(tempTargetDataTransferObject);
-        OperationType operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
+        final ComponentType targetComponentType = componentSetUp(tempTargetDataTransferObject);
+        final OperationType operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
         return  targetComponentType;
     }
 
@@ -164,13 +175,15 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      * @param operationIdent name of the OperationTypeObject
      * @return created operation
      */
-    private OperationType createOperation(String operationIdent) {
+    private OperationType createOperation(final String operationIdent) {
         final OperationType operationType = TypeFactory.eINSTANCE.createOperationType();
         operationType.setName(operationIdent);
         operationType.setReturnType(TypeModelStage.UNKNOWN_TYPE);
         operationType.setSignature(operationIdent);
 
-        logger.info("Placing Operation with name: " + operationIdent);
+        if(logger.isInfoEnabled()){
+            logger.info("Placing Operation with name: " + operationIdent);
+        }
         this.addObjectToSource(operationType);
 
         return operationType;
@@ -181,8 +194,8 @@ public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferO
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return created storage
      */
-    private StorageType createStorageType(DataTransferObject dataTransferObject){
-        StorageType storageType = TypeFactory.eINSTANCE.createStorageType();
+    private StorageType createStorageType(final DataTransferObject dataTransferObject){
+        final StorageType storageType = TypeFactory.eINSTANCE.createStorageType();
         storageType.setName(dataTransferObject.getTargetIdent());
         storageType.setType(TypeModelStage.UNKNOWN_TYPE);
 

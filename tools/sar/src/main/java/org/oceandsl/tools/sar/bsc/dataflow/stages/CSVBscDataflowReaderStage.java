@@ -9,7 +9,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class CSVBscDataflowReaderStage extends AbstractProducerStage<DataTransferObject> {
+/**
+ * Stage to read in csv data according to bachelor thesis ss2022
+ *
+ * @author Yannick Illmann
+ * @since 1.1
+ */public class CSVBscDataflowReaderStage extends AbstractProducerStage<DataTransferObject> {
     private final BufferedReader reader;
     private final String splitSymbol;
 
@@ -41,19 +46,12 @@ public class CSVBscDataflowReaderStage extends AbstractProducerStage<DataTransfe
             if (values.length == 4) {
                 try {
                     this.outputPort.send(new DataTransferObject(values[0].trim(), values[1].trim(),
-                            EDirection.getValue(values[2].trim()), values[3].trim(), ""));
-                } catch (final InternalError e) {
-                    this.logger.error("Line format error '{}', {}", line, e.getMessage());
-                }
-            } else if(values.length == 5){
-                try {
-                    this.outputPort.send(new DataTransferObject(values[0].trim(), values[1].trim(),
-                            EDirection.getValue(values[2].trim()), values[3].trim(), values[4].trim()));
+                            EDirection.getValue(values[2].trim()), values[3].trim()));
                 } catch (final InternalError e) {
                     this.logger.error("Line format error '{}', {}", line, e.getMessage());
                 }
             } else {
-                this.logger.error("Line needs at least 4 values. :{}:", line);
+                this.logger.error("Line needs at 4 values. :{}:", line);
             }
         }
 

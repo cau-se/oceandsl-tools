@@ -7,7 +7,12 @@ import org.oceandsl.tools.sar.bsc.dataflow.model.DataTransferObject;
 import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
 
 
-public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTransferObject,DataTransferObject> {
+/**
+ * Stage to define a deployment model according to bachelor thesis ss2022
+ *
+ * @author Yannick Illmann
+ * @since 1.1
+ */public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTransferObject,DataTransferObject> {
 
     private final AssemblyModel assemblyModel;
     private final DeploymentModel deploymentModel;
@@ -21,18 +26,18 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
 
     @SuppressWarnings("unused")
     @Override
-    protected void execute(DataTransferObject dataTransferObject) throws Exception {
+    protected void execute(final DataTransferObject dataTransferObject) throws Exception {
 
         DeployedComponent deployedComponent = deployedComponentSetUp(dataTransferObject);
         assert deployedComponent != null;
-        DeployedOperation deployedOperation = addOperation(deployedComponent, dataTransferObject);
+        final DeployedOperation deployedOperation = addOperation(deployedComponent, dataTransferObject);
 
         if(dataTransferObject.callsCommon()){
             deployedComponent = commonComponentSetUp(); // store common block independent of dataflow component
             assert deployedComponent != null;
-            DeployedStorage deployedStorage = addStorage(deployedComponent, dataTransferObject);
+            final DeployedStorage deployedStorage = addStorage(deployedComponent, dataTransferObject);
         } else {
-            DeployedComponent targetComponent = createTargetComponentAndOperation(dataTransferObject);
+            final DeployedComponent targetComponent = createTargetComponentAndOperation(dataTransferObject);
 
         }
         this.outputPort.send(dataTransferObject);
@@ -49,7 +54,7 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return component, stored for the given identifier string
      */
-    private DeployedComponent deployedComponentSetUp(DataTransferObject dataTransferObject) {
+    private DeployedComponent deployedComponentSetUp(final DataTransferObject dataTransferObject) {
         final DeploymentContext deployedContext = this.deploymentModel.getContexts().get(0).getValue();
         if (deployedContext == null) {
             this.logger.error("Internal error: Data must contain at least one deployment context.");
@@ -69,7 +74,7 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
      * @return component containing possible storages/common blocks
      */
     private DeployedComponent commonComponentSetUp() {
-        String commonIdent = "COMMON-Component";
+        final String commonIdent = "COMMON-Component";
         final DeploymentContext deploymentContext = this.deploymentModel.getContexts().get(0).getValue();
         if (deploymentContext == null) {
             this.logger.error("Internal error: Data must contain at least one deployment context.");
@@ -83,7 +88,9 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
                 deployedComponent.setAssemblyComponent(this.assemblyModel.getComponents().get(commonIdent));
                 deploymentContext.getComponents().put(commonIdent, deployedComponent);
 
-                logger.info("Placing DeployedComponent with name: " + commonIdent);
+                if(logger.isInfoEnabled()){
+                    logger.info("Placing DeployedComponent with name: " + commonIdent);
+                }
                 this.addObjectToSource(deployedComponent);
             }
             return deployedComponent;
@@ -101,7 +108,7 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return the added operation. Useful for DEBUG Reasons
      */
-    private DeployedOperation addOperation(DeployedComponent deployedComponent, DataTransferObject dataTransferObject){
+    private DeployedOperation addOperation(final DeployedComponent deployedComponent,final DataTransferObject dataTransferObject){
         DeployedOperation deployedOperation = deployedComponent.getOperations().get(dataTransferObject.getSourceIdent());
         if(deployedOperation == null){
             deployedOperation = createOperation(deployedComponent, dataTransferObject.getSourceIdent());
@@ -117,14 +124,16 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return the added operation. Useful for DEBUG Reasons
      */
-    private DeployedStorage addStorage(DeployedComponent deployedComponent, DataTransferObject dataTransferObject) {
+    private DeployedStorage addStorage(final DeployedComponent deployedComponent,final DataTransferObject dataTransferObject) {
         DeployedStorage deployedStorage = deployedComponent.getStorages().get(dataTransferObject.getTargetIdent());
         if (deployedStorage == null) {
             deployedStorage = createDeployedStorage(deployedComponent, dataTransferObject.getTargetIdent());
             deployedComponent.getStorages().put(dataTransferObject.getTargetIdent(), deployedStorage);
             this.deploymentModel.getContexts().get(0).getValue().getComponents().put(deployedComponent.getSignature(),deployedComponent);
 
-            logger.info("Placing Storage with name: " + deployedStorage.getAssemblyStorage().getStorageType().getName());
+            if(logger.isInfoEnabled()){
+                logger.info("Placing Storage with name: " + deployedStorage.getAssemblyStorage().getStorageType().getName());
+            }
             this.addObjectToSource(deployedStorage);
         }
         return deployedStorage;
@@ -141,14 +150,16 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return  component created and stored in the deployment model
      */
-    private DeployedComponent createDeployedComponent(DeploymentContext deploymentContext, DataTransferObject dataTransferObject){
+    private DeployedComponent createDeployedComponent(final DeploymentContext deploymentContext,final DataTransferObject dataTransferObject){
         final DeployedComponent newDeployedComponent= DeploymentFactory.eINSTANCE.createDeployedComponent();
 
         newDeployedComponent.setSignature(dataTransferObject.getComponent());
         newDeployedComponent.setAssemblyComponent(this.assemblyModel.getComponents().get(dataTransferObject.getComponent()));
         deploymentContext.getComponents().put(dataTransferObject.getComponent(), newDeployedComponent);
 
-        logger.info("Placing DeployedComponent with name: " + dataTransferObject.getComponent());
+        if(logger.isInfoEnabled()){
+            logger.info("Placing DeployedComponent with name: " + dataTransferObject.getComponent());
+        }
         this.addObjectToSource(newDeployedComponent);
         return newDeployedComponent;
     }
@@ -161,15 +172,15 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
      * @return component created and stored in the deployment model
      */
     @SuppressWarnings("unused")
-    private DeployedComponent createTargetComponentAndOperation(DataTransferObject dataTransferObject){
+    private DeployedComponent createTargetComponentAndOperation(final DataTransferObject dataTransferObject){
 
-        DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
+        final DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
         tempTargetDataTransferObject.setComponent(dataTransferObject.getTargetComponent());
         tempTargetDataTransferObject.setSourceIdent(dataTransferObject.getTargetIdent());
 
-        DeployedComponent targetComponentType = deployedComponentSetUp(tempTargetDataTransferObject);
+        final DeployedComponent targetComponentType = deployedComponentSetUp(tempTargetDataTransferObject);
         assert targetComponentType != null;
-        DeployedOperation operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
+        final DeployedOperation operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
         return  targetComponentType;
     }
 
@@ -180,11 +191,13 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
      * @param operationIdent string identifier for operation creation
      * @return created operation
      */
-    private DeployedOperation createOperation(DeployedComponent deployedComponent, String operationIdent) {
+    private DeployedOperation createOperation(final DeployedComponent deployedComponent,final String operationIdent) {
         final DeployedOperation deployedOperation = DeploymentFactory.eINSTANCE.createDeployedOperation();
         deployedOperation.setAssemblyOperation(deployedComponent.getAssemblyComponent().getOperations().get(operationIdent));
 
-        logger.info("Placing DeployedOperation with name: " + operationIdent);
+        if(logger.isInfoEnabled()){
+            logger.info("Placing DeployedOperation with name: " + operationIdent);
+        }
         this.addObjectToSource(deployedOperation);
         return deployedOperation;
     }
@@ -195,8 +208,8 @@ public class DeploymentModelStage extends AbstractDataflowAssemblerStage<DataTra
      * @param storageIdent string identifier for storage creation
      * @return created storage
      */
-    private DeployedStorage createDeployedStorage(DeployedComponent deployedComponent, String storageIdent) {
-        DeployedStorage deployedStorage = DeploymentFactory.eINSTANCE.createDeployedStorage();
+    private DeployedStorage createDeployedStorage(final DeployedComponent deployedComponent,final String storageIdent) {
+        final DeployedStorage deployedStorage = DeploymentFactory.eINSTANCE.createDeployedStorage();
         deployedStorage.setAssemblyStorage(deployedComponent.getAssemblyComponent().getStorages().get(storageIdent));
         return deployedStorage;
     }
