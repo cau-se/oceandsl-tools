@@ -43,6 +43,9 @@ public class Settings {
             "--hierarchy-grouping" }, required = false, description = "Generate a component hierarchy based on a map file")
     private List<Path> mapFiles;
 
+    @Parameter(names = { "-gs", "--separator" }, required = false, description = "Sparator string for CSV inputs")
+    private String separator;
+
     @Parameter(names = { "-c", "--opetation-calls" }, required = false, description = "Output the list of calls")
     private boolean operationCalls;
 
@@ -72,6 +75,10 @@ public class Settings {
 
     public boolean isComponentStatistics() {
         return this.componentStatistics;
+    }
+
+    public String getSeparator() {
+        return this.separator;
     }
 
 }

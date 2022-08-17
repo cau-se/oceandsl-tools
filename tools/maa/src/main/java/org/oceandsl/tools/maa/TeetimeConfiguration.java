@@ -17,6 +17,16 @@ package org.oceandsl.tools.maa;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import kieker.analysis.architecture.repository.ModelRepository;
+
+import teetime.framework.Configuration;
+import teetime.framework.OutputPort;
+import teetime.stage.basic.distributor.Distributor;
+import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
+
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.architecture.stages.ModelSink;
 import org.oceandsl.analysis.generic.stages.TableCSVSink;
@@ -27,14 +37,6 @@ import org.oceandsl.tools.maa.stages.GenerateProvidedInterfacesStage;
 import org.oceandsl.tools.maa.stages.GroupComponentsHierarchicallyStage;
 import org.oceandsl.tools.maa.stages.OperationCallsStage;
 import org.oceandsl.tools.maa.stages.ProvidedInterfaceTableTransformation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import kieker.analysis.architecture.repository.ModelRepository;
-import teetime.framework.Configuration;
-import teetime.framework.OutputPort;
-import teetime.stage.basic.distributor.Distributor;
-import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
 /**
  * @author Reiner Jung
@@ -68,11 +70,11 @@ public class TeetimeConfiguration extends Configuration {
             outputPort = generateProvidedInterfacesStage.getOutputPort();
         }
 
-        final boolean mapFiles = (settings.getMapFiles() != null) && (settings.getMapFiles().size() > 0);
+        final boolean mapFiles = settings.getMapFiles() != null && settings.getMapFiles().size() > 0;
         if (mapFiles) {
             try {
                 final GroupComponentsHierarchicallyStage groupComponentHierarchicallyStage = new GroupComponentsHierarchicallyStage(
-                        settings.getMapFiles(), ";", true);
+                        settings.getMapFiles(), settings.getSeparator(), true);
                 this.connectPorts(outputPort, groupComponentHierarchicallyStage.getInputPort());
                 outputPort = groupComponentHierarchicallyStage.getOutputPort();
             } catch (final IOException ex) {
