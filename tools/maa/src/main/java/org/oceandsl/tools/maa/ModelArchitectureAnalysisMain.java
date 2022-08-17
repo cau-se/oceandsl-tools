@@ -71,6 +71,12 @@ public class ModelArchitectureAnalysisMain extends AbstractService<TeetimeConfig
                     this.parameterConfiguration.getOutputModelPath().toString());
             return false;
         }
+        if (this.parameterConfiguration.getMapFiles() != null) {
+            if (this.parameterConfiguration.getSeparator() == null) {
+                this.logger.error("Missing separator string for grouping CSV file.");
+                return false;
+            }
+        }
         return true;
     }
 
