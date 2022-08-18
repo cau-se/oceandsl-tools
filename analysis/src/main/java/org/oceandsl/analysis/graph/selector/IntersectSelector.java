@@ -15,16 +15,17 @@
  ***************************************************************************/
 package org.oceandsl.analysis.graph.selector;
 
-import java.util.Arrays;
-import java.util.List;
-
+import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.model.analysismodel.execution.AggregatedInvocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
+import kieker.model.analysismodel.sources.SourceModel;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 
-import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.sources.SourceModel;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Select nodes and edges and assign them to groups reflecting an intersection.
@@ -66,6 +67,16 @@ public class IntersectSelector implements IGraphElementSelector {
     public boolean edgeIsSelected(final AggregatedInvocation value) {
         final EList<String> sources = this.sourceModel.getSources().get(value);
         return this.isSelected(sources);
+    }
+
+    @Override
+    public boolean edgeIsSelected(OperationDataflow value) {
+        return false;
+    }
+
+    @Override
+    public boolean edgeIsSelected(StorageDataflow value) {
+        return false;
     }
 
     private boolean isSelected(final EList<String> sources) {

@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.analysis.graph.selector;
 
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.oceandsl.analysis.graph.IGraphElementSelector;
@@ -40,6 +42,16 @@ public class AllSelector implements IGraphElementSelector {
 
     @Override
     public boolean edgeIsSelected(final AggregatedInvocation value) {
+        return true;
+    }
+
+    @Override
+    public boolean edgeIsSelected(final OperationDataflow value) {
+        return true;
+    }
+
+    @Override
+    public boolean edgeIsSelected(final StorageDataflow value) {
         return true;
     }
 

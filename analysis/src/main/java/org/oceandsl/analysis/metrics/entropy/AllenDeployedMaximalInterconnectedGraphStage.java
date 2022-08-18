@@ -15,14 +15,9 @@
  ***************************************************************************/
 package org.oceandsl.analysis.metrics.entropy;
 
-import java.util.Map.Entry;
-
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
-
-import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
-
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -31,7 +26,10 @@ import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Tuple;
+import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 import teetime.stage.basic.AbstractTransformation;
+
+import java.util.Map.Entry;
 
 /**
  * @author Reiner Jung
@@ -72,7 +70,7 @@ public class AllenDeployedMaximalInterconnectedGraphStage
     private Node<DeployedComponent> findNode(final Graph<Node<DeployedComponent>> graph,
             final DeployedOperation operation) {
         for (final Node<DeployedComponent> node : graph.nodes()) {
-            final KiekerNode<DeployedComponent> kiekerNode = (KiekerNode<DeployedComponent>) node;
+            final KiekerNode<DeployedComponent,DeployedOperation> kiekerNode = (KiekerNode<DeployedComponent, DeployedOperation>) node;
             if (kiekerNode.getMember().equals(operation)) {
                 return kiekerNode;
             }

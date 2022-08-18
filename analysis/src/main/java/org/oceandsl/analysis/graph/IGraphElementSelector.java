@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.analysis.graph;
 
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
@@ -34,6 +36,9 @@ public interface IGraphElementSelector {
     boolean nodeIsSelected(EObject value);
 
     boolean edgeIsSelected(AggregatedInvocation value);
+
+    boolean edgeIsSelected(OperationDataflow value);
+    boolean edgeIsSelected(StorageDataflow value);
 
     String getFilePrefix();
 

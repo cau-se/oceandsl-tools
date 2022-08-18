@@ -15,8 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.stages.graph;
 
-import java.util.Optional;
-
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.generic.graph.GraphFactory;
 import kieker.analysis.generic.graph.IGraph;
@@ -24,12 +22,13 @@ import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
-
-import teetime.stage.basic.AbstractTransformation;
-
+import kieker.model.analysismodel.execution.OperationDataflow;
 import org.oceandsl.analysis.graph.EGraphGenerationMode;
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
+import teetime.stage.basic.AbstractTransformation;
+
+import java.util.Optional;
 
 /**
  * Create a graph based on function calls in the architecture model.
@@ -82,6 +81,37 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
                 break;
             default:
                 throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
+            }
+        }
+
+        for (final OperationDataflow operationDataflow : executionModel.getOperationDataflow().values()) {
+            final boolean sourceSelected = this.selector.nodeIsSelected(operationDataflow.getTarget().getComponent());
+            final boolean targetSelected = this.selector.nodeIsSelected(operationDataflow.getTarget());
+            if (sourceSelected) {
+                this.addVertexIfAbsent(graph, operationDataflow.getSource());
+            }
+            if (targetSelected) {
+                this.addVertexIfAbsent(graph, operationDataflow.getTarget());
+            }
+            switch (this.graphGeneratioMode) {
+                case ONLY_EDGES_FOR_NODES:
+                    if (sourceSelected && targetSelected && this.selector.edgeIsSelected(operationDataflow)) {
+                        this.addEdge(graph, operationDataflow.getSource(), operationDataflow.getTarget());
+                    }
+                    break;
+                case ADD_NODES_FOR_EDGES:
+                    if (this.selector.edgeIsSelected(operationDataflow)) {
+                        if (!sourceSelected) {
+                            this.addVertexIfAbsent(graph, operationDataflow.getSource());
+                        }
+                        if (!targetSelected) {
+                            this.addVertexIfAbsent(graph, operationDataflow.getTarget());
+                        }
+                        this.addEdge(graph, operationDataflow.getSource(), operationDataflow.getTarget());
+                    }
+                    break;
+                default:
+                    throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
             }
         }
 
