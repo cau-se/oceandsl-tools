@@ -146,14 +146,15 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(computeAllenComplexityStage.getOutputPort(), saveAllenDataStage.getInputPort());
 
         /*this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
-        this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());
+        this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());*/
 
+        //Fehlerhaft in functionNodeCouplingStage
         this.connectPorts(statisticsDistributor.getNewOutputPort(), functionCallGraphStage.getInputPort());
         this.connectPorts(functionCallGraphStage.getOutputPort(), functionNodeCouplingStage.getInputPort());
         this.connectPorts(functionNodeCouplingStage.getOutputPort(), distinctOperationDegreeSink.getInputPort());
 
         this.connectPorts(statisticsDistributor.getNewOutputPort(), moduleCallGraphStage.getInputPort());
         this.connectPorts(moduleCallGraphStage.getOutputPort(), moduleNodeCouplingStage.getInputPort());
-        this.connectPorts(moduleNodeCouplingStage.getOutputPort(), distinctModuleDegreeSink.getInputPort());*/
+        this.connectPorts(moduleNodeCouplingStage.getOutputPort(), distinctModuleDegreeSink.getInputPort());
     }
 }

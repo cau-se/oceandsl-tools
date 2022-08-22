@@ -20,9 +20,11 @@ import kieker.analysis.generic.graph.GraphFactory;
 import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import org.oceandsl.analysis.graph.EGraphGenerationMode;
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
@@ -57,26 +59,26 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
             final boolean sourceSelected = this.selector.nodeIsSelected(invocation.getTarget().getComponent());
             final boolean targetSelected = this.selector.nodeIsSelected(invocation.getTarget());
             if (sourceSelected) {
-                this.addVertexIfAbsent(graph, invocation.getSource());
+                this.addOperationVertexIfAbsent(graph, invocation.getSource());
             }
             if (targetSelected) {
-                this.addVertexIfAbsent(graph, invocation.getTarget());
+                this.addOperationVertexIfAbsent(graph, invocation.getTarget());
             }
             switch (this.graphGeneratioMode) {
             case ONLY_EDGES_FOR_NODES:
                 if (sourceSelected && targetSelected && this.selector.edgeIsSelected(invocation)) {
-                    this.addEdge(graph, invocation.getSource(), invocation.getTarget());
+                    this.addOperationEdge(graph, invocation.getSource(), invocation.getTarget());
                 }
                 break;
             case ADD_NODES_FOR_EDGES:
                 if (this.selector.edgeIsSelected(invocation)) {
                     if (!sourceSelected) {
-                        this.addVertexIfAbsent(graph, invocation.getSource());
+                        this.addOperationVertexIfAbsent(graph, invocation.getSource());
                     }
                     if (!targetSelected) {
-                        this.addVertexIfAbsent(graph, invocation.getTarget());
+                        this.addOperationVertexIfAbsent(graph, invocation.getTarget());
                     }
-                    this.addEdge(graph, invocation.getSource(), invocation.getTarget());
+                    this.addOperationEdge(graph, invocation.getSource(), invocation.getTarget());
                 }
                 break;
             default:
@@ -88,52 +90,103 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
             final boolean sourceSelected = this.selector.nodeIsSelected(operationDataflow.getTarget().getComponent());
             final boolean targetSelected = this.selector.nodeIsSelected(operationDataflow.getTarget());
             if (sourceSelected) {
-                this.addVertexIfAbsent(graph, operationDataflow.getSource());
+                this.addOperationVertexIfAbsent(graph, operationDataflow.getSource());
             }
             if (targetSelected) {
-                this.addVertexIfAbsent(graph, operationDataflow.getTarget());
+                this.addOperationVertexIfAbsent(graph, operationDataflow.getTarget());
             }
             switch (this.graphGeneratioMode) {
                 case ONLY_EDGES_FOR_NODES:
                     if (sourceSelected && targetSelected && this.selector.edgeIsSelected(operationDataflow)) {
-                        this.addEdge(graph, operationDataflow.getSource(), operationDataflow.getTarget());
+                        this.addOperationEdge(graph, operationDataflow.getSource(), operationDataflow.getTarget());
                     }
                     break;
                 case ADD_NODES_FOR_EDGES:
                     if (this.selector.edgeIsSelected(operationDataflow)) {
                         if (!sourceSelected) {
-                            this.addVertexIfAbsent(graph, operationDataflow.getSource());
+                            this.addOperationVertexIfAbsent(graph, operationDataflow.getSource());
                         }
                         if (!targetSelected) {
-                            this.addVertexIfAbsent(graph, operationDataflow.getTarget());
+                            this.addOperationVertexIfAbsent(graph, operationDataflow.getTarget());
                         }
-                        this.addEdge(graph, operationDataflow.getSource(), operationDataflow.getTarget());
+                        this.addOperationEdge(graph, operationDataflow.getSource(), operationDataflow.getTarget());
                     }
                     break;
                 default:
                     throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
             }
+
+        }
+            for (final StorageDataflow storageDataflow : executionModel.getStorageDataflow().values()) {
+                final boolean sourceSelected = this.selector.nodeIsSelected(storageDataflow.getStorage().getComponent());
+                final boolean targetSelected = this.selector.nodeIsSelected(storageDataflow.getStorage());
+                if (sourceSelected) {
+                    this.addOperationVertexIfAbsent(graph, storageDataflow.getCode());
+                }
+                if (targetSelected) {
+                    this.addStorageVertexIfAbsent(graph, storageDataflow.getStorage());
+                }
+                switch (this.graphGeneratioMode) {
+                    case ONLY_EDGES_FOR_NODES:
+                        if (sourceSelected && targetSelected && this.selector.edgeIsSelected(storageDataflow)) {
+                            this.addStorageEdge(graph, storageDataflow.getCode(), storageDataflow.getStorage());
+                        }
+                        break;
+                    case ADD_NODES_FOR_EDGES:
+                        if (this.selector.edgeIsSelected(storageDataflow)) {
+                            if (!sourceSelected) {
+                                this.addOperationVertexIfAbsent(graph, storageDataflow.getCode());
+                            }
+                            if (!targetSelected) {
+                                this.addStorageVertexIfAbsent(graph, storageDataflow.getStorage());
+                            }
+                            this.addStorageEdge(graph, storageDataflow.getCode(), storageDataflow.getStorage());
+                        }
+                        break;
+                    default:
+                        throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
+                }
         }
 
         this.outputPort.send(graph);
     }
 
-    private void addEdge(final IGraph graph, final DeployedOperation source, final DeployedOperation target) {
-        final Optional<INode> sourceNode = this.findNode(graph, source);
-        final Optional<INode> targetNode = this.findNode(graph, target);
+    private void addOperationEdge(final IGraph graph, final DeployedOperation source, final DeployedOperation target) {
+        final Optional<INode> sourceNode = this.findOperationNode(graph, source);
+        final Optional<INode> targetNode = this.findOperationNode(graph, target);
         graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
     }
 
-    private Optional<INode> findNode(final IGraph graph, final DeployedOperation operation) {
+    private void addStorageEdge(final IGraph graph, final DeployedOperation source, final DeployedStorage target) {
+        final Optional<INode> sourceNode = this.findOperationNode(graph, source);
+        final Optional<INode> targetNode = this.findStorageNode(graph, target);
+        graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
+    }
+
+    private Optional<INode> findOperationNode(final IGraph graph, final DeployedOperation operation) {
         final String fullyQualifiedName = FullyQualifiedNamesFactory.createFullyQualifiedName(operation);
         return graph.findNode(fullyQualifiedName);
     }
 
-    private void addVertexIfAbsent(final IGraph graph, final DeployedOperation operation) {
-        final Optional<INode> node = this.findNode(graph, operation);
+    private Optional<INode> findStorageNode(final IGraph graph, final DeployedStorage storage) {
+        final String fullyQualifiedName = FullyQualifiedNamesFactory.createFullyQualifiedName(storage);
+        return graph.findNode(fullyQualifiedName);
+    }
+
+    private void addOperationVertexIfAbsent(final IGraph graph, final DeployedOperation operation) {
+        final Optional<INode> node = this.findOperationNode(graph, operation);
         if (!node.isPresent()) {
             final INode newNode = GraphFactory
                     .createNode(FullyQualifiedNamesFactory.createFullyQualifiedName(operation));
+            graph.getGraph().addNode(newNode);
+        }
+    }
+
+    private void addStorageVertexIfAbsent(final IGraph graph, final DeployedStorage storage) {
+        final Optional<INode> node = this.findStorageNode(graph, storage);
+        if (!node.isPresent()) {
+            final INode newNode = GraphFactory
+                    .createNode(FullyQualifiedNamesFactory.createFullyQualifiedName(storage));
             graph.getGraph().addNode(newNode);
         }
     }

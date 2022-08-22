@@ -15,8 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.stages.graph;
 
-import java.util.Optional;
-
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.generic.graph.GraphFactory;
 import kieker.analysis.generic.graph.IGraph;
@@ -24,12 +22,14 @@ import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
-
-import teetime.stage.basic.AbstractTransformation;
-
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import org.oceandsl.analysis.graph.EGraphGenerationMode;
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
+import teetime.stage.basic.AbstractTransformation;
+
+import java.util.Optional;
 
 /**
  * Compute a graph based on the module structure of the architecture limited to nodes and modules
@@ -82,6 +82,68 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
                 break;
             default:
                 throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
+            }
+        }
+
+        for (final OperationDataflow operationDataflow : executionModel.getOperationDataflow().values()) {
+            final boolean sourceSelected = this.selector.nodeIsSelected(operationDataflow.getSource().getComponent());
+            final boolean targetSelected = this.selector.nodeIsSelected(operationDataflow.getTarget().getComponent());
+            if (sourceSelected) {
+                this.addVertexIfAbsent(graph, operationDataflow.getSource().getComponent());
+            }
+            if (targetSelected) {
+                this.addVertexIfAbsent(graph, operationDataflow.getTarget().getComponent());
+            }
+            switch (this.graphGeneratioMode) {
+                case ONLY_EDGES_FOR_NODES:
+                    if (sourceSelected && targetSelected && this.selector.edgeIsSelected(operationDataflow)) {
+                        this.addEdge(graph, operationDataflow.getSource().getComponent(), operationDataflow.getTarget().getComponent());
+                    }
+                    break;
+                case ADD_NODES_FOR_EDGES:
+                    if (this.selector.edgeIsSelected(operationDataflow)) {
+                        if (!sourceSelected) {
+                            this.addVertexIfAbsent(graph, operationDataflow.getSource().getComponent());
+                        }
+                        if (!targetSelected) {
+                            this.addVertexIfAbsent(graph, operationDataflow.getTarget().getComponent());
+                        }
+                        this.addEdge(graph, operationDataflow.getSource().getComponent(), operationDataflow.getTarget().getComponent());
+                    }
+                    break;
+                default:
+                    throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
+            }
+        }
+
+        for (final StorageDataflow storageDataflow : executionModel.getStorageDataflow().values()) {
+            final boolean sourceSelected = this.selector.nodeIsSelected(storageDataflow.getCode().getComponent());
+            final boolean targetSelected = this.selector.nodeIsSelected(storageDataflow.getStorage().getComponent());
+            if (sourceSelected) {
+                this.addVertexIfAbsent(graph, storageDataflow.getCode().getComponent());
+            }
+            if (targetSelected) {
+                this.addVertexIfAbsent(graph, storageDataflow.getStorage().getComponent());
+            }
+            switch (this.graphGeneratioMode) {
+                case ONLY_EDGES_FOR_NODES:
+                    if (sourceSelected && targetSelected && this.selector.edgeIsSelected(storageDataflow)) {
+                        this.addEdge(graph, storageDataflow.getCode().getComponent(), storageDataflow.getStorage().getComponent());
+                    }
+                    break;
+                case ADD_NODES_FOR_EDGES:
+                    if (this.selector.edgeIsSelected(storageDataflow)) {
+                        if (!sourceSelected) {
+                            this.addVertexIfAbsent(graph, storageDataflow.getCode().getComponent());
+                        }
+                        if (!targetSelected) {
+                            this.addVertexIfAbsent(graph, storageDataflow.getStorage().getComponent());
+                        }
+                        this.addEdge(graph, storageDataflow.getCode().getComponent(), storageDataflow.getStorage().getComponent());
+                    }
+                    break;
+                default:
+                    throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
             }
         }
 

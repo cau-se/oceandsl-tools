@@ -15,14 +15,15 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis;
 
-import java.util.Iterator;
-
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeployedStorage;
+
+import java.util.Iterator;
 
 /**
  * @author Reiner Jung
@@ -38,6 +39,11 @@ public final class FullyQualifiedNamesFactory {
     public static String createFullyQualifiedName(final DeployedOperation operation) {
         return String.format("%s.%s", FullyQualifiedNamesFactory.createFullyQualifiedName(operation.getComponent()),
                 operation.getAssemblyOperation().getOperationType().getSignature());
+    }
+
+    public static String createFullyQualifiedName(final DeployedStorage storage) {
+        return String.format("%s.%s", FullyQualifiedNamesFactory.createFullyQualifiedName(storage.getComponent()),
+                storage.getAssemblyStorage().getStorageType().getType());
     }
 
     public static String createFullyQualifiedName(final DeployedComponent component) {
