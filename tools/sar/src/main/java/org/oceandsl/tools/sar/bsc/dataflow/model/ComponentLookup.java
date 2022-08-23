@@ -10,37 +10,23 @@ public class ComponentLookup {
     private final Map<String, ComponentStoreObject> lookupTable = new HashMap<>();
     private final List<String> components = new ArrayList<>();
 
+
     public ComponentStoreObject getContentOfComponent(final String component){
         return lookupTable.get(component);
     }
 
-    public void putRoutineToComponent(final String componentIdent,final String routineIdent){
+    public void putOperationsToComponent(final String componentIdent,final String operationIdent){
         final ComponentStoreObject component = lookupTable.get(componentIdent);
         if(component != null){
-            final List<String> contentNew = new ArrayList<>(component.getImplementedRoutines());
-            contentNew.add(routineIdent);
-            component.setImplementedRoutines(contentNew);
+            final List<String> contentNew = new ArrayList<>(component.getImplementedOperations());
+            contentNew.add(operationIdent);
+            component.setImplementedOperations(contentNew);
             lookupTable.put(componentIdent,component);
 
         } else {
             components.add(componentIdent);
             final ComponentStoreObject newComponent = new ComponentStoreObject(componentIdent);
-            newComponent.addRoutinetoRoutines(routineIdent);
-            lookupTable.put(componentIdent,newComponent);
-        }
-    }
-    public void putFunctionToComponent(final String componentIdent,final String functionIdent){
-        final ComponentStoreObject component = lookupTable.get(componentIdent);
-        if(component != null){
-            final List<String> contentNew = new ArrayList<>(component.getImplementedFunctions());
-            contentNew.add(functionIdent);
-            component.setImplementedFunctions(contentNew);
-            lookupTable.put(componentIdent,component);
-
-        } else {
-            components.add(componentIdent);
-            final ComponentStoreObject newComponent = new ComponentStoreObject(componentIdent);
-            newComponent.addFunctionToFunctions(functionIdent);
+            newComponent.addOperationToOperations(operationIdent);
             lookupTable.put(componentIdent,newComponent);
         }
     }
@@ -56,7 +42,7 @@ public class ComponentLookup {
         } else {
             components.add(componentIdent);
             final ComponentStoreObject newComponent = new ComponentStoreObject(componentIdent);
-            newComponent.addCommontoCommons(cblockIdent);
+            newComponent.addCommonToCommons(cblockIdent);
             lookupTable.put(componentIdent,newComponent);
         }
     }
@@ -66,8 +52,7 @@ public class ComponentLookup {
     }
 
     public boolean callsOperation(final String componentIdent,final String content){
-        final List<String> operations = lookupTable.get(componentIdent).getImplementedRoutines();
-        operations.addAll(lookupTable.get(componentIdent).getImplementedFunctions());
+        final List<String> operations = lookupTable.get(componentIdent).getImplementedOperations();
         return operations.contains(content);
     }
     public boolean callsCommon(final String componentIdent,final String content){
@@ -82,6 +67,21 @@ public class ComponentLookup {
             }
         }
         return "";
+    }
+
+    public void setPackageToComponent(String component, String componentPackage){
+        ComponentStoreObject componentStoreObject = this.lookupTable.get(component);
+        if(componentStoreObject != null){
+            componentStoreObject.setComponentPackage(componentPackage);
+        }
+    }
+    public String getPackageToComponent(String component){
+        ComponentStoreObject componentStoreObject = this.lookupTable.get(component);
+        if(componentStoreObject != null) {
+            return componentStoreObject.getComponentPackage();
+        } else {
+            return "null";
+        }
     }
 
     public int getSizeOfTable(){

@@ -139,7 +139,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     private ComponentType createComponentType(final DataTransferObject dataTransferObject){
         final ComponentType newComponentType = TypeFactory.eINSTANCE.createComponentType();
         newComponentType.setName(dataTransferObject.getComponent());
-        newComponentType.setPackage("GLOBAL");
+        newComponentType.setPackage(dataTransferObject.getPackageSourceIdent());
         newComponentType.setSignature(dataTransferObject.getComponent());
 
         if(logger.isInfoEnabled()){

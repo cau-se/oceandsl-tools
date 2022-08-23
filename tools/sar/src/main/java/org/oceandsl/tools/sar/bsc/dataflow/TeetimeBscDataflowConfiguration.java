@@ -38,7 +38,7 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
         logger.info("Successfully started a Teetime Config");
 
         logger.info("Starting to read component file.");
-        final ComponentLookup componentLookup = writeLookUpFile(settings);
+        final ComponentLookup componentLookup = writeLookUpObject(settings);
         if(componentLookup.getSizeOfTable()>0){
             logger.info("components successfully retrieved.");
         } else {
@@ -76,28 +76,29 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
         this.connectPorts(deploymentModelStage.getOutputPort(), executionModelStage.getInputPort());
     }
 
-    public ComponentLookup writeLookUpFile(final Settings settings){
+    public ComponentLookup writeLookUpObject(final Settings settings){
         try{
             //read component csv
-            final BufferedReader reader = Files.newBufferedReader(settings.getComponentBscInputFile());
+            BufferedReader reader = Files.newBufferedReader(settings.getComponentBscInputFile());
             String line;
             final ComponentLookup componentLookup = new ComponentLookup();
             while((line= reader.readLine())!=null){
                 final String[] values = line.split(";");
                 if(values.length == 3){
-                    switch(values[2]){
+                    componentLookup.putOperationsToComponent(values[0],values[1]);
 
-                        case "SUBROUTINE":
-                            componentLookup.putRoutineToComponent(values[0],values[1]);
-                            break;
-
-                        case "FUNCTION":
-                            componentLookup.putFunctionToComponent(values[0],values[1]);
-                            break;
-
-                    }
                 } else {
                     logger.error("Invalid line '{}'. 3 Values needed ", line);
+                }
+            }
+            reader = Files.newBufferedReader(settings.getPackageBscInputFile());
+            while((line= reader.readLine())!=null){
+                final String[] values = line.split(";");
+                if(values.length == 2){
+                    componentLookup.setPackageToComponent(values[1],values[0]);
+
+                } else {
+                    logger.error("Invalid line '{}'. 2 Values needed ", line);
                 }
             }
             reader.close();

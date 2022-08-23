@@ -15,11 +15,11 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar;
 
-import java.nio.file.Path;
-import java.util.List;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
+
+import java.nio.file.Path;
+import java.util.List;
 
 /**
  * All settings including command line parameters for the analysis.
@@ -44,6 +44,10 @@ public class Settings { // NOPMD dataclass - required to contain settings
     @Parameter(names = { "-bsc-c",
             "--bsc-component-input" }, required = false, converter = PathConverter.class, description = "Bsc Dataflow CSV file")
     private Path componentBscInputFile;
+
+    @Parameter(names = { "-bsc-p",
+            "--bsc-package-input" }, required = false, converter = PathConverter.class, description = "Bsc Dataflow CSV file")
+    private Path packageBscInputFile;
 
     @Parameter(names = { "-cs",
             "--call-separation-char" }, required = false, description = "Separation character for operation call CSV files, default is comma (,)")
@@ -165,5 +169,9 @@ public class Settings { // NOPMD dataclass - required to contain settings
 
     public Path getComponentBscInputFile() {
         return componentBscInputFile;
+    }
+
+    public Path getPackageBscInputFile() {
+        return packageBscInputFile;
     }
 }

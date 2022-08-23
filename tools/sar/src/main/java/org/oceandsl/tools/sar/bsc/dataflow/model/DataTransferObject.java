@@ -6,6 +6,7 @@ public class DataTransferObject {
 
     private String component;
     private String sourceIdent;
+    private String packageSourceIdent;
     private EDirection direction;
     private String targetIdent;
     private String targetComponent;
@@ -71,5 +72,13 @@ public class DataTransferObject {
 
     public boolean callsCommon() {
         return callsCommonFlag;
+    }
+
+    public String getPackageSourceIdent() {
+        return packageSourceIdent;
+    }
+
+    public void setPackageSourceIdent(String packageSourceIdent) {
+        this.packageSourceIdent = packageSourceIdent;
     }
 }

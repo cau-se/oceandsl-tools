@@ -6,8 +6,8 @@ import java.util.List;
 public class ComponentStoreObject {
 
     private final String componentName;
-    private List<String>  implementedFunctions = new ArrayList<>();
-    private List<String> implementedRoutines = new ArrayList<>();
+    private String componentPackage = "Global";
+    private List<String> implementedOperations = new ArrayList<>();
     private List<String> implementedCommonBlocks = new ArrayList<>();
 
     public ComponentStoreObject(final String componentName){
@@ -18,12 +18,8 @@ public class ComponentStoreObject {
         return implementedCommonBlocks;
     }
 
-    public List<String> getImplementedRoutines() {
-        return implementedRoutines;
-    }
-
-    public List<String> getImplementedFunctions() {
-        return implementedFunctions;
+    public List<String> getImplementedOperations() {
+        return implementedOperations;
     }
 
 
@@ -31,24 +27,24 @@ public class ComponentStoreObject {
         this.implementedCommonBlocks = implementedCommonBlocks;
     }
 
-    public void setImplementedRoutines(final List<String> implementedRoutines) {
-        this.implementedRoutines = implementedRoutines;
-    }
-
-    public void setImplementedFunctions(final List<String> implementedFunctions){
-        this.implementedFunctions = implementedFunctions;
+    public void setImplementedOperations(final List<String> implementedOperations) {
+        this.implementedOperations = implementedOperations;
     }
 
     public String getComponentName() {
         return componentName;
     }
-    public void addRoutinetoRoutines(final String routineIdent){
-        this.implementedRoutines.add(routineIdent);
+    public void addOperationToOperations(final String routineIdent){
+        this.implementedOperations.add(routineIdent);
     }
-    public void addCommontoCommons(final String commonIdent){
+    public void addCommonToCommons(final String commonIdent){
         this.implementedCommonBlocks.add(commonIdent);
     }
-    public void addFunctionToFunctions(final String funcIdent){
-        this.implementedFunctions.add(funcIdent);
+
+    public String getComponentPackage() {
+        return componentPackage;
+    }
+    public void setComponentPackage(String componentPackage) {
+        this.componentPackage = componentPackage;
     }
 }
