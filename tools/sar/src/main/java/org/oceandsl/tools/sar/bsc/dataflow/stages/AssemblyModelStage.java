@@ -60,6 +60,7 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         if (assemblyComponent == null) {
             assemblyComponent = createAssemblyComponent(dataTransferObject);
         }
+        createPackageAssemblyComponent(assemblyComponent, dataTransferObject);
         return assemblyComponent;
     }
 
@@ -149,6 +150,22 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         return newAssemblyComponent;
     }
 
+    private void createPackageAssemblyComponent(AssemblyComponent containedAssemblyComponent, DataTransferObject dataTransferObject) {
+        AssemblyComponent packageAssemblyComponent = this.assemblyModel.getComponents().get(dataTransferObject.getSourcePackage());
+        if(packageAssemblyComponent == null){
+            packageAssemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
+            packageAssemblyComponent.setSignature(dataTransferObject.getSourcePackage());
+            packageAssemblyComponent.setComponentType(this.typeModel.getComponentTypes().get(dataTransferObject.getSourcePackage()));
+            if(logger.isInfoEnabled()){
+                logger.info("Placing Package-AssemblyComponent with name: " + packageAssemblyComponent.getSignature());
+            }
+            this.assemblyModel.getComponents().put(packageAssemblyComponent.getSignature(), packageAssemblyComponent);
+            this.addObjectToSource(packageAssemblyComponent);
+        }
+        packageAssemblyComponent.getContainedComponents().add(containedAssemblyComponent);
+        this.addObjectToSource(packageAssemblyComponent);
+    }
+
     /**
      * This function is used to create the matching target component of a given dataflow step. It will use the 'createAssemblyComponent' method
      * to store the new component in the assembly model. Therefor it creates a new transfer object only used in this method.
@@ -162,6 +179,7 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         final DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
         tempTargetDataTransferObject.setComponent(dataTransferObject.getTargetComponent());
         tempTargetDataTransferObject.setSourceIdent(dataTransferObject.getTargetIdent());
+        tempTargetDataTransferObject.setSourcePackage(dataTransferObject.getTargetPackage());
 
         final AssemblyComponent targetComponentType = assemblyComponentSetUp(tempTargetDataTransferObject);
         final AssemblyOperation operationType = addOperation(targetComponentType, tempTargetDataTransferObject);

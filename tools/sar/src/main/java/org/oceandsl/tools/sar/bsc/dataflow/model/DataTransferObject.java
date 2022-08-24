@@ -6,10 +6,11 @@ public class DataTransferObject {
 
     private String component;
     private String sourceIdent;
-    private String packageSourceIdent;
+    private String sourcePackage;
     private EDirection direction;
     private String targetIdent;
     private String targetComponent;
+    private String targetPackage = ".unknown";
     private boolean callsOperationFlag;
     private boolean callsCommonFlag;
 
@@ -74,11 +75,19 @@ public class DataTransferObject {
         return callsCommonFlag;
     }
 
-    public String getPackageSourceIdent() {
-        return packageSourceIdent;
+    public String getTargetPackage() {
+        return targetPackage;
     }
 
-    public void setPackageSourceIdent(String packageSourceIdent) {
-        this.packageSourceIdent = packageSourceIdent;
+    public void setTargetPackage(String targetPackage) {
+        this.targetPackage = targetPackage;
+    }
+
+    public String getSourcePackage() {
+        return sourcePackage;
+    }
+
+    public void setSourcePackage(String sourcePackage) {
+        this.sourcePackage = sourcePackage;
     }
 }

@@ -58,6 +58,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         if (componentType == null) {
             componentType = createComponentType(dataTransferObject);
         }
+        createPackageComponent(componentType, dataTransferObject);
         return componentType;
     }
 
@@ -139,7 +140,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     private ComponentType createComponentType(final DataTransferObject dataTransferObject){
         final ComponentType newComponentType = TypeFactory.eINSTANCE.createComponentType();
         newComponentType.setName(dataTransferObject.getComponent());
-        newComponentType.setPackage(dataTransferObject.getPackageSourceIdent());
+        newComponentType.setPackage(dataTransferObject.getSourcePackage());
         newComponentType.setSignature(dataTransferObject.getComponent());
 
         if(logger.isInfoEnabled()){
@@ -148,6 +149,23 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         this.typeModel.getComponentTypes().put(dataTransferObject.getComponent(), newComponentType);
         this.addObjectToSource(newComponentType);
         return newComponentType;
+    }
+
+    private void createPackageComponent(ComponentType containedComponentType, DataTransferObject dataTransferObject) {
+        ComponentType packageComponentType = this.typeModel.getComponentTypes().get(dataTransferObject.getSourcePackage());
+        if(packageComponentType == null){
+            packageComponentType = TypeFactory.eINSTANCE.createComponentType();
+            packageComponentType.setName(dataTransferObject.getSourcePackage());
+            packageComponentType.setPackage(dataTransferObject.getSourcePackage());
+            packageComponentType.setSignature(dataTransferObject.getSourcePackage());
+            if(logger.isInfoEnabled()){
+                logger.info("Placing Package-Component with name: " + packageComponentType.getName());
+            }
+            this.typeModel.getComponentTypes().put(packageComponentType.getName(), packageComponentType);
+            this.addObjectToSource(packageComponentType);
+        }
+        packageComponentType.getContainedComponents().add(containedComponentType);
+        this.addObjectToSource(packageComponentType);
     }
 
     /**
@@ -163,6 +181,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         final DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
         tempTargetDataTransferObject.setComponent(dataTransferObject.getTargetComponent());
         tempTargetDataTransferObject.setSourceIdent(dataTransferObject.getTargetIdent());
+        tempTargetDataTransferObject.setSourcePackage(dataTransferObject.getTargetPackage());
 
         final ComponentType targetComponentType = componentSetUp(tempTargetDataTransferObject);
         final OperationType operationType = addOperation(targetComponentType, tempTargetDataTransferObject);

@@ -64,6 +64,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
             if (deployedComponent == null) {
                 deployedComponent = createDeployedComponent(deployedContext, dataTransferObject);
             }
+            createPackageDeploymentComponent(deployedContext, deployedComponent, dataTransferObject);
             return deployedComponent;
         }
     }
@@ -164,6 +165,22 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         return newDeployedComponent;
     }
 
+    private void createPackageDeploymentComponent(DeploymentContext deploymentContext, DeployedComponent containedAssemblyComponent, DataTransferObject dataTransferObject) {
+        DeployedComponent packageDeploymentComponent = deploymentContext.getComponents().get(dataTransferObject.getSourcePackage());
+        if(packageDeploymentComponent == null){
+            packageDeploymentComponent = DeploymentFactory.eINSTANCE.createDeployedComponent();
+            packageDeploymentComponent.setSignature(dataTransferObject.getSourcePackage());
+            packageDeploymentComponent.setAssemblyComponent(this.assemblyModel.getComponents().get(dataTransferObject.getSourcePackage()));
+            if(logger.isInfoEnabled()){
+                logger.info("Placing Package-AssemblyComponent with name: " + packageDeploymentComponent.getSignature());
+            }
+            deploymentContext.getComponents().put(packageDeploymentComponent.getSignature(), packageDeploymentComponent);
+            this.addObjectToSource(packageDeploymentComponent);
+        }
+        packageDeploymentComponent.getContainedComponents().add(containedAssemblyComponent);
+        this.addObjectToSource(packageDeploymentComponent);
+    }
+
     /**
      * This function is used to create the matching target component of a given dataflow step. It will use the 'createDeployedComponent' method
      * to store the new component in the deployment model. Therefor it creates a new transfer object only used in this method.
@@ -177,6 +194,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         final DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
         tempTargetDataTransferObject.setComponent(dataTransferObject.getTargetComponent());
         tempTargetDataTransferObject.setSourceIdent(dataTransferObject.getTargetIdent());
+        tempTargetDataTransferObject.setSourcePackage(dataTransferObject.getTargetPackage());
 
         final DeployedComponent targetComponentType = deployedComponentSetUp(tempTargetDataTransferObject);
         assert targetComponentType != null;

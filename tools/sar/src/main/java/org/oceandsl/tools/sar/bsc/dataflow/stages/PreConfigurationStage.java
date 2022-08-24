@@ -43,6 +43,8 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
                             + ". Please make sure its either a common block or subroutine and it is mentioned as such in analysis files!");
                 }
             }
+            final String targetComponent = dataTransferObject.getTargetComponent();
+            dataTransferObject.setTargetPackage(componentLookup.getPackageToComponent(targetComponent));
         }catch(NullPointerException e){
             if(logger.isErrorEnabled()){
                 logger.error("Unknown origin component from Operation: " + targetIdent);
@@ -56,7 +58,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
             dataTransferObject.setCallsOperation(true);
         }
         final String component = dataTransferObject.getComponent();
-        dataTransferObject.setPackageSourceIdent(componentLookup.getPackageToComponent(component));
+        dataTransferObject.setSourcePackage(componentLookup.getPackageToComponent(component));
 
         this.outputPort.send(dataTransferObject);
     }
