@@ -137,9 +137,6 @@ public class AllenDeployedArchitectureGraphStage
             }
         }
 
-        System.out.println("finished allen prepare stage");
-
-
         this.outputPort.send(graph);
     }
 
