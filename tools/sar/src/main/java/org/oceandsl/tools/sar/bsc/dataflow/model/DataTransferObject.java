@@ -79,7 +79,7 @@ public class DataTransferObject {
         return targetPackage;
     }
 
-    public void setTargetPackage(String targetPackage) {
+    public void setTargetPackage(final String targetPackage) {
         this.targetPackage = targetPackage;
     }
 
@@ -87,7 +87,7 @@ public class DataTransferObject {
         return sourcePackage;
     }
 
-    public void setSourcePackage(String sourcePackage) {
+    public void setSourcePackage(final String sourcePackage) {
         this.sourcePackage = sourcePackage;
     }
 }

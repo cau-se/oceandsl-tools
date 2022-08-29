@@ -153,9 +153,9 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
      */
 
     private DeployedStorage findStorage(final DeploymentContext context, final String name) {
-        String commonIdent = "COMMON-Component";
-        DeployedComponent deployedComponent = context.getComponents().get(commonIdent);
-        DeployedStorage deployedStorage = deployedComponent.getStorages().get(name);
+        final String commonIdent = "COMMON-Component";
+        final DeployedComponent deployedComponent = context.getComponents().get(commonIdent);
+        final DeployedStorage deployedStorage = deployedComponent.getStorages().get(name);
         if(deployedStorage!= null){
             return deployedStorage;
         } else {

@@ -69,13 +69,13 @@ public class ComponentLookup {
         return "";
     }
 
-    public void setPackageToComponent(String component, String componentPackage){
+    public void setPackageToComponent(final String component,final String componentPackage){
         ComponentStoreObject componentStoreObject = this.lookupTable.get(component);
         if(componentStoreObject != null){
             componentStoreObject.setComponentPackage(componentPackage);
         }
     }
-    public String getPackageToComponent(String component){
+    public String getPackageToComponent(final String component){
         ComponentStoreObject componentStoreObject = this.lookupTable.get(component);
         if(componentStoreObject != null) {
             return componentStoreObject.getComponentPackage();

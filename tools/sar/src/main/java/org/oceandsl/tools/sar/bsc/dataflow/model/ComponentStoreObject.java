@@ -44,7 +44,7 @@ public class ComponentStoreObject {
     public String getComponentPackage() {
         return componentPackage;
     }
-    public void setComponentPackage(String componentPackage) {
+    public void setComponentPackage(final String componentPackage) {
         this.componentPackage = componentPackage;
     }
 }
