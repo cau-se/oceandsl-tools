@@ -128,7 +128,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     private DeployedStorage addStorage(final DeployedComponent deployedComponent,final DataTransferObject dataTransferObject) {
         DeployedStorage deployedStorage = deployedComponent.getStorages().get(dataTransferObject.getTargetIdent());
         if (deployedStorage == null) {
-            deployedStorage = createDeployedStorage(deployedComponent, dataTransferObject.getTargetIdent());
+            deployedStorage = createStorage(deployedComponent, dataTransferObject.getTargetIdent());
             deployedComponent.getStorages().put(dataTransferObject.getTargetIdent(), deployedStorage);
             this.deploymentModel.getContexts().get(0).getValue().getComponents().put(deployedComponent.getSignature(),deployedComponent);
 
@@ -165,7 +165,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         return newDeployedComponent;
     }
 
-    private void createPackageDeploymentComponent(DeploymentContext deploymentContext, DeployedComponent containedAssemblyComponent, DataTransferObject dataTransferObject) {
+    private void createPackageDeploymentComponent(final DeploymentContext deploymentContext,final DeployedComponent containedAssemblyComponent,final DataTransferObject dataTransferObject) {
         DeployedComponent packageDeploymentComponent = deploymentContext.getComponents().get(dataTransferObject.getSourcePackage());
         if(packageDeploymentComponent == null){
             packageDeploymentComponent = DeploymentFactory.eINSTANCE.createDeployedComponent();
@@ -226,7 +226,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
      * @param storageIdent string identifier for storage creation
      * @return created storage
      */
-    private DeployedStorage createDeployedStorage(final DeployedComponent deployedComponent,final String storageIdent) {
+    private DeployedStorage createStorage(final DeployedComponent deployedComponent,final String storageIdent) {
         final DeployedStorage deployedStorage = DeploymentFactory.eINSTANCE.createDeployedStorage();
         deployedStorage.setAssemblyStorage(deployedComponent.getAssemblyComponent().getStorages().get(storageIdent));
         return deployedStorage;

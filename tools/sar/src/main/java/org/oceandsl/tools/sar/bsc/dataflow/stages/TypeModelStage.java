@@ -115,7 +115,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     private StorageType addStorage(final ComponentType componentType,final DataTransferObject dataTransferObject) {
         StorageType storageType = componentType.getProvidedStorages().get(dataTransferObject.getTargetIdent()); // common Block init via registration of referencing
         if(storageType== null){
-            storageType = createStorageType(dataTransferObject);
+            storageType = createStorageType(dataTransferObject.getTargetIdent());
             componentType.getProvidedStorages().put(storageType.getName(), storageType);
             this.typeModel.getComponentTypes().put(componentType.getName(), componentType);
 
@@ -151,7 +151,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         return newComponentType;
     }
 
-    private void createPackageComponent(ComponentType containedComponentType, DataTransferObject dataTransferObject) {
+    private void createPackageComponent(final ComponentType containedComponentType,final DataTransferObject dataTransferObject) {
         ComponentType packageComponentType = this.typeModel.getComponentTypes().get(dataTransferObject.getSourcePackage());
         if(packageComponentType == null){
             packageComponentType = TypeFactory.eINSTANCE.createComponentType();
@@ -210,12 +210,12 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
 
     /**
      * This function creates an StorageTypeObject and returns it
-     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @param storageIdent name of the StorageTypeObject.
      * @return created storage
      */
-    private StorageType createStorageType(final DataTransferObject dataTransferObject){
+    private StorageType createStorageType(final String storageIdent){
         final StorageType storageType = TypeFactory.eINSTANCE.createStorageType();
-        storageType.setName(dataTransferObject.getTargetIdent());
+        storageType.setName(storageIdent);
         storageType.setType(TypeModelStage.UNKNOWN_TYPE);
 
         return storageType;

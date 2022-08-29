@@ -34,8 +34,8 @@ public class ComponentStoreObject {
     public String getComponentName() {
         return componentName;
     }
-    public void addOperationToOperations(final String routineIdent){
-        this.implementedOperations.add(routineIdent);
+    public void addOperationToOperations(final String operationIdent){
+        this.implementedOperations.add(operationIdent);
     }
     public void addCommonToCommons(final String commonIdent){
         this.implementedCommonBlocks.add(commonIdent);

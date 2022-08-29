@@ -34,7 +34,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         if(dataTransferObject.callsOperation()){
             addOperationDataflow(context, sourceOperation, dataTransferObject);
         } else if(dataTransferObject.callsCommon()){
-            addStorageAccess(context, sourceOperation, dataTransferObject);
+            addStorageDataflow(context, sourceOperation, dataTransferObject);
         } else {
             logger.error("Failed to setup Dataflow, due to an earlier error.");
         }
@@ -55,8 +55,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
      */
     private void addOperationDataflow(final DeploymentContext context,final DeployedOperation sourceOperation,final DataTransferObject dataTransferObject){
         final DeployedComponent targetComponent = context.getComponents().get(dataTransferObject.getTargetComponent());
-        //filter unkown components
-        if(!targetComponent.getAssemblyComponent().getComponentType().getName().equals(".unknown")){
+        if(!targetComponent.getAssemblyComponent().getComponentType().getName().equals(".unknown")){ //filter unknown components
 
             final DeployedOperation targetOperation = targetComponent.getOperations().get(dataTransferObject.getTargetIdent());
 
@@ -68,7 +67,11 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
             final OperationDataflow operationDataflow = this.executionModel.getOperationDataflow().get(key);
             if(operationDataflow == null){
                 createOperationDataflow(key, sourceOperation, targetOperation, dataTransferObject);
-            } // else fall not necessary, because an operation access from the same source to the same target can not change dataflow types due to function definition.
+            }
+            /*
+             * Dataflow can not change from READ to BOTH with two separate iteration steps due to the initialization of functions.
+             * OperationDataflow READ only possible when a function has no arguments. This cannot change in future code lines
+             */
         }
     }
 
@@ -78,28 +81,28 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
      * @param sourceOperation of the dataflow step, stored in Deployment model
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      */
-    private void addStorageAccess(final DeploymentContext context,final DeployedOperation sourceOperation,final DataTransferObject dataTransferObject){
+    private void addStorageDataflow(final DeploymentContext context,final DeployedOperation sourceOperation,final DataTransferObject dataTransferObject){
         final DeployedStorage accessedStorage = this.findStorage(context, dataTransferObject.getTargetIdent());
         final Tuple<DeployedOperation, DeployedStorage> key = ExecutionFactory.eINSTANCE.createTuple();
         key.setFirst(sourceOperation);
         key.setSecond(accessedStorage);
         this.addObjectToSource(key);
 
-        final StorageDataflow aggregatedStorageAccess = this.executionModel.getStorageDataflow().get(key);
-        if (aggregatedStorageAccess == null) {
-            createStorageAccess(key,sourceOperation,accessedStorage,dataTransferObject);
+        final StorageDataflow storageDataflow = this.executionModel.getStorageDataflow().get(key);
+        if (storageDataflow == null) {
+            createStorageDataflow(key,sourceOperation,accessedStorage,dataTransferObject);
         } else {
-            checkAndChangeDirectionOfStorage(aggregatedStorageAccess, dataTransferObject);
+            checkAndChangeDirectionOfStorageDataflow(storageDataflow, dataTransferObject);
         }
     }
 
-    private void checkAndChangeDirectionOfStorage(final StorageDataflow aggregatedStorageAccess,final DataTransferObject dataTransferObject) {
-        final EDirection directionStorageDataflow = aggregatedStorageAccess.getDirection();
+    private void checkAndChangeDirectionOfStorageDataflow(final StorageDataflow storageDataflow,final DataTransferObject dataTransferObject) {
+        final EDirection directionStorageDataflow = storageDataflow.getDirection();
         final EDirection directionDataTransferObject = this.convertDirection(dataTransferObject.getDirection());
 
         if(directionStorageDataflow != directionDataTransferObject){
-            aggregatedStorageAccess.setDirection(EDirection.BOTH);
-            this.addObjectToSource(aggregatedStorageAccess);
+            storageDataflow.setDirection(EDirection.BOTH);
+            this.addObjectToSource(storageDataflow);
         }
     }
 
@@ -133,16 +136,16 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
      * @param accessedStorage of the dataflow step, stored in Deployment model
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      */
-    private void createStorageAccess(final Tuple<DeployedOperation, DeployedStorage> key,final DeployedOperation sourceOperation,final DeployedStorage accessedStorage,final DataTransferObject dataTransferObject){
-        final StorageDataflow aggregatedStorageAccess = ExecutionFactory.eINSTANCE.createStorageDataflow();
-        aggregatedStorageAccess.setCode(sourceOperation);
-        aggregatedStorageAccess.setStorage(accessedStorage);
-        aggregatedStorageAccess.setDirection(this.convertDirection(dataTransferObject.getDirection()));
+    private void createStorageDataflow(final Tuple<DeployedOperation, DeployedStorage> key,final DeployedOperation sourceOperation,final DeployedStorage accessedStorage,final DataTransferObject dataTransferObject){
+        final StorageDataflow storageDataflow = ExecutionFactory.eINSTANCE.createStorageDataflow();
+        storageDataflow.setCode(sourceOperation);
+        storageDataflow.setStorage(accessedStorage);
+        storageDataflow.setDirection(this.convertDirection(dataTransferObject.getDirection()));
         if(logger.isInfoEnabled()){
             logger.info("Placing Dataflow Common: " + dataTransferObject.getSourceIdent() + " to " + dataTransferObject.getTargetIdent());
         }
-        this.executionModel.getStorageDataflow().put(key, aggregatedStorageAccess);
-        this.addObjectToSource(aggregatedStorageAccess);
+        this.executionModel.getStorageDataflow().put(key, storageDataflow);
+        this.addObjectToSource(storageDataflow);
     }
 
     /*
@@ -150,14 +153,15 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
      */
 
     private DeployedStorage findStorage(final DeploymentContext context, final String name) {
-        for (final DeployedComponent component : context.getComponents().values()) {
-            final DeployedStorage storage = component.getStorages().get(name);
-            if (storage != null) {
-                return storage;
-            }
+        String commonIdent = "COMMON-Component";
+        DeployedComponent deployedComponent = context.getComponents().get(commonIdent);
+        DeployedStorage deployedStorage = deployedComponent.getStorages().get(name);
+        if(deployedStorage!= null){
+            return deployedStorage;
+        } else {
+            this.logger.error("Internal error. Cannot find storage {}", name);
+            return null;
         }
-        this.logger.error("Internal error. Cannot find storage {}", name);
-        return null;
     }
 
     private EDirection convertDirection(final org.oceandsl.tools.sar.stages.dataflow.EDirection direction) {

@@ -150,7 +150,7 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         return newAssemblyComponent;
     }
 
-    private void createPackageAssemblyComponent(AssemblyComponent containedAssemblyComponent, DataTransferObject dataTransferObject) {
+    private void createPackageAssemblyComponent(final AssemblyComponent containedAssemblyComponent,final DataTransferObject dataTransferObject) {
         AssemblyComponent packageAssemblyComponent = this.assemblyModel.getComponents().get(dataTransferObject.getSourcePackage());
         if(packageAssemblyComponent == null){
             packageAssemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
