@@ -55,12 +55,13 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return component, stored for the given identifier string
      */
+    @SuppressWarnings("unused")
     private AssemblyComponent assemblyComponentSetUp(final DataTransferObject dataTransferObject) {
         AssemblyComponent assemblyComponent = this.assemblyModel.getComponents().get(dataTransferObject.getComponent());
         if (assemblyComponent == null) {
             assemblyComponent = createAssemblyComponent(dataTransferObject);
         }
-        createPackageAssemblyComponent(assemblyComponent, dataTransferObject);
+        AssemblyComponent packageAssemblyComponent = addComponent(assemblyComponent, dataTransferObject);
         return assemblyComponent;
     }
 
@@ -88,6 +89,23 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
     /*
         ADDING
      */
+
+    /**
+     * This function adds a component to its referenced package component.
+     *
+     * @param containedAssemblyComponent component to add to package
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return the package component containing the provided file component
+     */
+    private AssemblyComponent addComponent(final AssemblyComponent containedAssemblyComponent,final DataTransferObject dataTransferObject){
+        AssemblyComponent packageAssemblyComponent = this.assemblyModel.getComponents().get(dataTransferObject.getSourcePackage());
+        if(packageAssemblyComponent == null){
+            packageAssemblyComponent =  createPackageAssemblyComponent(dataTransferObject);
+        }
+        packageAssemblyComponent.getContainedComponents().add(containedAssemblyComponent);
+        this.addObjectToSource(packageAssemblyComponent);
+        return packageAssemblyComponent;
+    }
 
     /**
      * This function adds an AssemblyOperation to a given component.
@@ -131,12 +149,11 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
     /*
         CREATING
      */
-
     /**
-     * This function is used to create a new AssemblyComponentObject and store it in the given assembly model.
+     * This function is used to create a new file AssemblyComponentObject and store it in the given assembly model.
      *
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
-     * @return component created and stored in the assembly model
+     * @return file component created and stored in the assembly model
      */
     private AssemblyComponent createAssemblyComponent(final DataTransferObject dataTransferObject){
         final AssemblyComponent newAssemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
@@ -150,20 +167,23 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         return newAssemblyComponent;
     }
 
-    private void createPackageAssemblyComponent(final AssemblyComponent containedAssemblyComponent,final DataTransferObject dataTransferObject) {
-        AssemblyComponent packageAssemblyComponent = this.assemblyModel.getComponents().get(dataTransferObject.getSourcePackage());
-        if(packageAssemblyComponent == null){
-            packageAssemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
-            packageAssemblyComponent.setSignature(dataTransferObject.getSourcePackage());
-            packageAssemblyComponent.setComponentType(this.typeModel.getComponentTypes().get(dataTransferObject.getSourcePackage()));
-            if(logger.isInfoEnabled()){
-                logger.info("Placing Package-AssemblyComponent with name: " + packageAssemblyComponent.getSignature());
-            }
-            this.assemblyModel.getComponents().put(packageAssemblyComponent.getSignature(), packageAssemblyComponent);
-            this.addObjectToSource(packageAssemblyComponent);
+    /**
+     * This function is used to create a new package AssemblyComponentObject and store it in the given assembly model.
+     *
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return package component created and stored in the assembly model
+     */
+    private AssemblyComponent createPackageAssemblyComponent(final DataTransferObject dataTransferObject) {
+        AssemblyComponent packageAssemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
+        packageAssemblyComponent.setSignature(dataTransferObject.getSourcePackage());
+        packageAssemblyComponent.setComponentType(this.typeModel.getComponentTypes().get(dataTransferObject.getSourcePackage()));
+
+        if(logger.isInfoEnabled()){
+            logger.info("Placing Package-AssemblyComponent with name: " + packageAssemblyComponent.getSignature());
         }
-        packageAssemblyComponent.getContainedComponents().add(containedAssemblyComponent);
+        this.assemblyModel.getComponents().put(packageAssemblyComponent.getSignature(), packageAssemblyComponent);
         this.addObjectToSource(packageAssemblyComponent);
+        return packageAssemblyComponent;
     }
 
     /**

@@ -31,16 +31,18 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
                     logger.info("Dataflow to Common saved");
                 }
                 dataTransferObject.setCallsCommon(true);
+                sendDTO(dataTransferObject);
             } else if(componentLookup.callsOperation(dataTransferObject.getTargetComponent(), targetIdent)){
                 if(logger.isInfoEnabled()){
                     logger.info("Dataflow to Operation saved");
                 }
                 dataTransferObject.setCallsOperation(true);
+                sendDTO(dataTransferObject);
             } else {
                 if(logger.isErrorEnabled()){
                     logger.error("Invalid Dataflow detected. No Valid Connection from "
                             + dataTransferObject.getSourceIdent() + " to Ident " + dataTransferObject.getTargetIdent()
-                            + ". Please make sure its either a common block or subroutine and it is mentioned as such in analysis files!");
+                            + ". Please make sure its either a common block or operation and it is mentioned as such in analysis files!");
                 }
             }
             final String targetComponent = dataTransferObject.getTargetComponent();
@@ -56,7 +58,10 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
              * therefore all unknown dataflow targets are handled like operations
              */
             dataTransferObject.setCallsOperation(true);
+            sendDTO(dataTransferObject);
         }
+    }
+    private void sendDTO(final DataTransferObject dataTransferObject){
         final String component = dataTransferObject.getComponent();
         dataTransferObject.setSourcePackage(componentLookup.getPackageToComponent(component));
 

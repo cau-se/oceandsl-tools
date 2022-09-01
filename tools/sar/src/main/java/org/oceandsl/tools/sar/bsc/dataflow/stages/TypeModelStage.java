@@ -13,13 +13,11 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
  */public class TypeModelStage extends AbstractDataflowAssemblerStage<DataTransferObject,DataTransferObject> {
 
     private static final String UNKNOWN_TYPE = "UNKNOWN";
-
     private final TypeModel typeModel;
 
     public TypeModelStage(final TypeModel typeModel,final SourceModel sourceModel,final String sourceLabel) {
         super(sourceModel, sourceLabel);
         this.typeModel = typeModel;
-
     }
 
     @SuppressWarnings("unused")
@@ -53,12 +51,13 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return component, stored for the given identifier string
      */
+    @SuppressWarnings("unused")
     private ComponentType componentSetUp(final DataTransferObject dataTransferObject) {
         ComponentType componentType = this.typeModel.getComponentTypes().get(dataTransferObject.getComponent());
         if (componentType == null) {
             componentType = createComponentType(dataTransferObject);
         }
-        createPackageComponent(componentType, dataTransferObject);
+        ComponentType packageComponent = addComponent(componentType, dataTransferObject);
         return componentType;
     }
 
@@ -90,6 +89,23 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
      */
 
     /**
+     * This function adds a component to its referenced package component.
+     *
+     * @param containedComponentType component to add to package
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return the package component containing the provided file component
+     */
+    private ComponentType addComponent(final ComponentType containedComponentType,final DataTransferObject dataTransferObject){
+        ComponentType packageComponentType = this.typeModel.getComponentTypes().get(dataTransferObject.getSourcePackage());
+        if(packageComponentType == null) {
+            packageComponentType = createPackageComponent(dataTransferObject);
+        }
+        packageComponentType.getContainedComponents().add(containedComponentType);
+        this.addObjectToSource(packageComponentType);
+        return packageComponentType;
+    }
+
+    /**
      * This function adds an OperationType to a given component.
      *
      * @param componentType the operation should be stored in
@@ -99,7 +115,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     private OperationType addOperation(final ComponentType componentType,final DataTransferObject dataTransferObject){
         OperationType operationType = componentType.getProvidedOperations().get(dataTransferObject.getSourceIdent());
         if(operationType == null){
-            operationType = createOperation(dataTransferObject.getSourceIdent());
+            operationType = createOperationType(dataTransferObject.getSourceIdent());
             componentType.getProvidedOperations().put(dataTransferObject.getSourceIdent(), operationType);
         }
         return operationType;
@@ -130,9 +146,8 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     /*
         CREATING
      */
-
     /**
-     * This function is used to create a new ComponentTypeObject and store it in the given type model.
+     * This function is used to create a new file ComponentTypeObject and store it in the given type model.
      *
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return component created and stored in the type model
@@ -151,21 +166,24 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         return newComponentType;
     }
 
-    private void createPackageComponent(final ComponentType containedComponentType,final DataTransferObject dataTransferObject) {
-        ComponentType packageComponentType = this.typeModel.getComponentTypes().get(dataTransferObject.getSourcePackage());
-        if(packageComponentType == null){
-            packageComponentType = TypeFactory.eINSTANCE.createComponentType();
-            packageComponentType.setName(dataTransferObject.getSourcePackage());
-            packageComponentType.setPackage(dataTransferObject.getSourcePackage());
-            packageComponentType.setSignature(dataTransferObject.getSourcePackage());
-            if(logger.isInfoEnabled()){
-                logger.info("Placing Package-Component with name: " + packageComponentType.getName());
-            }
-            this.typeModel.getComponentTypes().put(packageComponentType.getName(), packageComponentType);
-            this.addObjectToSource(packageComponentType);
+    /**
+     * This function is used to create a new package ComponentTypeObject and store it in the given type model.
+     *
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return component created and stored in the type model
+     */
+    private ComponentType createPackageComponent(final DataTransferObject dataTransferObject) {
+        ComponentType packageComponentType = TypeFactory.eINSTANCE.createComponentType();
+        packageComponentType.setName(dataTransferObject.getSourcePackage());
+        packageComponentType.setPackage(dataTransferObject.getSourcePackage());
+        packageComponentType.setSignature(dataTransferObject.getSourcePackage());
+        if(logger.isInfoEnabled()){
+            logger.info("Placing Package-Component with name: " + packageComponentType.getName());
         }
-        packageComponentType.getContainedComponents().add(containedComponentType);
+        this.typeModel.getComponentTypes().put(packageComponentType.getName(), packageComponentType);
         this.addObjectToSource(packageComponentType);
+
+        return packageComponentType;
     }
 
     /**
@@ -194,7 +212,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
      * @param operationIdent name of the OperationTypeObject
      * @return created operation
      */
-    private OperationType createOperation(final String operationIdent) {
+    private OperationType createOperationType(final String operationIdent) {
         final OperationType operationType = TypeFactory.eINSTANCE.createOperationType();
         operationType.setName(operationIdent);
         operationType.setReturnType(TypeModelStage.UNKNOWN_TYPE);

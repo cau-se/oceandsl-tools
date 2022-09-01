@@ -54,6 +54,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return component, stored for the given identifier string
      */
+    @SuppressWarnings("unused")
     private DeployedComponent deployedComponentSetUp(final DataTransferObject dataTransferObject) {
         final DeploymentContext deployedContext = this.deploymentModel.getContexts().get(0).getValue();
         if (deployedContext == null) {
@@ -64,7 +65,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
             if (deployedComponent == null) {
                 deployedComponent = createDeployedComponent(deployedContext, dataTransferObject);
             }
-            createPackageDeploymentComponent(deployedContext, deployedComponent, dataTransferObject);
+            DeployedComponent packageDeployedComponent = addComponent(deployedContext, deployedComponent, dataTransferObject);
             return deployedComponent;
         }
     }
@@ -101,6 +102,24 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     /*
         ADDING
      */
+
+    /**
+     * This function adds a component to its referenced package component.
+     *
+     * @param deploymentContext context the deploymentComponents are stored in
+     * @param containedDeployedComponent component to add to package
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return the package component containing the provided file component
+     */
+    private DeployedComponent addComponent(final DeploymentContext deploymentContext,final DeployedComponent containedDeployedComponent,final DataTransferObject dataTransferObject){
+        DeployedComponent packageDeploymentComponent = deploymentContext.getComponents().get(dataTransferObject.getSourcePackage());
+        if(packageDeploymentComponent == null){
+            packageDeploymentComponent = createPackageDeploymentComponent(deploymentContext, dataTransferObject);
+        }
+        packageDeploymentComponent.getContainedComponents().add(containedDeployedComponent);
+        this.addObjectToSource(packageDeploymentComponent);
+        return packageDeploymentComponent;
+    }
 
     /**
      * This function adds an AssemblyOperation to a given component.
@@ -143,13 +162,12 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     /*
         CREATING
      */
-
     /**
-     * This function is used to create a new AssemblyComponentObject and store it in the given deployment model.
+     * This function is used to create a new file DeployedComponentObject and store it in the given deployment model.
      *
      * @param deploymentContext context the deploymentComponents are stored in
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
-     * @return  component created and stored in the deployment model
+     * @return  file component created and stored in the deployment model
      */
     private DeployedComponent createDeployedComponent(final DeploymentContext deploymentContext,final DataTransferObject dataTransferObject){
         final DeployedComponent newDeployedComponent= DeploymentFactory.eINSTANCE.createDeployedComponent();
@@ -165,20 +183,24 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         return newDeployedComponent;
     }
 
-    private void createPackageDeploymentComponent(final DeploymentContext deploymentContext,final DeployedComponent containedAssemblyComponent,final DataTransferObject dataTransferObject) {
-        DeployedComponent packageDeploymentComponent = deploymentContext.getComponents().get(dataTransferObject.getSourcePackage());
-        if(packageDeploymentComponent == null){
-            packageDeploymentComponent = DeploymentFactory.eINSTANCE.createDeployedComponent();
-            packageDeploymentComponent.setSignature(dataTransferObject.getSourcePackage());
-            packageDeploymentComponent.setAssemblyComponent(this.assemblyModel.getComponents().get(dataTransferObject.getSourcePackage()));
-            if(logger.isInfoEnabled()){
-                logger.info("Placing Package-AssemblyComponent with name: " + packageDeploymentComponent.getSignature());
-            }
-            deploymentContext.getComponents().put(packageDeploymentComponent.getSignature(), packageDeploymentComponent);
-            this.addObjectToSource(packageDeploymentComponent);
+    /**
+     * This function is used to create a new package DeployedComponentObject and store it in the given deployment model.
+     *
+     * @param deploymentContext context the deploymentComponents are stored in
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return package component created and stored in the deployment model
+     */
+    private DeployedComponent createPackageDeploymentComponent(final DeploymentContext deploymentContext,final DataTransferObject dataTransferObject) {
+
+        DeployedComponent packageDeploymentComponent = DeploymentFactory.eINSTANCE.createDeployedComponent();
+        packageDeploymentComponent.setSignature(dataTransferObject.getSourcePackage());
+        packageDeploymentComponent.setAssemblyComponent(this.assemblyModel.getComponents().get(dataTransferObject.getSourcePackage()));
+        if(logger.isInfoEnabled()){
+            logger.info("Placing Package-AssemblyComponent with name: " + packageDeploymentComponent.getSignature());
         }
-        packageDeploymentComponent.getContainedComponents().add(containedAssemblyComponent);
+        deploymentContext.getComponents().put(packageDeploymentComponent.getSignature(), packageDeploymentComponent);
         this.addObjectToSource(packageDeploymentComponent);
+        return packageDeploymentComponent;
     }
 
     /**
@@ -203,7 +225,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     }
 
     /**
-     * This function creates an AssemblyOperationObject and stores it in the given source
+     * This function creates an DeployedOperationObject and stores it in the given source
      *
      * @param deployedComponent component where the new operation is stored in
      * @param operationIdent string identifier for operation creation
