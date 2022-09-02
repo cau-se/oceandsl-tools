@@ -35,19 +35,19 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
 
         if(dataTransferObject.callsCommon()){
             // store common block independent of component containing functions
-            assemblyComponent = commonComponentSetUp();
+            assemblyComponent = createCommonComponent();
             final AssemblyStorage assemblyStorage = addStorage(assemblyComponent,dataTransferObject);
         } else {
             //if no storage is referenced, add target operation to target component
-            final AssemblyComponent targetComponent = createTargetComponentAndOperation(dataTransferObject);
+            final AssemblyComponent targetComponent = targetComponentAndOperationSetUp(dataTransferObject);
         }
         this.outputPort.send(dataTransferObject);
     }
 
+
     /*
         SETUP
      */
-
     /**
      * This function retrieves a stored or new created AssemblyComponent. Depending on the given identifier in the transfer-object
      * a subroutine is called to set up a new AssemblyComponent instance.
@@ -66,24 +66,23 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
     }
 
     /**
-     * This function retrieves a stored or new created AssemblyComponent, storing all storages/common blocks.
+     * This function is used to create the matching target component of a given dataflow step. It will use the 'createAssemblyComponent' method
+     * to store the new component in the assembly model. Therefor it creates a new transfer object only used in this method.
      *
-     * @return component containing possible storages/common blocks.
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return component created and stored in the assembly model
      */
-    private AssemblyComponent commonComponentSetUp() {
-        final String commonIdent = "COMMON-Component";
-        AssemblyComponent assemblyComponent = this.assemblyModel.getComponents().get(commonIdent);
-        if (assemblyComponent == null) {
-            assemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
-            assemblyComponent.setComponentType(this.typeModel.getComponentTypes().get(commonIdent));
-            assemblyComponent.setSignature(commonIdent);
-            if(logger.isInfoEnabled()){
-                logger.info("Placing AssemblyComponent with name: " + commonIdent);
-            }
-            this.assemblyModel.getComponents().put(commonIdent, assemblyComponent);
-            this.addObjectToSource(assemblyComponent);
-        }
-        return assemblyComponent;
+    @SuppressWarnings("unused")
+    private AssemblyComponent targetComponentAndOperationSetUp(final DataTransferObject dataTransferObject){
+
+        final DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
+        tempTargetDataTransferObject.setComponent(dataTransferObject.getTargetComponent());
+        tempTargetDataTransferObject.setSourceIdent(dataTransferObject.getTargetIdent());
+        tempTargetDataTransferObject.setSourcePackage(dataTransferObject.getTargetPackage());
+
+        final AssemblyComponent targetComponentType = assemblyComponentSetUp(tempTargetDataTransferObject);
+        final AssemblyOperation operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
+        return  targetComponentType;
     }
 
     /*
@@ -168,6 +167,27 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
     }
 
     /**
+     * This function retrieves a stored or new created AssemblyComponent, storing all storages/common blocks.
+     *
+     * @return component containing possible storages/common blocks.
+     */
+    private AssemblyComponent createCommonComponent() {
+        final String commonIdent = "COMMON-Component";
+        AssemblyComponent assemblyComponent = this.assemblyModel.getComponents().get(commonIdent);
+        if (assemblyComponent == null) {
+            assemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
+            assemblyComponent.setComponentType(this.typeModel.getComponentTypes().get(commonIdent));
+            assemblyComponent.setSignature(commonIdent);
+            if(logger.isInfoEnabled()){
+                logger.info("Placing AssemblyComponent with name: " + commonIdent);
+            }
+            this.assemblyModel.getComponents().put(commonIdent, assemblyComponent);
+            this.addObjectToSource(assemblyComponent);
+        }
+        return assemblyComponent;
+    }
+
+    /**
      * This function is used to create a new package AssemblyComponentObject and store it in the given assembly model.
      *
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
@@ -184,26 +204,6 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
         this.assemblyModel.getComponents().put(packageAssemblyComponent.getSignature(), packageAssemblyComponent);
         this.addObjectToSource(packageAssemblyComponent);
         return packageAssemblyComponent;
-    }
-
-    /**
-     * This function is used to create the matching target component of a given dataflow step. It will use the 'createAssemblyComponent' method
-     * to store the new component in the assembly model. Therefor it creates a new transfer object only used in this method.
-     *
-     * @param dataTransferObject TransferObject containing all dataflow information in one step.
-     * @return component created and stored in the assembly model
-     */
-    @SuppressWarnings("unused")
-    private AssemblyComponent createTargetComponentAndOperation(final DataTransferObject dataTransferObject){
-
-        final DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
-        tempTargetDataTransferObject.setComponent(dataTransferObject.getTargetComponent());
-        tempTargetDataTransferObject.setSourceIdent(dataTransferObject.getTargetIdent());
-        tempTargetDataTransferObject.setSourcePackage(dataTransferObject.getTargetPackage());
-
-        final AssemblyComponent targetComponentType = assemblyComponentSetUp(tempTargetDataTransferObject);
-        final AssemblyOperation operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
-        return  targetComponentType;
     }
 
     /**

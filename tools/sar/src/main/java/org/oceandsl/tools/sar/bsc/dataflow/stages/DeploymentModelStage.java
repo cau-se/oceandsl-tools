@@ -33,11 +33,11 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         final DeployedOperation deployedOperation = addOperation(deployedComponent, dataTransferObject);
 
         if(dataTransferObject.callsCommon()){
-            deployedComponent = commonComponentSetUp(); // store common block independent of dataflow component
+            deployedComponent = createCommonComponent(); // store common block independent of dataflow component
             assert deployedComponent != null;
             final DeployedStorage deployedStorage = addStorage(deployedComponent, dataTransferObject);
         } else {
-            final DeployedComponent targetComponent = createTargetComponentAndOperation(dataTransferObject);
+            final DeployedComponent targetComponent = targetComponentAndOperationSetUp(dataTransferObject);
 
         }
         this.outputPort.send(dataTransferObject);
@@ -71,32 +71,24 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     }
 
     /**
-     * This function retrieves a stored or new created DeployedComponent, storing all storages/common blocks.
+     * This function is used to create the matching target component of a given dataflow step. It will use the 'createDeployedComponent' method
+     * to store the new component in the deployment model. Therefor it creates a new transfer object only used in this method.
      *
-     * @return component containing possible storages/common blocks
+     * @param dataTransferObject TransferObject containing all dataflow information in one step.
+     * @return component created and stored in the deployment model
      */
-    private DeployedComponent commonComponentSetUp() {
-        final String commonIdent = "COMMON-Component";
-        final DeploymentContext deploymentContext = this.deploymentModel.getContexts().get(0).getValue();
-        if (deploymentContext == null) {
-            this.logger.error("Internal error: Data must contain at least one deployment context.");
-            return null;
-        } else {
-            DeployedComponent deployedComponent = deploymentContext.getComponents().get(commonIdent);
-            if (deployedComponent == null) {
-                deployedComponent= DeploymentFactory.eINSTANCE.createDeployedComponent();
+    @SuppressWarnings("unused")
+    private DeployedComponent targetComponentAndOperationSetUp(final DataTransferObject dataTransferObject){
 
-                deployedComponent.setSignature(commonIdent);
-                deployedComponent.setAssemblyComponent(this.assemblyModel.getComponents().get(commonIdent));
-                deploymentContext.getComponents().put(commonIdent, deployedComponent);
+        final DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
+        tempTargetDataTransferObject.setComponent(dataTransferObject.getTargetComponent());
+        tempTargetDataTransferObject.setSourceIdent(dataTransferObject.getTargetIdent());
+        tempTargetDataTransferObject.setSourcePackage(dataTransferObject.getTargetPackage());
 
-                if(logger.isInfoEnabled()){
-                    logger.info("Placing DeployedComponent with name: " + commonIdent);
-                }
-                this.addObjectToSource(deployedComponent);
-            }
-            return deployedComponent;
-        }
+        final DeployedComponent targetComponentType = deployedComponentSetUp(tempTargetDataTransferObject);
+        assert targetComponentType != null;
+        final DeployedOperation operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
+        return  targetComponentType;
     }
 
     /*
@@ -162,6 +154,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     /*
         CREATING
      */
+
     /**
      * This function is used to create a new file DeployedComponentObject and store it in the given deployment model.
      *
@@ -184,6 +177,35 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
     }
 
     /**
+     * This function retrieves a stored or new created DeployedComponent, storing all storages/common blocks.
+     *
+     * @return component containing possible storages/common blocks
+     */
+    private DeployedComponent createCommonComponent() {
+        final String commonIdent = "COMMON-Component";
+        final DeploymentContext deploymentContext = this.deploymentModel.getContexts().get(0).getValue();
+        if (deploymentContext == null) {
+            this.logger.error("Internal error: Data must contain at least one deployment context.");
+            return null;
+        } else {
+            DeployedComponent deployedComponent = deploymentContext.getComponents().get(commonIdent);
+            if (deployedComponent == null) {
+                deployedComponent= DeploymentFactory.eINSTANCE.createDeployedComponent();
+
+                deployedComponent.setSignature(commonIdent);
+                deployedComponent.setAssemblyComponent(this.assemblyModel.getComponents().get(commonIdent));
+                deploymentContext.getComponents().put(commonIdent, deployedComponent);
+
+                if(logger.isInfoEnabled()){
+                    logger.info("Placing DeployedComponent with name: " + commonIdent);
+                }
+                this.addObjectToSource(deployedComponent);
+            }
+            return deployedComponent;
+        }
+    }
+
+    /**
      * This function is used to create a new package DeployedComponentObject and store it in the given deployment model.
      *
      * @param deploymentContext context the deploymentComponents are stored in
@@ -201,27 +223,6 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         deploymentContext.getComponents().put(packageDeploymentComponent.getSignature(), packageDeploymentComponent);
         this.addObjectToSource(packageDeploymentComponent);
         return packageDeploymentComponent;
-    }
-
-    /**
-     * This function is used to create the matching target component of a given dataflow step. It will use the 'createDeployedComponent' method
-     * to store the new component in the deployment model. Therefor it creates a new transfer object only used in this method.
-     *
-     * @param dataTransferObject TransferObject containing all dataflow information in one step.
-     * @return component created and stored in the deployment model
-     */
-    @SuppressWarnings("unused")
-    private DeployedComponent createTargetComponentAndOperation(final DataTransferObject dataTransferObject){
-
-        final DataTransferObject tempTargetDataTransferObject = new DataTransferObject();
-        tempTargetDataTransferObject.setComponent(dataTransferObject.getTargetComponent());
-        tempTargetDataTransferObject.setSourceIdent(dataTransferObject.getTargetIdent());
-        tempTargetDataTransferObject.setSourcePackage(dataTransferObject.getTargetPackage());
-
-        final DeployedComponent targetComponentType = deployedComponentSetUp(tempTargetDataTransferObject);
-        assert targetComponentType != null;
-        final DeployedOperation operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
-        return  targetComponentType;
     }
 
     /**
