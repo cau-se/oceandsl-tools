@@ -15,8 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis;
 
+import kieker.analysis.architecture.dependency.DependencyGraphCreatorStage;
 import kieker.analysis.architecture.recovery.signature.NameBuilder;
 import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.sink.graph.dot.DotFileWriterStage;
 import kieker.analysis.generic.sink.graph.graphml.GraphMLFileWriterStage;
 import kieker.model.analysismodel.deployment.DeployedComponent;
@@ -31,8 +33,8 @@ import org.oceandsl.analysis.metrics.entropy.AllenDeployedArchitectureGraphStage
 import org.oceandsl.analysis.metrics.entropy.ComputeAllenComplexityMetrics;
 import org.oceandsl.analysis.metrics.entropy.KiekerArchitectureModelSystemGraphUtils;
 import org.oceandsl.analysis.metrics.entropy.SaveAllenDataStage;
-import org.oceandsl.tools.mvis.graph.ColoredDotExportConfigurationFactory;
-import org.oceandsl.tools.mvis.graph.DedicatedFileNameMapper;
+import org.oceandsl.tools.mvis.graph.*;
+import org.oceandsl.tools.mvis.stages.graph.ColorDependencyGraphBuilderConfiguration;
 import org.oceandsl.tools.mvis.stages.graph.ModuleCallGraphStage;
 import org.oceandsl.tools.mvis.stages.graph.OperationCallGraphStage;
 import org.oceandsl.tools.mvis.stages.metrics.ModuleNodeCountCouplingStage;
@@ -88,13 +90,13 @@ public class TeetimeConfiguration extends Configuration {
 
         final GraphMLFileWriterStage graphMLFileWriterStage = new GraphMLFileWriterStage(settings.getOutputDirectory());
 
-        /** connecting ports.
+        /** connecting ports.*/
         this.connectPorts(statisticsDistributor.getNewOutputPort(), triggerDistributor.getInputPort());
 
         final IColorDependencyGraphBuilderConfiguration configuration = new ColorDependencyGraphBuilderConfiguration(
-                settings.getSelector());*/
+                settings.getSelector());
 
-        /** operation graph.
+        /** operation graph.*/
         if (settings.getOutputGraphs().contains(EOutputGraph.DOT_OP)
                 || settings.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
             final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
@@ -111,9 +113,9 @@ public class TeetimeConfiguration extends Configuration {
             if (settings.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
                 this.connectPorts(graphsDistributor.getNewOutputPort(), graphMLFileWriterStage.getInputPort());
             }
-        } */
+        }
 
-        /** component graph.
+        /** component graph.*/
         if (settings.getOutputGraphs().contains(EOutputGraph.DOT_COMPONENT)) {
             final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> componentDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
                     configuration, new ColorAssemblyLevelComponentDependencyGraphBuilderFactory());
@@ -126,7 +128,7 @@ public class TeetimeConfiguration extends Configuration {
                     componentDependencyGraphCreatorStage.getInputPort());
             this.connectPorts(componentDependencyGraphCreatorStage.getOutputPort(),
                     componentDependencyDotFileWriterStage.getInputPort());
-        }*/
+        }
 
         /** setup allen metrics. */
         final AllenDeployedArchitectureGraphStage allenArchitectureModularGraphStage = new AllenDeployedArchitectureGraphStage(
