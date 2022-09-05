@@ -114,6 +114,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
             componentType = TypeFactory.eINSTANCE.createComponentType();
             componentType.setName(commonIdent);
             componentType.setSignature(commonIdent);
+            componentType.setPackage("COMMON");
 
             if(logger.isInfoEnabled()){
                 logger.info("Placing Component with name: " + componentType.getName());

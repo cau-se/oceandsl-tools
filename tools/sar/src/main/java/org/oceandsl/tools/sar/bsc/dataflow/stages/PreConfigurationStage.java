@@ -37,6 +37,8 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
                     logger.info("Dataflow to Operation saved");
                 }
                 dataTransferObject.setCallsOperation(true);
+                final String targetComponent = dataTransferObject.getTargetComponent();
+                dataTransferObject.setTargetPackage(componentLookup.getPackageToComponent(targetComponent));
                 sendDTO(dataTransferObject);
             } else {
                 if(logger.isErrorEnabled()){
@@ -45,13 +47,12 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
                             + ". Please make sure its either a common block or operation and it is mentioned as such in analysis files!");
                 }
             }
-            final String targetComponent = dataTransferObject.getTargetComponent();
-            dataTransferObject.setTargetPackage(componentLookup.getPackageToComponent(targetComponent));
         }catch(NullPointerException e){
             if(logger.isErrorEnabled()){
                 logger.error("Unknown origin component from Operation: " + targetIdent);
             }
             dataTransferObject.setTargetComponent(".unknown");
+            dataTransferObject.setTargetPackage(".unknown");
 
             /*
              * Common Blocks are referenced as "/(...)/" which is evaluated in first if,
