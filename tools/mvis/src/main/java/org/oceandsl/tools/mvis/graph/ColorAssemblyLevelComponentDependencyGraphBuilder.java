@@ -15,8 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.graph;
 
-import java.util.Optional;
-
 import kieker.analysis.architecture.dependency.PropertyConstants;
 import kieker.analysis.architecture.dependency.VertexType;
 import kieker.analysis.generic.graph.GraphFactory;
@@ -26,9 +24,10 @@ import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
-
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
+
+import java.util.Optional;
 
 /**
  * @author Reiner Jung

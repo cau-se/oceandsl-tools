@@ -22,9 +22,7 @@ import kieker.analysis.generic.graph.GraphFactory;
 import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedStorage;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.execution.StorageDataflow;
+import kieker.model.analysismodel.execution.*;
 import kieker.model.analysismodel.sources.SourceModel;
 import kieker.model.analysismodel.statistics.*;
 import org.eclipse.emf.common.util.EList;
@@ -91,12 +89,15 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
         this.executionModel = repository.getModel(ExecutionModel.class);
         this.statisticsModel = repository.getModel(StatisticsModel.class);
         this.responseTimeDecorator = new ResponseTimeDecorator(this.statisticsModel, ChronoUnit.NANOS);
-        for (final AggregatedInvocation invocation : this.executionModel.getAggregatedInvocations().values()) {
+        /*for (final AggregatedInvocation invocation : this.executionModel.getAggregatedInvocations().values()) {
             this.handleInvocation(invocation);
-        }
+        }*/
         for (final StorageDataflow storageAccess : this.executionModel.getStorageDataflow()
                 .values()) {
-            this.handleStorageAccess(storageAccess);
+            this.handleStorageDataflow(storageAccess);
+        }
+        for (final OperationDataflow operationDataflow : this.executionModel.getOperationDataflow().values()){
+            this.handleOperationDataflow(operationDataflow);
         }
         return this.graph;
     }
@@ -116,19 +117,58 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
         this.addEdge(sourceVertex, targetVertex, calls);
     }
 
-    private void handleStorageAccess(final StorageDataflow storageAccess) {
+    private void handleStorageDataflow(final StorageDataflow storageAccess) {
         final INode sourceVertex = storageAccess.getCode() != null ? this.addVertex(storageAccess.getCode())
                 : this.addVertexForEntry(); // NOCS (declarative)
         final INode targetVertex = this.addStorageVertex(storageAccess.getStorage());
 
         final EMap<EObject, Statistics> statisticsMap = this.statisticsModel.getStatistics();
         final Statistics statistics = statisticsMap.get(storageAccess);
+        /*final EMap<EPredefinedUnits, StatisticRecord> recordMap = statistics.getStatistics();
+        final StatisticRecord record = recordMap.get(EPredefinedUnits.INVOCATION);
+        final EMap<EPropertyType, Object> properties = record.getProperties();
+
+        final long calls = (Long) properties.get(EPropertyType.COUNT);*/
+        EDirection direction = storageAccess.getDirection();
+        switch(direction){
+            case WRITE:
+                this.addEdge(sourceVertex, targetVertex, 1);
+                break;
+            case READ:
+                this.addEdge(targetVertex, sourceVertex, 0);
+                break;
+            case BOTH:
+                this.addEdge(sourceVertex, targetVertex, 2);
+                this.addEdge(targetVertex, sourceVertex, 2);
+                break;
+        }
+    }
+
+    private void handleOperationDataflow(final OperationDataflow operationDataflow) {
+        final INode sourceVertex = operationDataflow.getSource() != null ? this.addVertex(operationDataflow.getSource())
+                : this.addVertexForEntry(); // NOCS (declarative)
+        final INode targetVertex = this.addVertex(operationDataflow.getTarget());
+
+        final EMap<EObject, Statistics> statisticsMap = this.statisticsModel.getStatistics();
+        /*final Statistics statistics = statisticsMap.get(operationDataflow);
         final EMap<EPredefinedUnits, StatisticRecord> recordMap = statistics.getStatistics();
         final StatisticRecord record = recordMap.get(EPredefinedUnits.INVOCATION);
         final EMap<EPropertyType, Object> properties = record.getProperties();
 
-        final long calls = (Long) properties.get(EPropertyType.COUNT);
-        this.addEdge(sourceVertex, targetVertex, calls);
+        final long calls = (Long) properties.get(EPropertyType.COUNT);*/
+        EDirection direction = operationDataflow.getDirection();
+        switch(direction){
+            case WRITE:
+                this.addEdge(sourceVertex, targetVertex, 1);
+                break;
+            case READ:
+                this.addEdge(targetVertex, sourceVertex, 0);
+                break;
+            case BOTH:
+                this.addEdge(sourceVertex, targetVertex, 2);
+                this.addEdge(targetVertex, sourceVertex, 2);
+                break;
+        }
     }
 
     protected abstract INode addStorageVertex(final DeployedStorage deployedStorage);
