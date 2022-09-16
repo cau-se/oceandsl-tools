@@ -21,10 +21,7 @@ import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.execution.OperationDataflow;
-import kieker.model.analysismodel.execution.StorageDataflow;
+import kieker.model.analysismodel.execution.*;
 import org.oceandsl.analysis.graph.EGraphGenerationMode;
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
@@ -55,7 +52,7 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
 
         final IGraph graph = GraphFactory.createGraph(element.getName());
 
-        for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
+        /*for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
             final boolean sourceSelected = this.selector.nodeIsSelected(invocation.getTarget().getComponent());
             final boolean targetSelected = this.selector.nodeIsSelected(invocation.getTarget());
             if (sourceSelected) {
@@ -84,7 +81,7 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
             default:
                 throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
             }
-        }
+        }*/
 
         for (final OperationDataflow operationDataflow : executionModel.getOperationDataflow().values()) {
             final boolean sourceSelected = this.selector.nodeIsSelected(operationDataflow.getTarget().getComponent());
@@ -98,7 +95,7 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
             switch (this.graphGeneratioMode) {
                 case ONLY_EDGES_FOR_NODES:
                     if (sourceSelected && targetSelected && this.selector.edgeIsSelected(operationDataflow)) {
-                        this.addOperationEdge(graph, operationDataflow.getSource(), operationDataflow.getTarget());
+                        this.addOperationEdge(graph, operationDataflow.getSource(), operationDataflow.getTarget(), operationDataflow.getDirection());
                     }
                     break;
                 case ADD_NODES_FOR_EDGES:
@@ -109,7 +106,7 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
                         if (!targetSelected) {
                             this.addOperationVertexIfAbsent(graph, operationDataflow.getTarget());
                         }
-                        this.addOperationEdge(graph, operationDataflow.getSource(), operationDataflow.getTarget());
+                        this.addOperationEdge(graph, operationDataflow.getSource(), operationDataflow.getTarget(), operationDataflow.getDirection());
                     }
                     break;
                 default:
@@ -129,7 +126,7 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
                 switch (this.graphGeneratioMode) {
                     case ONLY_EDGES_FOR_NODES:
                         if (sourceSelected && targetSelected && this.selector.edgeIsSelected(storageDataflow)) {
-                            this.addStorageEdge(graph, storageDataflow.getCode(), storageDataflow.getStorage());
+                            this.addStorageEdge(graph, storageDataflow.getCode(), storageDataflow.getStorage(), storageDataflow.getDirection());
                         }
                         break;
                     case ADD_NODES_FOR_EDGES:
@@ -140,7 +137,7 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
                             if (!targetSelected) {
                                 this.addStorageVertexIfAbsent(graph, storageDataflow.getStorage());
                             }
-                            this.addStorageEdge(graph, storageDataflow.getCode(), storageDataflow.getStorage());
+                            this.addStorageEdge(graph, storageDataflow.getCode(), storageDataflow.getStorage(), storageDataflow.getDirection());
                         }
                         break;
                     default:
@@ -151,16 +148,42 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
         this.outputPort.send(graph);
     }
 
-    private void addOperationEdge(final IGraph graph, final DeployedOperation source, final DeployedOperation target) {
+    private void addOperationEdge(final IGraph graph, final DeployedOperation source, final DeployedOperation target, EDirection direction) {
         final Optional<INode> sourceNode = this.findOperationNode(graph, source);
         final Optional<INode> targetNode = this.findOperationNode(graph, target);
-        graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
+        switch(direction){
+            case WRITE:
+                graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
+                break;
+            case READ:
+                graph.getGraph().addEdge(targetNode.get(), sourceNode.get(), GraphFactory.createEdge(null));
+                break;
+            case BOTH:
+                graph.getGraph().addEdge(targetNode.get(), sourceNode.get(), GraphFactory.createEdge(null));
+                graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
+                break;
+            default:
+                break;
+        }
     }
 
-    private void addStorageEdge(final IGraph graph, final DeployedOperation source, final DeployedStorage target) {
-        final Optional<INode> sourceNode = this.findOperationNode(graph, source);
-        final Optional<INode> targetNode = this.findStorageNode(graph, target);
-        graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
+    private void addStorageEdge(final IGraph graph, final DeployedOperation operation, final DeployedStorage storage, EDirection direction) {
+        final Optional<INode> operationNode = this.findOperationNode(graph, operation);
+        final Optional<INode> storageNode = this.findStorageNode(graph, storage);
+        switch(direction){
+            case WRITE:
+                    graph.getGraph().addEdge(operationNode.get(), storageNode.get(), GraphFactory.createEdge(null));
+                    break;
+            case READ:
+                    graph.getGraph().addEdge(storageNode.get(), operationNode.get(), GraphFactory.createEdge(null));
+                    break;
+            case BOTH:
+                    graph.getGraph().addEdge(storageNode.get(), operationNode.get(), GraphFactory.createEdge(null));
+                    graph.getGraph().addEdge(operationNode.get(), storageNode.get(), GraphFactory.createEdge(null));
+                    break;
+            default:
+                    break;
+        }
     }
 
     private Optional<INode> findOperationNode(final IGraph graph, final DeployedOperation operation) {

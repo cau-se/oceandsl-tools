@@ -20,10 +20,7 @@ import kieker.analysis.generic.graph.GraphFactory;
 import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedComponent;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.execution.OperationDataflow;
-import kieker.model.analysismodel.execution.StorageDataflow;
+import kieker.model.analysismodel.execution.*;
 import org.oceandsl.analysis.graph.EGraphGenerationMode;
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
@@ -54,7 +51,7 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
 
         final IGraph graph = GraphFactory.createGraph(repository.getName());
 
-        for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
+        /*for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
             final boolean sourceSelected = this.selector.nodeIsSelected(invocation.getSource().getComponent());
             final boolean targetSelected = this.selector.nodeIsSelected(invocation.getTarget().getComponent());
             if (sourceSelected) {
@@ -83,7 +80,7 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
             default:
                 throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
             }
-        }
+        }*/
 
         for (final OperationDataflow operationDataflow : executionModel.getOperationDataflow().values()) {
             final boolean sourceSelected = this.selector.nodeIsSelected(operationDataflow.getSource().getComponent());
@@ -97,7 +94,7 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
             switch (this.graphGeneratioMode) {
                 case ONLY_EDGES_FOR_NODES:
                     if (sourceSelected && targetSelected && this.selector.edgeIsSelected(operationDataflow)) {
-                        this.addEdge(graph, operationDataflow.getSource().getComponent(), operationDataflow.getTarget().getComponent());
+                        this.addEdge(graph, operationDataflow.getSource().getComponent(), operationDataflow.getTarget().getComponent(), operationDataflow.getDirection());
                     }
                     break;
                 case ADD_NODES_FOR_EDGES:
@@ -108,7 +105,7 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
                         if (!targetSelected) {
                             this.addVertexIfAbsent(graph, operationDataflow.getTarget().getComponent());
                         }
-                        this.addEdge(graph, operationDataflow.getSource().getComponent(), operationDataflow.getTarget().getComponent());
+                        this.addEdge(graph, operationDataflow.getSource().getComponent(), operationDataflow.getTarget().getComponent(), operationDataflow.getDirection());
                     }
                     break;
                 default:
@@ -128,7 +125,7 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
             switch (this.graphGeneratioMode) {
                 case ONLY_EDGES_FOR_NODES:
                     if (sourceSelected && targetSelected && this.selector.edgeIsSelected(storageDataflow)) {
-                        this.addEdge(graph, storageDataflow.getCode().getComponent(), storageDataflow.getStorage().getComponent());
+                        this.addEdge(graph, storageDataflow.getCode().getComponent(), storageDataflow.getStorage().getComponent(), storageDataflow.getDirection());
                     }
                     break;
                 case ADD_NODES_FOR_EDGES:
@@ -139,7 +136,7 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
                         if (!targetSelected) {
                             this.addVertexIfAbsent(graph, storageDataflow.getStorage().getComponent());
                         }
-                        this.addEdge(graph, storageDataflow.getCode().getComponent(), storageDataflow.getStorage().getComponent());
+                        this.addEdge(graph, storageDataflow.getCode().getComponent(), storageDataflow.getStorage().getComponent(), storageDataflow.getDirection());
                     }
                     break;
                 default:
@@ -150,10 +147,21 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
         this.outputPort.send(graph);
     }
 
-    private void addEdge(final IGraph graph, final DeployedComponent source, final DeployedComponent target) {
+    private void addEdge(final IGraph graph, final DeployedComponent source, final DeployedComponent target, EDirection direction) {
         final Optional<INode> sourceNode = this.findNode(graph, source);
         final Optional<INode> targetNode = this.findNode(graph, target);
-        graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
+        switch(direction){
+            case WRITE:
+                graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
+                break;
+            case READ:
+                graph.getGraph().addEdge(targetNode.get(), sourceNode.get(), GraphFactory.createEdge(null));
+                break;
+            case BOTH:
+                graph.getGraph().addEdge(targetNode.get(), sourceNode.get(), GraphFactory.createEdge(null));
+                graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
+                break;
+        }
     }
 
     private Optional<INode> findNode(final IGraph graph, final DeployedComponent component) {
