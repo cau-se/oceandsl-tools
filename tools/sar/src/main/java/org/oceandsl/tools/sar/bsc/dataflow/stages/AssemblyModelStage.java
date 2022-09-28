@@ -67,7 +67,7 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
 
     /**
      * This function is used to create the matching target component of a given dataflow step. It will use the 'createAssemblyComponent' method
-     * to store the new component in the assembly model. Therefor it creates a new transfer object only used in this method.
+     * to store the new component in the assembly model. Therefore, it creates a new transfer object only used in this method.
      *
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return component created and stored in the assembly model
@@ -82,6 +82,7 @@ public class AssemblyModelStage extends AbstractDataflowAssemblerStage<DataTrans
 
         final AssemblyComponent targetComponentType = assemblyComponentSetUp(tempTargetDataTransferObject);
         final AssemblyOperation operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
+        this.addObjectToSource(targetComponentType);
         return  targetComponentType;
     }
 

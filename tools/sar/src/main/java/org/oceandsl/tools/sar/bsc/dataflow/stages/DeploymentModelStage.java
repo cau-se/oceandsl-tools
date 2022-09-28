@@ -88,6 +88,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         final DeployedComponent targetComponentType = deployedComponentSetUp(tempTargetDataTransferObject);
         assert targetComponentType != null;
         final DeployedOperation operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
+        this.addObjectToSource(targetComponentType);
         return  targetComponentType;
     }
 

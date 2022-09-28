@@ -27,12 +27,14 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         try{
 
             if(targetIdent.contains("/")){
+                //Only a common block has '/' in its identifier
                 if(logger.isInfoEnabled()){
                     logger.info("Dataflow to Common saved");
                 }
                 dataTransferObject.setCallsCommon(true);
                 sendDTO(dataTransferObject);
             } else if(componentLookup.callsOperation(dataTransferObject.getTargetComponent(), targetIdent)){
+                //Lookup class can verify inner model data flow.
                 if(logger.isInfoEnabled()){
                     logger.info("Dataflow to Operation saved");
                 }
@@ -48,6 +50,11 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
                 }
             }
         }catch(NullPointerException e){
+            /*
+             * If no target component was set, a NullPointer is thrown, while verifying inner model data flow
+             * no target concludes to external data flow.
+             */
+
             if(logger.isErrorEnabled()){
                 logger.error("Unknown origin component from Operation: " + targetIdent);
             }
@@ -62,6 +69,11 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
             sendDTO(dataTransferObject);
         }
     }
+
+    /**
+     * A helper method to send configured DTOs to next stage.
+     * @param dataTransferObject
+     */
     private void sendDTO(final DataTransferObject dataTransferObject){
         final String component = dataTransferObject.getComponent();
         dataTransferObject.setSourcePackage(componentLookup.getPackageToComponent(component));

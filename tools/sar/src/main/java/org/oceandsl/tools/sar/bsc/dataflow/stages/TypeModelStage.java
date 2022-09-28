@@ -63,7 +63,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
 
     /**
      * This function is used to create the matching target component of a given dataflow step. It will use the 'createComponentType' method
-     * to store the new component in the type model. Therefor it creates a new transfer object only used in this method.
+     * to store the new component in the type model. Therefore, it creates a new transfer object only used in this method.
      *
      * @param dataTransferObject TransferObject containing all dataflow information in one step.
      * @return target component created and stored in the type model
@@ -78,6 +78,7 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
 
         final ComponentType targetComponentType = componentSetUp(tempTargetDataTransferObject);
         final OperationType operationType = addOperation(targetComponentType, tempTargetDataTransferObject);
+        this.addObjectToSource(targetComponentType);
         return  targetComponentType;
     }
 
@@ -100,30 +101,6 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         packageComponentType.getContainedComponents().add(containedComponentType);
         this.addObjectToSource(packageComponentType);
         return packageComponentType;
-    }
-
-    /**
-     * This function retrieves a stored or new created ComponentType, storing all storages/common blocks.
-     *
-     * @return component containing possible storages/common blocks.
-     */
-    private ComponentType createCommonComponent() {
-        final String commonIdent = "COMMON-Component";
-        ComponentType componentType = this.typeModel.getComponentTypes().get(commonIdent);
-        if (componentType == null) {
-            componentType = TypeFactory.eINSTANCE.createComponentType();
-            componentType.setName(commonIdent);
-            componentType.setSignature(commonIdent);
-            componentType.setPackage("COMMON");
-
-            if(logger.isInfoEnabled()){
-                logger.info("Placing Component with name: " + componentType.getName());
-            }
-            this.typeModel.getComponentTypes().put(componentType.getName(), componentType);
-            this.addObjectToSource(componentType);
-            return componentType;
-        }
-        return componentType;
     }
 
     /**
@@ -163,9 +140,33 @@ import org.oceandsl.tools.sar.stages.dataflow.AbstractDataflowAssemblerStage;
         }
         return storageType;
     }
+
     /*
         CREATING
      */
+    /**
+     * This function retrieves a stored or new created ComponentType, storing all storages/common blocks.
+     *
+     * @return component containing possible storages/common blocks.
+     */
+    private ComponentType createCommonComponent() {
+        final String commonIdent = "COMMON-Component";
+        ComponentType componentType = this.typeModel.getComponentTypes().get(commonIdent);
+        if (componentType == null) {
+            componentType = TypeFactory.eINSTANCE.createComponentType();
+            componentType.setName(commonIdent);
+            componentType.setSignature(commonIdent);
+            componentType.setPackage("COMMON");
+
+            if(logger.isInfoEnabled()){
+                logger.info("Placing Component with name: " + componentType.getName());
+            }
+            this.typeModel.getComponentTypes().put(componentType.getName(), componentType);
+            this.addObjectToSource(componentType);
+            return componentType;
+        }
+        return componentType;
+    }
 
     /**
      * This function is used to create a new file ComponentTypeObject and store it in the given type model.

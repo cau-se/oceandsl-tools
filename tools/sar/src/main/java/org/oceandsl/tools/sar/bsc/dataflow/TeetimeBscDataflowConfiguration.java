@@ -60,7 +60,7 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
         final CSVBscDataflowReaderStage readDataflowStage = new CSVBscDataflowReaderStage(settings.getBscDataflowInputFile(),";");
         readerDataflowPort = readDataflowStage.getOutputPort();
 
-        /* -- call based modeling -- */
+        /* -- Modeling Setup -- */
         final PreConfigurationStage preConfigurationStage = new PreConfigurationStage(componentLookup, modelRepository.getModel(SourceModel.class), settings.getSourceLabel());
         final TypeModelStage typeModelStage = new TypeModelStage(modelRepository.getModel(TypeModel.class), modelRepository.getModel(SourceModel.class),settings.getSourceLabel());
         final AssemblyModelStage assemblyModelStage = new AssemblyModelStage(modelRepository.getModel(TypeModel.class), modelRepository.getModel(AssemblyModel.class), modelRepository.getModel(SourceModel.class), settings.getSourceLabel());
@@ -91,6 +91,7 @@ public class TeetimeBscDataflowConfiguration extends Configuration {
                     logger.error("Invalid line '{}'. 3 Values needed ", line);
                 }
             }
+            //read package map file csv
             reader = Files.newBufferedReader(settings.getPackageBscInputFile());
             while((line= reader.readLine())!=null){
                 final String[] values = line.split(";");

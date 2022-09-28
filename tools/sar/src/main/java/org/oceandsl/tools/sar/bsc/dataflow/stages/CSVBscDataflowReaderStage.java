@@ -18,16 +18,7 @@ import java.nio.file.Path;
     private final BufferedReader reader;
     private final String splitSymbol;
 
-    /**
-     * Read a single CSV file.
-     *
-     * @param path
-     *            file path
-     * @param splitSymbol
-     *            string containing the split symbol for the CSV file
-     * @throws IOException
-     *             when a stream could not be opened.
-     */
+
     public CSVBscDataflowReaderStage(final Path path, final String splitSymbol) throws IOException {
         this.reader = Files.newBufferedReader(path);
         this.splitSymbol = splitSymbol;
@@ -43,6 +34,9 @@ import java.nio.file.Path;
 
         while ((line = this.reader.readLine()) != null) {
             final String[] values = line.split(this.splitSymbol);
+            /*
+                Structure of CSV defined in ESM-Dataflow-Analysis Repository ReadMe
+             */
             if (values.length == 4) {
                 try {
                     this.outputPort.send(new DataTransferObject(values[0].trim(), values[1].trim(),
