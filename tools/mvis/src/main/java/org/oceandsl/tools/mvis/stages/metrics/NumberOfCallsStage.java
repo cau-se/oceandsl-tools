@@ -19,22 +19,24 @@ import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
+
+import kieker.analysis.architecture.dependency.PropertyConstants;
+import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.Tuple;
+import kieker.model.analysismodel.statistics.StatisticRecord;
+import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.statistics.StatisticsPackage;
+
+import teetime.stage.basic.AbstractTransformation;
+
 import org.oceandsl.analysis.architecture.RepositoryUtils;
 import org.oceandsl.analysis.code.stages.data.LongValueHandler;
 import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
-
-import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.deployment.DeployedOperation;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.execution.Tuple;
-import kieker.model.analysismodel.statistics.EPredefinedUnits;
-import kieker.model.analysismodel.statistics.EPropertyType;
-import kieker.model.analysismodel.statistics.StatisticRecord;
-import kieker.model.analysismodel.statistics.Statistics;
-import kieker.model.analysismodel.statistics.StatisticsModel;
-import teetime.stage.basic.AbstractTransformation;
 
 /**
  * @author Reiner Jung
@@ -44,59 +46,53 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        final ExecutionModel executionModel = (ExecutionModel) repository.getModels().get(ExecutionModel.class);
-        final StatisticsModel statisticsModel = (StatisticsModel) repository.getModels().get(StatisticsModel.class);
+        final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
+        final StatisticsModel statisticsModel = repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
 
         final Table result = new Table(repository.getName(), new StringValueHandler("source-file"),
                 new StringValueHandler("source-function"), new StringValueHandler("target-file"),
                 new StringValueHandler("target-function"), new LongValueHandler("calls"));
 
-        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> invocationEntry : executionModel
-                .getAggregatedInvocations().entrySet()) {
-            final AggregatedInvocation value = invocationEntry.getValue();
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> invocationEntry : executionModel
+                .getInvocations().entrySet()) {
+            final Invocation value = invocationEntry.getValue();
             if (value == null) {
                 this.logger.error("Broken invocation entry. {} -> {}",
                         RepositoryUtils.getName(invocationEntry.getKey().getFirst()),
                         RepositoryUtils.getName(invocationEntry.getKey().getSecond()));
             }
-            final Statistics statistics = this.findStatistics(statisticsModel.getStatistics(), value);
+            final StatisticRecord statistics = this.findStatistics(statisticsModel.getStatistics(), value);
             if (statistics != null) {
-                final Long data = (Long) statistics.getStatistics().get(EPredefinedUnits.INVOCATION).getProperties()
-                        .get(EPropertyType.COUNT);
+                final Long data = (Long) statistics.getProperties().get(PropertyConstants.CALLS);
 
-                result.addRow(value.getSource().getAssemblyOperation().getComponent().getComponentType().getSignature(),
-                        value.getSource().getAssemblyOperation().getOperationType().getSignature(),
-                        value.getTarget().getAssemblyOperation().getComponent().getComponentType().getSignature(),
-                        value.getTarget().getAssemblyOperation().getOperationType().getSignature(), data);
+                result.addRow(value.getCaller().getAssemblyOperation().getComponent().getComponentType().getSignature(),
+                        value.getCaller().getAssemblyOperation().getOperationType().getSignature(),
+                        value.getCallee().getAssemblyOperation().getComponent().getComponentType().getSignature(),
+                        value.getCallee().getAssemblyOperation().getOperationType().getSignature(), data);
             } else {
                 this.logger.error("Missing statistics for invocation {} -> {}",
-                        RepositoryUtils.getName(invocationEntry.getValue().getSource()),
-                        RepositoryUtils.getName(invocationEntry.getValue().getTarget()));
+                        RepositoryUtils.getName(invocationEntry.getValue().getCaller()),
+                        RepositoryUtils.getName(invocationEntry.getValue().getCallee()));
             }
         }
 
         this.outputPort.send(result);
     }
 
-    private Statistics findStatistics(final EMap<EObject, Statistics> statistics,
-            final AggregatedInvocation invocation) {
-        for (final Entry<EObject, Statistics> entry : statistics.entrySet()) {
-            if (entry.getKey() instanceof AggregatedInvocation) {
-                final AggregatedInvocation key = (AggregatedInvocation) entry.getKey();
+    private StatisticRecord findStatistics(final EMap<EObject, StatisticRecord> statistics,
+            final Invocation invocation) {
+        for (final Entry<EObject, StatisticRecord> entry : statistics.entrySet()) {
+            if (entry.getKey() instanceof Invocation) {
+                final Invocation key = (Invocation) entry.getKey();
                 if (key != null) {
-                    if (invocation.getSource().equals(key.getSource())
-                            && invocation.getTarget().equals(key.getTarget())) {
+                    if (invocation.getCaller().equals(key.getCaller())
+                            && invocation.getCallee().equals(key.getCallee())) {
                         return entry.getValue();
                     }
                 } else {
                     this.logger.error("Found statistics without a key value");
-                    for (final Entry<EObject, Statistics> stats : statistics.entrySet()) {
-                        final String kex = stats.getKey() != null ? stats.getKey().toString() : "NO-KEY";
-                        this.logger.info("  Key {}", kex);
-                        for (final Entry<EPredefinedUnits, StatisticRecord> stat : stats.getValue().getStatistics()
-                                .entrySet()) {
-                            this.logger.info("    {} = {}", kex, stat.getValue().getProperties().toString());
-                        }
+                    for (final Entry<String, Object> recordEntry : entry.getValue().getProperties().entrySet()) {
+                        this.logger.error("property {} = {}", recordEntry.getKey(), recordEntry.getValue());
                     }
                 }
             }

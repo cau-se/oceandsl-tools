@@ -20,11 +20,17 @@ import org.junit.jupiter.api.Test;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.assembly.AssemblyPackage;
 import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.source.SourceModel;
+import kieker.model.analysismodel.source.SourcePackage;
 import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.TypeModel;
+import kieker.model.analysismodel.type.TypePackage;
 
 class ArchitectureModelManagementUtilsTest {
 
@@ -35,11 +41,15 @@ class ArchitectureModelManagementUtilsTest {
         final ModelRepository repository = ArchitectureModelManagementUtils
                 .createModelRepository(ArchitectureModelManagementUtilsTest.EXPERIMENT_NAME);
         Assertions.assertEquals(ArchitectureModelManagementUtilsTest.EXPERIMENT_NAME, repository.getName());
-        Assertions.assertEquals(TypeModel.class, repository.getModel(TypeModel.class).getClass());
-        Assertions.assertEquals(AssemblyModel.class, repository.getModel(AssemblyModel.class).getClass());
-        Assertions.assertEquals(DeploymentModel.class, repository.getModel(DeploymentModel.class).getClass());
-        Assertions.assertEquals(ExecutionModel.class, repository.getModel(ExecutionModel.class).getClass());
-        Assertions.assertEquals(StatisticsModel.class, repository.getModel(StatisticsModel.class).getClass());
-        Assertions.assertEquals(SourceModel.class, repository.getModel(SourceModel.class).getClass());
+        Assertions.assertEquals(TypeModel.class, repository.getModel(TypePackage.Literals.TYPE_MODEL).getClass());
+        Assertions.assertEquals(AssemblyModel.class,
+                repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL).getClass());
+        Assertions.assertEquals(DeploymentModel.class,
+                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL).getClass());
+        Assertions.assertEquals(ExecutionModel.class,
+                repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL).getClass());
+        Assertions.assertEquals(StatisticsModel.class,
+                repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL).getClass());
+        Assertions.assertEquals(SourceModel.class, repository.getModel(SourcePackage.Literals.SOURCE_MODEL).getClass());
     }
 }

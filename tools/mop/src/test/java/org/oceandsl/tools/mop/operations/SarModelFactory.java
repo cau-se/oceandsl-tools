@@ -22,9 +22,9 @@ import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentFactory;
 import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionFactory;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.statistics.StatisticsFactory;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.ComponentType;
@@ -147,12 +147,12 @@ public class SarModelFactory extends AbstractModelTestFactory {
                 AbstractModelTestFactory.HOSTNAME, AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE,
                 AbstractModelTestFactory.OP_LINK_SIGNATURE);
         // operation -> operation
-        AbstractModelTestFactory.createAggregatedInvocation(result.getAggregatedInvocations(), operation, operation);
+        AbstractModelTestFactory.createAggregatedInvocation(result.getInvocations(), operation, operation);
         // operation -> compile
-        AbstractModelTestFactory.createAggregatedInvocation(result.getAggregatedInvocations(), operation, compile);
+        AbstractModelTestFactory.createAggregatedInvocation(result.getInvocations(), operation, compile);
         // operation -> link
-        AbstractModelTestFactory.createAggregatedInvocation(result.getAggregatedInvocations(), operation, link);
-        AbstractModelTestFactory.createAggregatedInvocation(result.getAggregatedInvocations(), compile, compile);
+        AbstractModelTestFactory.createAggregatedInvocation(result.getInvocations(), operation, link);
+        AbstractModelTestFactory.createAggregatedInvocation(result.getInvocations(), compile, compile);
 
         return result;
     }
@@ -162,7 +162,7 @@ public class SarModelFactory extends AbstractModelTestFactory {
 
         final StatisticsModel result = factory.createStatisticsModel();
 
-        for (final AggregatedInvocation key : executionModel.getAggregatedInvocations().values()) {
+        for (final Invocation key : executionModel.getInvocations().values()) {
             result.getStatistics().put(key, AbstractModelTestFactory.createStatistics());
         }
 

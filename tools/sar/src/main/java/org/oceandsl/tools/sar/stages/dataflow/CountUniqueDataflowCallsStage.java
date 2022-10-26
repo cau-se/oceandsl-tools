@@ -22,14 +22,14 @@ import org.eclipse.emf.ecore.EObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import kieker.analysis.architecture.dependency.PropertyConstants;
 import kieker.analysis.statistics.StatisticsDecoratorStage;
 import kieker.analysis.statistics.calculating.CountCalculator;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
-import kieker.model.analysismodel.statistics.EPredefinedUnits;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 
 import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
@@ -41,14 +41,14 @@ import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
 public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<DataAccess> {
 
     public CountUniqueDataflowCallsStage(final StatisticsModel statisticsModel, final ExecutionModel executionModel) {
-        super(statisticsModel, EPredefinedUnits.INVOCATION, new CountCalculator<>(),
+        super(statisticsModel, new CountCalculator<>(PropertyConstants.CALLS),
                 CountUniqueDataflowCallsStage.createForAggregatedStorageAccess(executionModel));
     }
 
     public static final Function<DataAccess, EObject> createForAggregatedStorageAccess(
             final ExecutionModel executionModel) {
         return dataAccess -> {
-            final AggregatedStorageAccess result = CountUniqueDataflowCallsStage.getValue(executionModel,
+            final StorageDataflow result = CountUniqueDataflowCallsStage.getValue(executionModel,
                     CountUniqueDataflowCallsStage.getKeyTuple(dataAccess, executionModel));
 
             if (result == null) {
@@ -63,8 +63,8 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
 
     private static Tuple<DeployedOperation, DeployedStorage> getKeyTuple(final DataAccess dataAccess,
             final ExecutionModel executionModel) {
-        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> entry : executionModel
-                .getAggregatedStorageAccesses().entrySet()) {
+        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> entry : executionModel
+                .getStorageDataflows().entrySet()) {
             final Tuple<DeployedOperation, DeployedStorage> key = entry.getKey();
             if (key.getFirst().getAssemblyOperation().getOperationType().getName().equals(dataAccess.getOperation())
                     && key.getFirst().getComponent().getAssemblyComponent().getSignature()
@@ -77,10 +77,10 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
         return null;
     }
 
-    private static AggregatedStorageAccess getValue(final ExecutionModel executionModel,
+    private static StorageDataflow getValue(final ExecutionModel executionModel,
             final Tuple<DeployedOperation, DeployedStorage> key) {
-        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> ag : executionModel
-                .getAggregatedStorageAccesses()) {
+        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> ag : executionModel
+                .getStorageDataflows()) {
             if (ag.getKey().hashCode() == key.hashCode()) {
                 return ag.getValue();
             }

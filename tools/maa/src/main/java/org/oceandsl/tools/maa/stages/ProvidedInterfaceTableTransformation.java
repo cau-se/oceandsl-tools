@@ -22,16 +22,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
-import org.oceandsl.analysis.code.stages.data.Table;
-
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.ProvidedInterfaceType;
 import kieker.model.analysismodel.type.RequiredInterfaceType;
 import kieker.model.analysismodel.type.TypeModel;
+import kieker.model.analysismodel.type.TypePackage;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.code.stages.data.StringValueHandler;
+import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
  * Generate table for interfaces in component type, interface name, operations.
@@ -46,7 +48,7 @@ public class ProvidedInterfaceTableTransformation extends AbstractTransformation
         final Table table = new Table("interfaces", new StringValueHandler("component-type"),
                 new StringValueHandler("provided-interface"), new StringValueHandler("operation"),
                 new StringValueHandler("caller-component-types"));
-        final TypeModel typeModel = element.getModel(TypeModel.class);
+        final TypeModel typeModel = element.getModel(TypePackage.Literals.TYPE_MODEL);
         final Map<ProvidedInterfaceType, Set<RequiredInterfaceType>> providedToRequiredMap = this
                 .createLookupProvidedInterfaceType(typeModel.getComponentTypes().values());
 

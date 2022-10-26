@@ -22,18 +22,22 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
-import org.oceandsl.analysis.graph.EGraphGenerationMode;
-import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.Tuple;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.graph.EGraphGenerationMode;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung
@@ -55,8 +59,8 @@ public class AllenDeployedArchitectureGraphStage
     protected void execute(final ModelRepository repository) throws Exception {
         // RepositoryUtils.print(repository);
 
-        final DeploymentModel deploymentModel = repository.getModel(DeploymentModel.class);
-        final ExecutionModel executionModel = repository.getModel(ExecutionModel.class);
+        final DeploymentModel deploymentModel = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
+        final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
         final MutableGraph<Node<DeployedComponent>> graph = GraphBuilder.undirected().allowsSelfLoops(true).build();
 
         this.selector.setRepository(repository);
@@ -71,19 +75,19 @@ public class AllenDeployedArchitectureGraphStage
                 }
             }
         }
-        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> entry : executionModel
-                .getAggregatedInvocations()) {
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> entry : executionModel
+                .getInvocations()) {
             if (this.selector.edgeIsSelected(entry.getValue())) {
-                final Node<DeployedComponent> source = this.findNode(graph, entry.getValue().getSource());
-                final Node<DeployedComponent> target = this.findNode(graph, entry.getValue().getTarget());
+                final Node<DeployedComponent> source = this.findNode(graph, entry.getValue().getCaller());
+                final Node<DeployedComponent> target = this.findNode(graph, entry.getValue().getCallee());
 
                 switch (this.graphGeneratioMode) { // NOPMD
                 case ADD_NODES_FOR_EDGES:
-                    graph.putEdge(this.getOrCreateNode(graph, source, entry.getValue().getSource()),
-                            this.getOrCreateNode(graph, target, entry.getValue().getTarget()));
+                    graph.putEdge(this.getOrCreateNode(graph, source, entry.getValue().getCaller()),
+                            this.getOrCreateNode(graph, target, entry.getValue().getCallee()));
                     break;
                 case ONLY_EDGES_FOR_NODES:
-                    if ((source != null) && (target != null)) {
+                    if (source != null && target != null) {
                         graph.putEdge(source, target);
                     }
                     break;

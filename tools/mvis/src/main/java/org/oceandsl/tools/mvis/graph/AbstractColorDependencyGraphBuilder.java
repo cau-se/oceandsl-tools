@@ -18,25 +18,23 @@ package org.oceandsl.tools.mvis.graph;
 import java.time.temporal.ChronoUnit;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.dependency.AbstractDependencyGraphBuilder;
+import kieker.analysis.architecture.dependency.PropertyConstants;
 import kieker.analysis.architecture.dependency.ResponseTimeDecorator;
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.generic.graph.GraphFactory;
 import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedStorage;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.statistics.EPredefinedUnits;
-import kieker.model.analysismodel.statistics.EPropertyType;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.StorageDataflow;
+import kieker.model.analysismodel.source.SourceModel;
+import kieker.model.analysismodel.source.SourcePackage;
 import kieker.model.analysismodel.statistics.StatisticRecord;
-import kieker.model.analysismodel.statistics.Statistics;
-import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.statistics.StatisticsPackage;
 
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 
@@ -93,47 +91,38 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
     public IGraph build(final ModelRepository repository) {
         this.graph = GraphFactory.createGraph(repository.getName());
 
-        this.sourcesModel = repository.getModel(SourceModel.class);
-        this.executionModel = repository.getModel(ExecutionModel.class);
-        this.statisticsModel = repository.getModel(StatisticsModel.class);
+        this.sourcesModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
+        this.executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
+        this.statisticsModel = repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
         this.responseTimeDecorator = new ResponseTimeDecorator(this.statisticsModel, ChronoUnit.NANOS);
-        for (final AggregatedInvocation invocation : this.executionModel.getAggregatedInvocations().values()) {
+        for (final Invocation invocation : this.executionModel.getInvocations().values()) {
             this.handleInvocation(invocation);
         }
-        for (final AggregatedStorageAccess storageAccess : this.executionModel.getAggregatedStorageAccesses()
-                .values()) {
-            this.handleStorageAccess(storageAccess);
+        for (final StorageDataflow storageDataflow : this.executionModel.getStorageDataflows().values()) {
+            this.handleStorageDataflow(storageDataflow);
         }
         return this.graph;
     }
 
-    private void handleInvocation(final AggregatedInvocation invocation) {
-        final INode sourceVertex = invocation.getSource() != null ? this.addVertex(invocation.getSource())
+    private void handleInvocation(final Invocation invocation) {
+        final INode sourceVertex = invocation.getCaller() != null ? this.addVertex(invocation.getCaller())
                 : this.addVertexForEntry(); // NOCS (declarative)
-        final INode targetVertex = this.addVertex(invocation.getTarget());
+        final INode targetVertex = this.addVertex(invocation.getCallee());
 
-        final EMap<EObject, Statistics> statisticsMap = this.statisticsModel.getStatistics();
-        final Statistics statistics = statisticsMap.get(invocation);
-        final EMap<EPredefinedUnits, StatisticRecord> recordMap = statistics.getStatistics();
-        final StatisticRecord record = recordMap.get(EPredefinedUnits.INVOCATION);
-        final EMap<EPropertyType, Object> properties = record.getProperties();
+        final StatisticRecord statisticRecord = this.statisticsModel.getStatistics().get(invocation);
 
-        final long calls = (Long) properties.get(EPropertyType.COUNT);
+        final long calls = (Long) statisticRecord.getProperties().get(PropertyConstants.CALLS);
         this.addEdge(sourceVertex, targetVertex, calls);
     }
 
-    private void handleStorageAccess(final AggregatedStorageAccess storageAccess) {
-        final INode sourceVertex = storageAccess.getCode() != null ? this.addVertex(storageAccess.getCode())
+    private void handleStorageDataflow(final StorageDataflow storageDataflow) {
+        final INode sourceVertex = storageDataflow.getCode() != null ? this.addVertex(storageDataflow.getCode())
                 : this.addVertexForEntry(); // NOCS (declarative)
-        final INode targetVertex = this.addStorageVertex(storageAccess.getStorage());
+        final INode targetVertex = this.addStorageVertex(storageDataflow.getStorage());
 
-        final EMap<EObject, Statistics> statisticsMap = this.statisticsModel.getStatistics();
-        final Statistics statistics = statisticsMap.get(storageAccess);
-        final EMap<EPredefinedUnits, StatisticRecord> recordMap = statistics.getStatistics();
-        final StatisticRecord record = recordMap.get(EPredefinedUnits.INVOCATION);
-        final EMap<EPropertyType, Object> properties = record.getProperties();
+        final StatisticRecord statisticRecord = this.statisticsModel.getStatistics().get(storageDataflow);
 
-        final long calls = (Long) properties.get(EPropertyType.COUNT);
+        final long calls = (Long) statisticRecord.getProperties().get(PropertyConstants.CALLS);
         this.addEdge(sourceVertex, targetVertex, calls);
     }
 

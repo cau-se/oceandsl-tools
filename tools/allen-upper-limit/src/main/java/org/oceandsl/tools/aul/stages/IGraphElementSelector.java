@@ -19,7 +19,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
+import kieker.model.analysismodel.execution.Invocation;
 
 /**
  * Interface for a node and edge selector for graphs to realize diff and subtract.
@@ -33,7 +33,7 @@ public interface IGraphElementSelector {
 
     boolean nodeIsSelected(EObject value);
 
-    boolean edgeIsSelected(AggregatedInvocation value);
+    boolean edgeIsSelected(Invocation value);
 
     String getFilePrefix();
 

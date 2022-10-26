@@ -29,23 +29,27 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.architecture.RepositoryUtils;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.exception.ConfigurationException;
-import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.assembly.AssemblyPackage;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentContext;
-import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
-import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.type.TypeModel;
+import kieker.model.analysismodel.source.SourceModel;
+import kieker.model.analysismodel.source.SourcePackage;
+import kieker.model.analysismodel.type.TypePackage;
+
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.architecture.RepositoryUtils;
 
 /**
  * Checks the integrity of architecture models.
@@ -65,11 +69,14 @@ public final class CheckModelIntegrityMain {
         // RepositoryUtils.print(repository);
 
         long errors = 0;
-        for (final Entry<Class<? extends EObject>, List<Class<? extends EObject>>> modelConfig : CheckModelIntegrityMain
-                .configureModels().entrySet()) {
+        for (final Entry<EClass, List<Class<? extends EObject>>> modelConfig : CheckModelIntegrityMain.configureModels()
+                .entrySet()) {
             errors += CheckModelIntegrityMain.checkForSourcesForAllModelElements(
-                    modelConfig.getKey().getCanonicalName(), repository.getModel(SourceModel.class),
-                    repository.getModel(modelConfig.getKey()).eAllContents(), modelConfig.getValue());
+                    modelConfig.getKey().getInstanceTypeName(),
+                    repository.getModel(SourcePackage.Literals.SOURCE_MODEL),
+                    repository.getModel(repository.getModelDescriptor(modelConfig.getKey()).getRootClass())
+                            .eAllContents(),
+                    modelConfig.getValue());
         }
         System.out.printf("Number of missing source labels %s\n", errors); // NOPMD
 
@@ -77,8 +84,8 @@ public final class CheckModelIntegrityMain {
         System.out.printf("Number of missing references to sources %s\n", errors); // NOPMD
 
         errors = 0;
-        for (final Entry<Class<? extends EObject>, List<Class<? extends EObject>>> modelConfig : CheckModelIntegrityMain
-                .configureModels().entrySet()) {
+        for (final Entry<EClass, List<Class<? extends EObject>>> modelConfig : CheckModelIntegrityMain.configureModels()
+                .entrySet()) {
             errors += CheckModelIntegrityMain.checkReferences(modelConfig.getKey(),
                     repository.getModel(modelConfig.getKey()).eAllContents());
         }
@@ -86,8 +93,8 @@ public final class CheckModelIntegrityMain {
         System.out.printf("Missing references %s\n", errors); // NOPMD
 
         errors = 0;
-        for (final Entry<Class<? extends EObject>, List<Class<? extends EObject>>> modelConfig : CheckModelIntegrityMain
-                .configureModels().entrySet()) {
+        for (final Entry<EClass, List<Class<? extends EObject>>> modelConfig : CheckModelIntegrityMain.configureModels()
+                .entrySet()) {
             errors += CheckModelIntegrityMain
                     .missingSignature(repository.getModel(modelConfig.getKey()).eAllContents());
         }
@@ -95,9 +102,14 @@ public final class CheckModelIntegrityMain {
 
         // CheckModelIntegrityMain.checkForDuplicateDeployedOperations(repository.getModel(DeploymentModel.class));
 
-        CheckModelIntegrityMain.checkExecutionInvocationIntegrity(repository.getModel(ExecutionModel.class));
-        CheckModelIntegrityMain.checkExecutionStorageAccessIntegrity(repository.getModel(ExecutionModel.class));
-        CheckModelIntegrityMain.checkForDuplicateInvocations(repository.getModel(ExecutionModel.class));
+        CheckModelIntegrityMain
+                .checkExecutionInvocationIntegrity(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
+        CheckModelIntegrityMain
+                .checkExecutionStorageDataflowIntegrity(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
+        CheckModelIntegrityMain.checkExecutionOperationDataflowIntegrity(
+                repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
+        CheckModelIntegrityMain
+                .checkForDuplicateInvocations(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
     }
 
     // private static void checkForDuplicateDeployedOperations(final DeploymentModel model) {
@@ -110,31 +122,31 @@ public final class CheckModelIntegrityMain {
 
     private static void checkForDuplicateInvocations(final ExecutionModel model) {
         System.out.println("Check for duplicate invocations based on DeployedOperation"); // NOPMD
-        final Map<DeployedOperation, Map<DeployedOperation, AggregatedInvocation>> map = new HashMap<>();
-        for (final AggregatedInvocation invocation : model.getAggregatedInvocations().values()) {
-            Map<DeployedOperation, AggregatedInvocation> targetMap = map.get(invocation.getSource());
+        final Map<DeployedOperation, Map<DeployedOperation, Invocation>> map = new HashMap<>();
+        for (final Invocation invocation : model.getInvocations().values()) {
+            Map<DeployedOperation, Invocation> targetMap = map.get(invocation.getCaller());
             if (targetMap == null) {
                 targetMap = new HashMap<>();
-                targetMap.put(invocation.getTarget(), invocation);
+                targetMap.put(invocation.getCallee(), invocation);
             } else {
-                if (targetMap.get(invocation.getTarget()) != null) {
+                if (targetMap.get(invocation.getCallee()) != null) {
                     System.out.printf("Found duplicate %s -> %s\n", // NOPMD
-                            invocation.getSource().getAssemblyOperation().getOperationType().getName(),
-                            invocation.getTarget().getAssemblyOperation().getOperationType().getName());
+                            invocation.getCaller().getAssemblyOperation().getOperationType().getName(),
+                            invocation.getCallee().getAssemblyOperation().getOperationType().getName());
                 }
             }
         }
 
         System.out.println("Check for duplicate invocations based on DeployedOperation names"); // NOPMD
         final List<String> l = new ArrayList<>();
-        for (final AggregatedInvocation invocation : model.getAggregatedInvocations().values()) {
+        for (final Invocation invocation : model.getInvocations().values()) {
             final String m = String.format("%s:%s:%s -> %s:%s:%s", // NOPMD
-                    invocation.getSource().getComponent().getContext().getName(),
-                    invocation.getSource().getComponent().getAssemblyComponent().getSignature(),
-                    invocation.getSource().getAssemblyOperation().getOperationType().getSignature(),
-                    invocation.getTarget().getComponent().getContext().getName(),
-                    invocation.getTarget().getComponent().getAssemblyComponent().getSignature(),
-                    invocation.getTarget().getAssemblyOperation().getOperationType().getSignature());
+                    invocation.getCaller().getComponent().getContext().getName(),
+                    invocation.getCaller().getComponent().getAssemblyComponent().getSignature(),
+                    invocation.getCaller().getAssemblyOperation().getOperationType().getSignature(),
+                    invocation.getCallee().getComponent().getContext().getName(),
+                    invocation.getCallee().getComponent().getAssemblyComponent().getSignature(),
+                    invocation.getCallee().getAssemblyOperation().getOperationType().getSignature());
             boolean g = false;
             for (final String x : l) {
                 if (x.equals(m)) {
@@ -150,22 +162,21 @@ public final class CheckModelIntegrityMain {
 
     private static void checkExecutionInvocationIntegrity(final ExecutionModel model) {
         long errors = 0;
-        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> entry : model
-                .getAggregatedInvocations()) {
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> entry : model.getInvocations()) {
             final Tuple<DeployedOperation, DeployedOperation> tuple = entry.getKey();
-            final AggregatedInvocation invocation = entry.getValue();
-            if (tuple.getFirst() != invocation.getSource()) {
+            final Invocation invocation = entry.getValue();
+            if (tuple.getFirst() != invocation.getCaller()) {
                 System.out.printf("Caller does not match lookup key %s ++ %s\n", // NOPMD
-                        RepositoryUtils.getName(tuple.getFirst()), RepositoryUtils.getName(invocation.getSource()));
+                        RepositoryUtils.getName(tuple.getFirst()), RepositoryUtils.getName(invocation.getCaller()));
 
                 errors++;
             }
-            if (tuple.getSecond() != invocation.getTarget()) {
+            if (tuple.getSecond() != invocation.getCallee()) {
                 System.out.printf("Callee does not match lookup key %s ++ %s\n", // NOPMD
-                        RepositoryUtils.getName(tuple.getSecond()), RepositoryUtils.getName(invocation.getTarget()));
+                        RepositoryUtils.getName(tuple.getSecond()), RepositoryUtils.getName(invocation.getCallee()));
 
                 final DeployedComponent keyComponent = tuple.getSecond().getComponent();
-                final DeployedComponent targetComponent = invocation.getTarget().getComponent();
+                final DeployedComponent targetComponent = invocation.getCallee().getComponent();
                 if (keyComponent != targetComponent) { // NOPMD objects must not be identical
                     System.out.printf("Callee component does not match lookup key component %s ++ %s\n", // NOPMD
                             RepositoryUtils.getName(keyComponent), RepositoryUtils.getName(targetComponent));
@@ -187,30 +198,52 @@ public final class CheckModelIntegrityMain {
         System.out.printf("Number of errors in execution model invocations %d\n", errors); // NOPMD
     }
 
-    private static void checkExecutionStorageAccessIntegrity(final ExecutionModel model) {
+    private static void checkExecutionOperationDataflowIntegrity(final ExecutionModel model) {
         long errors = 0;
-        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> entry : model
-                .getAggregatedStorageAccesses()) {
-            final Tuple<DeployedOperation, DeployedStorage> tuple = entry.getKey();
-            final AggregatedStorageAccess storageAccesss = entry.getValue();
-            if (tuple.getFirst() != storageAccesss.getCode()) {
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, OperationDataflow> entry : model
+                .getOperationDataflows()) {
+            final Tuple<DeployedOperation, DeployedOperation> tuple = entry.getKey();
+            final OperationDataflow operationDataflow = entry.getValue();
+            if (tuple.getFirst() != operationDataflow.getCaller()) {
                 System.out.printf("Caller does not match %s:%s\n", // NOPMD
-                        RepositoryUtils.getName(storageAccesss.getCode().getComponent()),
-                        RepositoryUtils.getName(storageAccesss.getCode()));
+                        RepositoryUtils.getName(operationDataflow.getCaller().getComponent()),
+                        RepositoryUtils.getName(operationDataflow.getCaller()));
                 errors++;
             }
-            if (tuple.getSecond() != storageAccesss.getStorage()) {
+            if (tuple.getSecond() != operationDataflow.getCallee()) {
                 System.out.printf("Storage does not match %s:%s\n", // NOPMD
-                        RepositoryUtils.getName(storageAccesss.getStorage().getComponent()),
-                        RepositoryUtils.getName(storageAccesss.getStorage()));
+                        RepositoryUtils.getName(operationDataflow.getCallee().getComponent()),
+                        RepositoryUtils.getName(operationDataflow.getCallee()));
                 errors++;
             }
         }
-        System.out.printf("Number of errors in execution model storage accesses %d\n", errors); // NOPMD
+        System.out.printf("Number of errors in execution model operation dataflows %d\n", errors); // NOPMD
+    }
+
+    private static void checkExecutionStorageDataflowIntegrity(final ExecutionModel model) {
+        long errors = 0;
+        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> entry : model
+                .getStorageDataflows()) {
+            final Tuple<DeployedOperation, DeployedStorage> tuple = entry.getKey();
+            final StorageDataflow storageDataflow = entry.getValue();
+            if (tuple.getFirst() != storageDataflow.getCode()) {
+                System.out.printf("Caller does not match %s:%s\n", // NOPMD
+                        RepositoryUtils.getName(storageDataflow.getCode().getComponent()),
+                        RepositoryUtils.getName(storageDataflow.getCode()));
+                errors++;
+            }
+            if (tuple.getSecond() != storageDataflow.getStorage()) {
+                System.out.printf("Storage does not match %s:%s\n", // NOPMD
+                        RepositoryUtils.getName(storageDataflow.getStorage().getComponent()),
+                        RepositoryUtils.getName(storageDataflow.getStorage()));
+                errors++;
+            }
+        }
+        System.out.printf("Number of errors in execution model storage dataflows %d\n", errors); // NOPMD
     }
 
     private static long checkForSourcesWihtoutModelElements(final ModelRepository repository) {
-        final SourceModel sourceModel = repository.getModel(SourceModel.class);
+        final SourceModel sourceModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
         long errors = 0;
         for (final EObject element : sourceModel.getSources().keySet()) {
             element.eCrossReferences();
@@ -223,7 +256,7 @@ public final class CheckModelIntegrityMain {
     }
 
     private static boolean existsObjectForSource(final EObject element, final ModelRepository repository) {
-        for (final Class<? extends EObject> modelRootClass : CheckModelIntegrityMain.configureModels().keySet()) {
+        for (final EClass modelRootClass : CheckModelIntegrityMain.configureModels().keySet()) {
             final EObject model = repository.getModel(modelRootClass);
             if (CheckModelIntegrityMain.modelContains(model, element)) {
                 return true;
@@ -276,8 +309,7 @@ public final class CheckModelIntegrityMain {
         return result;
     }
 
-    private static long checkReferences(final Class<? extends EObject> modelClass,
-            final TreeIterator<EObject> iterator) {
+    private static long checkReferences(final EClass modelClass, final TreeIterator<EObject> iterator) {
         System.out.printf("Model %s\n", modelClass.getName()); // NOPMD
         long errorCount = 0;
         while (iterator.hasNext()) {
@@ -297,14 +329,15 @@ public final class CheckModelIntegrityMain {
         return errorCount;
     }
 
-    private static Map<Class<? extends EObject>, List<Class<? extends EObject>>> configureModels() {
-        final Map<Class<? extends EObject>, List<Class<? extends EObject>>> modelConfigs = new HashMap<>();
-        modelConfigs.put(TypeModel.class, new ArrayList<Class<? extends EObject>>());
-        modelConfigs.put(AssemblyModel.class, new ArrayList<Class<? extends EObject>>());
-        modelConfigs.put(DeploymentModel.class, new ArrayList<Class<? extends EObject>>());
+    private static Map<EClass, List<Class<? extends EObject>>> configureModels() {
+        final Map<EClass, List<Class<? extends EObject>>> modelConfigs = new HashMap<>();
+        modelConfigs.put(TypePackage.Literals.TYPE_MODEL, new ArrayList<Class<? extends EObject>>());
+        modelConfigs.put(AssemblyPackage.Literals.ASSEMBLY_MODEL, new ArrayList<Class<? extends EObject>>());
+        modelConfigs.put(DeploymentPackage.Literals.DEPLOYMENT_MODEL, new ArrayList<Class<? extends EObject>>());
         final List<Class<? extends EObject>> executionIgnoreList = new ArrayList<>();
         executionIgnoreList.add(Tuple.class);
-        modelConfigs.put(ExecutionModel.class, executionIgnoreList);
+        modelConfigs.put(ExecutionPackage.Literals.EXECUTION_MODEL, executionIgnoreList);
+
         return modelConfigs;
     }
 

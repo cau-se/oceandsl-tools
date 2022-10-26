@@ -26,8 +26,10 @@ import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.util.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
+import kieker.model.collection.CollectionPackage;
 import kieker.model.collection.Connections;
 import kieker.model.collection.OperationCollection;
+
 import teetime.stage.basic.AbstractTransformation;
 
 /**
@@ -49,7 +51,7 @@ public class FindDistinctCollectionsStage extends
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        final Connections connections = repository.getModel(Connections.class);
+        final Connections connections = repository.getModel(CollectionPackage.Literals.CONNECTIONS);
 
         final Map<ComponentType, Set<OperationType>> providedOperationsMap = this
                 .createProvidedComponentToCallerOperationsMap(connections);

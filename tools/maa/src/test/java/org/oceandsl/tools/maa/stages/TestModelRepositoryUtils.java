@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import kieker.analysis.architecture.repository.ArchitectureModelUtils;
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
@@ -78,9 +79,9 @@ public final class TestModelRepositoryUtils {
         final AssemblyModel assemblyModel = TestModelRepositoryUtils.createAssemblyModel(typeModel);
         final DeploymentModel deploymentModel = TestModelRepositoryUtils.createDeploymentModel(assemblyModel);
 
-        repository.register(TypeModel.class, typeModel);
-        repository.register(AssemblyModel.class, assemblyModel);
-        repository.register(DeploymentModel.class, deploymentModel);
+        repository.register(ArchitectureModelUtils.TYPE_MODEL, typeModel);
+        repository.register(ArchitectureModelUtils.ASSEMBLY_MODEL, assemblyModel);
+        repository.register(ArchitectureModelUtils.DEPLOYMENT_MODEL, deploymentModel);
 
         return repository;
     }

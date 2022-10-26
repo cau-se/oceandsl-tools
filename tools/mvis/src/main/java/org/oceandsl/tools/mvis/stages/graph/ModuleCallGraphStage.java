@@ -22,8 +22,9 @@ import kieker.analysis.generic.graph.GraphFactory;
 import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedComponent;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.execution.Invocation;
 
 import teetime.stage.basic.AbstractTransformation;
 
@@ -50,34 +51,34 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        final ExecutionModel executionModel = (ExecutionModel) repository.getModels().get(ExecutionModel.class);
+        final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
 
         final IGraph graph = GraphFactory.createGraph(repository.getName());
 
-        for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
-            final boolean sourceSelected = this.selector.nodeIsSelected(invocation.getSource().getComponent());
-            final boolean targetSelected = this.selector.nodeIsSelected(invocation.getTarget().getComponent());
+        for (final Invocation invocation : executionModel.getInvocations().values()) {
+            final boolean sourceSelected = this.selector.nodeIsSelected(invocation.getCaller().getComponent());
+            final boolean targetSelected = this.selector.nodeIsSelected(invocation.getCallee().getComponent());
             if (sourceSelected) {
-                this.addVertexIfAbsent(graph, invocation.getSource().getComponent());
+                this.addVertexIfAbsent(graph, invocation.getCaller().getComponent());
             }
             if (targetSelected) {
-                this.addVertexIfAbsent(graph, invocation.getTarget().getComponent());
+                this.addVertexIfAbsent(graph, invocation.getCallee().getComponent());
             }
             switch (this.graphGeneratioMode) {
             case ONLY_EDGES_FOR_NODES:
                 if (sourceSelected && targetSelected && this.selector.edgeIsSelected(invocation)) {
-                    this.addEdge(graph, invocation.getSource().getComponent(), invocation.getTarget().getComponent());
+                    this.addEdge(graph, invocation.getCaller().getComponent(), invocation.getCallee().getComponent());
                 }
                 break;
             case ADD_NODES_FOR_EDGES:
                 if (this.selector.edgeIsSelected(invocation)) {
                     if (!sourceSelected) {
-                        this.addVertexIfAbsent(graph, invocation.getSource().getComponent());
+                        this.addVertexIfAbsent(graph, invocation.getCaller().getComponent());
                     }
                     if (!targetSelected) {
-                        this.addVertexIfAbsent(graph, invocation.getTarget().getComponent());
+                        this.addVertexIfAbsent(graph, invocation.getCallee().getComponent());
                     }
-                    this.addEdge(graph, invocation.getSource().getComponent(), invocation.getTarget().getComponent());
+                    this.addEdge(graph, invocation.getCaller().getComponent(), invocation.getCallee().getComponent());
                 }
                 break;
             default:

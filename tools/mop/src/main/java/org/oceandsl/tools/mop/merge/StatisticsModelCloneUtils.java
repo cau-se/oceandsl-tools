@@ -17,10 +17,7 @@ package org.oceandsl.tools.mop.merge;
 
 import java.util.Map.Entry;
 
-import kieker.model.analysismodel.statistics.EPredefinedUnits;
-import kieker.model.analysismodel.statistics.EPropertyType;
 import kieker.model.analysismodel.statistics.StatisticRecord;
-import kieker.model.analysismodel.statistics.Statistics;
 import kieker.model.analysismodel.statistics.StatisticsFactory;
 
 /**
@@ -33,25 +30,16 @@ public final class StatisticsModelCloneUtils {
         // Utility class
     }
 
-    public static Statistics duplicate(final Statistics value) {
-        final Statistics newValue = StatisticsFactory.eINSTANCE.createStatistics();
-
-        for (final Entry<EPredefinedUnits, StatisticRecord> statistics : value.getStatistics()) {
-            newValue.getStatistics().put(statistics.getKey(),
-                    StatisticsModelCloneUtils.duplicate(statistics.getValue()));
-        }
-
-        return newValue;
-
-    }
-
     public static StatisticRecord duplicate(final StatisticRecord value) {
         final StatisticRecord newValue = StatisticsFactory.eINSTANCE.createStatisticRecord();
-        for (final Entry<EPropertyType, Object> properties : value.getProperties()) {
-            newValue.getProperties().put(properties.getKey(),
-                    StatisticsModelCloneUtils.duplicateObject(properties.getValue()));
+
+        for (final Entry<String, Object> statistics : value.getProperties()) {
+            newValue.getProperties().put(statistics.getKey(),
+                    StatisticsModelCloneUtils.duplicateObject(statistics.getValue()));
         }
+
         return newValue;
+
     }
 
     public static Object duplicateObject(final Object value) {

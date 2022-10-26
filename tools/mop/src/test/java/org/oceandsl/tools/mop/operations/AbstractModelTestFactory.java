@@ -28,16 +28,13 @@ import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentFactory;
 import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionFactory;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.Tuple;
-import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.sources.SourcesFactory;
-import kieker.model.analysismodel.statistics.EPredefinedUnits;
-import kieker.model.analysismodel.statistics.EPropertyType;
+import kieker.model.analysismodel.source.SourceFactory;
+import kieker.model.analysismodel.source.SourceModel;
 import kieker.model.analysismodel.statistics.StatisticRecord;
-import kieker.model.analysismodel.statistics.Statistics;
 import kieker.model.analysismodel.statistics.StatisticsFactory;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
@@ -160,33 +157,30 @@ public abstract class AbstractModelTestFactory { // NOCS cannot be final, NOPMD 
     }
 
     public static void createAggregatedInvocation(
-            final EMap<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> aggregatedInvocations,
+            final EMap<Tuple<DeployedOperation, DeployedOperation>, Invocation> aggregatedInvocations,
             final DeployedOperation caller, final DeployedOperation callee) {
         final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
         key.setFirst(caller);
         key.setSecond(callee);
 
-        final AggregatedInvocation invocation = ExecutionFactory.eINSTANCE.createAggregatedInvocation();
-        invocation.setSource(caller);
-        invocation.setTarget(callee);
+        final Invocation invocation = ExecutionFactory.eINSTANCE.createInvocation();
+        invocation.setCaller(caller);
+        invocation.setCallee(callee);
 
         aggregatedInvocations.put(key, invocation);
     }
 
-    public static Statistics createStatistics() {
-        final Statistics statistics = StatisticsFactory.eINSTANCE.createStatistics();
+    public static StatisticRecord createStatistics() {
 
         final StatisticRecord record = StatisticsFactory.eINSTANCE.createStatisticRecord();
-        record.getProperties().put(EPropertyType.COUNT, 1L);
+        record.getProperties().put("invocation", 1L);
 
-        statistics.getStatistics().put(EPredefinedUnits.INVOCATION, record);
-
-        return statistics;
+        return record;
     }
 
     protected static SourceModel createSourceModel(final TypeModel typeModel, final AssemblyModel assemblyModel,
             final DeploymentModel deploymentModel, final ExecutionModel executionModel, final String source) {
-        final SourcesFactory factory = SourcesFactory.eINSTANCE;
+        final SourceFactory factory = SourceFactory.eINSTANCE;
 
         final SourceModel result = factory.createSourceModel();
 
@@ -214,7 +208,7 @@ public abstract class AbstractModelTestFactory { // NOCS cannot be final, NOPMD 
 
         /** execution */
         executionModel.eAllContents().forEachRemaining(item -> {
-            if (item instanceof AggregatedInvocation) {
+            if (item instanceof Invocation) {
                 result.getSources().put(item, AbstractModelTestFactory.createList(source));
             }
         });

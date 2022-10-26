@@ -22,18 +22,23 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EMap;
-import org.oceandsl.analysis.utils.MapFileReader;
-import org.oceandsl.analysis.utils.StringValueConverter;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.assembly.AssemblyPackage;
 import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
+import kieker.model.analysismodel.type.TypePackage;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.utils.MapFileReader;
+import org.oceandsl.analysis.utils.StringValueConverter;
 
 /**
  * @author Reiner Jung
@@ -57,9 +62,9 @@ public class GroupComponentsHierarchicallyStage extends AbstractTransformation<M
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        final TypeModel typeModel = repository.getModel(TypeModel.class);
-        final AssemblyModel assemblyModel = repository.getModel(AssemblyModel.class);
-        final DeploymentModel deploymentModel = repository.getModel(DeploymentModel.class);
+        final TypeModel typeModel = repository.getModel(TypePackage.Literals.TYPE_MODEL);
+        final AssemblyModel assemblyModel = repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
+        final DeploymentModel deploymentModel = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
         this.componentMap.values().forEach(componentName -> {
             if (!typeModel.getComponentTypes().containsKey(componentName)) {
                 final ComponentType componentType = this.createComponentType(componentName);
