@@ -28,6 +28,7 @@ import kieker.analysis.util.Tuple;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.assembly.AssemblyPackage;
 import kieker.model.analysismodel.assembly.AssemblyProvidedInterface;
 import kieker.model.analysismodel.assembly.AssemblyRequiredInterface;
 import kieker.model.analysismodel.deployment.DeployedComponent;
@@ -35,11 +36,13 @@ import kieker.model.analysismodel.deployment.DeployedProvidedInterface;
 import kieker.model.analysismodel.deployment.DeployedRequiredInterface;
 import kieker.model.analysismodel.deployment.DeploymentFactory;
 import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.ProvidedInterfaceType;
 import kieker.model.analysismodel.type.RequiredInterfaceType;
 import kieker.model.analysismodel.type.TypeFactory;
+
 import teetime.stage.basic.AbstractTransformation;
 
 /**
@@ -62,8 +65,10 @@ public class GenerateProvidedInterfacesStage extends
 
         final Map<ProvidedInterfaceType, Set<RequiredInterfaceType>> providedtoRequiredInterfaceTypeMap = this
                 .createInterfaceTypes(interfaceMap);
-        this.createAssemblyInterfaces(repository.getModel(AssemblyModel.class), providedtoRequiredInterfaceTypeMap);
-        this.createDeploymentInterfaces(repository.getModel(DeploymentModel.class), providedtoRequiredInterfaceTypeMap);
+        this.createAssemblyInterfaces(repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
+                providedtoRequiredInterfaceTypeMap);
+        this.createDeploymentInterfaces(repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
+                providedtoRequiredInterfaceTypeMap);
 
         this.outputPort.send(repository);
     }

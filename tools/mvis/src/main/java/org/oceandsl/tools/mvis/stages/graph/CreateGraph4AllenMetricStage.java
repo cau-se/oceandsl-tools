@@ -23,16 +23,20 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
-import org.oceandsl.analysis.metrics.entropy.KiekerNode;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.execution.Invocation;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.metrics.entropy.KiekerNode;
 
 /**
  * Derive a graph compatible for the Allen metric from the architecture model.
@@ -52,8 +56,8 @@ public class CreateGraph4AllenMetricStage
     private Graph<Node<DeployedComponent>> computeGraph(final ModelRepository repository) {
         final MutableGraph<Node<DeployedComponent>> graph = this.createGraph();
 
-        final DeploymentModel deploymentModel = repository.getModel(DeploymentModel.class);
-        final ExecutionModel executionModel = repository.getModel(ExecutionModel.class);
+        final DeploymentModel deploymentModel = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
+        final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
 
         for (final DeployedOperation operation : this.collectAllOperations(deploymentModel)) {
             graph.addNode(new KiekerNode<>(operation));
@@ -66,9 +70,9 @@ public class CreateGraph4AllenMetricStage
     private Iterable<DeployedOperation> getReferencedMembers(final DeployedOperation operation,
             final ExecutionModel executionModel) {
         final List<DeployedOperation> callees = new ArrayList<>();
-        for (final AggregatedInvocation invocation : executionModel.getAggregatedInvocations().values()) {
-            if (invocation.getSource().equals(operation)) {
-                callees.add(invocation.getTarget());
+        for (final Invocation invocation : executionModel.getInvocations().values()) {
+            if (invocation.getCaller().equals(operation)) {
+                callees.add(invocation.getCallee());
             }
         }
         return callees;

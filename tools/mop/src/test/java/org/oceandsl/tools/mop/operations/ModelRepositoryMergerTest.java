@@ -19,21 +19,29 @@ import java.util.Map.Entry;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
 
+import kieker.analysis.architecture.repository.ArchitectureModelUtils;
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
+import kieker.model.analysismodel.assembly.AssemblyPackage;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.source.SourceModel;
+import kieker.model.analysismodel.source.SourcePackage;
 import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeModel;
+import kieker.model.analysismodel.type.TypePackage;
+
+import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
 
 /**
  * @author Reiner Jung
@@ -53,7 +61,7 @@ public class ModelRepositoryMergerTest {
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
 
-        final TypeModel typeModel = darRepo.getModel(TypeModel.class);
+        final TypeModel typeModel = darRepo.getModel(TypePackage.Literals.TYPE_MODEL);
 
         Assert.assertEquals("Numer of component types", 3, typeModel.getComponentTypes().size());
         for (final Entry<String, ComponentType> type : typeModel.getComponentTypes().entrySet()) {
@@ -78,8 +86,8 @@ public class ModelRepositoryMergerTest {
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
 
-        final TypeModel typeModel = darRepo.getModel(TypeModel.class);
-        final AssemblyModel assemblyModel = darRepo.getModel(AssemblyModel.class);
+        final TypeModel typeModel = darRepo.getModel(TypePackage.Literals.TYPE_MODEL);
+        final AssemblyModel assemblyModel = darRepo.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
 
         Assert.assertEquals("Numer of component types", 3, assemblyModel.getComponents().size());
         for (final Entry<String, AssemblyComponent> entry : assemblyModel.getComponents().entrySet()) {
@@ -113,8 +121,8 @@ public class ModelRepositoryMergerTest {
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
 
-        final AssemblyModel assemblyModel = darRepo.getModel(AssemblyModel.class);
-        final DeploymentModel deploymentModel = darRepo.getModel(DeploymentModel.class);
+        final AssemblyModel assemblyModel = darRepo.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
+        final DeploymentModel deploymentModel = darRepo.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
 
         Assert.assertEquals("Numer of deployment contexts", 1, deploymentModel.getContexts().size());
         final DeploymentContext context = deploymentModel.getContexts().get(AbstractModelTestFactory.HOSTNAME);
@@ -145,9 +153,9 @@ public class ModelRepositoryMergerTest {
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
 
-        final ExecutionModel executionModel = darRepo.getModel(ExecutionModel.class);
+        final ExecutionModel executionModel = darRepo.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
 
-        Assert.assertEquals("Wrong number of invocations", 6, executionModel.getAggregatedInvocations().size());
+        Assert.assertEquals("Wrong number of invocations", 6, executionModel.getInvocations().size());
     }
 
     @Test
@@ -156,10 +164,10 @@ public class ModelRepositoryMergerTest {
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
 
-        final ExecutionModel executionModel = darRepo.getModel(ExecutionModel.class);
-        final StatisticsModel statisticsModel = darRepo.getModel(StatisticsModel.class);
+        final ExecutionModel executionModel = darRepo.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
+        final StatisticsModel statisticsModel = darRepo.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
 
-        Assert.assertEquals("Wrong number of statistics", executionModel.getAggregatedInvocations().size(),
+        Assert.assertEquals("Wrong number of statistics", executionModel.getInvocations().size(),
                 statisticsModel.getStatistics().size());
     }
 
@@ -169,7 +177,7 @@ public class ModelRepositoryMergerTest {
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
 
-        final SourceModel sourceModel = darRepo.getModel(SourceModel.class);
+        final SourceModel sourceModel = darRepo.getModel(SourcePackage.Literals.SOURCE_MODEL);
 
         /*
          * 7 types (comp 3 +op 4), 7 assembly, 7 deployment + 1 deployment context, 3 sar,2 dar, 1
@@ -196,13 +204,13 @@ public class ModelRepositoryMergerTest {
         final ExecutionModel executionModel = SarModelFactory.createExecutionModel(deploymentModel);
         final StatisticsModel statisticsModel = SarModelFactory.createStatisticsModel(executionModel);
 
-        repository.register(TypeModel.class, typeModel);
-        repository.register(AssemblyModel.class, assemblyModel);
-        repository.register(DeploymentModel.class, deploymentModel);
-        repository.register(ExecutionModel.class, executionModel);
-        repository.register(StatisticsModel.class, statisticsModel);
-        repository.register(SourceModel.class, AbstractModelTestFactory.createSourceModel(typeModel, assemblyModel,
-                deploymentModel, executionModel, "static"));
+        repository.register(ArchitectureModelUtils.TYPE_MODEL, typeModel);
+        repository.register(ArchitectureModelUtils.ASSEMBLY_MODEL, assemblyModel);
+        repository.register(ArchitectureModelUtils.DEPLOYMENT_MODEL, deploymentModel);
+        repository.register(ArchitectureModelUtils.EXECUTION_MODEL, executionModel);
+        repository.register(ArchitectureModelUtils.STATISTICS_MODEL, statisticsModel);
+        repository.register(ArchitectureModelUtils.SOURCE_MODEL, AbstractModelTestFactory.createSourceModel(typeModel,
+                assemblyModel, deploymentModel, executionModel, "static"));
         return repository;
     }
 
@@ -214,13 +222,13 @@ public class ModelRepositoryMergerTest {
         final ExecutionModel executionModel = DarModelFactory.createExecutionModel(deploymentModel);
         final StatisticsModel statisticsModel = DarModelFactory.createStatisticsModel(executionModel);
 
-        repository.register(TypeModel.class, typeModel);
-        repository.register(AssemblyModel.class, assemblyModel);
-        repository.register(DeploymentModel.class, deploymentModel);
-        repository.register(ExecutionModel.class, executionModel);
-        repository.register(StatisticsModel.class, statisticsModel);
-        repository.register(SourceModel.class, AbstractModelTestFactory.createSourceModel(typeModel, assemblyModel,
-                deploymentModel, executionModel, "dynamic"));
+        repository.register(ArchitectureModelUtils.TYPE_MODEL, typeModel);
+        repository.register(ArchitectureModelUtils.ASSEMBLY_MODEL, assemblyModel);
+        repository.register(ArchitectureModelUtils.DEPLOYMENT_MODEL, deploymentModel);
+        repository.register(ArchitectureModelUtils.EXECUTION_MODEL, executionModel);
+        repository.register(ArchitectureModelUtils.STATISTICS_MODEL, statisticsModel);
+        repository.register(ArchitectureModelUtils.SOURCE_MODEL, AbstractModelTestFactory.createSourceModel(typeModel,
+                assemblyModel, deploymentModel, executionModel, "dynamic"));
         return repository;
     }
 

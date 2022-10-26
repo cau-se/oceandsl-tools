@@ -20,12 +20,12 @@ import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
 import kieker.model.analysismodel.execution.EDirection;
 import kieker.model.analysismodel.execution.ExecutionFactory;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
-import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.source.SourceModel;
 
 /**
  * @author Reiner Jung
@@ -57,22 +57,22 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
         key.setSecond(accessedStorage);
         this.addObjectToSource(key);
 
-        AggregatedStorageAccess aggregatedStorageAccess = this.executionModel.getAggregatedStorageAccesses().get(key);
-        if (aggregatedStorageAccess == null) {
-            aggregatedStorageAccess = ExecutionFactory.eINSTANCE.createAggregatedStorageAccess();
-            aggregatedStorageAccess.setCode(callerOperation);
-            aggregatedStorageAccess.setStorage(accessedStorage);
-            aggregatedStorageAccess.setDirection(this.convertDirection(element.getDirection()));
-            this.executionModel.getAggregatedStorageAccesses().put(key, aggregatedStorageAccess);
-            this.addObjectToSource(aggregatedStorageAccess);
+        StorageDataflow storageDataflow = this.executionModel.getStorageDataflows().get(key);
+        if (storageDataflow == null) {
+            storageDataflow = ExecutionFactory.eINSTANCE.createStorageDataflow();
+            storageDataflow.setCode(callerOperation);
+            storageDataflow.setStorage(accessedStorage);
+            storageDataflow.setDirection(this.convertDirection(element.getDirection()));
+            this.executionModel.getStorageDataflows().put(key, storageDataflow);
+            this.addObjectToSource(storageDataflow);
         } else {
             final EDirection newDirection = this.convertDirection(element.getDirection());
-            if (aggregatedStorageAccess.getDirection() == EDirection.READ
+            if (storageDataflow.getDirection() == EDirection.READ
                     && (newDirection == EDirection.WRITE || newDirection == EDirection.BOTH)) {
-                aggregatedStorageAccess.setDirection(EDirection.BOTH);
-            } else if (aggregatedStorageAccess.getDirection() == EDirection.WRITE
+                storageDataflow.setDirection(EDirection.BOTH);
+            } else if (storageDataflow.getDirection() == EDirection.WRITE
                     && (newDirection == EDirection.READ || newDirection == EDirection.BOTH)) {
-                aggregatedStorageAccess.setDirection(EDirection.BOTH);
+                storageDataflow.setDirection(EDirection.BOTH);
             }
         }
 

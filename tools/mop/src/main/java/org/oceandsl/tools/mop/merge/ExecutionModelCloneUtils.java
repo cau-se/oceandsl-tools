@@ -23,9 +23,9 @@ import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.deployment.impl.EStringToDeployedComponentMapEntryImpl;
 import kieker.model.analysismodel.deployment.impl.EStringToDeployedOperationMapEntryImpl;
 import kieker.model.analysismodel.deployment.impl.EStringToDeployedStorageMapEntryImpl;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
 import kieker.model.analysismodel.execution.ExecutionFactory;
+import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.StorageDataflow;
 
 /**
  * @author Reiner Jung
@@ -37,20 +37,18 @@ public final class ExecutionModelCloneUtils {
         // Utility class
     }
 
-    public static AggregatedInvocation duplicate(final DeploymentModel deploymentModel,
-            final AggregatedInvocation invocation) {
-        final AggregatedInvocation newInvocation = ExecutionFactory.eINSTANCE.createAggregatedInvocation();
+    public static Invocation duplicate(final DeploymentModel deploymentModel, final Invocation invocation) {
+        final Invocation newInvocation = ExecutionFactory.eINSTANCE.createInvocation();
         newInvocation
-                .setSource(ExecutionModelCloneUtils.findDeployedOperation(deploymentModel, invocation.getSource()));
+                .setCaller(ExecutionModelCloneUtils.findDeployedOperation(deploymentModel, invocation.getCaller()));
         newInvocation
-                .setTarget(ExecutionModelCloneUtils.findDeployedOperation(deploymentModel, invocation.getTarget()));
+                .setCallee(ExecutionModelCloneUtils.findDeployedOperation(deploymentModel, invocation.getCallee()));
 
         return newInvocation;
     }
 
-    public static AggregatedStorageAccess duplicate(final DeploymentModel deploymentModel,
-            final AggregatedStorageAccess access) {
-        final AggregatedStorageAccess newAccess = ExecutionFactory.eINSTANCE.createAggregatedStorageAccess();
+    public static StorageDataflow duplicate(final DeploymentModel deploymentModel, final StorageDataflow access) {
+        final StorageDataflow newAccess = ExecutionFactory.eINSTANCE.createStorageDataflow();
         newAccess.setDirection(access.getDirection());
 
         newAccess.setCode(ExecutionModelCloneUtils.findDeployedOperation(deploymentModel, access.getCode()));

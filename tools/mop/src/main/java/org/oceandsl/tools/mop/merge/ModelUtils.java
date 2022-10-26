@@ -30,9 +30,9 @@ import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentContext;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
 import kieker.model.analysismodel.execution.EDirection;
+import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
@@ -72,10 +72,10 @@ public final class ModelUtils {
                 return ModelUtils.isEqual((OperationType) left, (OperationType) right);
             } else if (left instanceof StorageType) {
                 return ModelUtils.isEqual((StorageType) left, (StorageType) right);
-            } else if (left instanceof AggregatedInvocation) {
-                return ModelUtils.isEqual((AggregatedInvocation) left, (AggregatedInvocation) right);
-            } else if (left instanceof AggregatedStorageAccess) {
-                return ModelUtils.isEqual((AggregatedStorageAccess) left, (AggregatedStorageAccess) right);
+            } else if (left instanceof Invocation) {
+                return ModelUtils.isEqual((Invocation) left, (Invocation) right);
+            } else if (left instanceof StorageDataflow) {
+                return ModelUtils.isEqual((StorageDataflow) left, (StorageDataflow) right);
             } else if (left instanceof Tuple) {
                 return ModelUtils.isEqual((Tuple<?, ?>) left, (Tuple<?, ?>) right);
             } else {
@@ -90,13 +90,12 @@ public final class ModelUtils {
                 && ModelUtils.areObjectsEqual((EObject) leftTuple.getSecond(), (EObject) rightTuple.getSecond());
     }
 
-    public static boolean isEqual(final AggregatedStorageAccess leftStorageAccess,
-            final AggregatedStorageAccess rightStorageAccess) {
-        ModelUtils.check(leftStorageAccess, "AggregatedStorageAccess leftStorageAccess");
-        ModelUtils.check(rightStorageAccess, "AggregatedStorageAccess rightStorageAccess");
-        return ModelUtils.isEqual(leftStorageAccess.getCode(), rightStorageAccess.getCode())
-                && ModelUtils.compareDirections(leftStorageAccess.getDirection(), rightStorageAccess.getDirection())
-                && ModelUtils.isEqual(leftStorageAccess.getStorage(), rightStorageAccess.getStorage());
+    public static boolean isEqual(final StorageDataflow leftStorageDataflow, final StorageDataflow rightStorageAccess) {
+        ModelUtils.check(leftStorageDataflow, "StorageDataflow leftStorageDataflow");
+        ModelUtils.check(rightStorageAccess, "StorageDataflow rightStorageAccess");
+        return ModelUtils.isEqual(leftStorageDataflow.getCode(), rightStorageAccess.getCode())
+                && ModelUtils.compareDirections(leftStorageDataflow.getDirection(), rightStorageAccess.getDirection())
+                && ModelUtils.isEqual(leftStorageDataflow.getStorage(), rightStorageAccess.getStorage());
     }
 
     private static boolean compareDirections(final EDirection leftDirection, final EDirection rightDirection) {
@@ -126,12 +125,11 @@ public final class ModelUtils {
                 && ModelUtils.isEqual(leftAssemblyStorage.getComponent(), assemblyStorage.getComponent());
     }
 
-    public static boolean isEqual(final AggregatedInvocation leftInvocation,
-            final AggregatedInvocation rightInvocation) {
-        ModelUtils.check(leftInvocation, "AggregatedInvocation leftInvocation");
-        ModelUtils.check(rightInvocation, "AggregatedInvocation rightInvocation");
-        return ModelUtils.isEqual(leftInvocation.getSource(), rightInvocation.getSource())
-                && ModelUtils.isEqual(leftInvocation.getTarget(), rightInvocation.getTarget());
+    public static boolean isEqual(final Invocation leftInvocation, final Invocation rightInvocation) {
+        ModelUtils.check(leftInvocation, "Invocation leftInvocation");
+        ModelUtils.check(rightInvocation, "Invocation rightInvocation");
+        return ModelUtils.isEqual(leftInvocation.getCaller(), rightInvocation.getCaller())
+                && ModelUtils.isEqual(leftInvocation.getCallee(), rightInvocation.getCallee());
     }
 
     public static boolean isEqual(final DeployedOperation leftKey, final DeployedOperation rightKey) {

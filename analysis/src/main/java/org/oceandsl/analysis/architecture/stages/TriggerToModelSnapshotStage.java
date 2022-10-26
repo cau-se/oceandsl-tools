@@ -17,10 +17,13 @@ package org.oceandsl.analysis.architecture.stages;
 
 import java.util.Map.Entry;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
+import kieker.analysis.architecture.repository.ModelDescriptor;
 import kieker.analysis.architecture.repository.ModelRepository;
+
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
@@ -44,9 +47,10 @@ public class TriggerToModelSnapshotStage<T> extends AbstractConsumerStage<T> {
     @Override
     protected void execute(final T element) throws Exception {
         final ModelRepository duplicateRepository = new ModelRepository(this.repository.getName());
-        for (final Entry<Class<? extends EObject>, EObject> entry : this.repository.getModels().entrySet()) {
+        for (final Entry<EClass, EObject> entry : this.repository.getModels().entrySet()) {
             final EObject duplicateModel = EcoreUtil.copy(entry.getValue());
-            duplicateRepository.register(entry.getKey(), duplicateModel);
+            final ModelDescriptor descriptor = this.repository.getModelDescriptor(entry.getKey());
+            duplicateRepository.register(descriptor, duplicateModel);
         }
         this.outputPort.send(duplicateRepository);
     }

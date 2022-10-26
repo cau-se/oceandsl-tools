@@ -15,18 +15,21 @@
  ***************************************************************************/
 package org.oceandsl.tools.maa.stages;
 
-import org.oceandsl.analysis.code.stages.data.IntegerValueHandler;
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
-import org.oceandsl.analysis.code.stages.data.Table;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
 import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.statistics.StatisticsPackage;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.code.stages.data.IntegerValueHandler;
+import org.oceandsl.analysis.code.stages.data.StringValueHandler;
+import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * @author Reiner Jung
@@ -41,12 +44,12 @@ public class OperationCallsStage extends AbstractTransformation<ModelRepository,
                 new StringValueHandler("caller-operation"), new StringValueHandler("callee-component"),
                 new StringValueHandler("callee-operation"), new IntegerValueHandler("calls"));
 
-        final ExecutionModel executionModel = element.getModel(ExecutionModel.class);
-        final StatisticsModel statisticsModel = element.getModel(StatisticsModel.class);
+        final ExecutionModel executionModel = element.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
+        final StatisticsModel statisticsModel = element.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
 
-        executionModel.getAggregatedInvocations().values().forEach(invocation -> {
-            final DeployedOperation caller = invocation.getSource();
-            final DeployedOperation callee = invocation.getTarget();
+        executionModel.getInvocations().values().forEach(invocation -> {
+            final DeployedOperation caller = invocation.getCaller();
+            final DeployedOperation callee = invocation.getCallee();
             final Integer numOfCalls = 0;
             try {
                 result.addRow(this.getComponentName(caller),

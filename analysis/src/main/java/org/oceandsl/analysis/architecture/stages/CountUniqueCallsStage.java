@@ -22,14 +22,14 @@ import org.eclipse.emf.ecore.EObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import kieker.analysis.architecture.dependency.PropertyConstants;
 import kieker.analysis.architecture.recovery.events.OperationCallDurationEvent;
 import kieker.analysis.statistics.StatisticsDecoratorStage;
 import kieker.analysis.statistics.calculating.CountCalculator;
 import kieker.model.analysismodel.deployment.DeployedOperation;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.Tuple;
-import kieker.model.analysismodel.statistics.EPredefinedUnits;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 
 /**
@@ -42,15 +42,14 @@ import kieker.model.analysismodel.statistics.StatisticsModel;
 public class CountUniqueCallsStage extends StatisticsDecoratorStage<OperationCallDurationEvent> {
 
     public CountUniqueCallsStage(final StatisticsModel statisticsModel, final ExecutionModel executionModel) {
-        super(statisticsModel, EPredefinedUnits.INVOCATION, new CountCalculator<>(),
-                CountUniqueCallsStage.createForAggregatedInvocation(executionModel));
+        super(statisticsModel, new CountCalculator<>(PropertyConstants.CALLS),
+                CountUniqueCallsStage.createForInvocation(executionModel));
     }
 
-    public static final Function<OperationCallDurationEvent, EObject> createForAggregatedInvocation(
+    public static final Function<OperationCallDurationEvent, EObject> createForInvocation(
             final ExecutionModel executionModel) {
         return operationCall -> {
-            final AggregatedInvocation result = CountUniqueCallsStage.getValue(executionModel,
-                    operationCall.getOperationCall());
+            final Invocation result = CountUniqueCallsStage.getValue(executionModel, operationCall.getOperationCall());
 
             if (result == null) {
                 final Logger logger = LoggerFactory.getLogger(CountUniqueCallsStage.class);
@@ -65,10 +64,10 @@ public class CountUniqueCallsStage extends StatisticsDecoratorStage<OperationCal
         };
     }
 
-    private static AggregatedInvocation getValue(final ExecutionModel executionModel,
+    private static Invocation getValue(final ExecutionModel executionModel,
             final Tuple<DeployedOperation, DeployedOperation> key) {
-        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> ag : executionModel
-                .getAggregatedInvocations()) {
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> ag : executionModel
+                .getInvocations()) {
             if (ag.getKey().hashCode() == key.hashCode()) {
                 return ag.getValue();
             }

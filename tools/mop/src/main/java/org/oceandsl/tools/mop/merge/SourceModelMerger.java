@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.source.SourceModel;
 import kieker.model.analysismodel.type.TypeModel;
 
 /**

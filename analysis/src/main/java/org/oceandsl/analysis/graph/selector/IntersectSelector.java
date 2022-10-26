@@ -20,11 +20,13 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.source.SourceModel;
+import kieker.model.analysismodel.source.SourcePackage;
+
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * Select nodes and edges and assign them to groups reflecting an intersection.
@@ -53,7 +55,7 @@ public class IntersectSelector implements IGraphElementSelector {
 
     @Override
     public void setRepository(final ModelRepository repository) {
-        this.sourceModel = repository.getModel(SourceModel.class);
+        this.sourceModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
     }
 
     @Override
@@ -63,7 +65,7 @@ public class IntersectSelector implements IGraphElementSelector {
     }
 
     @Override
-    public boolean edgeIsSelected(final AggregatedInvocation value) {
+    public boolean edgeIsSelected(final Invocation value) {
         final EList<String> sources = this.sourceModel.getSources().get(value);
         return this.isSelected(sources);
     }

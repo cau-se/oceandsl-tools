@@ -20,16 +20,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
-import org.oceandsl.analysis.code.stages.CSVFunctionCallReaderStage;
-import org.oceandsl.analysis.code.stages.CSVMapperStage;
-import org.oceandsl.analysis.code.stages.OperationCallFixPathStage;
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
-import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
-import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
-import org.oceandsl.tools.sar.stages.StringFileWriterSink;
 import org.slf4j.Logger;
 
 import kieker.analysis.architecture.recovery.AssemblyModelAssemblerStage;
@@ -41,16 +31,28 @@ import kieker.analysis.architecture.recovery.TypeModelAssemblerStage;
 import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
 import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;
 import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.assembly.AssemblyModel;
-import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.statistics.StatisticsModel;
+import kieker.model.analysismodel.assembly.AssemblyPackage;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.source.SourcePackage;
+import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
-import kieker.model.analysismodel.type.TypeModel;
+import kieker.model.analysismodel.type.TypePackage;
+
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
+
+import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
+import org.oceandsl.analysis.code.stages.CSVFunctionCallReaderStage;
+import org.oceandsl.analysis.code.stages.CSVMapperStage;
+import org.oceandsl.analysis.code.stages.OperationCallFixPathStage;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
+import org.oceandsl.tools.sar.stages.StringFileWriterSink;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -82,24 +84,28 @@ public class TeetimeCallConfiguration extends Configuration {
                 settings.getHostname());
         /** -- call based modeling -- */
         final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
-                repository.getModel(TypeModel.class), repository.getModel(SourceModel.class), settings.getSourceLabel(),
+                repository.getModel(TypePackage.Literals.TYPE_MODEL),
+                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel(),
                 this.createComponentSignatureExtractor(settings), this.createOperationSignatureExtractor());
         final AssemblyModelAssemblerStage assemblyModelAssemblerStage = new AssemblyModelAssemblerStage(
-                repository.getModel(TypeModel.class), repository.getModel(AssemblyModel.class),
-                repository.getModel(SourceModel.class), settings.getSourceLabel());
+                repository.getModel(TypePackage.Literals.TYPE_MODEL),
+                repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
+                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel());
         final DeploymentModelAssemblerStage deploymentModelAssemblerStage = new DeploymentModelAssemblerStage(
-                repository.getModel(AssemblyModel.class), repository.getModel(DeploymentModel.class),
-                repository.getModel(SourceModel.class), settings.getSourceLabel());
+                repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
+                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
+                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel());
 
         final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
-                repository.getModel(DeploymentModel.class));
+                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL));
 
         final ExecutionModelAssemblerStage executionModelGenerationStage = new ExecutionModelAssemblerStage(
-                new ExecutionModelAssembler(repository.getModel(ExecutionModel.class),
-                        repository.getModel(SourceModel.class), settings.getSourceLabel()));
+                new ExecutionModelAssembler(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),
+                        repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
 
         final CountUniqueCallsStage countUniqueCalls = new CountUniqueCallsStage(
-                repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
+                repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL),
+                repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
 
         /** connecting ports. */
         this.connectPorts(readerPort, operationAndCallStage.getInputPort());
@@ -137,7 +143,7 @@ public class TeetimeCallConfiguration extends Configuration {
     private OutputPort<CallerCallee> createOperationCallFixPath(final OutputPort<CallerCallee> readerPort,
             final List<Path> functionNameFiles, final String namesSplitSymbol, final Path missingFunctionsFile)
             throws IOException {
-        if ((functionNameFiles != null) && !functionNameFiles.isEmpty()) {
+        if (functionNameFiles != null && !functionNameFiles.isEmpty()) {
             final OperationCallFixPathStage fixPathStage = new OperationCallFixPathStage(functionNameFiles,
                     namesSplitSymbol);
             if (missingFunctionsFile != null) {

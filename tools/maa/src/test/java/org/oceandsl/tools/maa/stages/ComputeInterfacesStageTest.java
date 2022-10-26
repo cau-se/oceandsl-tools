@@ -28,8 +28,10 @@ import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedProvidedInterface;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.ProvidedInterfaceType;
+
 import teetime.framework.test.StageTester;
 
 /**
@@ -47,7 +49,7 @@ public class ComputeInterfacesStageTest {
 
         final CollectConnectionsStage stage = new CollectConnectionsStage();
         StageTester.test(stage).send(modelRepository).to(stage.getInputPort()).start();
-        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
+        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
         for (final DeploymentContext context : deploymentModel.getContexts().values()) {
             final DeployedComponent componentA = context.getComponents()
                     .get(TestModelRepositoryUtils.FQN_COMPONENT_A + ":1");
@@ -141,7 +143,7 @@ public class ComputeInterfacesStageTest {
 
         final CollectConnectionsStage stage = new CollectConnectionsStage();
         StageTester.test(stage).send(modelRepository).to(stage.getInputPort()).start();
-        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
+        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
         for (final DeploymentContext context : deploymentModel.getContexts().values()) {
             final DeployedComponent componentA = context.getComponents()
                     .get(TestModelRepositoryUtils.FQN_COMPONENT_A + ":1");

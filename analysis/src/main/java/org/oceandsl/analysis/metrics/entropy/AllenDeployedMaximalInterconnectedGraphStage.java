@@ -28,9 +28,12 @@ import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.Tuple;
+
 import teetime.stage.basic.AbstractTransformation;
 
 /**
@@ -45,8 +48,8 @@ public class AllenDeployedMaximalInterconnectedGraphStage
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        final DeploymentModel deploymentModel = repository.getModel(DeploymentModel.class);
-        final ExecutionModel executionModel = repository.getModel(ExecutionModel.class);
+        final DeploymentModel deploymentModel = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
+        final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
         final MutableGraph<Node<DeployedComponent>> graph = GraphBuilder.undirected().allowsSelfLoops(true).build();
 
         for (final Entry<String, DeploymentContext> context : deploymentModel.getContexts()) {
@@ -57,12 +60,12 @@ public class AllenDeployedMaximalInterconnectedGraphStage
                 }
             }
         }
-        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> entry : executionModel
-                .getAggregatedInvocations()) {
-            final Node<DeployedComponent> source = this.findNode(graph, entry.getValue().getSource());
-            final Node<DeployedComponent> target = this.findNode(graph, entry.getValue().getTarget());
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> entry : executionModel
+                .getInvocations()) {
+            final Node<DeployedComponent> source = this.findNode(graph, entry.getValue().getCaller());
+            final Node<DeployedComponent> target = this.findNode(graph, entry.getValue().getCallee());
 
-            if ((source != null) && (target != null)) {
+            if (source != null && target != null) {
                 graph.putEdge(source, target);
             }
         }

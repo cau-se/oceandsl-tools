@@ -22,11 +22,11 @@ import org.eclipse.emf.common.util.EMap;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
-import kieker.model.analysismodel.execution.AggregatedStorageAccess;
 import kieker.model.analysismodel.execution.EDirection;
 import kieker.model.analysismodel.execution.ExecutionFactory;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
 
 /**
@@ -41,33 +41,28 @@ public final class ExecutionModelMerger {
 
     /* default */ static void mergeExecutionModel(final DeploymentModel deploymentModel, // NOPMD
             final ExecutionModel targetModel, final ExecutionModel mergeModel) {
-        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> entry : mergeModel
-                .getAggregatedInvocations()) {
-            if (!ExecutionModelMerger.compareTupleOperationKeys(targetModel.getAggregatedInvocations(),
-                    entry.getKey())) {
-                final AggregatedInvocation value = ExecutionModelCloneUtils.duplicate(deploymentModel,
-                        entry.getValue());
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> entry : mergeModel.getInvocations()) {
+            if (!ExecutionModelMerger.compareTupleOperationKeys(targetModel.getInvocations(), entry.getKey())) {
+                final Invocation value = ExecutionModelCloneUtils.duplicate(deploymentModel, entry.getValue());
                 final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
-                key.setFirst(value.getSource());
-                key.setSecond(value.getTarget());
-                targetModel.getAggregatedInvocations().put(key, value);
+                key.setFirst(value.getCaller());
+                key.setSecond(value.getCallee());
+                targetModel.getInvocations().put(key, value);
             }
         }
-        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> entry : mergeModel
-                .getAggregatedStorageAccesses()) {
+        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> entry : mergeModel
+                .getStorageDataflows()) {
             final Tuple<DeployedOperation, DeployedStorage> targetModelKey = ExecutionModelMerger
-                    .findTupleStorageKeys(targetModel.getAggregatedStorageAccesses(), entry.getKey());
+                    .findTupleStorageKeys(targetModel.getStorageDataflows(), entry.getKey());
             if (targetModelKey == null) {
-                final AggregatedStorageAccess value = ExecutionModelCloneUtils.duplicate(deploymentModel,
-                        entry.getValue());
+                final StorageDataflow value = ExecutionModelCloneUtils.duplicate(deploymentModel, entry.getValue());
                 final Tuple<DeployedOperation, DeployedStorage> key = ExecutionFactory.eINSTANCE.createTuple();
                 key.setFirst(value.getCode());
                 key.setSecond(value.getStorage());
-                targetModel.getAggregatedStorageAccesses().put(key, value);
+                targetModel.getStorageDataflows().put(key, value);
             } else {
-                final AggregatedStorageAccess targetStorageAccess = targetModel.getAggregatedStorageAccesses()
-                        .get(targetModelKey);
-                final AggregatedStorageAccess sourceStorageAccess = entry.getValue();
+                final StorageDataflow targetStorageAccess = targetModel.getStorageDataflows().get(targetModelKey);
+                final StorageDataflow sourceStorageAccess = entry.getValue();
                 switch (sourceStorageAccess.getDirection()) {
                 case READ:
                     if (targetStorageAccess.getDirection() == EDirection.WRITE) {
@@ -86,16 +81,16 @@ public final class ExecutionModelMerger {
                     throw new InternalError(
                             "Found unsupported direction type " + sourceStorageAccess.getDirection().getName());
                 }
-                targetModel.getAggregatedStorageAccesses().put(targetModelKey, targetStorageAccess);
+                targetModel.getStorageDataflows().put(targetModelKey, targetStorageAccess);
             }
         }
 
     }
 
     private static boolean compareTupleOperationKeys(
-            final EMap<Tuple<DeployedOperation, DeployedOperation>, AggregatedInvocation> aggregatedInvocations,
+            final EMap<Tuple<DeployedOperation, DeployedOperation>, Invocation> Invocations,
             final Tuple<DeployedOperation, DeployedOperation> key) {
-        for (final Tuple<DeployedOperation, DeployedOperation> invocationKey : aggregatedInvocations.keySet()) {
+        for (final Tuple<DeployedOperation, DeployedOperation> invocationKey : Invocations.keySet()) {
             if (ModelUtils.isEqual(invocationKey.getFirst(), key.getFirst())
                     && ModelUtils.isEqual(invocationKey.getSecond(), key.getSecond())) {
                 return true;
@@ -105,9 +100,9 @@ public final class ExecutionModelMerger {
     }
 
     private static Tuple<DeployedOperation, DeployedStorage> findTupleStorageKeys(
-            final EMap<Tuple<DeployedOperation, DeployedStorage>, AggregatedStorageAccess> aggregatedStorageAccesses,
+            final EMap<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> StorageDataflowes,
             final Tuple<DeployedOperation, DeployedStorage> key) {
-        for (final Tuple<DeployedOperation, DeployedStorage> invocationKey : aggregatedStorageAccesses.keySet()) {
+        for (final Tuple<DeployedOperation, DeployedStorage> invocationKey : StorageDataflowes.keySet()) {
             if (ModelUtils.isEqual(invocationKey.getFirst(), key.getFirst())
                     && ModelUtils.isEqual(invocationKey.getSecond(), key.getSecond())) {
                 return invocationKey;

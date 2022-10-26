@@ -22,7 +22,9 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.source.SourceModel;
+import kieker.model.analysismodel.source.SourcePackage;
+
 import teetime.stage.basic.AbstractFilter;
 
 /**
@@ -38,12 +40,12 @@ public class ReplaceSourceLabelStage extends AbstractFilter<ModelRepository> {
     }
 
     @Override
-    protected void execute(final ModelRepository element) throws Exception {
-        final SourceModel sourceModel = element.getModel(SourceModel.class);
+    protected void execute(final ModelRepository repository) throws Exception {
+        final SourceModel sourceModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
         for (final Replacement replacement : this.replacements) {
             this.processModel(sourceModel, replacement);
         }
-        this.outputPort.send(element);
+        this.outputPort.send(repository);
     }
 
     private void processModel(final SourceModel sourceModel, final Replacement replacement) {

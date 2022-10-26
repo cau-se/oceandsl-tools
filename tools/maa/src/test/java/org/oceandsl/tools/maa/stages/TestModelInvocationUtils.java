@@ -15,10 +15,12 @@
  ***************************************************************************/
 package org.oceandsl.tools.maa.stages;
 
+import kieker.analysis.architecture.repository.ModelDescriptor;
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.assembly.AssemblyPackage;
 import kieker.model.analysismodel.assembly.AssemblyProvidedInterface;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -26,15 +28,18 @@ import kieker.model.analysismodel.deployment.DeployedProvidedInterface;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentFactory;
 import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.execution.ExecutionFactory;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.ProvidedInterfaceType;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
+import kieker.model.analysismodel.type.TypePackage;
 
 /**
  * @author Reiner Jung
@@ -47,9 +52,10 @@ public final class TestModelInvocationUtils {
     }
 
     public static void addInvocations(final ModelRepository modelRepository) {
-        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
+        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
 
-        modelRepository.register(ExecutionModel.class, TestModelInvocationUtils.createExecutions(deploymentModel));
+        modelRepository.register(new ModelDescriptor("execution-model.xmi", ExecutionPackage.Literals.EXECUTION_MODEL,
+                ExecutionFactory.eINSTANCE), TestModelInvocationUtils.createExecutions(deploymentModel));
     }
 
     private static ExecutionModel createExecutions(final DeploymentModel deploymentModel) {
@@ -84,11 +90,11 @@ public final class TestModelInvocationUtils {
         key.setFirst(caller);
         key.setSecond(callee);
 
-        final AggregatedInvocation value = ExecutionFactory.eINSTANCE.createAggregatedInvocation();
-        value.setSource(caller);
-        value.setTarget(callee);
+        final Invocation value = ExecutionFactory.eINSTANCE.createInvocation();
+        value.setCaller(caller);
+        value.setCallee(callee);
 
-        executionModel.getAggregatedInvocations().put(key, value);
+        executionModel.getInvocations().put(key, value);
     }
 
     public static void addProvidedInterfaces(final ModelRepository modelRepository) {
@@ -107,9 +113,9 @@ public final class TestModelInvocationUtils {
 
     private static void createEmptyProvidedInterface(final ModelRepository modelRepository,
             final String componentName) {
-        final TypeModel typeModel = modelRepository.getModel(TypeModel.class);
-        final AssemblyModel assmeblyModel = modelRepository.getModel(AssemblyModel.class);
-        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
+        final TypeModel typeModel = modelRepository.getModel(TypePackage.Literals.TYPE_MODEL);
+        final AssemblyModel assmeblyModel = modelRepository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
+        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
 
         final ComponentType componentType = typeModel.getComponentTypes().get(componentName);
         final AssemblyComponent assemblyComponent = assmeblyModel.getComponents().get(componentName + ":1");
@@ -125,9 +131,9 @@ public final class TestModelInvocationUtils {
 
     private static void createProvidedInterface(final ModelRepository modelRepository, final String componentName,
             final String operationName) {
-        final TypeModel typeModel = modelRepository.getModel(TypeModel.class);
-        final AssemblyModel assmeblyModel = modelRepository.getModel(AssemblyModel.class);
-        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentModel.class);
+        final TypeModel typeModel = modelRepository.getModel(TypePackage.Literals.TYPE_MODEL);
+        final AssemblyModel assmeblyModel = modelRepository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
+        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
 
         final ComponentType componentType = typeModel.getComponentTypes().get(componentName);
         final AssemblyComponent assemblyComponent = assmeblyModel.getComponents().get(componentName + ":1");

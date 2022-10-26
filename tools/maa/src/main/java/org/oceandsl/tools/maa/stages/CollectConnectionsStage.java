@@ -17,14 +17,18 @@ package org.oceandsl.tools.maa.stages;
 
 import java.util.Collection;
 
+import kieker.analysis.architecture.repository.ModelDescriptor;
 import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.execution.AggregatedInvocation;
 import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.collection.CollectionFactory;
+import kieker.model.collection.CollectionPackage;
 import kieker.model.collection.Connections;
 import kieker.model.collection.Coupling;
 import kieker.model.collection.OperationCollection;
+
 import teetime.stage.basic.AbstractTransformation;
 
 /**
@@ -53,26 +57,26 @@ public class CollectConnectionsStage extends AbstractTransformation<ModelReposit
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        final ExecutionModel executionModel = repository.getModel(ExecutionModel.class);
+        final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
 
-        repository.register(Connections.class,
-                this.collectInterconnections(executionModel.getAggregatedInvocations().values()));
+        repository.register(
+                new ModelDescriptor("connections.xmi", CollectionPackage.Literals.CONNECTIONS,
+                        CollectionFactory.eINSTANCE),
+                this.collectInterconnections(executionModel.getInvocations().values()));
 
         this.outputPort.send(repository);
     }
 
-    private Connections collectInterconnections(final Collection<AggregatedInvocation> aggregatedInvocations) {
+    private Connections collectInterconnections(final Collection<Invocation> invocations) {
         final Connections interconnections = CollectionFactory.eINSTANCE.createConnections();
 
-        for (final AggregatedInvocation aggregatedInvocation : aggregatedInvocations) {
-            if (!aggregatedInvocation.getSource().getComponent()
-                    .equals(aggregatedInvocation.getTarget().getComponent())) { // only inter
-                                                                                // component edges
+        for (final Invocation invocation : invocations) {
+            if (!invocation.getCaller().getComponent().equals(invocation.getCallee().getComponent())) { // only
+                                                                                                        // inter-component
+                                                                                                        // edges
                 final Coupling key = CollectionFactory.eINSTANCE.createCoupling();
-                key.setCaller(
-                        aggregatedInvocation.getSource().getComponent().getAssemblyComponent().getComponentType());
-                key.setCallee(
-                        aggregatedInvocation.getTarget().getComponent().getAssemblyComponent().getComponentType());
+                key.setCaller(invocation.getCaller().getComponent().getAssemblyComponent().getComponentType());
+                key.setCallee(invocation.getCallee().getComponent().getAssemblyComponent().getComponentType());
 
                 OperationCollection calleeOperationCollection = interconnections.getConnections().get(key);
 
@@ -83,8 +87,7 @@ public class CollectConnectionsStage extends AbstractTransformation<ModelReposit
                     interconnections.getConnections().put(key, calleeOperationCollection);
                 }
 
-                final OperationType calleeOperation = aggregatedInvocation.getTarget().getAssemblyOperation()
-                        .getOperationType();
+                final OperationType calleeOperation = invocation.getCallee().getAssemblyOperation().getOperationType();
                 calleeOperationCollection.getOperations().put(calleeOperation.getSignature(), calleeOperation);
             }
         }

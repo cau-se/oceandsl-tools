@@ -37,12 +37,12 @@ import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.statistics.CallStatisticsStage;
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.flow.IFlowRecord;
-import kieker.model.analysismodel.assembly.AssemblyModel;
-import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.statistics.StatisticsModel;
-import kieker.model.analysismodel.type.TypeModel;
+import kieker.model.analysismodel.assembly.AssemblyPackage;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.source.SourcePackage;
+import kieker.model.analysismodel.statistics.StatisticsPackage;
+import kieker.model.analysismodel.type.TypePackage;
 import kieker.tools.source.LogsReaderCompositeStage;
 
 import teetime.framework.Configuration;
@@ -99,27 +99,31 @@ public class TeetimeConfiguration extends Configuration {
                 .selectOperationSignaturExtractor(settings.getSignatureExtractor());
 
         final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
-                repository.getModel(TypeModel.class), repository.getModel(SourceModel.class), settings.getSourceLabel(),
+                repository.getModel(TypePackage.Literals.TYPE_MODEL),
+                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel(),
                 componentSignatureExtractor, operationSignatureExtractor);
         final AssemblyModelAssemblerStage assemblyModelAssemblerStage = new AssemblyModelAssemblerStage(
-                repository.getModel(TypeModel.class), repository.getModel(AssemblyModel.class),
-                repository.getModel(SourceModel.class), settings.getSourceLabel());
+                repository.getModel(TypePackage.Literals.TYPE_MODEL),
+                repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
+                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel());
         final DeploymentModelAssemblerStage deploymentModelAssemblerStage = new DeploymentModelAssemblerStage(
-                repository.getModel(AssemblyModel.class), repository.getModel(DeploymentModel.class),
-                repository.getModel(SourceModel.class), settings.getSourceLabel());
+                repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
+                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
+                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel());
 
         final OperationAndCallGeneratorStage operationAndCallStage = new OperationAndCallGeneratorStage(true,
                 this.createProcessors(settings.getModuleModes(), settings, logger),
                 !settings.isKeepMetaDataOnCompletedTraces());
         final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
-                repository.getModel(DeploymentModel.class));
+                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL));
 
         final ExecutionModelAssemblerStage executionModelGenerationStage = new ExecutionModelAssemblerStage(
-                new ExecutionModelAssembler(repository.getModel(ExecutionModel.class),
-                        repository.getModel(SourceModel.class), settings.getSourceLabel()));
+                new ExecutionModelAssembler(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),
+                        repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
 
         final CallStatisticsStage callStatisticsStage = new CallStatisticsStage(
-                repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
+                repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL),
+                repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
 
         /** connecting ports. */
         this.connectPorts(readerPort, instanceOfFilter.getInputPort());
