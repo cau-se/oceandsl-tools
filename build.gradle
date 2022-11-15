@@ -14,7 +14,7 @@ plugins {
 
 repositories {
 	mavenLocal()
-	jcenter()
+//	jcenter()
 	mavenCentral()
 }
 
@@ -35,7 +35,7 @@ subprojects {
 	apply plugin: 'com.diffplug.spotless'
 
 	repositories {
-		jcenter()
+//		jcenter()
 		mavenLocal()
 		mavenCentral()
 		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
