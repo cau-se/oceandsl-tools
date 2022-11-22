@@ -15,73 +15,63 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.utils.MapFileReader;
-import org.oceandsl.analysis.utils.StringValueConverter;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
+
+import teetime.stage.basic.AbstractFilter;
 
 /**
  * @author Reiner Jung
  * @since 1.1
  */
-public class MapBasedCleanupComponentSignatureStage extends AbstractCleanupComponentSignatureStage {
+public class MapBasedCleanupComponentSignatureStage extends AbstractFilter<CallerCallee> {
 
-    private final Map<String, String> componentMap = new HashMap<>();
-    private final PrintWriter missingMappingWriter;
+    private static final String UNKNOWN = "<unknown>";
+    private final List<AbstractSignatureProcessor> processors;
 
-    public MapBasedCleanupComponentSignatureStage(final List<Path> componentMapFiles, final Path missingMappingFile,
-            final String separator, final boolean caseInsensitive) throws IOException, ValueConversionErrorException {
-        super(caseInsensitive);
-        if (missingMappingFile != null) {
-            this.missingMappingWriter = new PrintWriter(Files.newBufferedWriter(missingMappingFile));
-        } else {
-            this.missingMappingWriter = null; // NOPMD null assignment necessary
-        }
-        for (final Path componentMapFile : componentMapFiles) {
-            this.logger.info("Reading map file {}", componentMapFile.toString());
-            final MapFileReader<String, String> mapFileReader = new MapFileReader<>(componentMapFile, separator,
-                    this.componentMap, new StringValueConverter(caseInsensitive, 1),
-                    new StringValueConverter(caseInsensitive, 0));
-            mapFileReader.read();
-        }
+    public MapBasedCleanupComponentSignatureStage(final List<AbstractSignatureProcessor> processors) {
+        this.processors = processors;
     }
 
     @Override
-    protected String processComponentSignature(final String signature) {
-        if ("<<no-file>>".equals(signature)) {
-            return signature;
-        } else {
-            final Path path = Paths.get(signature);
-            final String filename = path.getName(path.getNameCount() - 1).toString();
-            final String result = this.componentMap
-                    .get(this.caseInsensitive ? filename.toLowerCase(Locale.ROOT) : filename);
-            if (result != null) {
-                return result;
-            } else {
-                this.logger.warn("File '{}' has no component mapping. Signature '{}'", filename, signature);
-                if (this.missingMappingWriter != null) {
-                    this.missingMappingWriter.println(filename + "; " + signature);
-                }
-                return "unknown";
+    protected void execute(final CallerCallee event) throws Exception {
+        final Operation caller = this.executeOperation(event.getSourcePath(), event.getSourceModule(),
+                event.getCaller());
+        final Operation callee = this.executeOperation(event.getTargetPath(), event.getTargetModule(),
+                event.getCallee());
+        final CallerCallee newEvent = new CallerCallee(event.getSourcePath(), caller.component, caller.operation,
+                event.getTargetPath(), callee.component, callee.operation);
+        this.outputPort.send(newEvent);
+    }
+
+    private Operation executeOperation(final String path, final String componentSignature,
+            final String operationSignature) {
+        final Operation operation = new Operation();
+        operation.component = MapBasedCleanupComponentSignatureStage.UNKNOWN;
+        operation.operation = MapBasedCleanupComponentSignatureStage.UNKNOWN;
+        for (final AbstractSignatureProcessor processor : this.processors) {
+            processor.processSignatures(path, componentSignature, operationSignature);
+            if (operation.component.equals(MapBasedCleanupComponentSignatureStage.UNKNOWN)) {
+                operation.component = processor.getComponentSignature();
+            }
+            if (operation.operation.equals(MapBasedCleanupComponentSignatureStage.UNKNOWN)) {
+                operation.operation = processor.getOperationSignature();
             }
         }
+        return operation;
     }
 
     @Override
     protected void onTerminating() {
-        if (this.missingMappingWriter != null) {
-            this.missingMappingWriter.close();
-        }
+        this.processors.forEach(processor -> processor.close());
         super.onTerminating();
+    }
+
+    private class Operation {
+        public String component;
+        public String operation;
     }
 
 }

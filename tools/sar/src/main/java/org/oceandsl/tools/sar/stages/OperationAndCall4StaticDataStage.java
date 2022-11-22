@@ -17,13 +17,12 @@ package org.oceandsl.tools.sar.stages;
 
 import java.time.Duration;
 
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
+
 import kieker.analysis.architecture.recovery.events.CallEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
-
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
-
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
 
 /**
  * Transform @{link CallerCallee}s to @{link OperationEvent}s and @{CallEvent}s on model level. The
@@ -47,8 +46,8 @@ public class OperationAndCall4StaticDataStage extends AbstractConsumerStage<Call
 
     @Override
     protected void execute(final CallerCallee element) throws Exception {
-        final OperationEvent caller = new OperationEvent(this.hostname, element.getSourcePath(), element.getCaller());
-        final OperationEvent callee = new OperationEvent(this.hostname, element.getTargetPath(), element.getCallee());
+        final OperationEvent caller = new OperationEvent(this.hostname, element.getSourceModule(), element.getCaller());
+        final OperationEvent callee = new OperationEvent(this.hostname, element.getTargetModule(), element.getCallee());
 
         final CallEvent callEvent = new CallEvent(caller, callee, Duration.ZERO);
 

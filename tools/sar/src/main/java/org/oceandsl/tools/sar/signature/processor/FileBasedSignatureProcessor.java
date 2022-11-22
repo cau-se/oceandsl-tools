@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.dar.signature.processor;
+package org.oceandsl.tools.sar.signature.processor;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
 
 /**
  * @author Reiner Jung
@@ -31,16 +29,21 @@ public class FileBasedSignatureProcessor extends AbstractSignatureProcessor {
     }
 
     @Override
-    public void processSignatures(final String componentSignature, final String operationSignature) {
-        if ("<<no-file>>".equals(componentSignature)) {
-            this.componentSignature = componentSignature;
+    public void processSignatures(final String pathString, final String componentSignature,
+            final String operationSignature) {
+        if ("<<no-file>>".equals(pathString)) {
+            this.componentSignature = pathString;
         } else {
-            final Path path = Paths.get(componentSignature);
-            this.componentSignature = this.convertToLowerCase(
-                    this.removeTrailingUnderscore(path.getName(path.getNameCount() - 1).toString()));
+            final Path path = Paths.get(pathString);
+            this.componentSignature = this.convertToLowerCase(path.getName(path.getNameCount() - 1).toString());
         }
 
-        this.operationSignature = this.convertToLowerCase(this.removeTrailingUnderscore(operationSignature));
+        this.operationSignature = this.convertToLowerCase(operationSignature);
+    }
+
+    @Override
+    public void close() {
+        // nothing to be done here
     }
 
 }

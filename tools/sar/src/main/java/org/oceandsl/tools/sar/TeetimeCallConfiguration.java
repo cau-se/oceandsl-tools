@@ -18,6 +18,7 @@ package org.oceandsl.tools.sar; // NOPMD ExecessiveImports
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
@@ -27,7 +28,11 @@ import org.oceandsl.analysis.code.stages.OperationCallFixPathStage;
 import org.oceandsl.analysis.code.stages.data.CallerCallee;
 import org.oceandsl.analysis.code.stages.data.CallerCalleeFactory;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
+import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.ModuleSignatureProcessor;
 import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
 import org.oceandsl.tools.sar.stages.StringFileWriterSink;
@@ -118,25 +123,61 @@ public class TeetimeCallConfiguration extends Configuration {
         this.connectPorts(executionModelGenerationStage.getOutputPort(), countUniqueCalls.getInputPort());
     }
 
+    private List<AbstractSignatureProcessor> createProcessors(final List<EModuleMode> modes, final Settings settings,
+            final Logger logger) throws IOException {
+        final List<AbstractSignatureProcessor> processors = new ArrayList<>();
+
+        for (final EModuleMode mode : modes) {
+            switch (mode) {
+            case MAP_MODE:
+                processors.add(this.createMapBasedProcessor(logger, settings));
+                break;
+            case MODULE_MODE:
+                processors.add(this.createModuleBasedProcessor(logger, settings));
+                break;
+            case JAVA_CLASS_MODE:
+                break;
+            case PYTHON_CLASS_MODE:
+                break;
+            case FILE_MODE:
+            default:
+                processors.add(this.createFileBasedProcessor(logger, settings));
+                break;
+            }
+        }
+
+        return processors;
+    }
+
+    private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger, final Settings settings) {
+        logger.info("Module based component definition");
+        return new ModuleSignatureProcessor(settings.isCaseInsensitive());
+    }
+
+    private AbstractSignatureProcessor createFileBasedProcessor(final Logger logger,
+            final Settings parameterConfiguration) {
+        logger.info("File based component definition");
+        return new FileBasedSignatureProcessor(parameterConfiguration.isCaseInsensitive());
+    }
+
+    private AbstractSignatureProcessor createMapBasedProcessor(final Logger logger, final Settings settings)
+            throws IOException {
+        if (settings.getComponentMapFiles() != null) {
+            logger.info("Map based component definition");
+            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), settings.getMissingMappingFile(),
+                    settings.isCaseInsensitive(), settings.getCallSplitSymbol());
+        } else {
+            logger.error("Missing map files for component identification.");
+            return null;
+        }
+    }
+
     private OutputPort<CallerCallee> createComponentMapping(final OutputPort<CallerCallee> readerPort,
             final Settings settings, final Logger logger) throws IOException, ValueConversionErrorException {
-        if (settings.getComponentMapFiles() == null) {
-            logger.info("File based component definition");
-            final FileBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new FileBasedCleanupComponentSignatureStage(
-                    settings.isCaseInsensitive());
-
-            this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
-
-            return cleanupComponentSignatureStage.getOutputPort();
-        } else {
-            logger.info("Map based component definition");
-            final MapBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new MapBasedCleanupComponentSignatureStage(
-                    settings.getComponentMapFiles(), settings.getMissingMappingFile(), settings.getCallSplitSymbol(),
-                    settings.isCaseInsensitive());
-
-            this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
-            return cleanupComponentSignatureStage.getOutputPort();
-        }
+        final MapBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new MapBasedCleanupComponentSignatureStage(
+                this.createProcessors(settings.getModuleModes(), settings, logger));
+        this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
+        return cleanupComponentSignatureStage.getOutputPort();
     }
 
     private OutputPort<CallerCallee> createOperationCallFixPath(final OutputPort<CallerCallee> readerPort,

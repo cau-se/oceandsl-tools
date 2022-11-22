@@ -23,6 +23,9 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
 import com.beust.jcommander.converters.PathConverter;
 
+import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.analysis.generic.EModuleModeConverter;
+
 /**
  * All settings including command line parameters for the analysis.
  *

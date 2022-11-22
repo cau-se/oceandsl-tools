@@ -50,6 +50,7 @@ import teetime.framework.OutputPort;
 import teetime.stage.InstanceOfFilter;
 
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.EModuleMode;
 import org.oceandsl.analysis.generic.stages.CountEventsStage;
 import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
 import org.oceandsl.tools.dar.extractors.ELFComponentSignatureExtractor;

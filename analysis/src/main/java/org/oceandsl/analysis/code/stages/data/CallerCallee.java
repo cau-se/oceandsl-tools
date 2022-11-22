@@ -26,8 +26,8 @@ public class CallerCallee implements ICsvRecord {
 
     private String sourcePath;
     private String targetPath;
-    private String sourceModule;
-    private String targetModule;
+    private final String sourceModule;
+    private final String targetModule;
     private final String caller;
     private final String callee;
 
@@ -35,6 +35,8 @@ public class CallerCallee implements ICsvRecord {
             final String targetPath, final String targetModule, final String callee) {
         this.sourcePath = sourcePath;
         this.targetPath = targetPath;
+        this.sourceModule = sourceModule;
+        this.targetModule = targetModule;
         this.caller = caller;
         this.callee = callee;
     }

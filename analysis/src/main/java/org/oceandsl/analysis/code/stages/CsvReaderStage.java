@@ -59,6 +59,9 @@ public class CsvReaderStage<T extends ICsvRecord> extends AbstractProducerStage<
         String[] headerLabels;
         if (this.header) {
             headerLabels = this.reader.readLine().split(this.splitSymbol);
+            for (int i = 0; i < headerLabels.length; i++) {
+                headerLabels[i] = headerLabels[i].trim();
+            }
         } else {
             final String[] values = this.reader.readLine().split(this.splitSymbol);
             headerLabels = new String[values.length];
@@ -70,6 +73,9 @@ public class CsvReaderStage<T extends ICsvRecord> extends AbstractProducerStage<
         String line;
         while ((line = this.reader.readLine()) != null) {
             final String[] values = line.split(this.splitSymbol);
+            for (int i = 0; i < values.length; i++) {
+                values[i] = values[i].trim();
+            }
             if (values.length == headerLabels.length) {
                 this.outputPort.send(this.recordFactory.createRecord(headerLabels, values));
             } else {
