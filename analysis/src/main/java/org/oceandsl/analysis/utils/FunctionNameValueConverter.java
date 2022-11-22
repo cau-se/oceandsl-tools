@@ -31,8 +31,8 @@ public class FunctionNameValueConverter extends StringValueConverter {
     }
 
     @Override
-    public String createValue(final String[] input) {
-        final String value = super.createValue(input);
+    public String getColumnValue(final String[] input) {
+        final String value = super.getColumnValue(input);
         if (value.endsWith("_")) {
             return value.substring(0, value.length() - 1);
         } else {

@@ -33,5 +33,5 @@ dependencies {
 }
 
 application {
-	mainClassName = 'org.oceandsl.tools.sar.StaticArchitectureRecoveryMain'
+	getMainClass().set('org.oceandsl.tools.sar.StaticArchitectureRecoveryMain')
 }

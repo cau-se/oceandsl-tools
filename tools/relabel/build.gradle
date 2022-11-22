@@ -29,5 +29,5 @@ dependencies {
 }
 
 application {
-	mainClassName = 'org.oceandsl.tools.relable.RelabelSourceMain'
+	getMainClass().set('org.oceandsl.tools.relable.RelabelSourceMain')
 }

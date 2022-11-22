@@ -16,5 +16,5 @@ dependencies {
 }
 
 application {
-	mainClassName = 'org.oceandsl.log.rewriter.LogRewriterMain'
+	getMainClass().set('org.oceandsl.log.rewriter.LogRewriterMain')
 }

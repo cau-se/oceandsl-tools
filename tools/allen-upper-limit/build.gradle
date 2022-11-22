@@ -29,5 +29,5 @@ dependencies {
 }
 
 application {
-	mainClassName = 'org.oceandsl.tools.aul.AllenUpperLimitMain'
+	getMainClass().set('org.oceandsl.tools.aul.AllenUpperLimitMain')
 }

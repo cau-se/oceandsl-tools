@@ -29,5 +29,5 @@ dependencies {
 }
 
 application {
-	mainClassName = 'org.oceandsl.tools.dar.DynamicArchitectureRecoveryMain'
+	getMainClass().set('org.oceandsl.tools.dar.DynamicArchitectureRecoveryMain')
 }

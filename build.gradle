@@ -69,8 +69,8 @@ subprojects {
 
 	tasks.withType(Pmd) {
 		reports {
-			xml.enabled = true
-			html.enabled = true
+			xml.required = true
+			html.required = true
 		}
 	}
 
@@ -87,8 +87,8 @@ subprojects {
 
 	tasks.withType(Checkstyle) {
 		reports {
-			xml.enabled true
-			html.enabled true
+			xml.required = true
+			html.required = true
 			// html.stylesheet resources.text.fromFile(rootProject.projectDir.path + '/config/checkstyle-noframes-severity-sorted.xsl')
 		}
 	}
