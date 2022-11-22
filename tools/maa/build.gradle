@@ -30,5 +30,5 @@ dependencies {
 }
 
 application {
-	mainClassName = 'org.oceandsl.tools.maa.ModelArchitectureAnalysisMain'
+	getMainClass().set('org.oceandsl.tools.maa.ModelArchitectureAnalysisMain')
 }

@@ -29,5 +29,5 @@ dependencies {
 }
 
 application {
-	mainClassName = 'org.oceandsl.tools.mvis.ModelVisualizationMain'
+	getMainClass().set('org.oceandsl.tools.mvis.ModelVisualizationMain')
 }

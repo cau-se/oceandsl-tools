@@ -26,5 +26,5 @@ package org.oceandsl.analysis.utils;
  */
 public interface IValueConverter<T> {
 
-    T createValue(String[] input);
+    T getColumnValue(String[] input);
 }

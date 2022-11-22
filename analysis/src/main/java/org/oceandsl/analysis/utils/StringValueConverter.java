@@ -34,7 +34,7 @@ public class StringValueConverter implements IValueConverter<String> {
     }
 
     @Override
-    public String createValue(final String[] input) {
+    public String getColumnValue(final String[] input) {
         return this.caseInsensitive ? input[this.column].toLowerCase(Locale.ROOT) : input[this.column];
     }
 }

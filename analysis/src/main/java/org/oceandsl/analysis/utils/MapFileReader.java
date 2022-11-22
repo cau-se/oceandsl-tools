@@ -65,7 +65,7 @@ public class MapFileReader<T, R> {
                 for (int i = 0; i < values.length; i++) {
                     values[i] = values[i].trim();
                 }
-                this.map.put(this.keyConverter.createValue(values), this.valueConverter.createValue(values));
+                this.map.put(this.keyConverter.getColumnValue(values), this.valueConverter.getColumnValue(values));
             } else {
                 MapFileReader.LOGGER.error("Entry incomplete '{}'", line.trim());
             }

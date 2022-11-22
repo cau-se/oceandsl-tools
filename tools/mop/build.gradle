@@ -30,5 +30,5 @@ dependencies {
 }
 
 application {
-	mainClassName = 'org.oceandsl.tools.mop.ModelOperationMain'
+	getMainClass().set('org.oceandsl.tools.mop.ModelOperationMain')
 }

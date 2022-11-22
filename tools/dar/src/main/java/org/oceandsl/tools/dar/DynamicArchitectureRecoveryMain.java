@@ -18,6 +18,7 @@ package org.oceandsl.tools.dar;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import com.beust.jcommander.JCommander;
@@ -130,6 +131,20 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
                             this.parameterConfiguration.getOutputDirectory());
                     return false;
                 }
+            }
+        }
+        if (this.parameterConfiguration.getModuleModes().contains(EModuleMode.MAP_MODE)) {
+            if (this.parameterConfiguration.getComponentMapFiles() != null
+                    && this.parameterConfiguration.getComponentMapFiles().size() > 0) {
+                for (final Path path : this.parameterConfiguration.getComponentMapFiles()) {
+                    if (!Files.isReadable(path)) {
+                        this.logger.error("Cannot read map file: {}", path.toString());
+                        return false;
+                    }
+                }
+            } else {
+                this.logger.error("Using map mode, but no map specified.");
+                return false;
             }
         }
         return true;

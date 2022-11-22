@@ -28,5 +28,5 @@ dependencies {
 }
 
 application {
-	mainClassName = 'org.oceandsl.pp.log.FixStaticLogMain'
+	getMainClass().set('org.oceandsl.pp.log.FixStaticLogMain')
 }
