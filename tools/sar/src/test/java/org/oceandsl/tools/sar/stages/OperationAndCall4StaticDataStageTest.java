@@ -19,13 +19,11 @@ import java.time.Duration;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
 
 import kieker.analysis.architecture.recovery.events.CallEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
-
 import teetime.framework.test.StageTester;
-
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
 
 /**
  * Tesintg operation and call data stage..
@@ -37,8 +35,10 @@ public class OperationAndCall4StaticDataStageTest {
 
     private static final String HOSTNAME = "test";
     private static final String SOURCE_PATH = "source/path";
+    private static final String SOURCE_MODULE = "sourceModule";
     private static final String CALLER = "caller()";
     private static final String TARGET_PATH = "target/path";
+    private static final String TARGET_MODULE = "targetModule";
     private static final String CALLEE = "callee()";
 
     @Test
@@ -47,7 +47,8 @@ public class OperationAndCall4StaticDataStageTest {
                 OperationAndCall4StaticDataStageTest.HOSTNAME);
 
         final CallerCallee callerCallee = new CallerCallee(OperationAndCall4StaticDataStageTest.SOURCE_PATH,
-                OperationAndCall4StaticDataStageTest.CALLER, OperationAndCall4StaticDataStageTest.TARGET_PATH,
+                OperationAndCall4StaticDataStageTest.SOURCE_MODULE, OperationAndCall4StaticDataStageTest.CALLER,
+                OperationAndCall4StaticDataStageTest.TARGET_PATH, OperationAndCall4StaticDataStageTest.TARGET_MODULE,
                 OperationAndCall4StaticDataStageTest.CALLEE);
         final OperationEvent firstOp = new OperationEvent(OperationAndCall4StaticDataStageTest.HOSTNAME,
                 OperationAndCall4StaticDataStageTest.SOURCE_PATH, OperationAndCall4StaticDataStageTest.CALLER);

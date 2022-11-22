@@ -19,6 +19,8 @@ import java.io.IOException;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /***************************************************************************
  * Copyright (C) 2022 OceanDSL (https://oceandsl.uni-kiel.de)
@@ -37,9 +39,6 @@ import org.junit.Test;
  ***************************************************************************/
 import teetime.framework.test.StageTester;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-
 /**
  * Text File based cleanup.
  *
@@ -49,8 +48,10 @@ import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 public class FileBasedCleanupComponentSignatureStageTest {
 
     private static final String SOURCE_PATH = "source/path/First";
+    private static final String SOURCE_MODULE = "sourceModule";
     private static final String CALLER = "Caller()";
     private static final String TARGET_PATH = "target/path/Second";
+    private static final String TARGET_MODULE = "targetModule";
     private static final String CALLEE = "Callee()";
 
     @Test
@@ -58,12 +59,14 @@ public class FileBasedCleanupComponentSignatureStageTest {
         final FileBasedCleanupComponentSignatureStage stage = new FileBasedCleanupComponentSignatureStage(true);
 
         final CallerCallee callerCallee = new CallerCallee(FileBasedCleanupComponentSignatureStageTest.SOURCE_PATH,
+                FileBasedCleanupComponentSignatureStageTest.SOURCE_MODULE,
                 FileBasedCleanupComponentSignatureStageTest.CALLER,
                 FileBasedCleanupComponentSignatureStageTest.TARGET_PATH,
+                FileBasedCleanupComponentSignatureStageTest.TARGET_MODULE,
                 FileBasedCleanupComponentSignatureStageTest.CALLEE);
 
-        final CallerCallee resultCallerCallee = new CallerCallee("first",
-                FileBasedCleanupComponentSignatureStageTest.CALLER, "second",
+        final CallerCallee resultCallerCallee = new CallerCallee("first", "firstModule",
+                FileBasedCleanupComponentSignatureStageTest.CALLER, "second", "secondModule",
                 FileBasedCleanupComponentSignatureStageTest.CALLEE);
 
         StageTester.test(stage).and().send(callerCallee).to(stage.getInputPort()).start();
@@ -76,12 +79,14 @@ public class FileBasedCleanupComponentSignatureStageTest {
         final FileBasedCleanupComponentSignatureStage stage = new FileBasedCleanupComponentSignatureStage(false);
 
         final CallerCallee callerCallee = new CallerCallee(FileBasedCleanupComponentSignatureStageTest.SOURCE_PATH,
+                FileBasedCleanupComponentSignatureStageTest.SOURCE_MODULE,
                 FileBasedCleanupComponentSignatureStageTest.CALLER,
                 FileBasedCleanupComponentSignatureStageTest.TARGET_PATH,
+                FileBasedCleanupComponentSignatureStageTest.TARGET_MODULE,
                 FileBasedCleanupComponentSignatureStageTest.CALLEE);
 
-        final CallerCallee resultCallerCallee = new CallerCallee("First",
-                FileBasedCleanupComponentSignatureStageTest.CALLER, "Second",
+        final CallerCallee resultCallerCallee = new CallerCallee("First", "firstModule",
+                FileBasedCleanupComponentSignatureStageTest.CALLER, "Second", "secoundModule",
                 FileBasedCleanupComponentSignatureStageTest.CALLEE);
 
         StageTester.test(stage).and().send(callerCallee).to(stage.getInputPort()).start();

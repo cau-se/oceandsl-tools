@@ -20,6 +20,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
+import org.oceandsl.analysis.code.stages.CsvMakeLowerCaseStage;
+import org.oceandsl.analysis.code.stages.CsvReaderStage;
+import org.oceandsl.analysis.code.stages.OperationCallFixPathStage;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeFactory;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
+import org.oceandsl.tools.sar.stages.StringFileWriterSink;
 import org.slf4j.Logger;
 
 import kieker.analysis.architecture.recovery.AssemblyModelAssemblerStage;
@@ -39,20 +50,8 @@ import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypePackage;
-
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
-
-import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
-import org.oceandsl.analysis.code.stages.CSVFunctionCallReaderStage;
-import org.oceandsl.analysis.code.stages.CSVMapperStage;
-import org.oceandsl.analysis.code.stages.OperationCallFixPathStage;
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.tools.sar.stages.FileBasedCleanupComponentSignatureStage;
-import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
-import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
-import org.oceandsl.tools.sar.stages.StringFileWriterSink;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -74,7 +73,7 @@ public class TeetimeCallConfiguration extends Configuration {
         readerPort = this.createOperationCallFixPath(readerPort, settings.getFunctionNameFiles(),
                 settings.getCallSplitSymbol(), settings.getMissingFunctionsFile());
 
-        final CSVMapperStage mapperStage = new CSVMapperStage(settings.isCaseInsensitive());
+        final CsvMakeLowerCaseStage mapperStage = new CsvMakeLowerCaseStage(settings.isCaseInsensitive());
         this.connectPorts(readerPort, mapperStage.getInputPort());
         readerPort = mapperStage.getOutputPort();
 
@@ -143,7 +142,7 @@ public class TeetimeCallConfiguration extends Configuration {
     private OutputPort<CallerCallee> createOperationCallFixPath(final OutputPort<CallerCallee> readerPort,
             final List<Path> functionNameFiles, final String namesSplitSymbol, final Path missingFunctionsFile)
             throws IOException {
-        if (functionNameFiles != null && !functionNameFiles.isEmpty()) {
+        if ((functionNameFiles != null) && !functionNameFiles.isEmpty()) {
             final OperationCallFixPathStage fixPathStage = new OperationCallFixPathStage(functionNameFiles,
                     namesSplitSymbol);
             if (missingFunctionsFile != null) {
@@ -159,8 +158,8 @@ public class TeetimeCallConfiguration extends Configuration {
 
     private OutputPort<CallerCallee> createReaderStage(final Path operationCallInputFile, final String callSplitSymbol)
             throws IOException {
-        final CSVFunctionCallReaderStage readCsvStage = new CSVFunctionCallReaderStage(operationCallInputFile,
-                callSplitSymbol);
+        final CsvReaderStage<CallerCallee> readCsvStage = new CsvReaderStage<>(operationCallInputFile, callSplitSymbol,
+                true, new CallerCalleeFactory());
         return readCsvStage.getOutputPort();
     }
 
