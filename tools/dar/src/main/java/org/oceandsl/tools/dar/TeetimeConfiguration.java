@@ -20,6 +20,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.analysis.generic.stages.CountEventsStage;
+import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.tools.dar.extractors.ELFComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
+import org.oceandsl.tools.dar.signature.processor.FileBasedSignatureProcessor;
+import org.oceandsl.tools.dar.signature.processor.MapBasedSignatureProcessor;
+import org.oceandsl.tools.dar.signature.processor.ModuleSignatureProcessor;
+import org.oceandsl.tools.dar.stages.OperationAndCallGeneratorStage;
 import org.slf4j.Logger;
 
 import kieker.analysis.architecture.recovery.AssemblyModelAssemblerStage;
@@ -44,22 +56,9 @@ import kieker.model.analysismodel.source.SourcePackage;
 import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.TypePackage;
 import kieker.tools.source.LogsReaderCompositeStage;
-
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 import teetime.stage.InstanceOfFilter;
-
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.generic.stages.CountEventsStage;
-import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
-import org.oceandsl.tools.dar.extractors.ELFComponentSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
-import org.oceandsl.tools.dar.signature.processor.FileBasedSignatureProcessor;
-import org.oceandsl.tools.dar.signature.processor.MapBasedSignatureProcessor;
-import org.oceandsl.tools.dar.signature.processor.ModuleSignatureProcessor;
-import org.oceandsl.tools.dar.stages.OperationAndCallGeneratorStage;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -93,6 +92,12 @@ public class TeetimeConfiguration extends Configuration {
 
         final CountEventsStage<IFlowRecord> counter = new CountEventsStage<>(1000000);
 
+        final OperationAndCallGeneratorStage operationAndCallStage = new OperationAndCallGeneratorStage(true,
+                this.createProcessors(settings.getModuleModes(), settings, logger),
+                !settings.isKeepMetaDataOnCompletedTraces());
+        final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
+                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL));
+
         final IComponentSignatureExtractor componentSignatureExtractor = this
                 .selectComponentSignaturExtractor(settings.getSignatureExtractor(), settings.getExperimentName());
         final IOperationSignatureExtractor operationSignatureExtractor = this
@@ -110,12 +115,6 @@ public class TeetimeConfiguration extends Configuration {
                 repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
                 repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
                 repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel());
-
-        final OperationAndCallGeneratorStage operationAndCallStage = new OperationAndCallGeneratorStage(true,
-                this.createProcessors(settings.getModuleModes(), settings, logger),
-                !settings.isKeepMetaDataOnCompletedTraces());
-        final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
-                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL));
 
         final ExecutionModelAssemblerStage executionModelGenerationStage = new ExecutionModelAssemblerStage(
                 new ExecutionModelAssembler(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),

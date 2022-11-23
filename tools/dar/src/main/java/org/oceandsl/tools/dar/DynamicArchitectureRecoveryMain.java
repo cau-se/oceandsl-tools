@@ -32,6 +32,7 @@ import kieker.tools.common.AbstractService;
 
 import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.EModuleMode;
 
 /**
  * Architecture analysis main class.

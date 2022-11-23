@@ -23,13 +23,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.oceandsl.analysis.utils.MapFileReader;
+import org.oceandsl.analysis.utils.StringValueConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
-
-import org.oceandsl.analysis.utils.MapFileReader;
-import org.oceandsl.analysis.utils.StringValueConverter;
 
 /**
  * @author Reiner Jung
@@ -70,11 +69,7 @@ public class MapBasedSignatureProcessor extends AbstractSignatureProcessor {
             }
         }
 
-        if (this.caseInsensitive) {
-            this.operationSignature = this.convertToLowerCase(this.removeTrailingUnderscore(operationSignature));
-        } else {
-            this.operationSignature = this.removeTrailingUnderscore(operationSignature);
-        }
+        this.operationSignature = this.convertToLowerCase(this.removeTrailingUnderscore(operationSignature));
     }
 
 }

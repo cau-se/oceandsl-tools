@@ -21,6 +21,9 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
 
+import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.analysis.generic.EModuleModeConverter;
+
 /**
  * All settings including command line parameters for the analysis.
  *
@@ -53,13 +56,17 @@ public class Settings { // NOPMD dataclass - required to contain settings
             "--function-names" }, required = false, variableArity = true, converter = PathConverter.class, description = "Function file map CSV file")
     private List<Path> functionNameFiles;
 
-    @Parameter(names = { "-m",
+    @Parameter(names = { "-a",
             "--missing-functions" }, required = false, converter = PathConverter.class, description = "Output file for the list of function without an associated file")
     private Path missingFunctionsFile;
 
     @Parameter(names = { "-o",
             "--output" }, required = true, converter = PathConverter.class, description = "Output directory to store graphics and statistics")
     private Path outputDirectory;
+
+    @Parameter(names = { "-m",
+            "--module-mode" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategy")
+    List<EModuleMode> moduleModes;
 
     @Parameter(names = { "-M",
             "--component-map" }, required = false, variableArity = true, converter = PathConverter.class, description = "Component, file and function map file")
@@ -113,6 +120,10 @@ public class Settings { // NOPMD dataclass - required to contain settings
         } else {
             return this.namesSplitSymbol;
         }
+    }
+
+    public List<EModuleMode> getModuleModes() {
+        return this.moduleModes;
     }
 
     public Path getOutputDirectory() {

@@ -15,21 +15,28 @@
  ***************************************************************************/
 package org.oceandsl.analysis.code.stages.data;
 
+import org.oceandsl.analysis.code.stages.ICsvRecord;
+
 /**
  * @author Reiner Jung
  * @since 1.0
  *
  */
-public class CallerCallee {
+public class CallerCallee implements ICsvRecord {
 
     private String sourcePath;
     private String targetPath;
+    private final String sourceModule;
+    private final String targetModule;
     private final String caller;
     private final String callee;
 
-    public CallerCallee(final String sourcePath, final String caller, final String targetPath, final String callee) {
+    public CallerCallee(final String sourcePath, final String sourceModule, final String caller,
+            final String targetPath, final String targetModule, final String callee) {
         this.sourcePath = sourcePath;
         this.targetPath = targetPath;
+        this.sourceModule = sourceModule;
+        this.targetModule = targetModule;
         this.caller = caller;
         this.callee = callee;
     }
@@ -58,13 +65,23 @@ public class CallerCallee {
         this.targetPath = targetPath;
     }
 
+    public String getSourceModule() {
+        return this.sourceModule;
+    }
+
+    public String getTargetModule() {
+        return this.targetModule;
+    }
+
     @Override
     public boolean equals(final Object object) {
         if (object instanceof CallerCallee) {
             final CallerCallee other = (CallerCallee) object;
             return this.checkString(this.sourcePath, other.getSourcePath())
+                    && this.checkString(this.sourceModule, other.getSourceModule())
                     && this.checkString(this.caller, other.getCaller())
                     && this.checkString(this.targetPath, other.getTargetPath())
+                    && this.checkString(this.targetModule, other.getTargetModule())
                     && this.checkString(this.callee, other.getCallee());
         } else {
             return false;
@@ -72,9 +89,9 @@ public class CallerCallee {
     }
 
     private boolean checkString(final String left, final String right) {
-        if (left == null && right == null) {
+        if ((left == null) && (right == null)) {
             return true;
-        } else if (left != null && right != null) {
+        } else if ((left != null) && (right != null)) {
             return left.equals(right);
         } else {
             return false;
@@ -83,7 +100,7 @@ public class CallerCallee {
 
     @Override
     public int hashCode() {
-        return this.sourcePath.hashCode() ^ this.caller.hashCode() ^ this.targetPath.hashCode()
-                ^ this.callee.hashCode();
+        return this.sourcePath.hashCode() ^ this.sourceModule.hashCode() ^ this.caller.hashCode()
+                ^ this.targetPath.hashCode() ^ this.targetModule.hashCode() ^ this.callee.hashCode();
     }
 }

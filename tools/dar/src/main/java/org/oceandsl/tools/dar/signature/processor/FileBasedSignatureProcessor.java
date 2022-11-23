@@ -40,11 +40,7 @@ public class FileBasedSignatureProcessor extends AbstractSignatureProcessor {
                     this.removeTrailingUnderscore(path.getName(path.getNameCount() - 1).toString()));
         }
 
-        if (this.caseInsensitive) {
-            this.operationSignature = this.convertToLowerCase(this.removeTrailingUnderscore(operationSignature));
-        } else {
-            this.operationSignature = this.removeTrailingUnderscore(operationSignature);
-        }
+        this.operationSignature = this.convertToLowerCase(this.removeTrailingUnderscore(operationSignature));
     }
 
 }

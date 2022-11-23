@@ -10,4 +10,4 @@ lib
 **/.classpath
 **/.project
 **/.settings/**
-
+hs_err_*.log

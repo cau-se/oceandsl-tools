@@ -32,7 +32,7 @@ public class ModuleSignatureProcessor extends AbstractSignatureProcessor {
 
     @Override
     public void processSignatures(final String componentSignature, final String operationSignature) {
-        final String[] values = operationSignature.split("_MOD_");
+        final String[] values = operationSignature.split(this.caseInsensitive ? "_mod_" : "_MOD_");
         if (values.length == 2) {
             this.componentSignature = this
                     .convertToLowerCase(this.removeLeadingUnderscore(this.removeTrailingUnderscore(values[0])));
