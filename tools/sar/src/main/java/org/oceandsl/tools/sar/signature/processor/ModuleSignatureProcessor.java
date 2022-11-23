@@ -29,14 +29,16 @@ public class ModuleSignatureProcessor extends AbstractSignatureProcessor {
     }
 
     @Override
-    public void processSignatures(final String path, final String componentSignature, final String operationSignature) {
+    public boolean processSignatures(final String path, final String componentSignature,
+            final String operationSignature) {
         this.operationSignature = this.convertToLowerCase(operationSignature);
         this.componentSignature = this.convertToLowerCase(componentSignature);
         // path is ignored
+        return true;
     }
 
     @Override
-    public void close() {
-        // nothing to be done here
+    public String getErrorMessage() {
+        return "";
     }
 }

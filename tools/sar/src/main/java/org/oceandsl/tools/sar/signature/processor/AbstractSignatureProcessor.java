@@ -41,9 +41,11 @@ public abstract class AbstractSignatureProcessor {
         return this.caseInsensitive ? string.toLowerCase() : string; // NOCS NOPMD
     }
 
-    public abstract void processSignatures(String path, String componentSignature, String operationSignature); // NOCS
-                                                                                                               // hiding
-                                                                                                               // fields
+    public abstract String getErrorMessage();
+
+    public abstract boolean processSignatures(String path, String componentSignature, String operationSignature); // NOCS
+                                                                                                                  // hiding
+                                                                                                                  // fields
 
     public String getComponentSignature() {
         return this.componentSignature;
@@ -52,6 +54,4 @@ public abstract class AbstractSignatureProcessor {
     public String getOperationSignature() {
         return this.operationSignature;
     }
-
-    public abstract void close();
 }

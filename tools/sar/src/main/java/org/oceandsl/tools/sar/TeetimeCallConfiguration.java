@@ -21,21 +21,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
-import org.oceandsl.analysis.code.stages.CsvMakeLowerCaseStage;
-import org.oceandsl.analysis.code.stages.CsvReaderStage;
-import org.oceandsl.analysis.code.stages.OperationCallFixPathStage;
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
-import org.oceandsl.analysis.code.stages.data.CallerCalleeFactory;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.generic.EModuleMode;
-import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.ModuleSignatureProcessor;
-import org.oceandsl.tools.sar.stages.MapBasedCleanupComponentSignatureStage;
-import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
-import org.oceandsl.tools.sar.stages.StringFileWriterSink;
 import org.slf4j.Logger;
 
 import kieker.analysis.architecture.recovery.AssemblyModelAssemblerStage;
@@ -55,8 +40,25 @@ import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypePackage;
+
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
+
+import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
+import org.oceandsl.analysis.code.stages.CsvMakeLowerCaseStage;
+import org.oceandsl.analysis.code.stages.CsvReaderStage;
+import org.oceandsl.analysis.code.stages.OperationCallFixPathStage;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeFactory;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.ModuleSignatureProcessor;
+import org.oceandsl.tools.sar.stages.CleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
+import org.oceandsl.tools.sar.stages.StringFileWriterSink;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -79,10 +81,11 @@ public class TeetimeCallConfiguration extends Configuration {
                 settings.getCallSplitSymbol(), settings.getMissingFunctionsFile());
 
         final CsvMakeLowerCaseStage mapperStage = new CsvMakeLowerCaseStage(settings.isCaseInsensitive());
-        this.connectPorts(readerPort, mapperStage.getInputPort());
-        readerPort = mapperStage.getOutputPort();
 
-        readerPort = this.createComponentMapping(readerPort, settings, logger);
+        final CleanupComponentSignatureStage cleanupComponentSignatureStage = new CleanupComponentSignatureStage(
+                this.createProcessors(settings.getModuleModes(), settings, logger));
+
+        final StringFileWriterSink errorMessageSink = new StringFileWriterSink(settings.getMissingMappingFile());
 
         final OperationAndCall4StaticDataStage operationAndCallStage = new OperationAndCall4StaticDataStage(
                 settings.getHostname());
@@ -112,7 +115,10 @@ public class TeetimeCallConfiguration extends Configuration {
                 repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
 
         /** connecting ports. */
-        this.connectPorts(readerPort, operationAndCallStage.getInputPort());
+        this.connectPorts(readerPort, mapperStage.getInputPort());
+        this.connectPorts(mapperStage.getOutputPort(), cleanupComponentSignatureStage.getInputPort());
+        this.connectPorts(cleanupComponentSignatureStage.getOutputPort(), operationAndCallStage.getInputPort());
+        this.connectPorts(cleanupComponentSignatureStage.getErrorMessageOutputPort(), errorMessageSink.getInputPort());
         this.connectPorts(operationAndCallStage.getOperationOutputPort(), typeModelAssemblerStage.getInputPort());
         this.connectPorts(typeModelAssemblerStage.getOutputPort(), assemblyModelAssemblerStage.getInputPort());
         this.connectPorts(assemblyModelAssemblerStage.getOutputPort(), deploymentModelAssemblerStage.getInputPort());
@@ -164,26 +170,18 @@ public class TeetimeCallConfiguration extends Configuration {
             throws IOException {
         if (settings.getComponentMapFiles() != null) {
             logger.info("Map based component definition");
-            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), settings.getMissingMappingFile(),
-                    settings.isCaseInsensitive(), settings.getCallSplitSymbol());
+            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), settings.isCaseInsensitive(),
+                    settings.getCallSplitSymbol());
         } else {
             logger.error("Missing map files for component identification.");
             return null;
         }
     }
 
-    private OutputPort<CallerCallee> createComponentMapping(final OutputPort<CallerCallee> readerPort,
-            final Settings settings, final Logger logger) throws IOException, ValueConversionErrorException {
-        final MapBasedCleanupComponentSignatureStage cleanupComponentSignatureStage = new MapBasedCleanupComponentSignatureStage(
-                this.createProcessors(settings.getModuleModes(), settings, logger));
-        this.connectPorts(readerPort, cleanupComponentSignatureStage.getInputPort());
-        return cleanupComponentSignatureStage.getOutputPort();
-    }
-
     private OutputPort<CallerCallee> createOperationCallFixPath(final OutputPort<CallerCallee> readerPort,
             final List<Path> functionNameFiles, final String namesSplitSymbol, final Path missingFunctionsFile)
             throws IOException {
-        if ((functionNameFiles != null) && !functionNameFiles.isEmpty()) {
+        if (functionNameFiles != null && !functionNameFiles.isEmpty()) {
             final OperationCallFixPathStage fixPathStage = new OperationCallFixPathStage(functionNameFiles,
                     namesSplitSymbol);
             if (missingFunctionsFile != null) {

@@ -16,8 +16,6 @@
 package org.oceandsl.tools.sar.signature.processor;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -25,10 +23,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.oceandsl.analysis.utils.MapFileReader;
-import org.oceandsl.analysis.utils.StringValueConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.oceandsl.analysis.utils.MapFileReader;
+import org.oceandsl.analysis.utils.StringValueConverter;
 
 /**
  * @author Reiner Jung
@@ -39,10 +38,10 @@ public class MapBasedSignatureProcessor extends AbstractSignatureProcessor {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final Map<String, String> componentMap = new HashMap<>();
-    private final PrintWriter missingMappingWriter;
+    private String errorMessage;
 
-    public MapBasedSignatureProcessor(final List<Path> componentMapFiles, final Path missingMappingFile,
-            final boolean caseInsensitive, final String separator) throws IOException {
+    public MapBasedSignatureProcessor(final List<Path> componentMapFiles, final boolean caseInsensitive,
+            final String separator) throws IOException {
         super(caseInsensitive);
         for (final Path componentMapFile : componentMapFiles) {
             this.logger.info("Reading map file {}", componentMapFile.toString());
@@ -52,39 +51,35 @@ public class MapBasedSignatureProcessor extends AbstractSignatureProcessor {
                     new StringValueConverter(caseInsensitive, 0));
             mapFileReader.read();
         }
-        if (missingMappingFile != null) {
-            this.missingMappingWriter = new PrintWriter(Files.newBufferedWriter(missingMappingFile));
-        } else {
-            this.missingMappingWriter = null; // NOPMD null assignment necessary
-        }
     }
 
     @Override
-    public void processSignatures(final String pathString, final String componentSignature,
+    public boolean processSignatures(final String pathString, final String componentSignature,
             final String operationSignature) {
         this.operationSignature = this.convertToLowerCase(operationSignature);
 
         if ("<<no-file>>".equals(pathString)) {
             this.componentSignature = "<unknown>";
+            return true;
         } else {
             final Path path = Paths.get(pathString);
             final String filename = this.convertToLowerCase(path.getName(path.getNameCount() - 1).toString());
             final String result = this.componentMap.get(filename);
             if (result != null) {
                 this.componentSignature = result;
+                return true;
             } else {
                 this.logger.warn("File '{}' has no component mapping. Signature '{}'", filename, operationSignature);
                 this.componentSignature = "??" + pathString.toLowerCase(Locale.ROOT);
-                if (this.missingMappingWriter != null) {
-                    this.missingMappingWriter.printf("%s;%s;%s\b", filename, componentSignature, operationSignature);
-                }
+                this.errorMessage = String.format("%s;%s;%s\n", filename, componentSignature, operationSignature);
+                return false;
             }
         }
     }
 
     @Override
-    public void close() {
-        this.missingMappingWriter.close();
+    public String getErrorMessage() {
+        return this.errorMessage;
     }
 
 }

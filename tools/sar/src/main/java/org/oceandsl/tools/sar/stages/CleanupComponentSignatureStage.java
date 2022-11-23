@@ -17,21 +17,24 @@ package org.oceandsl.tools.sar.stages;
 
 import java.util.List;
 
+import teetime.framework.OutputPort;
+import teetime.stage.basic.AbstractFilter;
+
 import org.oceandsl.analysis.code.stages.data.CallerCallee;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
-
-import teetime.stage.basic.AbstractFilter;
 
 /**
  * @author Reiner Jung
  * @since 1.1
  */
-public class MapBasedCleanupComponentSignatureStage extends AbstractFilter<CallerCallee> {
+public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee> {
+
+    private final OutputPort<String> errorMessageOutputPort = this.createOutputPort(String.class);
 
     private static final String UNKNOWN = "<unknown>";
     private final List<AbstractSignatureProcessor> processors;
 
-    public MapBasedCleanupComponentSignatureStage(final List<AbstractSignatureProcessor> processors) {
+    public CleanupComponentSignatureStage(final List<AbstractSignatureProcessor> processors) {
         this.processors = processors;
     }
 
@@ -49,24 +52,24 @@ public class MapBasedCleanupComponentSignatureStage extends AbstractFilter<Calle
     private Operation executeOperation(final String path, final String componentSignature,
             final String operationSignature) {
         final Operation operation = new Operation();
-        operation.component = MapBasedCleanupComponentSignatureStage.UNKNOWN;
-        operation.operation = MapBasedCleanupComponentSignatureStage.UNKNOWN;
+        operation.component = CleanupComponentSignatureStage.UNKNOWN;
+        operation.operation = CleanupComponentSignatureStage.UNKNOWN;
         for (final AbstractSignatureProcessor processor : this.processors) {
-            processor.processSignatures(path, componentSignature, operationSignature);
-            if (operation.component.equals(MapBasedCleanupComponentSignatureStage.UNKNOWN)) {
+            if (!processor.processSignatures(path, componentSignature, operationSignature)) {
+                this.errorMessageOutputPort.send(processor.getErrorMessage());
+            }
+            if (operation.component.equals(CleanupComponentSignatureStage.UNKNOWN)) {
                 operation.component = processor.getComponentSignature();
             }
-            if (operation.operation.equals(MapBasedCleanupComponentSignatureStage.UNKNOWN)) {
+            if (operation.operation.equals(CleanupComponentSignatureStage.UNKNOWN)) {
                 operation.operation = processor.getOperationSignature();
             }
         }
         return operation;
     }
 
-    @Override
-    protected void onTerminating() {
-        this.processors.forEach(processor -> processor.close());
-        super.onTerminating();
+    public OutputPort<String> getErrorMessageOutputPort() {
+        return this.errorMessageOutputPort;
     }
 
     private class Operation {
