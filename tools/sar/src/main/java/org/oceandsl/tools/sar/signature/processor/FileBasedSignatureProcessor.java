@@ -44,7 +44,7 @@ public class FileBasedSignatureProcessor extends AbstractSignatureProcessor {
 
     @Override
     public String getErrorMessage() {
-        return "";
+        return null;
     }
 
 }

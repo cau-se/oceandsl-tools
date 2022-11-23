@@ -16,7 +16,7 @@ class FileBasedSignatureProcessorTest {
         final boolean result = processor.processSignatures(FileBasedSignatureProcessorTest.PATH,
                 FileBasedSignatureProcessorTest.COMPONENT, FileBasedSignatureProcessorTest.OPERATION);
         Assertions.assertTrue(result, "File-based processor should never fail.");
-        Assertions.assertEquals(processor.getErrorMessage(), "", "there should never be an error message");
+        Assertions.assertEquals(processor.getErrorMessage(), null, "there should never be an error message");
         Assertions.assertEquals(processor.getComponentSignature(), FileBasedSignatureProcessorTest.SPECIAL_FILE_NAME,
                 "component name should not be lower case");
         Assertions.assertEquals(processor.getOperationSignature(), FileBasedSignatureProcessorTest.OPERATION,
@@ -29,12 +29,11 @@ class FileBasedSignatureProcessorTest {
         final boolean result = processor.processSignatures(FileBasedSignatureProcessorTest.PATH,
                 FileBasedSignatureProcessorTest.COMPONENT, FileBasedSignatureProcessorTest.OPERATION);
         Assertions.assertTrue(result, "File-based processor should never fail.");
-        Assertions.assertEquals(processor.getErrorMessage(), "", "there should never be an error message");
+        Assertions.assertEquals(processor.getErrorMessage(), null, "there should never be an error message");
         Assertions.assertEquals(processor.getComponentSignature(),
-                FileBasedSignatureProcessorTest.SPECIAL_FILE_NAME.toLowerCase(),
-                "component name should not be lower case");
+                FileBasedSignatureProcessorTest.SPECIAL_FILE_NAME.toLowerCase(), "component name should be lower case");
         Assertions.assertEquals(processor.getOperationSignature(),
-                FileBasedSignatureProcessorTest.OPERATION.toLowerCase(), "operation name should not be lower case");
+                FileBasedSignatureProcessorTest.OPERATION.toLowerCase(), "operation name should be lower case");
     }
 
 }
