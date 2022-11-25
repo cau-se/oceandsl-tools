@@ -22,9 +22,9 @@ package org.oceandsl.tools.sar.signature.processor;
  * @since 1.3.0
  *
  */
-public class ModuleSignatureProcessor extends AbstractSignatureProcessor {
+public class ModuleBasedSignatureProcessor extends AbstractSignatureProcessor {
 
-    public ModuleSignatureProcessor(final boolean caseInsensitive) {
+    public ModuleBasedSignatureProcessor(final boolean caseInsensitive) {
         super(caseInsensitive);
     }
 
@@ -39,6 +39,6 @@ public class ModuleSignatureProcessor extends AbstractSignatureProcessor {
 
     @Override
     public String getErrorMessage() {
-        return "";
+        return null;
     }
 }

@@ -21,6 +21,21 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
+import org.oceandsl.analysis.code.stages.CsvMakeLowerCaseStage;
+import org.oceandsl.analysis.code.stages.CsvReaderStage;
+import org.oceandsl.analysis.code.stages.OperationCallFixPathStage;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeFactory;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.ModuleBasedSignatureProcessor;
+import org.oceandsl.tools.sar.stages.CleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
+import org.oceandsl.tools.sar.stages.StringFileWriterSink;
 import org.slf4j.Logger;
 
 import kieker.analysis.architecture.recovery.AssemblyModelAssemblerStage;
@@ -40,25 +55,8 @@ import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypePackage;
-
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
-
-import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
-import org.oceandsl.analysis.code.stages.CsvMakeLowerCaseStage;
-import org.oceandsl.analysis.code.stages.CsvReaderStage;
-import org.oceandsl.analysis.code.stages.OperationCallFixPathStage;
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
-import org.oceandsl.analysis.code.stages.data.CallerCalleeFactory;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.generic.EModuleMode;
-import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.ModuleSignatureProcessor;
-import org.oceandsl.tools.sar.stages.CleanupComponentSignatureStage;
-import org.oceandsl.tools.sar.stages.OperationAndCall4StaticDataStage;
-import org.oceandsl.tools.sar.stages.StringFileWriterSink;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -165,7 +163,7 @@ public class TeetimeCallConfiguration extends Configuration {
 
     private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger, final Settings settings) {
         logger.info("Module based component definition");
-        return new ModuleSignatureProcessor(settings.isCaseInsensitive());
+        return new ModuleBasedSignatureProcessor(settings.isCaseInsensitive());
     }
 
     private AbstractSignatureProcessor createFileBasedProcessor(final Logger logger,
@@ -189,7 +187,7 @@ public class TeetimeCallConfiguration extends Configuration {
     private OutputPort<CallerCallee> createOperationCallFixPath(final OutputPort<CallerCallee> readerPort,
             final List<Path> functionNameFiles, final String namesSplitSymbol, final Path missingFunctionsFile)
             throws IOException {
-        if (functionNameFiles != null && !functionNameFiles.isEmpty()) {
+        if ((functionNameFiles != null) && !functionNameFiles.isEmpty()) {
             final OperationCallFixPathStage fixPathStage = new OperationCallFixPathStage(functionNameFiles,
                     namesSplitSymbol);
             if (missingFunctionsFile != null) {
