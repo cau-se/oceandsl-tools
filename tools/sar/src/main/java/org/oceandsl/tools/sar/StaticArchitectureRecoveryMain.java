@@ -172,7 +172,7 @@ public class StaticArchitectureRecoveryMain {
             }
         }
 
-        if (!Files.isDirectory(this.settings.getOutputDirectory().getParent())) {
+        if (!Files.isDirectory(this.settings.getOutputDirectory().toAbsolutePath().getParent())) {
             this.logger.error("Output path {} is not directory", this.settings.getOutputDirectory());
             return false;
         }
