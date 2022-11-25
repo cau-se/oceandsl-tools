@@ -22,8 +22,11 @@ import java.nio.file.Path;
 
 import teetime.framework.AbstractProducerStage;
 
+import org.oceandsl.analysis.code.stages.data.ICsvRecord;
+import org.oceandsl.analysis.code.stages.data.ICsvRecordFactory;
+
 /**
- * Reads an 3 or 4 column CSV file containing calls.
+ * Reader for CSV files.
  *
  * @author Reiner Jung
  * @since 1.0

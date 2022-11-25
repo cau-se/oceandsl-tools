@@ -16,6 +16,7 @@
 package org.oceandsl.tools.sar;
 
 import java.io.IOException;
+import java.lang.invoke.WrongMethodTypeException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -54,7 +55,7 @@ public class StaticArchitectureRecoveryMain {
     public static final int USAGE_EXIT_CODE = 4;
 
     /** logger for all tools. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass().getCanonicalName()); // NOPMD
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName()); // NOPMD
 
     /** true if help should be displayed. */
     protected boolean help = false; // NOPMD this is set to false for documentation purposes
@@ -213,7 +214,7 @@ public class StaticArchitectureRecoveryMain {
                 this.logger.error("Configuration Error"); // NOPMD
                 return StaticArchitectureRecoveryMain.CONFIGURATION_ERROR;
             }
-        } catch (final ParameterException e) {
+        } catch (final WrongMethodTypeException | ParameterException e) {
             this.logger.error(e.getLocalizedMessage()); // NOPMD
             commander.usage();
             return StaticArchitectureRecoveryMain.PARAMETER_ERROR;

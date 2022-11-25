@@ -15,8 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.analysis.code.stages.data;
 
-import org.oceandsl.analysis.code.stages.ICsvRecord;
-
 /**
  * @author Reiner Jung
  * @since 1.0

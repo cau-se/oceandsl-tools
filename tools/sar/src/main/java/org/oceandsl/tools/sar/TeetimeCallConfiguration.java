@@ -85,7 +85,12 @@ public class TeetimeCallConfiguration extends Configuration {
         final CleanupComponentSignatureStage cleanupComponentSignatureStage = new CleanupComponentSignatureStage(
                 this.createProcessors(settings.getModuleModes(), settings, logger));
 
-        final StringFileWriterSink errorMessageSink = new StringFileWriterSink(settings.getMissingMappingFile());
+        final StringFileWriterSink errorMessageSink;
+        if (settings.getMissingMappingsFile() != null) {
+            errorMessageSink = new StringFileWriterSink(settings.getMissingMappingsFile());
+        } else {
+            errorMessageSink = null;
+        }
 
         final OperationAndCall4StaticDataStage operationAndCallStage = new OperationAndCall4StaticDataStage(
                 settings.getHostname());
@@ -118,7 +123,10 @@ public class TeetimeCallConfiguration extends Configuration {
         this.connectPorts(readerPort, mapperStage.getInputPort());
         this.connectPorts(mapperStage.getOutputPort(), cleanupComponentSignatureStage.getInputPort());
         this.connectPorts(cleanupComponentSignatureStage.getOutputPort(), operationAndCallStage.getInputPort());
-        this.connectPorts(cleanupComponentSignatureStage.getErrorMessageOutputPort(), errorMessageSink.getInputPort());
+        if (errorMessageSink != null) {
+            this.connectPorts(cleanupComponentSignatureStage.getErrorMessageOutputPort(),
+                    errorMessageSink.getInputPort());
+        }
         this.connectPorts(operationAndCallStage.getOperationOutputPort(), typeModelAssemblerStage.getInputPort());
         this.connectPorts(typeModelAssemblerStage.getOutputPort(), assemblyModelAssemblerStage.getInputPort());
         this.connectPorts(assemblyModelAssemblerStage.getOutputPort(), deploymentModelAssemblerStage.getInputPort());

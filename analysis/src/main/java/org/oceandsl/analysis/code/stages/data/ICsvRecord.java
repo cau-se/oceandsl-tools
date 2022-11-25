@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.dar;
+package org.oceandsl.analysis.code.stages.data;
 
 /**
+ * Marker interface for CsvRecords.
+ *
  * @author Reiner Jung
  * @since 1.3.0
+ *
  */
-public class WrongParameterException extends Exception {
-
-    private static final long serialVersionUID = 4642340236541013398L;
+public interface ICsvRecord {
 }

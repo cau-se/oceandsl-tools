@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.generic;
-
-import java.util.Arrays;
+package org.oceandsl.analysis.code.stages.data;
 
 /**
+ * Factory interface for csv records.
  *
  * @author Reiner Jung
  * @since 1.3.0
  *
+ * @param <T>
  */
-public enum EModuleMode {
-    MAP_MODE, MODULE_MODE, JAVA_CLASS_MODE, PYTHON_CLASS_MODE, FILE_MODE;
+public interface ICsvRecordFactory<T extends ICsvRecord> {
 
-    public static String getModesInfo() {
-        return Arrays.asList(EModuleMode.values()).stream().map(e -> e.name()).reduce(", ", String::concat);
-    }
+    T createRecord(String[] headerLabels, String[] values);
 }
