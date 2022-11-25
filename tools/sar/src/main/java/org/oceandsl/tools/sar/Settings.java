@@ -57,7 +57,7 @@ public class Settings { // NOPMD dataclass - required to contain settings
     private List<Path> functionNameFiles;
 
     @Parameter(names = { "-a",
-            "--missing-functions" }, required = false, converter = PathConverter.class, description = "Output file for the list of function without an associated file")
+            "--missing-functions" }, required = false, converter = PathConverter.class, description = "Output file for the list of functions without an associated file")
     private Path missingFunctionsFile;
 
     @Parameter(names = { "-o",
@@ -65,18 +65,18 @@ public class Settings { // NOPMD dataclass - required to contain settings
     private Path outputDirectory;
 
     @Parameter(names = { "-m",
-            "--module-mode" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategy")
+            "--module-modes" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategies (at lease one of): module-mode, file-mode, map-mode")
     List<EModuleMode> moduleModes;
 
     @Parameter(names = { "-M",
-            "--component-map" }, required = false, variableArity = true, converter = PathConverter.class, description = "Component, file and function map file")
+            "--component-maps" }, required = false, variableArity = true, converter = PathConverter.class, description = "Component, file and function map files")
     private List<Path> componentMapFiles;
 
     @Parameter(names = { "-l", "--source-label" }, required = true, description = "Set source label for the read data")
     private String sourceLabel;
 
     @Parameter(names = { "-c",
-            "--case-insensitive" }, required = false, description = "Handle function names in CSV case insensitive")
+            "--case-insensitive" }, required = false, description = "Handle names in CSV case insensitive")
     private boolean caseInsensitive;
 
     @Parameter(names = { "-H",
@@ -87,8 +87,8 @@ public class Settings { // NOPMD dataclass - required to contain settings
     private String experimentName;
 
     @Parameter(names = { "-n",
-            "--missing-mappings" }, required = false, converter = PathConverter.class, description = "Output file for files without a mapping in the mapping file.")
-    private Path missingMappingFile;
+            "--missing-mappings-file" }, required = false, converter = PathConverter.class, description = "Output file for the list of files with a missing mapping in the mapping file.")
+    private Path missingMappingsFile;
 
     public Path getOperationCallInputFile() {
         return this.operationCallInputFile;
@@ -158,7 +158,7 @@ public class Settings { // NOPMD dataclass - required to contain settings
         return this.missingFunctionsFile;
     }
 
-    public Path getMissingMappingFile() {
-        return this.missingMappingFile;
+    public Path getMissingMappingsFile() {
+        return this.missingMappingsFile;
     }
 }

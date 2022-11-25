@@ -84,8 +84,8 @@ public class TeetimeCallConfiguration extends Configuration {
                 this.createProcessors(settings.getModuleModes(), settings, logger));
 
         final StringFileWriterSink errorMessageSink;
-        if (settings.getMissingMappingFile() != null) {
-            errorMessageSink = new StringFileWriterSink(settings.getMissingMappingFile());
+        if (settings.getMissingMappingsFile() != null) {
+            errorMessageSink = new StringFileWriterSink(settings.getMissingMappingsFile());
         } else {
             errorMessageSink = null;
         }

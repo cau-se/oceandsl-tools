@@ -43,7 +43,7 @@ public class Settings { // NOPMD data class
     private Path outputDirectory;
 
     @Parameter(names = { "-M",
-            "--component-map" }, required = false, variableArity = true, converter = PathConverter.class, description = "Component, file and function map file")
+            "--component-maps" }, required = false, variableArity = true, converter = PathConverter.class, description = "Component, file and function map files")
     private List<Path> componentMapFiles;
 
     @Parameter(names = { "-a",
@@ -57,8 +57,7 @@ public class Settings { // NOPMD data class
     @Parameter(names = { "-l", "--source-label" }, required = true, description = "Set source label for the read data")
     private String sourceLabel;
 
-    @Parameter(names = { "-c",
-            "--case-insensitive" }, required = false, description = "Handle function names case insensitive")
+    @Parameter(names = { "-c", "--case-insensitive" }, required = false, description = "Handle names case insensitive")
     private boolean caseInsensitive;
 
     @Parameter(names = { "-E", "--experiment-name" }, required = true, description = "Name of the experiment")
@@ -73,7 +72,7 @@ public class Settings { // NOPMD data class
     private boolean keepMetaDataOnCompletedTraces;
 
     @Parameter(names = { "-m",
-            "--module-mode" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategy")
+            "--module-modes" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategies: file-mode, map-mode, module-mode")
     List<EModuleMode> moduleModes;
 
     @Parameter(names = { "-ms",

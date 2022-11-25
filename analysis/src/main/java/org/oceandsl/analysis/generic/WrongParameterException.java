@@ -15,18 +15,11 @@
  ***************************************************************************/
 package org.oceandsl.analysis.generic;
 
-import java.util.Arrays;
-
 /**
- *
  * @author Reiner Jung
  * @since 1.3.0
- *
  */
-public enum EModuleMode {
-    MAP_MODE, MODULE_MODE, JAVA_CLASS_MODE, PYTHON_CLASS_MODE, FILE_MODE;
+public class WrongParameterException extends Exception {
 
-    public static String getModesInfo() {
-        return Arrays.asList(EModuleMode.values()).stream().map(e -> e.name()).reduce(", ", String::concat);
-    }
+    private static final long serialVersionUID = 4642340236541013398L;
 }
