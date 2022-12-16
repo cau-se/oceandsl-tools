@@ -20,13 +20,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.oceandsl.tools.sar.bsc.dataflow.model.DataTransfer;
+
 import teetime.framework.AbstractProducerStage;
 
 /**
  * @author Reiner Jung
  * @since 1.1
  */
-public class CSVDataflowReaderStage extends AbstractProducerStage<DataAccess> {
+public class CSVDataflowReaderStage extends AbstractProducerStage<DataTransfer> {
 
     private final BufferedReader reader;
     private final String splitSymbol;
@@ -55,7 +57,7 @@ public class CSVDataflowReaderStage extends AbstractProducerStage<DataAccess> {
             final String[] values = line.split(this.splitSymbol);
             if (values.length >= 4) {
                 try {
-                    this.outputPort.send(new DataAccess(values[0].trim(), values[1].trim(),
+                    this.outputPort.send(new DataTransfer(values[0].trim(), values[1].trim(),
                             EDirection.getValue(values[2].trim()), values[3].trim()));
                 } catch (final InternalError e) {
                     this.logger.error("Line format error '{}', {}", line, e.getMessage());

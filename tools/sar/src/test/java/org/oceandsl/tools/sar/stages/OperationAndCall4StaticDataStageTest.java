@@ -15,7 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages;
 
-
 import kieker.analysis.architecture.recovery.events.CallEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
 import org.hamcrest.MatcherAssert;

@@ -43,8 +43,7 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
                 CountUniqueDataflowCallsStage.createForStorageDataflow(executionModel));
     }
 
-    public static final Function<DataAccess, EObject> createForStorageDataflow(
-            final ExecutionModel executionModel) {
+    public static final Function<DataAccess, EObject> createForStorageDataflow(final ExecutionModel executionModel) {
         return dataAccess -> {
             final StorageDataflow result = CountUniqueDataflowCallsStage.getValue(executionModel,
                     CountUniqueDataflowCallsStage.getKeyTuple(dataAccess, executionModel));

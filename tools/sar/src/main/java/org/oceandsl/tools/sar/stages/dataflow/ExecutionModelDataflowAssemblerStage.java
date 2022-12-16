@@ -25,7 +25,7 @@ import kieker.model.analysismodel.execution.EDirection;
 import kieker.model.analysismodel.execution.ExecutionFactory;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Tuple;
-import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.source.SourceModel;
 
 /**
  * @author Reiner Jung

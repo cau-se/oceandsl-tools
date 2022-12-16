@@ -17,19 +17,6 @@ package org.oceandsl.tools.sar;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-
-import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.assembly.AssemblyModel;
-import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.sources.SourceModel;
-import kieker.model.analysismodel.statistics.StatisticsModel;
-import kieker.model.analysismodel.type.TypeModel;
-
-import teetime.framework.Configuration;
-import teetime.framework.OutputPort;
-
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.sar.stages.dataflow.AssemblyModelDataflowAssemblerStage;
 import org.oceandsl.tools.sar.stages.dataflow.CSVDataflowReaderStage;
@@ -40,6 +27,17 @@ import org.oceandsl.tools.sar.stages.dataflow.ExecutionModelDataflowAssemblerSta
 import org.oceandsl.tools.sar.stages.dataflow.FileBasedCleanupInDataflowSignatureStage;
 import org.oceandsl.tools.sar.stages.dataflow.MapBasedCleanupInDataflowSignatureStage;
 import org.oceandsl.tools.sar.stages.dataflow.TypeModelDataflowAssemblerStage;
+import org.slf4j.Logger;
+
+import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.model.analysismodel.assembly.AssemblyPackage;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.source.SourcePackage;
+import kieker.model.analysismodel.statistics.StatisticsPackage;
+import kieker.model.analysismodel.type.TypePackage;
+import teetime.framework.Configuration;
+import teetime.framework.OutputPort;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -79,19 +77,23 @@ public class TeetimeDataflowConfiguration extends Configuration {
 
         /** -- call based modeling -- */
         final TypeModelDataflowAssemblerStage typeModelDataflowAssemblerStage = new TypeModelDataflowAssemblerStage(
-                repository.getModel(TypeModel.class), repository.getModel(SourceModel.class),
-                settings.getSourceLabel());
+                repository.getModel(TypePackage.Literals.TYPE_MODEL),
+                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel());
         final AssemblyModelDataflowAssemblerStage assemblyModelDataflowAssemblerStage = new AssemblyModelDataflowAssemblerStage(
-                repository.getModel(TypeModel.class), repository.getModel(AssemblyModel.class),
-                repository.getModel(SourceModel.class), settings.getSourceLabel());
+                repository.getModel(TypePackage.Literals.TYPE_MODEL),
+                repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
+                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel());
         final DeploymentModelDataflowAssemblerStage deploymentModelDataflowAssemblerStage = new DeploymentModelDataflowAssemblerStage(
-                repository.getModel(AssemblyModel.class), repository.getModel(DeploymentModel.class),
-                repository.getModel(SourceModel.class), settings.getSourceLabel());
+                repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
+                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
+                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel());
         final ExecutionModelDataflowAssemblerStage executionModelDataflowGenerationStage = new ExecutionModelDataflowAssemblerStage(
-                repository.getModel(ExecutionModel.class), repository.getModel(DeploymentModel.class),
-                repository.getModel(SourceModel.class), settings.getSourceLabel());
+                repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),
+                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
+                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel());
         final CountUniqueDataflowCallsStage countUniqueDataflowCalls = new CountUniqueDataflowCallsStage(
-                repository.getModel(StatisticsModel.class), repository.getModel(ExecutionModel.class));
+                repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL),
+                repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
 
         /** connecting ports. */
         this.connectPorts(readerDataflowPort, typeModelDataflowAssemblerStage.getInputPort());

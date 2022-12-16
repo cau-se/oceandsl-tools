@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kieker.model.analysismodel.sources.SourceModel;
+import kieker.model.analysismodel.source.SourceModel;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.StorageType;

@@ -1,8 +1,23 @@
+/***************************************************************************
+ * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package org.oceandsl.tools.sar.bsc.dataflow.model;
 
 import org.oceandsl.tools.sar.stages.dataflow.EDirection;
 
-public class DataTransferObject {
+public class DataTransfer {
 
     private String component;
     private String sourceIdent;
@@ -14,7 +29,8 @@ public class DataTransferObject {
     private boolean callsOperationFlag;
     private boolean callsCommonFlag;
 
-    public DataTransferObject(final String component, final String sourceIdent, final EDirection direction, final String targetIdent){
+    public DataTransfer(final String component, final String sourceIdent, final EDirection direction,
+            final String targetIdent) {
 
         this.component = component;
         this.sourceIdent = sourceIdent;
@@ -24,8 +40,7 @@ public class DataTransferObject {
         this.callsCommonFlag = false;
     }
 
-
-    public DataTransferObject() {
+    public DataTransfer() {
         this.callsOperationFlag = false;
         this.callsCommonFlag = false;
     }
@@ -46,7 +61,9 @@ public class DataTransferObject {
         this.sourceIdent = sourceIdent;
     }
 
-    public EDirection getDirection() {return direction;}
+    public EDirection getDirection() {
+        return direction;
+    }
 
     public String getTargetIdent() {
         return targetIdent;
@@ -67,6 +84,7 @@ public class DataTransferObject {
     public void setCallsOperation(final boolean callsOperation) {
         this.callsOperationFlag = callsOperation;
     }
+
     public void setCallsCommon(final boolean callsCommon) {
         this.callsCommonFlag = callsCommon;
     }

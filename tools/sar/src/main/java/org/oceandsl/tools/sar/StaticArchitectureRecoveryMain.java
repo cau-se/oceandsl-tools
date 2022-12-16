@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 package org.oceandsl.tools.sar;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import kieker.analysis.architecture.repository.ModelRepository;
@@ -89,7 +90,7 @@ public class StaticArchitectureRecoveryMain {
         if (this.settings.getDataflowInputFile() != null) {
             this.executeConfiguration("dataflow", label, this.createTeetimeDataflowConfiguration());
         }
-        if(this.settings.getBscDataflowInputFile() != null && this.settings.getComponentBscInputFile() != null){
+        if (this.settings.getBscDataflowInputFile() != null && this.settings.getComponentBscInputFile() != null) {
             this.executeConfiguration("dataflow", label, this.createTeetimeBscDataflowConfiguration());
         } else {
             logger.error("Error on initialization. Please make sure to use both dataflow csv AND component csv file.");
@@ -164,7 +165,8 @@ public class StaticArchitectureRecoveryMain {
     }
 
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (this.settings.getOperationCallInputFile() == null && this.settings.getDataflowInputFile() == null && this.settings.getBscDataflowInputFile() == null) {
+        if (this.settings.getOperationCallInputFile() == null && this.settings.getDataflowInputFile() == null
+                && this.settings.getBscDataflowInputFile() == null) {
             this.logger.error("You need at least operation calls or dataflow as input.");
             return false;
         }
@@ -183,18 +185,20 @@ public class StaticArchitectureRecoveryMain {
             return false;
         }
 
-        return (this.isReadable(this.settings.getOperationCallInputFile()) || this.isReadable(this.settings.getDataflowInputFile()) || this.isReadable(this.settings.getBscDataflowInputFile()));
+        return (this.isReadable(this.settings.getOperationCallInputFile())
+                || this.isReadable(this.settings.getDataflowInputFile())
+                || this.isReadable(this.settings.getBscDataflowInputFile()));
     }
 
-    private boolean isReadable(Path p){
-        try{
+    private boolean isReadable(Path p) {
+        try {
             if (!Files.isReadable(p)) {
                 this.logger.error("Input path {} is not file", p);
                 return false;
             }
             return true;
-        }catch(NullPointerException e){
-            if(logger.isInfoEnabled()){
+        } catch (NullPointerException e) {
+            if (logger.isInfoEnabled()) {
                 logger.info("no config file at " + p);
             }
             return false;
