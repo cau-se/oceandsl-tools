@@ -20,26 +20,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.generic.EModuleMode;
-import org.oceandsl.analysis.generic.stages.CountEventsStage;
-import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
-import org.oceandsl.tools.dar.extractors.ELFComponentSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
-import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
-import org.oceandsl.tools.dar.signature.processor.FileBasedSignatureProcessor;
-import org.oceandsl.tools.dar.signature.processor.MapBasedSignatureProcessor;
-import org.oceandsl.tools.dar.signature.processor.ModuleSignatureProcessor;
-import org.oceandsl.tools.dar.stages.OperationAndCallGeneratorStage;
 import org.slf4j.Logger;
 
-import kieker.analysis.architecture.recovery.AssemblyModelAssemblerStage;
+import kieker.analysis.architecture.recovery.AssemblyModelAssembler;
 import kieker.analysis.architecture.recovery.CallEvent2OperationCallStage;
-import kieker.analysis.architecture.recovery.DeploymentModelAssemblerStage;
+import kieker.analysis.architecture.recovery.DeploymentModelAssembler;
 import kieker.analysis.architecture.recovery.ExecutionModelAssembler;
-import kieker.analysis.architecture.recovery.ExecutionModelAssemblerStage;
-import kieker.analysis.architecture.recovery.TypeModelAssemblerStage;
+import kieker.analysis.architecture.recovery.OperationCallModelAssemblerStage;
+import kieker.analysis.architecture.recovery.OperationEventModelAssemblerStage;
+import kieker.analysis.architecture.recovery.TypeModelAssembler;
 import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
 import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
 import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;
@@ -56,9 +45,23 @@ import kieker.model.analysismodel.source.SourcePackage;
 import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.TypePackage;
 import kieker.tools.source.LogsReaderCompositeStage;
+
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 import teetime.stage.InstanceOfFilter;
+
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.analysis.generic.stages.CountEventsStage;
+import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
+import org.oceandsl.tools.dar.extractors.ELFComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
+import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
+import org.oceandsl.tools.dar.signature.processor.FileBasedSignatureProcessor;
+import org.oceandsl.tools.dar.signature.processor.MapBasedSignatureProcessor;
+import org.oceandsl.tools.dar.signature.processor.ModuleSignatureProcessor;
+import org.oceandsl.tools.dar.stages.OperationAndCallGeneratorStage;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -103,20 +106,20 @@ public class TeetimeConfiguration extends Configuration {
         final IOperationSignatureExtractor operationSignatureExtractor = this
                 .selectOperationSignaturExtractor(settings.getSignatureExtractor());
 
-        final TypeModelAssemblerStage typeModelAssemblerStage = new TypeModelAssemblerStage(
-                repository.getModel(TypePackage.Literals.TYPE_MODEL),
-                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel(),
-                componentSignatureExtractor, operationSignatureExtractor);
-        final AssemblyModelAssemblerStage assemblyModelAssemblerStage = new AssemblyModelAssemblerStage(
-                repository.getModel(TypePackage.Literals.TYPE_MODEL),
-                repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
-                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel());
-        final DeploymentModelAssemblerStage deploymentModelAssemblerStage = new DeploymentModelAssemblerStage(
-                repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
-                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
-                repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel());
+        final OperationEventModelAssemblerStage typeModelAssemblerStage = new OperationEventModelAssemblerStage(
+                new TypeModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
+                        repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel(),
+                        componentSignatureExtractor, operationSignatureExtractor));
+        final OperationEventModelAssemblerStage assemblyModelAssemblerStage = new OperationEventModelAssemblerStage(
+                new AssemblyModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
+                        repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
+                        repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
+        final OperationEventModelAssemblerStage deploymentModelAssemblerStage = new OperationEventModelAssemblerStage(
+                new DeploymentModelAssembler(repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
+                        repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
+                        repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
 
-        final ExecutionModelAssemblerStage executionModelGenerationStage = new ExecutionModelAssemblerStage(
+        final OperationCallModelAssemblerStage executionModelGenerationStage = new OperationCallModelAssemblerStage(
                 new ExecutionModelAssembler(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
 
