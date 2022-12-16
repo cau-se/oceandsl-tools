@@ -29,6 +29,8 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.architecture.RepositoryUtils;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.exception.ConfigurationException;
@@ -47,9 +49,6 @@ import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.source.SourceModel;
 import kieker.model.analysismodel.source.SourcePackage;
 import kieker.model.analysismodel.type.TypePackage;
-
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.architecture.RepositoryUtils;
 
 /**
  * Checks the integrity of architecture models.

@@ -49,6 +49,24 @@ import kieker.model.analysismodel.statistics.StatisticsFactory;
 import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypePackage;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Reading and storing model repositories.
@@ -94,6 +112,11 @@ public final class ArchitectureModelManagementUtils {
 
     private ArchitectureModelManagementUtils() {
         // utility class do not instantiate
+    }
+
+    public static ModelRepository createModelRepository(final String experimentName, final boolean mapFile) {
+        return ArchitectureModelManagementUtils
+                .createModelRepository(String.format("%s-%s", experimentName, mapFile ? "map" : "file"));
     }
 
     public static ModelRepository createModelRepository(final String repositoryName) {
@@ -184,6 +207,7 @@ public final class ArchitectureModelManagementUtils {
 
         // store models
         final ResourceSet resourceSet = new ResourceSetImpl();
+        resourceSet.setResourceFactoryRegistry(registry);
 
         if (!Files.exists(outputDirectory)) {
             Files.createDirectory(outputDirectory);
@@ -228,4 +252,5 @@ public final class ArchitectureModelManagementUtils {
     private static File createWriteModelFileHandle(final Path path, final String filename) {
         return new File(path.toFile().getAbsolutePath() + File.separator + filename);
     }
+
 }

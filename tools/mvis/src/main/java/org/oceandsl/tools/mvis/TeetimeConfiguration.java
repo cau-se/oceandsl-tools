@@ -15,13 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis;
 
-import java.io.IOException;
-
-import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Cohesion;
-import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Complexity;
-import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Coupling;
-import org.mosim.refactorlizar.architecture.evaluation.codemetrics.HyperGraphSize;
-
 import kieker.analysis.architecture.dependency.DependencyGraphCreatorStage;
 import kieker.analysis.architecture.recovery.signature.NameBuilder;
 import kieker.analysis.architecture.repository.ModelRepository;
@@ -29,11 +22,10 @@ import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.sink.graph.dot.DotFileWriterStage;
 import kieker.analysis.generic.sink.graph.graphml.GraphMLFileWriterStage;
 import kieker.model.analysismodel.deployment.DeployedComponent;
-
-import teetime.framework.Configuration;
-import teetime.stage.basic.distributor.Distributor;
-import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
-
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Cohesion;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Complexity;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Coupling;
+import org.mosim.refactorlizar.architecture.evaluation.codemetrics.HyperGraphSize;
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.stages.TableCSVSink;
@@ -41,17 +33,18 @@ import org.oceandsl.analysis.metrics.entropy.AllenDeployedArchitectureGraphStage
 import org.oceandsl.analysis.metrics.entropy.ComputeAllenComplexityMetrics;
 import org.oceandsl.analysis.metrics.entropy.KiekerArchitectureModelSystemGraphUtils;
 import org.oceandsl.analysis.metrics.entropy.SaveAllenDataStage;
-import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelComponentDependencyGraphBuilderFactory;
-import org.oceandsl.tools.mvis.graph.ColorAssemblyLevelOperationDependencyGraphBuilderFactory;
-import org.oceandsl.tools.mvis.graph.ColoredDotExportConfigurationFactory;
-import org.oceandsl.tools.mvis.graph.DedicatedFileNameMapper;
-import org.oceandsl.tools.mvis.graph.IColorDependencyGraphBuilderConfiguration;
+import org.oceandsl.tools.mvis.graph.*;
 import org.oceandsl.tools.mvis.stages.graph.ColorDependencyGraphBuilderConfiguration;
 import org.oceandsl.tools.mvis.stages.graph.ModuleCallGraphStage;
 import org.oceandsl.tools.mvis.stages.graph.OperationCallGraphStage;
 import org.oceandsl.tools.mvis.stages.metrics.ModuleNodeCountCouplingStage;
 import org.oceandsl.tools.mvis.stages.metrics.NumberOfCallsStage;
 import org.oceandsl.tools.mvis.stages.metrics.OperationNodeCountCouplingStage;
+import teetime.framework.Configuration;
+import teetime.stage.basic.distributor.Distributor;
+import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
+
+import java.io.IOException;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -97,13 +90,13 @@ public class TeetimeConfiguration extends Configuration {
 
         final GraphMLFileWriterStage graphMLFileWriterStage = new GraphMLFileWriterStage(settings.getOutputDirectory());
 
-        /** connecting ports. */
+        /** connecting ports.*/
         this.connectPorts(statisticsDistributor.getNewOutputPort(), triggerDistributor.getInputPort());
 
         final IColorDependencyGraphBuilderConfiguration configuration = new ColorDependencyGraphBuilderConfiguration(
                 settings.getSelector());
 
-        /** operation graph. */
+        /** operation graph.*/
         if (settings.getOutputGraphs().contains(EOutputGraph.DOT_OP)
                 || settings.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
             final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
@@ -122,7 +115,7 @@ public class TeetimeConfiguration extends Configuration {
             }
         }
 
-        /** component graph. */
+        /** component graph.*/
         if (settings.getOutputGraphs().contains(EOutputGraph.DOT_COMPONENT)) {
             final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> componentDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
                     configuration, new ColorAssemblyLevelComponentDependencyGraphBuilderFactory());
@@ -154,9 +147,10 @@ public class TeetimeConfiguration extends Configuration {
                 computeAllenComplexityStage.getInputPort());
         this.connectPorts(computeAllenComplexityStage.getOutputPort(), saveAllenDataStage.getInputPort());
 
-        this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
-        this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());
+        /*this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
+        this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());*/
 
+        //Fehlerhaft in functionNodeCouplingStage
         this.connectPorts(statisticsDistributor.getNewOutputPort(), functionCallGraphStage.getInputPort());
         this.connectPorts(functionCallGraphStage.getOutputPort(), functionNodeCouplingStage.getInputPort());
         this.connectPorts(functionNodeCouplingStage.getOutputPort(), distinctOperationDegreeSink.getInputPort());

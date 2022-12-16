@@ -22,18 +22,19 @@ import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.exception.ConfigurationException;
-
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.tools.sar.bsc.dataflow.TeetimeBscDataflowConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import teetime.framework.Configuration;
 import teetime.framework.Execution;
 
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Architecture analysis main class.
@@ -93,6 +94,11 @@ public class StaticArchitectureRecoveryMain {
         }
         if (this.settings.getDataflowInputFile() != null) {
             this.executeConfiguration("dataflow", label, this.createTeetimeDataflowConfiguration());
+        }
+        if (this.settings.getBscDataflowInputFile() != null && this.settings.getComponentBscInputFile() != null) {
+            this.executeConfiguration("dataflow", label, this.createTeetimeBscDataflowConfiguration());
+        } else {
+            logger.error("Error on initialization. Please make sure to use both dataflow csv AND component csv file.");
         }
 
         this.shutdownService();
@@ -154,13 +160,19 @@ public class StaticArchitectureRecoveryMain {
         }
     }
 
-    protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (this.settings.getOperationCallInputFile() == null && this.settings.getDataflowInputFile() == null) {
-            this.logger.error("You need at least operation calls or dataflow as input.");
-            return false;
+    private TeetimeBscDataflowConfiguration createTeetimeBscDataflowConfiguration() throws ConfigurationException {
+        try {
+            return new TeetimeBscDataflowConfiguration(this.logger, this.settings, this.repository);
+        } catch (final IOException | ValueConversionErrorException e) {
+            this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
+            throw new ConfigurationException(e);
         }
-        if (!Files.isReadable(this.settings.getOperationCallInputFile())) {
-            this.logger.error("Input path {} is not file", this.settings.getOperationCallInputFile());
+    }
+
+    protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
+        if (this.settings.getOperationCallInputFile() == null && this.settings.getDataflowInputFile() == null
+                && this.settings.getBscDataflowInputFile() == null) {
+            this.logger.error("You need at least operation calls or dataflow as input.");
             return false;
         }
 
@@ -178,7 +190,24 @@ public class StaticArchitectureRecoveryMain {
             return false;
         }
 
-        return true;
+        return (this.isReadable(this.settings.getOperationCallInputFile())
+                || this.isReadable(this.settings.getDataflowInputFile())
+                || this.isReadable(this.settings.getBscDataflowInputFile()));
+    }
+
+    private boolean isReadable(Path p) {
+        try {
+            if (!Files.isReadable(p)) {
+                this.logger.error("Input path {} is not file", p);
+                return false;
+            }
+            return true;
+        } catch (NullPointerException e) {
+            if (logger.isInfoEnabled()) {
+                logger.info("no config file at " + p);
+            }
+            return false;
+        }
     }
 
     /**

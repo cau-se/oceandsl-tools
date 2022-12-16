@@ -27,6 +27,8 @@ import kieker.analysis.architecture.repository.ModelRepository;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
+import java.util.Map.Entry;
+
 /**
  * @param <T>
  *            trigger record type

@@ -15,10 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.merge;
 
-import java.util.Map.Entry;
-
-import org.eclipse.emf.common.util.EMap;
-
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentModel;
@@ -28,6 +24,9 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
+import org.eclipse.emf.common.util.EMap;
+
+import java.util.Map.Entry;
 
 /**
  * @author Reiner Jung
@@ -100,9 +99,9 @@ public final class ExecutionModelMerger {
     }
 
     private static Tuple<DeployedOperation, DeployedStorage> findTupleStorageKeys(
-            final EMap<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> StorageDataflowes,
+            final EMap<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> storageDataflowes,
             final Tuple<DeployedOperation, DeployedStorage> key) {
-        for (final Tuple<DeployedOperation, DeployedStorage> invocationKey : StorageDataflowes.keySet()) {
+        for (final Tuple<DeployedOperation, DeployedStorage> invocationKey : storageDataflowes.keySet()) {
             if (ModelUtils.isEqual(invocationKey.getFirst(), key.getFirst())
                     && ModelUtils.isEqual(invocationKey.getSecond(), key.getSecond())) {
                 return invocationKey;

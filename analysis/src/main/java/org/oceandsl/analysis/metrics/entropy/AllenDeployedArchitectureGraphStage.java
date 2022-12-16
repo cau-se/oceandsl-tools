@@ -22,22 +22,23 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
+import org.oceandsl.analysis.graph.EGraphGenerationMode;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.ExecutionPackage;
 import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
-
 import teetime.stage.basic.AbstractTransformation;
-
-import org.oceandsl.analysis.graph.EGraphGenerationMode;
-import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung
@@ -73,13 +74,19 @@ public class AllenDeployedArchitectureGraphStage
                         graph.addNode(node);
                     }
                 }
+                for (final Entry<String, DeployedStorage> storage : component.getValue().getStorages()) {
+                    if (this.selector.nodeIsSelected(storage.getValue())) {
+                        final Node<DeployedComponent> node = new KiekerNode<>(storage.getValue());
+                        graph.addNode(node);
+                    }
+                }
             }
         }
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> entry : executionModel
                 .getInvocations()) {
             if (this.selector.edgeIsSelected(entry.getValue())) {
-                final Node<DeployedComponent> source = this.findNode(graph, entry.getValue().getCaller());
-                final Node<DeployedComponent> target = this.findNode(graph, entry.getValue().getCallee());
+                final Node<DeployedComponent> source = this.findOperationNode(graph, entry.getValue().getCaller());
+                final Node<DeployedComponent> target = this.findOperationNode(graph, entry.getValue().getCallee());
 
                 switch (this.graphGeneratioMode) { // NOPMD
                 case ADD_NODES_FOR_EDGES:
@@ -87,7 +94,7 @@ public class AllenDeployedArchitectureGraphStage
                             this.getOrCreateNode(graph, target, entry.getValue().getCallee()));
                     break;
                 case ONLY_EDGES_FOR_NODES:
-                    if (source != null && target != null) {
+                    if ((source != null) && (target != null)) {
                         graph.putEdge(source, target);
                     }
                     break;
@@ -96,13 +103,59 @@ public class AllenDeployedArchitectureGraphStage
                 }
             }
         }
+
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, OperationDataflow> entry : executionModel
+                .getOperationDataflows()) {
+            if (this.selector.edgeIsSelected(entry.getValue())) {
+                final Node<DeployedComponent> source = this.findOperationNode(graph, entry.getValue().getCaller());
+                final Node<DeployedComponent> target = this.findOperationNode(graph, entry.getValue().getCallee());
+
+                switch (this.graphGeneratioMode) { // NOPMD
+                case ADD_NODES_FOR_EDGES:
+                    graph.putEdge(this.getOrCreateNode(graph, source, entry.getValue().getCaller()),
+                            this.getOrCreateNode(graph, target, entry.getValue().getCallee()));
+                    break;
+                case ONLY_EDGES_FOR_NODES:
+                    if ((source != null) && (target != null)) {
+                        graph.putEdge(source, target);
+                    }
+                    break;
+                default:
+                    throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
+                }
+            }
+        }
+
+        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> entry : executionModel
+                .getStorageDataflows()) {
+            if (this.selector.edgeIsSelected(entry.getValue())) {
+                final Node<DeployedComponent> source = this.findOperationNode(graph, entry.getValue().getCode());
+                final Node<DeployedComponent> target = this.findStorageNode(graph, entry.getValue().getStorage());
+
+                switch (this.graphGeneratioMode) { // NOPMD
+                case ADD_NODES_FOR_EDGES:
+                    graph.putEdge(this.getOrCreateNode(graph, source, entry.getValue().getCode()),
+                            this.getOrCreateStorageNode(graph, target, entry.getValue().getStorage()));
+                    break;
+                case ONLY_EDGES_FOR_NODES:
+                    if ((source != null) && (target != null)) {
+                        graph.putEdge(source, target);
+                    }
+                    break;
+                default:
+                    throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
+                }
+            }
+        }
+
         this.outputPort.send(graph);
     }
 
-    private Node<DeployedComponent> getOrCreateNode(final MutableGraph<Node<DeployedComponent>> graph,
-            final Node<DeployedComponent> node, final DeployedOperation operation) {
+    private Node<DeployedComponent> getOrCreateStorageNode(final MutableGraph<Node<DeployedComponent>> graph,
+            final Node<DeployedComponent> node, final DeployedStorage storage) {
+
         if (node == null) {
-            final Node<DeployedComponent> newNode = new KiekerNode<>(operation);
+            final KiekerNode<DeployedComponent, DeployedStorage> newNode = new KiekerNode<>(storage);
             graph.addNode(newNode);
             return newNode;
         } else {
@@ -110,12 +163,41 @@ public class AllenDeployedArchitectureGraphStage
         }
     }
 
-    private Node<DeployedComponent> findNode(final Graph<Node<DeployedComponent>> graph,
+    private Node<DeployedComponent> getOrCreateNode(final MutableGraph<Node<DeployedComponent>> graph,
+            final Node<DeployedComponent> node, final DeployedOperation operation) {
+        if (node == null) {
+            final KiekerNode<DeployedComponent, DeployedOperation> newNode = new KiekerNode<>(operation);
+            graph.addNode(newNode);
+            return newNode;
+        } else {
+            return node;
+        }
+    }
+
+    private Node<DeployedComponent> findOperationNode(final Graph<Node<DeployedComponent>> graph,
             final DeployedOperation operation) {
         for (final Node<DeployedComponent> node : graph.nodes()) {
-            final KiekerNode<DeployedComponent> kiekerNode = (KiekerNode<DeployedComponent>) node;
-            if (kiekerNode.getMember().equals(operation)) {
-                return kiekerNode;
+            if (!node.getModule().getOperations().isEmpty()) {
+
+                final KiekerNode<DeployedComponent, DeployedOperation> kiekerNode = (KiekerNode<DeployedComponent, DeployedOperation>) node;
+                if (kiekerNode.getMember().equals(operation)) {
+                    return kiekerNode;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private Node<DeployedComponent> findStorageNode(final Graph<Node<DeployedComponent>> graph,
+            final DeployedStorage storage) {
+        for (final Node<DeployedComponent> node : graph.nodes()) {
+            if (node.getModule().getOperations().isEmpty()) {
+
+                final KiekerNode<DeployedComponent, DeployedStorage> kiekerNode = (KiekerNode<DeployedComponent, DeployedStorage>) node;
+                if (kiekerNode.getMember().equals(storage)) {
+                    return kiekerNode;
+                }
             }
         }
 

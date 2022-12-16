@@ -31,8 +31,13 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.statistics.StatisticsModel;
-
+import org.eclipse.emf.ecore.EObject;
 import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map.Entry;
+import java.util.function.Function;
 
 /**
  * @author Reiner Jung
@@ -45,8 +50,7 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
                 CountUniqueDataflowCallsStage.createForAggregatedStorageAccess(executionModel));
     }
 
-    public static final Function<DataAccess, EObject> createForAggregatedStorageAccess(
-            final ExecutionModel executionModel) {
+    public static final Function<DataAccess, EObject> createForStorageDataflow(final ExecutionModel executionModel) {
         return dataAccess -> {
             final StorageDataflow result = CountUniqueDataflowCallsStage.getValue(executionModel,
                     CountUniqueDataflowCallsStage.getKeyTuple(dataAccess, executionModel));

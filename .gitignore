@@ -11,3 +11,13 @@ lib
 **/.project
 **/.settings/**
 hs_err_*.log
+
+#Ignore Intellij
+.idea
+
+#Ignore test or generated files
+dataflow.csv
+dataflow copy.csv
+filecontents.csv
+output
+outputMVIS
