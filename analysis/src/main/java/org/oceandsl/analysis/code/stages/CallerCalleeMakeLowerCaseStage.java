@@ -28,11 +28,11 @@ import teetime.stage.basic.AbstractFilter;
  * @since 1.0
  *
  */
-public class CsvMakeLowerCaseStage extends AbstractFilter<CallerCallee> {
+public class CallerCalleeMakeLowerCaseStage extends AbstractFilter<CallerCallee> {
 
     private final boolean caseInsensitive;
 
-    public CsvMakeLowerCaseStage(final boolean caseInsensitive) {
+    public CallerCalleeMakeLowerCaseStage(final boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
     }
 

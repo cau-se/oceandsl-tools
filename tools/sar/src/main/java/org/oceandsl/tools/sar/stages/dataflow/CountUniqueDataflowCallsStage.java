@@ -19,6 +19,8 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EObject;
+import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
+import org.oceandsl.tools.sar.stages.calls.DataflowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,52 +33,41 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.statistics.StatisticsModel;
-import org.eclipse.emf.ecore.EObject;
-import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map.Entry;
-import java.util.function.Function;
 
 /**
+ * TODO fix
+ *
  * @author Reiner Jung
  * @since 1.1
  */
-public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<DataAccess> {
+public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<DataflowEvent> {
 
     public CountUniqueDataflowCallsStage(final StatisticsModel statisticsModel, final ExecutionModel executionModel) {
         super(statisticsModel, new CountCalculator<>(PropertyConstants.CALLS),
-                CountUniqueDataflowCallsStage.createForAggregatedStorageAccess(executionModel));
+                CountUniqueDataflowCallsStage.createForStorageDataflow(executionModel));
     }
 
-    public static final Function<DataAccess, EObject> createForStorageDataflow(final ExecutionModel executionModel) {
+    public static final Function<DataflowEvent, EObject> createForStorageDataflow(final ExecutionModel executionModel) {
         return dataAccess -> {
             final StorageDataflow result = CountUniqueDataflowCallsStage.getValue(executionModel,
                     CountUniqueDataflowCallsStage.getKeyTuple(dataAccess, executionModel));
 
             if (result == null) {
                 final Logger logger = LoggerFactory.getLogger(CountUniqueCallsStage.class);
-                logger.error("Fatal error: call not does not exist {}:{}", dataAccess.getOperation(),
-                        dataAccess.getSharedData());
+                logger.error("Fatal error: call not does not exist {}:{}", dataAccess.getSource().toString(),
+                        dataAccess.getTarget().toString());
             }
 
             return result;
         };
     }
 
-    private static Tuple<DeployedOperation, DeployedStorage> getKeyTuple(final DataAccess dataAccess,
+    private static Tuple<DeployedOperation, DeployedStorage> getKeyTuple(final DataflowEvent dataAccess,
             final ExecutionModel executionModel) {
         for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> entry : executionModel
                 .getStorageDataflows().entrySet()) {
             final Tuple<DeployedOperation, DeployedStorage> key = entry.getKey();
-            if (key.getFirst().getAssemblyOperation().getOperationType().getName().equals(dataAccess.getOperation())
-                    && key.getFirst().getComponent().getAssemblyComponent().getSignature()
-                            .equals(dataAccess.getModule())
-                    && key.getSecond().getAssemblyStorage().getStorageType().getName()
-                            .equals(dataAccess.getSharedData())) {
-                return key;
-            }
+            return null;
         }
         return null;
     }

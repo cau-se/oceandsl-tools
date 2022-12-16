@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2022 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar.stages.dataflow;
+package org.oceandsl.analysis.code.stages;
 
-/**
- * @author Reiner Jung
- *
- */
-public enum EDirection {
-    READ, WRITE, BOTH;
+import kieker.model.analysismodel.type.StorageType;
 
-    public static EDirection getValue(final String name) throws InternalError {
-        for (final EDirection value : EDirection.values()) {
-            if (value.name().equalsIgnoreCase(name)) {
-                return value;
-            }
-        }
-        throw new InternalError("Illegal data access type.");
-    }
+public interface IStorageSignatureExtractor {
+
+    void extract(StorageType storageType);
+
 }

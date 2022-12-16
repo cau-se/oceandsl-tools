@@ -13,13 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.code.stages.data;
+package org.oceandsl.analysis.code.stages;
 
-public class CallerCalleeFactory implements ICsvRecordFactory<CallerCallee> {
+import org.oceandsl.analysis.code.OperationStorage;
+import org.oceandsl.analysis.code.stages.data.ICsvRecordFactory;
+
+import kieker.model.analysismodel.execution.EDirection;
+
+/**
+ * Create OperationStorage objects.
+ *
+ * @author Reiner Jung
+ * @since 1.15
+ */
+public class OperationStorageFactory implements ICsvRecordFactory<OperationStorage> {
 
     @Override
-    public CallerCallee createRecord(final String[] headerLabels, final String[] values) {
-        return new CallerCallee(values[0], values[1], values[2], values[3], values[4], values[5]);
+    public OperationStorage createRecord(final String[] headerLabels, final String[] values) {
+        final EDirection direction = EDirection.getByName(values[6]);
+        return new OperationStorage(values[0], values[1], values[2], values[3], values[4], values[5], direction);
     }
 
 }

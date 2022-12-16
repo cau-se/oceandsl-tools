@@ -19,7 +19,7 @@ class ModuleBasedSignatureProcessorTest {
         Assertions.assertEquals(processor.getErrorMessage(), null, "there should never be an error message");
         Assertions.assertEquals(processor.getComponentSignature(), ModuleBasedSignatureProcessorTest.COMPONENT,
                 "component name should not be lower case");
-        Assertions.assertEquals(processor.getOperationSignature(), ModuleBasedSignatureProcessorTest.OPERATION,
+        Assertions.assertEquals(processor.getElementSignature(), ModuleBasedSignatureProcessorTest.OPERATION,
                 "operation name should not be lower case");
     }
 
@@ -32,7 +32,7 @@ class ModuleBasedSignatureProcessorTest {
         Assertions.assertEquals(processor.getErrorMessage(), null, "there should never be an error message");
         Assertions.assertEquals(processor.getComponentSignature(),
                 ModuleBasedSignatureProcessorTest.COMPONENT.toLowerCase(), "component name should be lower case");
-        Assertions.assertEquals(processor.getOperationSignature(),
+        Assertions.assertEquals(processor.getElementSignature(),
                 ModuleBasedSignatureProcessorTest.OPERATION.toLowerCase(), "operation name should be lower case");
     }
 

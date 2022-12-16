@@ -13,13 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.code.stages.data;
+package org.oceandsl.tools.sar.stages.dataflow;
 
-public class CallerCalleeFactory implements ICsvRecordFactory<CallerCallee> {
+import org.oceandsl.analysis.code.stages.IStorageEventAssembler;
 
-    @Override
-    public CallerCallee createRecord(final String[] headerLabels, final String[] values) {
-        return new CallerCallee(values[0], values[1], values[2], values[3], values[4], values[5]);
+import kieker.analysis.architecture.recovery.events.StorageEvent;
+import teetime.stage.basic.AbstractFilter;
+
+/**
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
+public class StorageEventModelAssemblerStage extends AbstractFilter<StorageEvent> {
+
+    private final IStorageEventAssembler assembler;
+
+    public StorageEventModelAssemblerStage(final IStorageEventAssembler assembler) {
+        this.assembler = assembler;
     }
 
+    @Override
+    protected void execute(final StorageEvent event) {
+        this.assembler.addStorage(event);
+        this.outputPort.send(event);
+    }
 }

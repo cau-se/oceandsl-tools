@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2022 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,40 +24,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.oceandsl.analysis.code.OperationStorage;
+
 import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractFilter;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
-
 /**
- * This stage receives an {@link CallerCallee} object and checks whether the file path for caller
- * and callee operation are specified. In case they are missing, the stage sets them based on its
- * operation to file lookup table. In case the operation is not listed, it collects all operations
- * which do not have a file name.
+ * This stage receives an {@link OperationStorage} object and checks whether the file path for
+ * source and target entry are specified. In case they are missing, the stage sets them based on its
+ * entry to file lookup table. In case the entry is not listed, it collects all entries which do not
+ * have a file name.
  *
  * <ul>
- * <li>outputPort sends out {@link CallerCallee} objects with all 4 values set.</li>
- * <li>missingOperationOutputPort sends out each newly found operation which does not have a
- * associated file path.</li>
+ * <li>outputPort sends out {@link OperationStorage} objects with all values set.</li>
+ * <li>missingEntryOutputPort sends out each newly found operation which does not have a associated
+ * file path.</li>
  * </ul>
  *
  * @author Reiner Jung
  * @since 1.1
  */
-public class OperationCallFixPathStage extends AbstractFilter<CallerCallee> {
+public class OperationStorageFixPathStage extends AbstractFilter<OperationStorage> {
 
-    private final Map<String, String> operationToFileMap = new HashMap<>();
-    private final OutputPort<String> missingOperationOutputPort = this.createOutputPort(String.class);
-    private final List<String> missingOperationNames = new ArrayList<>();
+    private final Map<String, String> entryToFileMap = new HashMap<>();
+    private final OutputPort<String> missingEntryOutputPort = this.createOutputPort(String.class);
+    private final List<String> missingEntryNames = new ArrayList<>();
 
-    public OperationCallFixPathStage(final List<Path> functionMapPaths, final String splitSymbol) throws IOException {
-        for (final Path functionMapPath : functionMapPaths) {
+    public OperationStorageFixPathStage(final List<Path> entryMapPaths, final String splitSymbol) throws IOException {
+        for (final Path functionMapPath : entryMapPaths) {
             try (BufferedReader reader = Files.newBufferedReader(functionMapPath)) {
                 String line = reader.readLine();
                 while ((line = reader.readLine()) != null) {
                     final String[] values = line.split(splitSymbol);
                     if (values.length >= 2) {
-                        this.operationToFileMap.put(values[1].trim(), values[0].trim());
+                        this.entryToFileMap.put(values[1].trim(), values[0].trim());
                     }
                 }
             }
@@ -65,24 +65,24 @@ public class OperationCallFixPathStage extends AbstractFilter<CallerCallee> {
     }
 
     @Override
-    protected void execute(final CallerCallee element) throws Exception {
+    protected void execute(final OperationStorage element) throws Exception {
         if ("".equals(element.getSourcePath())) {
-            element.setSourcePath(this.findPath(element.getCaller()));
+            element.setSourcePath(this.findPath(element.getSourceSignature()));
         }
         if ("".equals(element.getTargetPath())) {
-            element.setTargetPath(this.findPath(element.getCallee()));
+            element.setTargetPath(this.findPath(element.getTargetSignature()));
         }
 
         this.outputPort.send(element);
     }
 
     private String findPath(final String functionName) {
-        final String path = this.operationToFileMap.get(functionName);
+        final String path = this.entryToFileMap.get(functionName);
         if (path == null) {
-            if (!this.missingOperationNames.contains(functionName)) {
+            if (!this.missingEntryNames.contains(functionName)) {
                 this.logger.warn("Missing file entry for operation: {}", functionName);
-                this.missingOperationNames.add(functionName);
-                this.missingOperationOutputPort.send(functionName);
+                this.missingEntryNames.add(functionName);
+                this.missingEntryOutputPort.send(functionName);
             }
             return "";
         } else {
@@ -90,8 +90,7 @@ public class OperationCallFixPathStage extends AbstractFilter<CallerCallee> {
         }
     }
 
-    public OutputPort<String> getMissingOperationOutputPort() {
-        return this.missingOperationOutputPort;
+    public OutputPort<String> getMissingEntryOutputPort() {
+        return this.missingEntryOutputPort;
     }
-
 }

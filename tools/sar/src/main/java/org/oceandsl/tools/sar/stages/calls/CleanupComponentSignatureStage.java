@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar.stages;
+package org.oceandsl.tools.sar.stages.calls;
 
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee>
                 operation.component = processor.getComponentSignature();
             }
             if (operation.operation.equals(CleanupComponentSignatureStage.UNKNOWN)) {
-                operation.operation = processor.getOperationSignature();
+                operation.operation = processor.getElementSignature();
             }
         }
         return operation;

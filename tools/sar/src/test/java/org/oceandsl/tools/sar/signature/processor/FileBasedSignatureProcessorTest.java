@@ -19,7 +19,7 @@ class FileBasedSignatureProcessorTest {
         Assertions.assertEquals(processor.getErrorMessage(), null, "there should never be an error message");
         Assertions.assertEquals(processor.getComponentSignature(), FileBasedSignatureProcessorTest.SPECIAL_FILE_NAME,
                 "component name should not be lower case");
-        Assertions.assertEquals(processor.getOperationSignature(), FileBasedSignatureProcessorTest.OPERATION,
+        Assertions.assertEquals(processor.getElementSignature(), FileBasedSignatureProcessorTest.OPERATION,
                 "operation name should not be lower case");
     }
 
@@ -32,7 +32,7 @@ class FileBasedSignatureProcessorTest {
         Assertions.assertEquals(processor.getErrorMessage(), null, "there should never be an error message");
         Assertions.assertEquals(processor.getComponentSignature(),
                 FileBasedSignatureProcessorTest.SPECIAL_FILE_NAME.toLowerCase(), "component name should be lower case");
-        Assertions.assertEquals(processor.getOperationSignature(),
+        Assertions.assertEquals(processor.getElementSignature(),
                 FileBasedSignatureProcessorTest.OPERATION.toLowerCase(), "operation name should be lower case");
     }
 

@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.code.stages.data;
+package org.oceandsl.analysis.code.stages;
 
-public class CallerCalleeFactory implements ICsvRecordFactory<CallerCallee> {
+import kieker.analysis.architecture.recovery.events.StorageEvent;
 
-    @Override
-    public CallerCallee createRecord(final String[] headerLabels, final String[] values) {
-        return new CallerCallee(values[0], values[1], values[2], values[3], values[4], values[5]);
-    }
+/**
+ * StoraveEvent assembler interface.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
+public interface IStorageEventAssembler {
+
+    void addStorage(StorageEvent event);
 
 }

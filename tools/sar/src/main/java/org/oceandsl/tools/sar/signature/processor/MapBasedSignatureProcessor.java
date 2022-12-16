@@ -55,8 +55,8 @@ public class MapBasedSignatureProcessor extends AbstractSignatureProcessor {
 
     @Override
     public boolean processSignatures(final String pathString, final String componentSignature,
-            final String operationSignature) {
-        this.operationSignature = this.convertToLowerCase(operationSignature);
+            final String elementSignature) {
+        this.elementSignature = this.convertToLowerCase(elementSignature);
 
         if ("<<no-file>>".equals(pathString)) {
             this.componentSignature = "<unknown>";
@@ -69,9 +69,9 @@ public class MapBasedSignatureProcessor extends AbstractSignatureProcessor {
                 this.componentSignature = result;
                 return true;
             } else {
-                this.logger.warn("File '{}' has no component mapping. Signature '{}'", filename, operationSignature);
+                this.logger.warn("File '{}' has no component mapping. Signature '{}'", filename, elementSignature);
                 this.componentSignature = "??" + pathString.toLowerCase(Locale.ROOT);
-                this.errorMessage = String.format("%s;%s;%s\n", filename, componentSignature, operationSignature);
+                this.errorMessage = String.format("%s;%s;%s\n", filename, componentSignature, elementSignature);
                 return false;
             }
         }
