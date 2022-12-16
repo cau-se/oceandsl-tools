@@ -23,10 +23,13 @@ import java.nio.file.Path;
 import teetime.framework.AbstractProducerStage;
 
 /**
+ * Read CSV data produced by ESM-dataflow analysis tool.
+ *
  * @author Reiner Jung
+ * @author Yannick Illmann
  * @since 1.1
  */
-public class CSVDataflowReaderStage extends AbstractProducerStage<DataAccess> {
+public class CSVDataflowReaderStage extends AbstractProducerStage<DataTransfer> {
 
     private final BufferedReader reader;
     private final String splitSymbol;
@@ -53,9 +56,12 @@ public class CSVDataflowReaderStage extends AbstractProducerStage<DataAccess> {
         String line;
         while ((line = this.reader.readLine()) != null) {
             final String[] values = line.split(this.splitSymbol);
+            /*
+                Structure of CSV defined in ESM-Dataflow-Analysis Repository ReadMe
+             */
             if (values.length >= 4) {
                 try {
-                    this.outputPort.send(new DataAccess(values[0].trim(), values[1].trim(),
+                    this.outputPort.send(new DataTransfer(values[0].trim(), values[1].trim(),
                             EDirection.getValue(values[2].trim()), values[3].trim()));
                 } catch (final InternalError e) {
                     this.logger.error("Line format error '{}', {}", line, e.getMessage());
