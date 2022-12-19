@@ -15,6 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.merge;
 
+import java.util.Map.Entry;
+
+import org.eclipse.emf.common.util.EMap;
+
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentModel;
@@ -24,9 +28,6 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
-import org.eclipse.emf.common.util.EMap;
-
-import java.util.Map.Entry;
 
 /**
  * @author Reiner Jung

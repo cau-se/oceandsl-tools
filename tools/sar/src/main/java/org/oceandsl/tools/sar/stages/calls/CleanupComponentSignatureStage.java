@@ -40,18 +40,18 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee>
 
     @Override
     protected void execute(final CallerCallee event) throws Exception {
-        final Operation caller = this.executeOperation(event.getSourcePath(), event.getSourceModule(),
+        final FullyQualifiedOperation caller = this.executeOperation(event.getSourcePath(), event.getSourceModule(),
                 event.getCaller());
-        final Operation callee = this.executeOperation(event.getTargetPath(), event.getTargetModule(),
+        final FullyQualifiedOperation callee = this.executeOperation(event.getTargetPath(), event.getTargetModule(),
                 event.getCallee());
         final CallerCallee newEvent = new CallerCallee(event.getSourcePath(), caller.component, caller.operation,
                 event.getTargetPath(), callee.component, callee.operation);
         this.outputPort.send(newEvent);
     }
 
-    private Operation executeOperation(final String path, final String componentSignature,
+    private FullyQualifiedOperation executeOperation(final String path, final String componentSignature,
             final String operationSignature) {
-        final Operation operation = new Operation();
+        final FullyQualifiedOperation operation = new FullyQualifiedOperation();
         operation.component = CleanupComponentSignatureStage.UNKNOWN;
         operation.operation = CleanupComponentSignatureStage.UNKNOWN;
         for (final AbstractSignatureProcessor processor : this.processors) {
@@ -72,7 +72,7 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee>
         return this.errorMessageOutputPort;
     }
 
-    private class Operation {
+    private class FullyQualifiedOperation {
         public String component;
         public String operation;
     }

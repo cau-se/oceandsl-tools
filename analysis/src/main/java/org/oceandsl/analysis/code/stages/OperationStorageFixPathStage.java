@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.oceandsl.analysis.code.OperationStorage;
-
 import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractFilter;
+
+import org.oceandsl.analysis.code.OperationStorage;
 
 /**
  * This stage receives an {@link OperationStorage} object and checks whether the file path for

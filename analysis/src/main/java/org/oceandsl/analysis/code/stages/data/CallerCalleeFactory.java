@@ -15,6 +15,12 @@
  ***************************************************************************/
 package org.oceandsl.analysis.code.stages.data;
 
+/**
+ * Record factory for a {@link CallerCallee} record supporting CSV file reader.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 public class CallerCalleeFactory implements ICsvRecordFactory<CallerCallee> {
 
     @Override

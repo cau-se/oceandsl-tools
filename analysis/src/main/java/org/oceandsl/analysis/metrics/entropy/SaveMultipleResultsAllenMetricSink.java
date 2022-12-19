@@ -58,7 +58,7 @@ public class SaveMultipleResultsAllenMetricSink
      */
     @SafeVarargs
     public SaveMultipleResultsAllenMetricSink(final Path outputPath, final String newline, final String valueSeparator,
-            final Class<? extends CodeMetric>... metrics) throws IOException {
+            final Class<? extends CodeMetric>... metrics) throws IOException { // NOPMD
         this.newline = newline;
         this.valueSeparator = valueSeparator;
         this.writer = Files.newBufferedWriter(outputPath);

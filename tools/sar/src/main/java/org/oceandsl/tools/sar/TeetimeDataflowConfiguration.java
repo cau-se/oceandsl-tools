@@ -21,27 +21,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oceandsl.analysis.code.OperationStorage;
-import org.oceandsl.analysis.code.stages.CsvReaderStage;
-import org.oceandsl.analysis.code.stages.IStorageSignatureExtractor;
-import org.oceandsl.analysis.code.stages.OperationStorageFactory;
-import org.oceandsl.analysis.code.stages.OperationStorageFixPathStage;
-import org.oceandsl.analysis.code.stages.OperationStorageMakeLowerCaseStage;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.generic.EModuleMode;
-import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.ModuleBasedSignatureProcessor;
-import org.oceandsl.tools.sar.stages.calls.StringFileWriterSink;
-import org.oceandsl.tools.sar.stages.dataflow.CleanupDataflowComponentSignatureStage;
-import org.oceandsl.tools.sar.stages.dataflow.CountUniqueDataflowCallsStage;
-import org.oceandsl.tools.sar.stages.dataflow.ElementAndDataflow4StaticDataStage;
-import org.oceandsl.tools.sar.stages.dataflow.ExecutionModelDataflowAssemblerStage;
-import org.oceandsl.tools.sar.stages.dataflow.StorageAssemblyModelAssembler;
-import org.oceandsl.tools.sar.stages.dataflow.StorageDeploymentModelAssembler;
-import org.oceandsl.tools.sar.stages.dataflow.StorageEventModelAssemblerStage;
-import org.oceandsl.tools.sar.stages.dataflow.StorageTypeModelAssembler;
 import org.slf4j.Logger;
 
 import kieker.analysis.architecture.recovery.AssemblyModelAssembler;
@@ -60,8 +39,31 @@ import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.StorageType;
 import kieker.model.analysismodel.type.TypePackage;
+
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
+
+import org.oceandsl.analysis.code.OperationStorage;
+import org.oceandsl.analysis.code.stages.CsvReaderStage;
+import org.oceandsl.analysis.code.stages.IStorageSignatureExtractor;
+import org.oceandsl.analysis.code.stages.OperationStorageFactory;
+import org.oceandsl.analysis.code.stages.OperationStorageFixPathStage;
+import org.oceandsl.analysis.code.stages.OperationStorageMakeLowerCaseStage;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.analysis.generic.stages.StringFileWriterSink;
+import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.ModuleBasedSignatureProcessor;
+import org.oceandsl.tools.sar.stages.dataflow.CleanupDataflowComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.dataflow.CountUniqueDataflowCallsStage;
+import org.oceandsl.tools.sar.stages.dataflow.ElementAndDataflow4StaticDataStage;
+import org.oceandsl.tools.sar.stages.dataflow.ExecutionModelDataflowAssemblerStage;
+import org.oceandsl.tools.sar.stages.dataflow.StorageAssemblyModelAssembler;
+import org.oceandsl.tools.sar.stages.dataflow.StorageDeploymentModelAssembler;
+import org.oceandsl.tools.sar.stages.dataflow.StorageEventModelAssemblerStage;
+import org.oceandsl.tools.sar.stages.dataflow.StorageTypeModelAssembler;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -180,7 +182,7 @@ public class TeetimeDataflowConfiguration extends Configuration {
     private OutputPort<OperationStorage> createOperationStorageFixPath(final OutputPort<OperationStorage> readerPort,
             final List<Path> functionNameFiles, final String namesSplitSymbol, final Path missingFunctionsFile)
             throws IOException {
-        if ((functionNameFiles != null) && !functionNameFiles.isEmpty()) {
+        if (functionNameFiles != null && !functionNameFiles.isEmpty()) {
             final OperationStorageFixPathStage fixPathStage = new OperationStorageFixPathStage(functionNameFiles,
                     namesSplitSymbol);
             if (missingFunctionsFile != null) {

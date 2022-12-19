@@ -40,12 +40,12 @@ public class SaveAllenDataStage extends AbstractConsumerStage<Map<Class<? extend
 
     @Override
     protected void execute(final Map<Class<? extends CodeMetric>, CodeMetric> element) throws Exception {
-        final BufferedWriter writer = Files
-                .newBufferedWriter(this.outputDirectory.resolve(SaveAllenDataStage.ALLEN_METRIC_FILENAME));
-        for (final Entry<Class<? extends CodeMetric>, CodeMetric> value : element.entrySet()) {
-            writer.write(String.format("%s, %s\n", value.getKey().getCanonicalName(), value.getValue().getValue()));
+        try (final BufferedWriter writer = Files
+                .newBufferedWriter(this.outputDirectory.resolve(SaveAllenDataStage.ALLEN_METRIC_FILENAME))) {
+            for (final Entry<Class<? extends CodeMetric>, CodeMetric> value : element.entrySet()) {
+                writer.write(String.format("%s, %s\n", value.getKey().getCanonicalName(), value.getValue().getValue()));
+            }
         }
-        writer.close();
     }
 
 }

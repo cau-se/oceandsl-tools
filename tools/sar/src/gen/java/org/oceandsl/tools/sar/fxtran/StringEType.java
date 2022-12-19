@@ -5,15 +5,14 @@ package org.oceandsl.tools.sar.fxtran;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>String EType</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> A representation of the model object '<em><b>String EType</b></em>'. <!--
+ * end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.oceandsl.tools.sar.fxtran.StringEType#getS <em>S</em>}</li>
+ * <li>{@link org.oceandsl.tools.sar.fxtran.StringEType#getS <em>S</em>}</li>
  * </ul>
  *
  * @see org.oceandsl.tools.sar.fxtran.FxtranPackage#getStringEType()
@@ -22,9 +21,9 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface StringEType extends EObject {
     /**
-     * Returns the value of the '<em><b>S</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * Returns the value of the '<em><b>S</b></em>' attribute. <!-- begin-user-doc --> <!--
+     * end-user-doc -->
+     *
      * @return the value of the '<em>S</em>' attribute.
      * @see #setS(String)
      * @see org.oceandsl.tools.sar.fxtran.FxtranPackage#getStringEType_S()
@@ -35,10 +34,11 @@ public interface StringEType extends EObject {
     String getS();
 
     /**
-     * Sets the value of the '{@link org.oceandsl.tools.sar.fxtran.StringEType#getS <em>S</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>S</em>' attribute.
+     * Sets the value of the '{@link org.oceandsl.tools.sar.fxtran.StringEType#getS <em>S</em>}'
+     * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @param value
+     *            the new value of the '<em>S</em>' attribute.
      * @see #getS()
      * @generated
      */

@@ -31,12 +31,6 @@ import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.statistics.StatisticsModel;
-import org.eclipse.emf.ecore.EObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Map.Entry;
-import java.util.function.Function;
 
 /**
  * Counts the number of unique operation calls and stores that information in the statistics model.

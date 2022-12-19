@@ -17,11 +17,12 @@ package org.oceandsl.log.rewriter;
 
 import java.io.IOException;
 
-import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
-
 import kieker.analysis.generic.sink.DataSink;
 import kieker.tools.source.LogsReaderCompositeStage;
+
 import teetime.framework.Configuration;
+
+import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
 
 /**
  * @author Reiner Jung

@@ -17,9 +17,9 @@ package org.oceandsl.analysis.code.stages;
 
 import java.util.Locale;
 
-import org.oceandsl.analysis.code.OperationStorage;
-
 import teetime.stage.basic.AbstractFilter;
+
+import org.oceandsl.analysis.code.OperationStorage;
 
 /**
  * Make names all lower case when case insensitive is requested.

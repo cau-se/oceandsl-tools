@@ -23,15 +23,17 @@ import java.nio.file.Path;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.exception.ConfigurationException;
+
 import teetime.framework.Configuration;
 import teetime.framework.Execution;
+
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * Architecture analysis main class.
@@ -153,7 +155,7 @@ public class StaticArchitectureRecoveryMain {
     }
 
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if ((this.settings.getOperationCallInputFile() == null) && (this.settings.getDataflowInputFile() == null)) {
+        if (this.settings.getOperationCallInputFile() == null && this.settings.getDataflowInputFile() == null) {
             this.logger.error("You need at least operation calls or dataflow as input.");
             return false;
         }
@@ -172,8 +174,8 @@ public class StaticArchitectureRecoveryMain {
             return false;
         }
 
-        return (this.isReadable(this.settings.getOperationCallInputFile())
-                || this.isReadable(this.settings.getDataflowInputFile()));
+        return this.isReadable(this.settings.getOperationCallInputFile())
+                || this.isReadable(this.settings.getDataflowInputFile());
     }
 
     private boolean isReadable(final Path p) {
@@ -184,9 +186,7 @@ public class StaticArchitectureRecoveryMain {
             }
             return true;
         } catch (final NullPointerException e) {
-            if (this.logger.isInfoEnabled()) {
-                this.logger.info("no config file at " + p);
-            }
+            this.logger.info("no config file at {}", p);
             return false;
         }
     }

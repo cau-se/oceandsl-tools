@@ -62,8 +62,8 @@ class MapBasedSignatureProcessorTest {
         Assertions.assertEquals(processor.getErrorMessage(), null, "there should never be an error message");
         Assertions.assertEquals(processor.getComponentSignature(),
                 MapBasedSignatureProcessorTest.COMPONENT.toLowerCase(), "component name should not be lower case");
-        Assertions.assertEquals(processor.getElementSignature(),
-                MapBasedSignatureProcessorTest.OPERATION.toLowerCase(), "operation name should not be lower case");
+        Assertions.assertEquals(processor.getElementSignature(), MapBasedSignatureProcessorTest.OPERATION.toLowerCase(),
+                "operation name should not be lower case");
     }
 
 }

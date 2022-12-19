@@ -49,7 +49,7 @@ public class ComputeAllenComplexityMetrics<T>
     private final SystemGraphUtils<T> systemGraphUtils;
 
     @SafeVarargs
-    public ComputeAllenComplexityMetrics(final SystemGraphUtils<T> systemGraphUtils,
+    public ComputeAllenComplexityMetrics(final SystemGraphUtils<T> systemGraphUtils, // NOPMD
             final Class<? extends CodeMetric>... metrics) {
         this.metrics = metrics;
         this.systemGraphUtils = systemGraphUtils;

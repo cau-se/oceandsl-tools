@@ -51,17 +51,17 @@ public class OperationNodeCountCouplingStage extends AbstractTransformation<IGra
         this.outputPort.send(result);
     }
 
-    private String getFilepath(final Object id){
-        String stringId = (String) id;
+    private String getFilepath(final Object id) {
+        final String stringId = (String) id;
         String filepath = stringId.split("\\.f")[0];
         filepath = filepath.split("@")[1];
         return filepath.concat(".f");
     }
 
     private String getFunction(final Object id) throws ConfigurationException {
-        String stringId = (String) id;
-        String[] filepath = stringId.split("\\.");
-        return filepath[filepath.length-1];
+        final String stringId = (String) id;
+        final String[] filepath = stringId.split("\\.");
+        return filepath[filepath.length - 1];
     }
 
     private OperationType getOperationType(final Object id) throws ConfigurationException {

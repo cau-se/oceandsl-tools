@@ -15,10 +15,11 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages.dataflow;
 
-import org.oceandsl.analysis.code.stages.IStorageEventAssembler;
-
 import kieker.analysis.architecture.recovery.events.StorageEvent;
+
 import teetime.stage.basic.AbstractFilter;
+
+import org.oceandsl.analysis.code.stages.IStorageEventAssembler;
 
 /**
  *

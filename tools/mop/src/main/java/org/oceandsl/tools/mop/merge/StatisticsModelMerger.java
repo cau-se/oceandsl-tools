@@ -17,7 +17,6 @@ package org.oceandsl.tools.mop.merge;
 
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 import org.slf4j.Logger;
@@ -34,7 +33,6 @@ import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.statistics.StatisticRecord;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.type.StorageType;
-import java.util.Map.Entry;
 
 /**
  * Merge two statistics models.

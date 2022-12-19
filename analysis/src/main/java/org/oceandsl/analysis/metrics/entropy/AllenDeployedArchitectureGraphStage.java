@@ -21,9 +21,8 @@ import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 
+import org.eclipse.emf.common.util.EMap;
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
-import org.oceandsl.analysis.graph.EGraphGenerationMode;
-import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
@@ -38,7 +37,11 @@ import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.OperationDataflow;
 import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.graph.EGraphGenerationMode;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * @author Reiner Jung
@@ -66,7 +69,17 @@ public class AllenDeployedArchitectureGraphStage
 
         this.selector.setRepository(repository);
 
-        for (final Entry<String, DeploymentContext> context : deploymentModel.getContexts()) {
+        this.createNodes(graph, deploymentModel.getContexts());
+        this.processInvocations(graph, executionModel.getInvocations());
+        this.processOperationDataflows(graph, executionModel.getOperationDataflows());
+        this.processStorageDataflows(graph, executionModel.getStorageDataflows());
+
+        this.outputPort.send(graph);
+    }
+
+    private void createNodes(final MutableGraph<Node<DeployedComponent>> graph,
+            final EMap<String, DeploymentContext> contexts) {
+        for (final Entry<String, DeploymentContext> context : contexts) {
             for (final Entry<String, DeployedComponent> component : context.getValue().getComponents()) {
                 for (final Entry<String, DeployedOperation> operation : component.getValue().getOperations()) {
                     if (this.selector.nodeIsSelected(operation.getValue())) {
@@ -82,8 +95,11 @@ public class AllenDeployedArchitectureGraphStage
                 }
             }
         }
-        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> entry : executionModel
-                .getInvocations()) {
+    }
+
+    private void processInvocations(final MutableGraph<Node<DeployedComponent>> graph,
+            final EMap<Tuple<DeployedOperation, DeployedOperation>, Invocation> invocations) throws InternalError {
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> entry : invocations) {
             if (this.selector.edgeIsSelected(entry.getValue())) {
                 final Node<DeployedComponent> source = this.findOperationNode(graph, entry.getValue().getCaller());
                 final Node<DeployedComponent> target = this.findOperationNode(graph, entry.getValue().getCallee());
@@ -94,7 +110,7 @@ public class AllenDeployedArchitectureGraphStage
                             this.getOrCreateNode(graph, target, entry.getValue().getCallee()));
                     break;
                 case ONLY_EDGES_FOR_NODES:
-                    if ((source != null) && (target != null)) {
+                    if (source != null && target != null) {
                         graph.putEdge(source, target);
                     }
                     break;
@@ -103,9 +119,12 @@ public class AllenDeployedArchitectureGraphStage
                 }
             }
         }
+    }
 
-        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, OperationDataflow> entry : executionModel
-                .getOperationDataflows()) {
+    private void processOperationDataflows(final MutableGraph<Node<DeployedComponent>> graph,
+            final EMap<Tuple<DeployedOperation, DeployedOperation>, OperationDataflow> operationDataflows)
+            throws InternalError {
+        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, OperationDataflow> entry : operationDataflows) {
             if (this.selector.edgeIsSelected(entry.getValue())) {
                 final Node<DeployedComponent> source = this.findOperationNode(graph, entry.getValue().getCaller());
                 final Node<DeployedComponent> target = this.findOperationNode(graph, entry.getValue().getCallee());
@@ -116,7 +135,7 @@ public class AllenDeployedArchitectureGraphStage
                             this.getOrCreateNode(graph, target, entry.getValue().getCallee()));
                     break;
                 case ONLY_EDGES_FOR_NODES:
-                    if ((source != null) && (target != null)) {
+                    if (source != null && target != null) {
                         graph.putEdge(source, target);
                     }
                     break;
@@ -125,9 +144,12 @@ public class AllenDeployedArchitectureGraphStage
                 }
             }
         }
+    }
 
-        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> entry : executionModel
-                .getStorageDataflows()) {
+    private void processStorageDataflows(final MutableGraph<Node<DeployedComponent>> graph,
+            final EMap<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> storageDataflows)
+            throws InternalError {
+        for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> entry : storageDataflows) {
             if (this.selector.edgeIsSelected(entry.getValue())) {
                 final Node<DeployedComponent> source = this.findOperationNode(graph, entry.getValue().getCode());
                 final Node<DeployedComponent> target = this.findStorageNode(graph, entry.getValue().getStorage());
@@ -138,7 +160,7 @@ public class AllenDeployedArchitectureGraphStage
                             this.getOrCreateStorageNode(graph, target, entry.getValue().getStorage()));
                     break;
                 case ONLY_EDGES_FOR_NODES:
-                    if ((source != null) && (target != null)) {
+                    if (source != null && target != null) {
                         graph.putEdge(source, target);
                     }
                     break;
@@ -147,8 +169,6 @@ public class AllenDeployedArchitectureGraphStage
                 }
             }
         }
-
-        this.outputPort.send(graph);
     }
 
     private Node<DeployedComponent> getOrCreateStorageNode(final MutableGraph<Node<DeployedComponent>> graph,

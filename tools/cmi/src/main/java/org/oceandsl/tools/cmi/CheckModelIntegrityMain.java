@@ -29,8 +29,6 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.architecture.RepositoryUtils;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.exception.ConfigurationException;
@@ -49,6 +47,9 @@ import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.source.SourceModel;
 import kieker.model.analysismodel.source.SourcePackage;
 import kieker.model.analysismodel.type.TypePackage;
+
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.architecture.RepositoryUtils;
 
 /**
  * Checks the integrity of architecture models.
@@ -127,12 +128,10 @@ public final class CheckModelIntegrityMain {
             if (targetMap == null) {
                 targetMap = new HashMap<>();
                 targetMap.put(invocation.getCallee(), invocation);
-            } else {
-                if (targetMap.get(invocation.getCallee()) != null) {
-                    System.out.printf("Found duplicate %s -> %s\n", // NOPMD
-                            invocation.getCaller().getAssemblyOperation().getOperationType().getName(),
-                            invocation.getCallee().getAssemblyOperation().getOperationType().getName());
-                }
+            } else if (targetMap.get(invocation.getCallee()) != null) {
+                System.out.printf("Found duplicate %s -> %s\n", // NOPMD
+                        invocation.getCaller().getAssemblyOperation().getOperationType().getName(),
+                        invocation.getCallee().getAssemblyOperation().getOperationType().getName());
             }
         }
 

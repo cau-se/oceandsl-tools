@@ -15,13 +15,13 @@
  ***************************************************************************/
 package org.oceandsl.analysis.graph.selector;
 
-import kieker.model.analysismodel.execution.OperationDataflow;
-import kieker.model.analysismodel.execution.StorageDataflow;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 

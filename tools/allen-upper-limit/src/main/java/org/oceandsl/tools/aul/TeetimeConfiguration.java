@@ -31,6 +31,7 @@ import teetime.framework.OutputPort;
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.stages.NumberGeneratorProducer;
+import org.oceandsl.analysis.graph.selector.AllSelector;
 import org.oceandsl.analysis.metrics.entropy.AllenDeployedMaximalInterconnectedGraphStage;
 import org.oceandsl.analysis.metrics.entropy.ComputeAllenComplexityMetrics;
 import org.oceandsl.analysis.metrics.entropy.KiekerArchitectureModelSystemGraphUtils;
@@ -59,7 +60,8 @@ public class TeetimeConfiguration extends Configuration {
         } else {
             final ModelRepositoryProducerStage readerStage = new ModelRepositoryProducerStage(
                     settings.getInputDirectory());
-            final AllenDeployedMaximalInterconnectedGraphStage allenArchitectureModularGraphStage = new AllenDeployedMaximalInterconnectedGraphStage();
+            final AllenDeployedMaximalInterconnectedGraphStage allenArchitectureModularGraphStage = new AllenDeployedMaximalInterconnectedGraphStage(
+                    new AllSelector());
 
             this.connectPorts(readerStage.getOutputPort(), allenArchitectureModularGraphStage.getInputPort());
 

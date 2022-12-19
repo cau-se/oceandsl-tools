@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar.stages;
+package org.oceandsl.tools.sar.stages.calls;
 
 import java.time.Duration;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
-import org.oceandsl.tools.sar.stages.calls.OperationAndCall4StaticDataStage;
 
 import kieker.analysis.architecture.recovery.events.CallEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
+
 import teetime.framework.test.StageTester;
+
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
 
 /**
  * Tesintg operation and call data stage..

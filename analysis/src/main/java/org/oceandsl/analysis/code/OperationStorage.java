@@ -15,12 +15,12 @@
  ***************************************************************************/
 package org.oceandsl.analysis.code;
 
-import org.oceandsl.analysis.code.stages.data.ICsvRecord;
-
 import kieker.model.analysismodel.execution.EDirection;
 
+import org.oceandsl.analysis.code.stages.data.ICsvRecord;
+
 /**
- * Dataflow analysis record.
+ * Dataflow analysis record describing a CSV file with 7 columns.
  *
  * @author Reiner Jung
  * @author Yannick Illmann (initial contribution)

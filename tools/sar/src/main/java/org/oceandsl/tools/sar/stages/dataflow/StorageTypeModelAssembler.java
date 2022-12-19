@@ -15,9 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages.dataflow;
 
-import org.oceandsl.analysis.code.stages.IStorageEventAssembler;
-import org.oceandsl.analysis.code.stages.IStorageSignatureExtractor;
-
 import kieker.analysis.architecture.recovery.AbstractModelAssembler;
 import kieker.analysis.architecture.recovery.events.StorageEvent;
 import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
@@ -26,6 +23,9 @@ import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.StorageType;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
+
+import org.oceandsl.analysis.code.stages.IStorageEventAssembler;
+import org.oceandsl.analysis.code.stages.IStorageSignatureExtractor;
 
 /**
  * Create storage elements in the type model.

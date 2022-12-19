@@ -15,12 +15,13 @@
  ***************************************************************************/
 package org.oceandsl.analysis.metrics.entropy;
 
+import java.util.Objects;
+
+import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
+
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.execution.OperationDataflow;
-import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
-
-import java.util.Objects;
 
 /**
  * Central node class for graphs.
@@ -33,7 +34,7 @@ import java.util.Objects;
  * @author Reiner Jung
  * @since 1.0
  */
-public class KiekerNode<T,E> implements Node<T> {
+public class KiekerNode<T, E> implements Node<T> {
 
     private final E member;
 
@@ -69,7 +70,7 @@ public class KiekerNode<T,E> implements Node<T> {
         }
 
         @SuppressWarnings("unchecked")
-        final KiekerNode<T,E> other = (KiekerNode<T,E>) obj;
+        final KiekerNode<T, E> other = (KiekerNode<T, E>) obj;
         return Objects.equals(this.member, other.member);
     }
 
@@ -78,18 +79,19 @@ public class KiekerNode<T,E> implements Node<T> {
     public T getModule() {
         if (this.member != null) {
             if (this.member instanceof DeployedOperation) {
-                DeployedOperation memberLocal = (DeployedOperation) this.member;
+                final DeployedOperation memberLocal = (DeployedOperation) this.member;
                 return (T) memberLocal.eContainer().eContainer();
 
             } else if (this.member instanceof DeployedStorage) {
-                DeployedStorage memberLocal = (DeployedStorage) this.member;
+                final DeployedStorage memberLocal = (DeployedStorage) this.member;
                 return (T) memberLocal.eContainer().eContainer();
             } else {
-                System.err.println("[Kieker Node Object] Invalid Kieker Node detected! Member is either an instance of DeployedOperation nor DeployedStorage.");
+                System.err.println(
+                        "[Kieker Node Object] Invalid Kieker Node detected! Member is either an instance of DeployedOperation nor DeployedStorage.");
                 return null;
             }
-        }else {
-                return null;
+        } else {
+            return null;
         }
     }
 
@@ -97,7 +99,7 @@ public class KiekerNode<T,E> implements Node<T> {
         return this.member;
     }
 
-    public boolean isOperation(){
+    public boolean isOperation() {
         return this.member instanceof OperationDataflow;
     }
 }

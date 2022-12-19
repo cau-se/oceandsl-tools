@@ -113,11 +113,9 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
                 this.logger.error("Model file {} is not executable", this.parameterConfiguration.getModelExecutable());
                 return false;
             }
-        } else {
-            if (!Files.isDirectory(this.parameterConfiguration.getInputFile())) {
-                this.logger.error("Input path {} is not a directory", this.parameterConfiguration.getInputFile());
-                return false;
-            }
+        } else if (!Files.isDirectory(this.parameterConfiguration.getInputFile())) {
+            this.logger.error("Input path {} is not a directory", this.parameterConfiguration.getInputFile());
+            return false;
         }
         if (this.parameterConfiguration.getOutputDirectory() != null) {
             if (this.parameterConfiguration.getOutputDirectory().getParent() == null) {
@@ -126,12 +124,10 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
                             this.parameterConfiguration.getOutputDirectory());
                     return false;
                 }
-            } else {
-                if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory().getParent())) {
-                    this.logger.error("Output path {} is not a directory",
-                            this.parameterConfiguration.getOutputDirectory());
-                    return false;
-                }
+            } else if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory().getParent())) {
+                this.logger.error("Output path {} is not a directory",
+                        this.parameterConfiguration.getOutputDirectory());
+                return false;
             }
         }
         if (this.parameterConfiguration.getModuleModes().contains(EModuleMode.MAP_MODE)) {

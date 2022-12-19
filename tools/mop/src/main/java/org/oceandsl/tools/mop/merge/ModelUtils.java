@@ -15,6 +15,14 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.merge;
 
+import java.util.Map.Entry;
+
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.util.EcoreEMap;
+
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
@@ -29,13 +37,6 @@ import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.StorageType;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.util.EcoreEMap;
-
-import java.util.Map.Entry;
 
 /**
  * @author Reiner Jung
@@ -176,12 +177,10 @@ public final class ModelUtils {
     public static boolean isEqual(final String leftSignature, final String signature) {
         if (leftSignature == null) {
             return signature == null;
+        } else if (signature == null) {
+            return false;
         } else {
-            if (signature == null) {
-                return false;
-            } else {
-                return leftSignature.equals(signature);
-            }
+            return leftSignature.equals(signature);
         }
     }
 

@@ -17,8 +17,20 @@ package org.oceandsl.analysis.code.stages;
 
 import kieker.model.analysismodel.type.StorageType;
 
+/**
+ * Signature extractor interface for storage references.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 public interface IStorageSignatureExtractor {
 
+    /**
+     * Extract information from the signature to set all other parameter of a storage type.
+     *
+     * @param storageType
+     *            the storage type to be modified
+     */
     void extract(StorageType storageType);
 
 }

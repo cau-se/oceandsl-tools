@@ -15,8 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages.dataflow;
 
-import org.oceandsl.tools.sar.stages.calls.DataflowEvent;
-
 import kieker.analysis.architecture.recovery.events.OperationEvent;
 import kieker.analysis.architecture.recovery.events.StorageEvent;
 import kieker.model.analysismodel.deployment.DeployedComponent;

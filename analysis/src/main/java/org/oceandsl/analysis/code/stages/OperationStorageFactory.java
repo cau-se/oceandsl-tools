@@ -15,10 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.analysis.code.stages;
 
+import kieker.model.analysismodel.execution.EDirection;
+
 import org.oceandsl.analysis.code.OperationStorage;
 import org.oceandsl.analysis.code.stages.data.ICsvRecordFactory;
-
-import kieker.model.analysismodel.execution.EDirection;
 
 /**
  * Create OperationStorage objects.

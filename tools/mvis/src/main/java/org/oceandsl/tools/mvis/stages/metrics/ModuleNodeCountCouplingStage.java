@@ -51,8 +51,8 @@ public class ModuleNodeCountCouplingStage extends AbstractTransformation<IGraph,
         this.outputPort.send(result);
     }
 
-    private String getFilepath(final Object id){
-        String stringId = (String) id;
+    private String getFilepath(final Object id) {
+        final String stringId = (String) id;
         String filepath = stringId.split("\\.f")[0];
         filepath = filepath.split("@")[1];
         return filepath.concat(".f");

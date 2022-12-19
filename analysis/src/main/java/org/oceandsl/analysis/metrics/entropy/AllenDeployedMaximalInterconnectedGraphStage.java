@@ -15,71 +15,82 @@
  ***************************************************************************/
 package org.oceandsl.analysis.metrics.entropy;
 
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+
+import org.eclipse.emf.common.util.EMap;
+import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
+
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.deployment.DeploymentPackage;
-import kieker.model.analysismodel.execution.ExecutionModel;
-import kieker.model.analysismodel.execution.ExecutionPackage;
-import kieker.model.analysismodel.execution.Invocation;
-import kieker.model.analysismodel.execution.Tuple;
 
-import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 import teetime.stage.basic.AbstractTransformation;
 
-import java.util.Map.Entry;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
+ * Compute a graph where every node is connected with every edge.
+ *
  * @author Reiner Jung
- * @since 1.4
+ * @since 1.2.0
  */
 public class AllenDeployedMaximalInterconnectedGraphStage
         extends AbstractTransformation<ModelRepository, Graph<Node<DeployedComponent>>> {
 
-    public AllenDeployedMaximalInterconnectedGraphStage() {
+    private final IGraphElementSelector selector;
+
+    public AllenDeployedMaximalInterconnectedGraphStage(final IGraphElementSelector selector) {
+        this.selector = selector;
     }
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
         final DeploymentModel deploymentModel = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
-        final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
         final MutableGraph<Node<DeployedComponent>> graph = GraphBuilder.undirected().allowsSelfLoops(true).build();
 
-        for (final Entry<String, DeploymentContext> context : deploymentModel.getContexts()) {
-            for (final Entry<String, DeployedComponent> component : context.getValue().getComponents()) {
-                for (final Entry<String, DeployedOperation> operation : component.getValue().getOperations()) {
-                    final Node<DeployedComponent> node = new KiekerNode<>(operation.getValue());
-                    graph.addNode(node);
-                }
-            }
-        }
-        for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> entry : executionModel
-                .getInvocations()) {
-            final Node<DeployedComponent> source = this.findNode(graph, entry.getValue().getCaller());
-            final Node<DeployedComponent> target = this.findNode(graph, entry.getValue().getCallee());
+        this.createNodes(graph, deploymentModel.getContexts());
+        this.interconnectAllNodes(graph);
 
-            if (source != null && target != null) {
-                graph.putEdge(source, target);
-            }
-        }
         this.outputPort.send(graph);
     }
 
-    private Node<DeployedComponent> findNode(final Graph<Node<DeployedComponent>> graph,
-            final DeployedOperation operation) {
-        for (final Node<DeployedComponent> node : graph.nodes()) {
-            final KiekerNode<DeployedComponent,DeployedOperation> kiekerNode = (KiekerNode<DeployedComponent, DeployedOperation>) node;
-            if (kiekerNode.getMember().equals(operation)) {
-                return kiekerNode;
+    private void createNodes(final MutableGraph<Node<DeployedComponent>> graph,
+            final EMap<String, DeploymentContext> contexts) {
+        for (final Entry<String, DeploymentContext> context : contexts) {
+            for (final Entry<String, DeployedComponent> component : context.getValue().getComponents()) {
+                for (final Entry<String, DeployedOperation> operation : component.getValue().getOperations()) {
+                    if (this.selector.nodeIsSelected(operation.getValue())) {
+                        final Node<DeployedComponent> node = new KiekerNode<>(operation.getValue());
+                        graph.addNode(node);
+                    }
+                }
+                for (final Entry<String, DeployedStorage> storage : component.getValue().getStorages()) {
+                    if (this.selector.nodeIsSelected(storage.getValue())) {
+                        final Node<DeployedComponent> node = new KiekerNode<>(storage.getValue());
+                        graph.addNode(node);
+                    }
+                }
             }
         }
-
-        return null;
     }
 
+    private void interconnectAllNodes(final MutableGraph<Node<DeployedComponent>> graph) {
+        final Set<Node<DeployedComponent>> processedNodes = new HashSet<>();
+        graph.nodes().forEach(source -> {
+            processedNodes.add(source);
+            graph.nodes().stream().filter(target -> !processedNodes.contains(target)).forEach(target -> {
+                graph.putEdge(source, target);
+            });
+        });
+    }
 }

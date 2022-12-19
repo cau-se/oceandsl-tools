@@ -15,8 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages.dataflow;
 
-import org.oceandsl.analysis.code.stages.IStorageEventAssembler;
-
 import kieker.analysis.architecture.recovery.AbstractModelAssembler;
 import kieker.analysis.architecture.recovery.events.StorageEvent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
@@ -26,6 +24,8 @@ import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentFactory;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.source.SourceModel;
+
+import org.oceandsl.analysis.code.stages.IStorageEventAssembler;
 
 /**
  *

@@ -91,11 +91,9 @@ public class AllenUpperLimitMain extends AbstractService<TeetimeConfiguration, S
             if (this.parameterConfiguration.getCreatorMode() == null) {
                 this.logger.error("No creator mode for the test graph has been specified.");
                 return false;
-            } else {
-                if (this.parameterConfiguration.getCreatorMode() instanceof NullNetworkCreator) {
-                    this.logger.warn(
-                            "Specified node creator mode is not supported, using fallback which does not create edges.");
-                }
+            } else if (this.parameterConfiguration.getCreatorMode() instanceof NullNetworkCreator) {
+                this.logger.warn(
+                        "Specified node creator mode is not supported, using fallback which does not create edges.");
             }
         }
 

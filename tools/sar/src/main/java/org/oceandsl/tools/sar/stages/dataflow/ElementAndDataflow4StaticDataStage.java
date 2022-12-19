@@ -18,14 +18,14 @@ package org.oceandsl.tools.sar.stages.dataflow;
 import java.time.Duration;
 import java.util.regex.Pattern;
 
-import org.oceandsl.analysis.code.OperationStorage;
-import org.oceandsl.tools.sar.stages.calls.DataflowEvent;
-
 import kieker.analysis.architecture.recovery.events.AbstractElementEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
 import kieker.analysis.architecture.recovery.events.StorageEvent;
+
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
+
+import org.oceandsl.analysis.code.OperationStorage;
 
 /**
  * Transform @{link CallerCallee}s to @{link OperationEvent}s and @{CallEvent}s on model level. The
