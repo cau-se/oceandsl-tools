@@ -26,6 +26,7 @@ import kieker.analysis.architecture.dependency.PropertyConstants;
 import kieker.analysis.architecture.dependency.ResponseTimeDecorator;
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.generic.graph.GraphFactory;
+import kieker.analysis.generic.graph.IEdge;
 import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedStorage;
@@ -91,7 +92,7 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
     }
 
     @Override
-    public IGraph build(final ModelRepository repository) {
+    public IGraph<INode, IEdge> build(final ModelRepository repository) {
         this.graph = GraphFactory.createGraph(repository.getName());
 
         this.sourcesModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);

@@ -38,7 +38,9 @@ public class KiekerNode<T, E> implements Node<T> {
 
     private final E member;
 
-    /** @param member */
+    /**
+     * @param member
+     */
     public KiekerNode(final E member) {
         this.member = member;
     }
