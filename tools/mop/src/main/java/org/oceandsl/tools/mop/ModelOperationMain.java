@@ -15,8 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -48,14 +48,14 @@ public class ModelOperationMain extends AbstractService<TeetimeConfiguration, Se
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            return new TeetimeConfiguration(this.parameterConfiguration);
+            return new TeetimeConfiguration(this.settings);
         } catch (final IOException e) {
             throw new ConfigurationException(e);
         }
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }

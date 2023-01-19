@@ -17,6 +17,7 @@ package org.oceandsl.log.rewriter;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -39,14 +40,14 @@ public class LogRewriterMain extends AbstractService<TeetimeConfiguration, Setti
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            return new TeetimeConfiguration(this.parameterConfiguration);
+            return new TeetimeConfiguration(this.settings);
         } catch (final IOException e) {
             throw new ConfigurationException(e);
         }
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }
@@ -58,23 +59,22 @@ public class LogRewriterMain extends AbstractService<TeetimeConfiguration, Setti
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (!this.parameterConfiguration.getAddrlineExecutable().canExecute()) {
-            this.logger.error("Addr2line file {} is not executable",
-                    this.parameterConfiguration.getAddrlineExecutable());
+        if (!this.settings.getAddrlineExecutable().canExecute()) {
+            this.logger.error("Addr2line file {} is not executable", this.settings.getAddrlineExecutable());
             return false;
         }
-        if (!this.parameterConfiguration.getModelExecutable().canExecute()) {
-            this.logger.error("Model file {} is not executable", this.parameterConfiguration.getModelExecutable());
+        if (!this.settings.getModelExecutable().canExecute()) {
+            this.logger.error("Model file {} is not executable", this.settings.getModelExecutable());
             return false;
         }
-        for (final File inputFile : this.parameterConfiguration.getInputFiles()) {
+        for (final File inputFile : this.settings.getInputFiles()) {
             if (!inputFile.isDirectory()) {
                 this.logger.error("Input directory {} is not directory", inputFile);
                 return false;
             }
         }
-        if (!this.parameterConfiguration.getOutputFile().isDirectory()) {
-            this.logger.error("Output directory {} is not directory", this.parameterConfiguration.getOutputFile());
+        if (!this.settings.getOutputFile().isDirectory()) {
+            this.logger.error("Output directory {} is not directory", this.settings.getOutputFile());
             return false;
         }
         return true;

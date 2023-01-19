@@ -15,20 +15,19 @@
  ***************************************************************************/
 package org.oceandsl.tools.aul;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.tools.aul.stages.NullNetworkCreator;
 import org.slf4j.LoggerFactory;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
-
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.tools.aul.stages.NullNetworkCreator;
 
 /**
  * Architecture analysis main class.
@@ -53,7 +52,7 @@ public class AllenUpperLimitMain extends AbstractService<TeetimeConfiguration, S
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            return new TeetimeConfiguration(this.parameterConfiguration);
+            return new TeetimeConfiguration(this.settings);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
@@ -61,7 +60,7 @@ public class AllenUpperLimitMain extends AbstractService<TeetimeConfiguration, S
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }
@@ -73,27 +72,29 @@ public class AllenUpperLimitMain extends AbstractService<TeetimeConfiguration, S
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (this.parameterConfiguration.getInputDirectory() == null && this.parameterConfiguration.getNodes() == null) {
+        if ((this.settings.getInputDirectory() == null) && (this.settings.getNodes() == null)) {
             this.logger.error("Must specify either a model or the number of nodes for an generated model.");
             return false;
         }
-        if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory())) {
-            this.logger.error("Output path {} is not directory", this.parameterConfiguration.getOutputDirectory());
+        if (!Files.isDirectory(this.settings.getOutputDirectory())) {
+            this.logger.error("Output path {} is not directory", this.settings.getOutputDirectory());
             return false;
         }
-        if (this.parameterConfiguration.getInputDirectory() != null) {
-            if (!Files.isDirectory(this.parameterConfiguration.getInputDirectory())) {
-                this.logger.error("Input path {} is not directory", this.parameterConfiguration.getInputDirectory());
+        if (this.settings.getInputDirectory() != null) {
+            if (!Files.isDirectory(this.settings.getInputDirectory())) {
+                this.logger.error("Input path {} is not directory", this.settings.getInputDirectory());
                 return false;
             }
         }
-        if (this.parameterConfiguration.getNodes() != null) {
-            if (this.parameterConfiguration.getCreatorMode() == null) {
+        if (this.settings.getNodes() != null) {
+            if (this.settings.getCreatorMode() == null) {
                 this.logger.error("No creator mode for the test graph has been specified.");
                 return false;
-            } else if (this.parameterConfiguration.getCreatorMode() instanceof NullNetworkCreator) {
-                this.logger.warn(
-                        "Specified node creator mode is not supported, using fallback which does not create edges.");
+            } else {
+                if (this.settings.getCreatorMode() instanceof NullNetworkCreator) {
+                    this.logger.warn(
+                            "Specified node creator mode is not supported, using fallback which does not create edges.");
+                }
             }
         }
 

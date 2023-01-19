@@ -15,7 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.pp.log;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -43,7 +42,7 @@ public class FixStaticLogMain extends AbstractService<FixStaticLogTeetimeConfigu
     @Override
     protected FixStaticLogTeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            return new FixStaticLogTeetimeConfiguration(this.parameterConfiguration);
+            return new FixStaticLogTeetimeConfiguration(this.settings);
         } catch (final IOException e) {
             this.logger.error("IO error. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
@@ -51,7 +50,7 @@ public class FixStaticLogMain extends AbstractService<FixStaticLogTeetimeConfigu
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }
@@ -63,19 +62,18 @@ public class FixStaticLogMain extends AbstractService<FixStaticLogTeetimeConfigu
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (!this.parameterConfiguration.getInputPath().toFile().isFile()) {
-            this.logger.error("Input file {} is not file", this.parameterConfiguration.getInputPath());
+        if (!this.settings.getInputPath().toFile().isFile()) {
+            this.logger.error("Input file {} is not file", this.settings.getInputPath());
             return false;
         }
-        for (final Path path : this.parameterConfiguration.getMapPaths()) {
+        for (final Path path : this.settings.getMapPaths()) {
             if (!path.toFile().isFile()) {
                 this.logger.error("Map file {} is not file", path);
                 return false;
             }
         }
-        if (!this.parameterConfiguration.getOutputFile().getParentFile().isDirectory()) {
-            this.logger.error("Directory for output file {} does not exists",
-                    this.parameterConfiguration.getOutputFile());
+        if (!this.settings.getOutputFile().getParentFile().isDirectory()) {
+            this.logger.error("Directory for output file {} does not exists", this.settings.getOutputFile());
             return false;
         }
 

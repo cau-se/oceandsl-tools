@@ -15,8 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.relabel;
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -51,17 +51,17 @@ public class RelabelSourceMain extends AbstractService<TeetimeConfiguration, Set
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (!Files.isDirectory(this.parameterConfiguration.getInputDirectory())) {
-            this.logger.error("Input path {} is not a directory", this.parameterConfiguration.getInputDirectory());
+        if (!Files.isDirectory(this.settings.getInputDirectory())) {
+            this.logger.error("Input path {} is not a directory", this.settings.getInputDirectory());
             return false;
         }
 
-        if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory())) {
-            this.logger.error("Output path {} is not directory", this.parameterConfiguration.getOutputDirectory());
+        if (!Files.isDirectory(this.settings.getOutputDirectory())) {
+            this.logger.error("Output path {} is not directory", this.settings.getOutputDirectory());
             return false;
         }
 
-        if (this.parameterConfiguration.getReplacements().size() == 0) {
+        if (this.settings.getReplacements().size() == 0) {
             this.logger.error("Need to specify at least one replacement rule.");
             return false;
         }
@@ -71,11 +71,12 @@ public class RelabelSourceMain extends AbstractService<TeetimeConfiguration, Set
 
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
-        return new TeetimeConfiguration(this.parameterConfiguration);
+        return new TeetimeConfiguration(this.settings);
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
+        // we do not use a configuration file
         return null;
     }
 

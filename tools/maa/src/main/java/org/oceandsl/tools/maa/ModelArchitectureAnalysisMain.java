@@ -15,8 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.maa;
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -46,11 +46,12 @@ public class ModelArchitectureAnalysisMain extends AbstractService<TeetimeConfig
 
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
-        return new TeetimeConfiguration(this.parameterConfiguration);
+        return new TeetimeConfiguration(this.settings);
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
+        // we do not use a configuration file
         return null;
     }
 
@@ -61,18 +62,16 @@ public class ModelArchitectureAnalysisMain extends AbstractService<TeetimeConfig
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (!Files.isDirectory(this.parameterConfiguration.getInputModelPath())) {
-            this.logger.error("Input path '{}' cannot be found.",
-                    this.parameterConfiguration.getInputModelPath().toString());
+        if (!Files.isDirectory(this.settings.getInputModelPath())) {
+            this.logger.error("Input path '{}' cannot be found.", this.settings.getInputModelPath().toString());
             return false;
         }
-        if (!Files.isDirectory(this.parameterConfiguration.getOutputModelPath())) {
-            this.logger.error("Output path '{}' cannot be found.",
-                    this.parameterConfiguration.getOutputModelPath().toString());
+        if (!Files.isDirectory(this.settings.getOutputModelPath())) {
+            this.logger.error("Output path '{}' cannot be found.", this.settings.getOutputModelPath().toString());
             return false;
         }
-        if (this.parameterConfiguration.getMapFiles() != null) {
-            if (this.parameterConfiguration.getSeparator() == null) {
+        if (this.settings.getMapFiles() != null) {
+            if (this.settings.getSeparator() == null) {
                 this.logger.error("Missing separator string for grouping CSV file.");
                 return false;
             }
