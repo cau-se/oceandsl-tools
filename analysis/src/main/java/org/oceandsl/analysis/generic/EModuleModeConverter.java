@@ -16,6 +16,7 @@
 package org.oceandsl.analysis.generic;
 
 import java.lang.invoke.WrongMethodTypeException;
+import java.util.Locale;
 
 import com.beust.jcommander.IStringConverter;
 
@@ -38,7 +39,7 @@ public class EModuleModeConverter implements IStringConverter<EModuleMode> {
         String options = "";
         String separator = "";
         for (final EModuleMode element : EModuleMode.values()) {
-            options += separator + element.name().replace("_", "-").toLowerCase();
+            options += separator + element.name().replace("_", "-").toLowerCase(Locale.getDefault());
             separator = ", ";
         }
         throw new WrongMethodTypeException(

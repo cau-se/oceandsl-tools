@@ -26,8 +26,6 @@ import kieker.model.analysismodel.deployment.DeployedOperation;
  *
  * @param <T>
  *            type representing modules
- * @param <R>
- *            type representing nodes
  *
  * @author Reiner Jung
  * @since 1.0
@@ -36,7 +34,9 @@ public class KiekerNode<T> implements Node<T> {
 
     private final DeployedOperation member;
 
-    /** @param member */
+    /**
+     * @param member
+     */
     public KiekerNode(final DeployedOperation member) {
         this.member = member;
     }

@@ -91,6 +91,13 @@
     		<properties>
     			<property name="threshold" value="2"/>
     		</properties>
-    	</rule>
+    </rule>
+    
+    <rule ref="category/java/codestyle.xml/ClassNamingConventions">
+        <properties>
+            <property name="utilityClassPattern" value="[A-Z][a-zA-Z0-9]*(Utils|Factory|Constants)" />
+        </properties>
+    </rule>
+
 
 </ruleset>

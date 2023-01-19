@@ -80,7 +80,7 @@ public class ColorAssemblyLevelComponentDependencyGraphBuilder extends AbstractC
     protected INode addVertexIfAbsent(final AssemblyComponent component) {
         final String name = FullyQualifiedNamesFactory.createFullyQualifiedName(component);
         final Optional<INode> nodeOptional = this.graph.getGraph().nodes().stream()
-                .filter(node -> name.equals(((INode) node).getId())).findFirst();
+                .filter(node -> name.equals(node.getId())).findFirst();
         if (nodeOptional.isEmpty()) {
             final INode node = GraphFactory.createNode(name);
             this.graph.getGraph().addNode(node);
