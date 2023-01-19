@@ -106,7 +106,7 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
     protected INode addVertexIfAbsent(final IGraph localGraph, final AssemblyComponent component) {
         final String name = FullyQualifiedNamesFactory.createFullyQualifiedName(component);
         final Optional<INode> nodeOptional = localGraph.getGraph().nodes().stream()
-                .filter(node -> name.equals(node.getId())).findFirst();
+                .filter(node -> name.equals(((INode) node).getId())).findFirst();
         if (nodeOptional.isEmpty()) {
             final INode node = GraphFactory.createNode(name);
             localGraph.getGraph().addNode(node);
@@ -118,7 +118,7 @@ public class ColorAssemblyLevelOperationDependencyGraphBuilder extends AbstractC
     protected INode addVertexIfAbsent(final IGraph localGraph, final AssemblyOperation operation) {
         final String name = FullyQualifiedNamesFactory.createFullyQualifiedName(operation);
         final Optional<INode> nodeOptional = localGraph.getGraph().nodes().stream()
-                .filter(node -> name.equals(node.getId())).findFirst();
+                .filter(node -> name.equals(((INode) node).getId())).findFirst();
         if (nodeOptional.isEmpty()) {
             final INode node = GraphFactory.createNode(name);
             localGraph.getGraph().addNode(node);

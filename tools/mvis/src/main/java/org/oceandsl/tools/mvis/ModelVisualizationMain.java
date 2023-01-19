@@ -54,7 +54,7 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            return new TeetimeConfiguration(this.parameterConfiguration);
+            return new TeetimeConfiguration(this.settings);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
@@ -74,22 +74,22 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (this.parameterConfiguration.getGraphGenerationMode() == null) {
+        if (this.settings.getGraphGenerationMode() == null) {
             this.logger.error("You need to specify a graph generation mode: {}",
                     this.createModeList(EGraphGenerationMode.values()));
             return false;
         }
-        if (this.parameterConfiguration.getSelector() == null) {
+        if (this.settings.getSelector() == null) {
             this.logger.error("No valid node and edge selector specificed. Valid types are: {}",
                     this.createSelectorList(ESelectorKind.values()));
             return false;
         }
-        if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory())) {
-            this.logger.error("Output path {} is not directory", this.parameterConfiguration.getOutputDirectory());
+        if (!Files.isDirectory(this.settings.getOutputDirectory())) {
+            this.logger.error("Output path {} is not directory", this.settings.getOutputDirectory());
             return false;
         }
-        if (!Files.isDirectory(this.parameterConfiguration.getInputDirectory())) {
-            this.logger.error("Input path {} is not directory", this.parameterConfiguration.getInputDirectory());
+        if (!Files.isDirectory(this.settings.getInputDirectory())) {
+            this.logger.error("Input path {} is not directory", this.settings.getInputDirectory());
             return false;
         }
         return true;

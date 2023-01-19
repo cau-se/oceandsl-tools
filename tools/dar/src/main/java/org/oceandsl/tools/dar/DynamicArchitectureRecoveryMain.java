@@ -59,10 +59,10 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            this.repository = ArchitectureModelManagementUtils.createModelRepository(this.createRepositoryName(
-                    this.parameterConfiguration.getExperimentName(), this.parameterConfiguration.getModuleModes()));
+            this.repository = ArchitectureModelManagementUtils.createModelRepository(
+                    this.createRepositoryName(this.settings.getExperimentName(), this.settings.getModuleModes()));
 
-            return new TeetimeConfiguration(this.logger, this.parameterConfiguration, this.repository);
+            return new TeetimeConfiguration(this.logger, this.settings, this.repository);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
@@ -103,41 +103,37 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (this.parameterConfiguration.getModelExecutable() != null) {
-            if (!this.parameterConfiguration.getAddrlineExecutable().canExecute()) {
-                this.logger.error("Addr2line file {} is not executable",
-                        this.parameterConfiguration.getAddrlineExecutable());
+        if (this.settings.getModelExecutable() != null) {
+            if (!this.settings.getAddrlineExecutable().canExecute()) {
+                this.logger.error("Addr2line file {} is not executable", this.settings.getAddrlineExecutable());
                 return false;
             }
-            if (!this.parameterConfiguration.getModelExecutable().canExecute()) {
-                this.logger.error("Model file {} is not executable", this.parameterConfiguration.getModelExecutable());
+            if (!this.settings.getModelExecutable().canExecute()) {
+                this.logger.error("Model file {} is not executable", this.settings.getModelExecutable());
                 return false;
             }
         } else {
-            if (!Files.isDirectory(this.parameterConfiguration.getInputFile())) {
-                this.logger.error("Input path {} is not a directory", this.parameterConfiguration.getInputFile());
+            if (!Files.isDirectory(this.settings.getInputFile())) {
+                this.logger.error("Input path {} is not a directory", this.settings.getInputFile());
                 return false;
             }
         }
-        if (this.parameterConfiguration.getOutputDirectory() != null) {
-            if (this.parameterConfiguration.getOutputDirectory().getParent() == null) {
-                if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory())) {
-                    this.logger.error("Output path {} is not a directory",
-                            this.parameterConfiguration.getOutputDirectory());
+        if (this.settings.getOutputDirectory() != null) {
+            if (this.settings.getOutputDirectory().getParent() == null) {
+                if (!Files.isDirectory(this.settings.getOutputDirectory())) {
+                    this.logger.error("Output path {} is not a directory", this.settings.getOutputDirectory());
                     return false;
                 }
             } else {
-                if (!Files.isDirectory(this.parameterConfiguration.getOutputDirectory().getParent())) {
-                    this.logger.error("Output path {} is not a directory",
-                            this.parameterConfiguration.getOutputDirectory());
+                if (!Files.isDirectory(this.settings.getOutputDirectory().getParent())) {
+                    this.logger.error("Output path {} is not a directory", this.settings.getOutputDirectory());
                     return false;
                 }
             }
         }
-        if (this.parameterConfiguration.getModuleModes().contains(EModuleMode.MAP_MODE)) {
-            if (this.parameterConfiguration.getComponentMapFiles() != null
-                    && this.parameterConfiguration.getComponentMapFiles().size() > 0) {
-                for (final Path path : this.parameterConfiguration.getComponentMapFiles()) {
+        if (this.settings.getModuleModes().contains(EModuleMode.MAP_MODE)) {
+            if (this.settings.getComponentMapFiles() != null && this.settings.getComponentMapFiles().size() > 0) {
+                for (final Path path : this.settings.getComponentMapFiles()) {
                     if (!Files.isReadable(path)) {
                         this.logger.error("Cannot read map file: {}", path.toString());
                         return false;
@@ -154,8 +150,7 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
     @Override
     protected void shutdownService() {
         try {
-            ArchitectureModelManagementUtils.writeModelRepository(this.parameterConfiguration.getOutputDirectory(),
-                    this.repository);
+            ArchitectureModelManagementUtils.writeModelRepository(this.settings.getOutputDirectory(), this.repository);
         } catch (final IOException e) {
             this.logger.error("Error saving model: {}", e.getLocalizedMessage());
         }

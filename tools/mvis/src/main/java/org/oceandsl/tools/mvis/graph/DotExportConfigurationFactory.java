@@ -21,8 +21,10 @@ import kieker.analysis.architecture.dependency.IVertexTypeMapper;
 import kieker.analysis.architecture.dependency.PropertyConstants;
 import kieker.analysis.architecture.dependency.VertexType;
 import kieker.analysis.architecture.recovery.signature.NameBuilder;
+import kieker.analysis.generic.graph.IEdge;
 import kieker.analysis.generic.graph.IElement;
 import kieker.analysis.generic.graph.INode;
+import kieker.analysis.generic.sink.graph.dot.DotExportBuilder;
 import kieker.analysis.generic.sink.graph.dot.DotExportMapper;
 import kieker.analysis.generic.sink.graph.dot.attributes.DotClusterAttribute;
 import kieker.analysis.generic.sink.graph.dot.attributes.DotEdgeAttribute;
@@ -58,8 +60,8 @@ public class DotExportConfigurationFactory {
         this.vertexTypeMapper = vertexTypeMapper;
     }
 
-    private DotExportMapper.Builder createBaseBuilder() {
-        final DotExportMapper.Builder builder = new DotExportMapper.Builder();
+    private DotExportBuilder<INode, IEdge> createBaseBuilder() {
+        final DotExportBuilder<INode, IEdge> builder = new DotExportBuilder<>();
 
         builder.addGraphAttribute(DotGraphAttribute.RANKDIR, g -> "LR");
         builder.addDefaultEdgeAttribute(DotEdgeAttribute.STYLE, g -> "solid");
@@ -78,8 +80,8 @@ public class DotExportConfigurationFactory {
         return builder;
     }
 
-    public DotExportMapper createForTypeLevelOperationDependencyGraph() {
-        final DotExportMapper.Builder builder = this.createBaseBuilder();
+    public DotExportMapper<INode, IEdge> createForTypeLevelOperationDependencyGraph() {
+        final DotExportBuilder<INode, IEdge> builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "oval");
 
@@ -99,8 +101,8 @@ public class DotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportMapper createForTypeLevelComponentDependencyGraph() {
-        final DotExportMapper.Builder builder = this.createBaseBuilder();
+    public DotExportMapper<INode, IEdge> createForTypeLevelComponentDependencyGraph() {
+        final DotExportBuilder<INode, IEdge> builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "box");
 
@@ -118,8 +120,9 @@ public class DotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportMapper createForAssemblyLevelOperationDependencyGraph(final boolean vertexStatistics) {
-        final DotExportMapper.Builder builder = this.createBaseBuilder();
+    public DotExportMapper<INode, IEdge> createForAssemblyLevelOperationDependencyGraph(
+            final boolean vertexStatistics) {
+        final DotExportBuilder<INode, IEdge> builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "oval");
 
@@ -139,8 +142,9 @@ public class DotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportMapper createForAssemblyLevelComponentDependencyGraph(final boolean vertexStatistics) {
-        final DotExportMapper.Builder builder = this.createBaseBuilder();
+    public DotExportMapper<INode, IEdge> createForAssemblyLevelComponentDependencyGraph(
+            final boolean vertexStatistics) {
+        final DotExportBuilder<INode, IEdge> builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "box");
 
@@ -158,8 +162,8 @@ public class DotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportMapper createForDeploymentLevelOperationDependencyGraph() {
-        final DotExportMapper.Builder builder = this.createBaseBuilder();
+    public DotExportMapper<INode, IEdge> createForDeploymentLevelOperationDependencyGraph() {
+        final DotExportBuilder<INode, IEdge> builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "oval");
 
@@ -190,8 +194,8 @@ public class DotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportMapper createForDeploymentLevelComponentDependencyGraph() {
-        final DotExportMapper.Builder builder = this.createBaseBuilder();
+    public DotExportMapper<INode, IEdge> createForDeploymentLevelComponentDependencyGraph() {
+        final DotExportBuilder<INode, IEdge> builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "box");
 
@@ -211,8 +215,8 @@ public class DotExportConfigurationFactory {
         return builder.build();
     }
 
-    public DotExportMapper createForDeploymentLevelContextDependencyGraph() {
-        final DotExportMapper.Builder builder = this.createBaseBuilder();
+    public DotExportMapper<INode, IEdge> createForDeploymentLevelContextDependencyGraph() {
+        final DotExportBuilder<INode, IEdge> builder = this.createBaseBuilder();
 
         builder.addDefaultNodeAttribute(DotNodeAttribute.SHAPE, v -> "box3d");
 
