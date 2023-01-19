@@ -43,7 +43,7 @@ import teetime.stage.basic.AbstractTransformation;
 public class AllenDeployedMaximalInterconnectedGraphStage
         extends AbstractTransformation<ModelRepository, Graph<Node<DeployedComponent>>> {
 
-    public AllenDeployedMaximalInterconnectedGraphStage() {
+    public AllenDeployedMaximalInterconnectedGraphStage() { // NOPMD
     }
 
     @Override

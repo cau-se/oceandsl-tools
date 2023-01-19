@@ -39,6 +39,9 @@ import teetime.stage.basic.AbstractTransformation;
 /**
  * Compute the Allen metrics for a given modular graph.
  *
+ * @param <T>
+ *            node element type
+ *
  * @author Reiner Jung
  * @since 1.1
  */
@@ -50,7 +53,7 @@ public class ComputeAllenComplexityMetrics<T>
 
     @SafeVarargs
     public ComputeAllenComplexityMetrics(final SystemGraphUtils<T> systemGraphUtils,
-            final Class<? extends CodeMetric>... metrics) {
+            final Class<? extends CodeMetric>... metrics) { // NOPMD
         this.metrics = metrics;
         this.systemGraphUtils = systemGraphUtils;
     }
@@ -83,9 +86,9 @@ public class ComputeAllenComplexityMetrics<T>
     }
 
     private HyperGraphSize calculateHyperGraphSize(final CalculationMode mode,
-            final SystemGraphUtils<T> systemGraphUtils, final Graph<Node<T>> graph) {
+            final SystemGraphUtils<T> internalSystemGraphUtils, final Graph<Node<T>> graph) {
         return new HyperGraphSize(
-                new HyperGraphSizeCalculator<T>(mode).calculate(systemGraphUtils.convertToSystemGraph(graph)));
+                new HyperGraphSizeCalculator<T>(mode).calculate(internalSystemGraphUtils.convertToSystemGraph(graph)));
     }
 
 }

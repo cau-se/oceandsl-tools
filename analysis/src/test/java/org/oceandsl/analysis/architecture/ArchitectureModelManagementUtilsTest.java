@@ -37,7 +37,7 @@ class ArchitectureModelManagementUtilsTest {
     private static final String EXPERIMENT_NAME = "test-experiment";
 
     @Test
-    void createModelRepositoryTest() {
+    public void createModelRepositoryTest() { // NOPMD
         final ModelRepository repository = ArchitectureModelManagementUtils
                 .createModelRepository(ArchitectureModelManagementUtilsTest.EXPERIMENT_NAME);
         Assertions.assertEquals(ArchitectureModelManagementUtilsTest.EXPERIMENT_NAME, repository.getName());
