@@ -15,6 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.stages.metrics;
 
+import kieker.analysis.generic.graph.IEdge;
 import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
 import kieker.common.exception.ConfigurationException;
@@ -35,10 +36,10 @@ import org.oceandsl.analysis.code.stages.data.Table;
  * @author Reiner Jung
  * @since 1.1
  */
-public class OperationNodeCountCouplingStage extends AbstractTransformation<IGraph, Table> {
+public class OperationNodeCountCouplingStage extends AbstractTransformation<IGraph<INode, IEdge>, Table> {
 
     @Override
-    protected void execute(final IGraph graph) throws Exception {
+    protected void execute(final IGraph<INode, IEdge> graph) throws Exception {
         final Table result = new Table(graph.getLabel(), new StringValueHandler("module"),
                 new StringValueHandler("operation"), new LongValueHandler("in-edges"),
                 new LongValueHandler("out-edges"));

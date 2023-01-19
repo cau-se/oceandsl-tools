@@ -48,7 +48,7 @@ public class ModelOperationMain extends AbstractService<TeetimeConfiguration, Se
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            return new TeetimeConfiguration(this.parameterConfiguration);
+            return new TeetimeConfiguration(this.settings);
         } catch (final IOException e) {
             throw new ConfigurationException(e);
         }
