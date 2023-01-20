@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 
 import com.beust.jcommander.JCommander;
 
@@ -72,10 +73,11 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
     }
 
     private String createModuleModesString(final List<EModuleMode> moduleModes) {
-        if (moduleModes.size() > 0) {
+        if (!moduleModes.isEmpty()) {
             String modes = null;
             for (final EModuleMode mode : moduleModes) {
-                final String modeName = mode.name().toLowerCase().substring(0, mode.name().indexOf('_'));
+                final String modeName = mode.name().toLowerCase(Locale.getDefault()).substring(0,
+                        mode.name().indexOf('_'));
                 if (modes == null) {
                     modes = modeName;
                 } else {

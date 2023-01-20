@@ -28,6 +28,9 @@ import org.oceandsl.analysis.code.stages.data.ICsvRecordFactory;
 /**
  * Reader for CSV files.
  *
+ * @param <T>
+ *            ICsvRecord datatype
+ *
  * @author Reiner Jung
  * @since 1.0
  *
@@ -46,6 +49,11 @@ public class CsvReaderStage<T extends ICsvRecord> extends AbstractProducerStage<
      *            file path
      * @param splitSymbol
      *            string containing the split symbol
+     * @param header
+     *            indicate how to interpret the first line in the CSV file, set to true to indicate
+     *            that the first line contains the header information
+     * @param recordFactory
+     *            factory for record values
      * @throws IOException
      *             when a stream could not be opened.
      */
@@ -59,7 +67,7 @@ public class CsvReaderStage<T extends ICsvRecord> extends AbstractProducerStage<
 
     @Override
     protected void execute() throws Exception {
-        String[] headerLabels;
+        final String[] headerLabels;
         if (this.header) {
             headerLabels = this.reader.readLine().split(this.splitSymbol);
             for (int i = 0; i < headerLabels.length; i++) {
