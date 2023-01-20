@@ -88,9 +88,9 @@ public final class ExecutionModelMerger {
     }
 
     private static boolean compareTupleOperationKeys(
-            final EMap<Tuple<DeployedOperation, DeployedOperation>, Invocation> Invocations,
+            final EMap<Tuple<DeployedOperation, DeployedOperation>, Invocation> invocations,
             final Tuple<DeployedOperation, DeployedOperation> key) {
-        for (final Tuple<DeployedOperation, DeployedOperation> invocationKey : Invocations.keySet()) {
+        for (final Tuple<DeployedOperation, DeployedOperation> invocationKey : invocations.keySet()) {
             if (ModelUtils.isEqual(invocationKey.getFirst(), key.getFirst())
                     && ModelUtils.isEqual(invocationKey.getSecond(), key.getSecond())) {
                 return true;

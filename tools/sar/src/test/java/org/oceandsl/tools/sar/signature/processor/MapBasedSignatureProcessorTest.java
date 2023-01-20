@@ -1,3 +1,18 @@
+/***************************************************************************
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package org.oceandsl.tools.sar.signature.processor;
 
 import java.io.BufferedWriter;
@@ -19,7 +34,7 @@ class MapBasedSignatureProcessorTest {
     private static final String COMPONENT = "SpecialComponent";
     private static final String SPECIAL_FILE_NAME = "specialFileName";
     private static final String PATH = "a/b/" + MapBasedSignatureProcessorTest.SPECIAL_FILE_NAME;
-    private static final List<Path> fileList = new ArrayList<>();
+    private static final List<Path> FILE_LIST = new ArrayList<>();
     private static File file;
 
     @BeforeAll
@@ -30,7 +45,7 @@ class MapBasedSignatureProcessorTest {
                 MapBasedSignatureProcessorTest.SPECIAL_FILE_NAME, MapBasedSignatureProcessorTest.OPERATION));
         writer.close();
 
-        MapBasedSignatureProcessorTest.fileList.add(MapBasedSignatureProcessorTest.file.toPath());
+        MapBasedSignatureProcessorTest.FILE_LIST.add(MapBasedSignatureProcessorTest.file.toPath());
     }
 
     @AfterAll
@@ -39,9 +54,9 @@ class MapBasedSignatureProcessorTest {
     }
 
     @Test
-    void testCaseSensitive() throws IOException {
+    public void testCaseSensitive() throws IOException { // NOPMD Assertions
         final MapBasedSignatureProcessor processor = new MapBasedSignatureProcessor(
-                MapBasedSignatureProcessorTest.fileList, false, ";");
+                MapBasedSignatureProcessorTest.FILE_LIST, false, ";");
         final boolean result = processor.processSignatures(MapBasedSignatureProcessorTest.PATH,
                 MapBasedSignatureProcessorTest.COMPONENT, MapBasedSignatureProcessorTest.OPERATION);
         Assertions.assertTrue(result, "File-based processor should never fail.");
@@ -53,9 +68,9 @@ class MapBasedSignatureProcessorTest {
     }
 
     @Test
-    void testCaseInsensitive() throws IOException {
+    public void testCaseInsensitive() throws IOException { // NOPMD Assertions
         final MapBasedSignatureProcessor processor = new MapBasedSignatureProcessor(
-                MapBasedSignatureProcessorTest.fileList, true, ";");
+                MapBasedSignatureProcessorTest.FILE_LIST, true, ";");
         final boolean result = processor.processSignatures(MapBasedSignatureProcessorTest.PATH,
                 MapBasedSignatureProcessorTest.COMPONENT, MapBasedSignatureProcessorTest.OPERATION);
         Assertions.assertTrue(result, "File-based processor should never fail.");

@@ -193,12 +193,10 @@ public final class StatisticsModelMerger {
     }
 
     private static boolean isIdenticalDirection(final EDirection left, final EDirection right) {
-        if (left == right) {
-            return true;
-        } else if (left == EDirection.BOTH) {
+        if (left.equals(right)) {
             return true;
         } else {
-            return false;
+            return left == EDirection.BOTH;
         }
     }
 

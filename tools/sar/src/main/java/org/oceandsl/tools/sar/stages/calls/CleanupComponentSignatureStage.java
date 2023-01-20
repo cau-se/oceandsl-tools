@@ -17,11 +17,11 @@ package org.oceandsl.tools.sar.stages.calls;
 
 import java.util.List;
 
-import teetime.framework.OutputPort;
-import teetime.stage.basic.AbstractFilter;
-
 import org.oceandsl.analysis.code.stages.data.CallerCallee;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
+
+import teetime.framework.OutputPort;
+import teetime.stage.basic.AbstractFilter;
 
 /**
  * @author Reiner Jung
@@ -29,9 +29,10 @@ import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
  */
 public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee> {
 
+    private static final String UNKNOWN = "<unknown>";
+
     private final OutputPort<String> errorMessageOutputPort = this.createOutputPort(String.class);
 
-    private static final String UNKNOWN = "<unknown>";
     private final List<AbstractSignatureProcessor> processors;
 
     public CleanupComponentSignatureStage(final List<AbstractSignatureProcessor> processors) {
