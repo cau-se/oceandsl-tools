@@ -29,9 +29,10 @@ import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
  */
 public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee> {
 
+    private static final String UNKNOWN = "<unknown>";
+
     private final OutputPort<String> errorMessageOutputPort = this.createOutputPort(String.class);
 
-    private static final String UNKNOWN = "<unknown>";
     private final List<AbstractSignatureProcessor> processors;
 
     public CleanupComponentSignatureStage(final List<AbstractSignatureProcessor> processors) {
@@ -40,18 +41,18 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee>
 
     @Override
     protected void execute(final CallerCallee event) throws Exception {
-        final Operation caller = this.executeOperation(event.getSourcePath(), event.getSourceModule(),
+        final FullQualifiedOperation caller = this.executeOperation(event.getSourcePath(), event.getSourceModule(),
                 event.getCaller());
-        final Operation callee = this.executeOperation(event.getTargetPath(), event.getTargetModule(),
+        final FullQualifiedOperation callee = this.executeOperation(event.getTargetPath(), event.getTargetModule(),
                 event.getCallee());
         final CallerCallee newEvent = new CallerCallee(event.getSourcePath(), caller.component, caller.operation,
                 event.getTargetPath(), callee.component, callee.operation);
         this.outputPort.send(newEvent);
     }
 
-    private Operation executeOperation(final String path, final String componentSignature,
+    private FullQualifiedOperation executeOperation(final String path, final String componentSignature,
             final String operationSignature) {
-        final Operation operation = new Operation();
+        final FullQualifiedOperation operation = new FullQualifiedOperation();
         operation.component = CleanupComponentSignatureStage.UNKNOWN;
         operation.operation = CleanupComponentSignatureStage.UNKNOWN;
         for (final AbstractSignatureProcessor processor : this.processors) {
@@ -72,9 +73,9 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee>
         return this.errorMessageOutputPort;
     }
 
-    private class Operation {
-        public String component;
-        public String operation;
+    private class FullQualifiedOperation {
+        private String component;
+        private String operation;
     }
 
 }

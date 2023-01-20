@@ -88,9 +88,9 @@ public final class ExecutionModelMerger {
     }
 
     private static boolean compareTupleOperationKeys(
-            final EMap<Tuple<DeployedOperation, DeployedOperation>, Invocation> Invocations,
+            final EMap<Tuple<DeployedOperation, DeployedOperation>, Invocation> invocations,
             final Tuple<DeployedOperation, DeployedOperation> key) {
-        for (final Tuple<DeployedOperation, DeployedOperation> invocationKey : Invocations.keySet()) {
+        for (final Tuple<DeployedOperation, DeployedOperation> invocationKey : invocations.keySet()) {
             if (ModelUtils.isEqual(invocationKey.getFirst(), key.getFirst())
                     && ModelUtils.isEqual(invocationKey.getSecond(), key.getSecond())) {
                 return true;
@@ -100,9 +100,9 @@ public final class ExecutionModelMerger {
     }
 
     private static Tuple<DeployedOperation, DeployedStorage> findTupleStorageKeys(
-            final EMap<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> StorageDataflowes,
+            final EMap<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> storageDataflowes,
             final Tuple<DeployedOperation, DeployedStorage> key) {
-        for (final Tuple<DeployedOperation, DeployedStorage> invocationKey : StorageDataflowes.keySet()) {
+        for (final Tuple<DeployedOperation, DeployedStorage> invocationKey : storageDataflowes.keySet()) {
             if (ModelUtils.isEqual(invocationKey.getFirst(), key.getFirst())
                     && ModelUtils.isEqual(invocationKey.getSecond(), key.getSecond())) {
                 return invocationKey;

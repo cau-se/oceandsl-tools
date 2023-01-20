@@ -53,12 +53,14 @@
 		<exclude name="DataflowAnomalyAnalysis" />
 		<exclude name="DoNotCallSystemExit" />
 		<exclude name="UseProperClassLoader" />
+		<exclude name="LoggerIsNotStaticFinal" />
 	</rule>
 	<!-- We want to customize this rule a bit, change the message and raise the priority  -->
 	<rule ref="category/java/errorprone.xml/EmptyCatchBlock" message="Must handle exceptions">
 		<priority>2</priority>
 	</rule>
 
+	<rule ref="category/java/errorprone.xml/ProperLogger" />
 
 	<rule ref="category/java/documentation.xml">
 		<exclude name="CommentSize" />
