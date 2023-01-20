@@ -17,11 +17,11 @@ package org.oceandsl.pp.log;
 
 import java.io.IOException;
 
+import teetime.framework.Configuration;
+
 import org.oceandsl.analysis.code.stages.CsvReaderStage;
 import org.oceandsl.analysis.code.stages.data.CallerCallee;
 import org.oceandsl.analysis.code.stages.data.CallerCalleeFactory;
-
-import teetime.framework.Configuration;
 
 /**
  * Pipe and Filter configuration for the static log preprocessor.

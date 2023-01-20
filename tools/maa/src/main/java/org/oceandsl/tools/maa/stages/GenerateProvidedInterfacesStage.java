@@ -137,7 +137,7 @@ public class GenerateProvidedInterfacesStage extends
         assemblyModel.getComponents().values().forEach(assemblyComponent -> {
             assemblyComponent.getComponentType().getProvidedInterfaceTypes().forEach(providedInterfaceType -> {
                 final AssemblyProvidedInterface providedInterface = this
-                        .createAssemblyProvidedInterface(assemblyComponent, providedInterfaceType);
+                        .createAssemblyProvidedInterface(providedInterfaceType);
                 assemblyComponent.getProvidedInterfaces().put(providedInterfaceType.getSignature(), providedInterface);
 
                 providedtoRequiredInterfaceTypeMap.get(providedInterfaceType).forEach(requiredInterfaceType -> {
@@ -169,7 +169,7 @@ public class GenerateProvidedInterfacesStage extends
         return requiredInterface;
     }
 
-    private AssemblyProvidedInterface createAssemblyProvidedInterface(final AssemblyComponent assemblyComponent,
+    private AssemblyProvidedInterface createAssemblyProvidedInterface(
             final ProvidedInterfaceType providedInterfaceType) {
 
         final AssemblyProvidedInterface providedInterface = AssemblyFactory.eINSTANCE.createAssemblyProvidedInterface();

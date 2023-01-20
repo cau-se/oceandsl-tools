@@ -143,7 +143,7 @@ public final class TestModelInvocationUtils {
         final ProvidedInterfaceType providedInterfaceType = TestModelInvocationUtils
                 .createProvidedInterfaceType(componentType, operationName);
         final AssemblyProvidedInterface assemblyProvidedInterface = TestModelInvocationUtils
-                .createAssemblyProvidedInterface(assemblyComponent, providedInterfaceType, operationName);
+                .createAssemblyProvidedInterface(assemblyComponent, providedInterfaceType);
         TestModelInvocationUtils.createDeployedProvidedInterface(deployedComponent, assemblyProvidedInterface);
     }
 
@@ -157,14 +157,6 @@ public final class TestModelInvocationUtils {
                 deployedProvidedInterface);
 
         return deployedProvidedInterface;
-    }
-
-    private static AssemblyProvidedInterface createAssemblyProvidedInterface(final AssemblyComponent assemblyComponent,
-            final ProvidedInterfaceType providedInterfaceType, final String operationSignature) {
-        final AssemblyProvidedInterface assemblyProvidedInterface = TestModelInvocationUtils
-                .createAssemblyProvidedInterface(assemblyComponent, providedInterfaceType);
-
-        return assemblyProvidedInterface;
     }
 
     private static AssemblyProvidedInterface createAssemblyProvidedInterface(final AssemblyComponent assemblyComponent,

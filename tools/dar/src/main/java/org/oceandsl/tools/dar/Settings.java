@@ -73,7 +73,7 @@ public class Settings { // NOPMD data class
 
     @Parameter(names = { "-m",
             "--module-modes" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategies: file-mode, map-mode, module-mode")
-    List<EModuleMode> moduleModes;
+    private List<EModuleMode> moduleModes;
 
     @Parameter(names = { "-ms",
             "--map-file-separator" }, required = false, description = "Separator character for the mapping file")
