@@ -14,6 +14,7 @@ dependencies {
 	implementation 'org.mosim.refactorlizar:architecture-evaluation-tool:0.0.4'
 	implementation 'net.kieker-monitoring:kieker:2.0.0-SNAPSHOT'
 }
+
 java {
 	// disabled, as there is a strange error referencing "common" in javadoc
 	// withJavadocJar()
