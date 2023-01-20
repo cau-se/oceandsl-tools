@@ -66,7 +66,7 @@ public class Settings { // NOPMD dataclass - required to contain settings
 
     @Parameter(names = { "-m",
             "--module-modes" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategies (at lease one of): module-mode, file-mode, map-mode")
-    List<EModuleMode> moduleModes;
+    private List<EModuleMode> moduleModes;
 
     @Parameter(names = { "-M",
             "--component-maps" }, required = false, variableArity = true, converter = PathConverter.class, description = "Component, file and function map files")
