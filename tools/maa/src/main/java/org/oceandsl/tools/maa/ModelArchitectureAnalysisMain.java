@@ -70,7 +70,7 @@ public class ModelArchitectureAnalysisMain extends AbstractService<TeetimeConfig
             this.logger.error("Output path '{}' cannot be found.", this.settings.getOutputModelPath().toString());
             return false;
         }
-        if (this.settings.getMapFiles() != null && this.settings.getSeparator() == null) {
+        if ((this.settings.getMapFiles() != null) && (this.settings.getSeparator() == null)) {
             this.logger.error("Missing separator string for grouping CSV file.");
             return false;
         }
