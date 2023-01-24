@@ -23,16 +23,15 @@ import java.util.List;
 
 import com.beust.jcommander.JCommander;
 
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.EModuleMode;
 import org.slf4j.LoggerFactory;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
-
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.generic.EModuleMode;
 
 /**
  * Architecture analysis main class.
@@ -59,10 +58,10 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
-            this.repository = ArchitectureModelManagementUtils.createModelRepository(this.createRepositoryName(
-                    this.parameterConfiguration.getExperimentName(), this.parameterConfiguration.getModuleModes()));
+            this.repository = ArchitectureModelManagementUtils.createModelRepository(
+                    this.createRepositoryName(this.settings.getExperimentName(), this.settings.getModuleModes()));
 
-            return new TeetimeConfiguration(this.logger, this.parameterConfiguration, this.repository);
+            return new TeetimeConfiguration(this.logger, this.settings, this.repository);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
@@ -131,8 +130,8 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
             }
         }
         if (this.parameterConfiguration.getModuleModes().contains(EModuleMode.MAP_MODE)) {
-            if (this.parameterConfiguration.getComponentMapFiles() != null
-                    && this.parameterConfiguration.getComponentMapFiles().size() > 0) {
+            if ((this.parameterConfiguration.getComponentMapFiles() != null)
+                    && (this.parameterConfiguration.getComponentMapFiles().size() > 0)) {
                 for (final Path path : this.parameterConfiguration.getComponentMapFiles()) {
                     if (!Files.isReadable(path)) {
                         this.logger.error("Cannot read map file: {}", path.toString());
