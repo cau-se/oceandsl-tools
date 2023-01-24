@@ -19,16 +19,14 @@ import java.time.Duration;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
 
 import kieker.analysis.architecture.recovery.events.CallEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
-
 import teetime.framework.test.StageTester;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
-
 /**
- * Tesintg operation and call data stage..
+ * Testing operation and call data stage..
  *
  * @author Reiner Jung
  * @since 1.3
@@ -53,9 +51,9 @@ public class OperationAndCall4StaticDataStageTest {
                 OperationAndCall4StaticDataStageTest.TARGET_PATH, OperationAndCall4StaticDataStageTest.TARGET_MODULE,
                 OperationAndCall4StaticDataStageTest.CALLEE);
         final OperationEvent firstOp = new OperationEvent(OperationAndCall4StaticDataStageTest.HOSTNAME,
-                OperationAndCall4StaticDataStageTest.SOURCE_PATH, OperationAndCall4StaticDataStageTest.CALLER);
+                OperationAndCall4StaticDataStageTest.SOURCE_MODULE, OperationAndCall4StaticDataStageTest.CALLER);
         final OperationEvent secondOp = new OperationEvent(OperationAndCall4StaticDataStageTest.HOSTNAME,
-                OperationAndCall4StaticDataStageTest.TARGET_PATH, OperationAndCall4StaticDataStageTest.CALLEE);
+                OperationAndCall4StaticDataStageTest.TARGET_MODULE, OperationAndCall4StaticDataStageTest.CALLEE);
 
         final CallEvent call = new CallEvent(firstOp, secondOp, Duration.ZERO);
 
