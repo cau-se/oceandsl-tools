@@ -15,20 +15,19 @@
  ***************************************************************************/
 package org.oceandsl.tools.aul;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.tools.aul.stages.NullNetworkCreator;
 import org.slf4j.LoggerFactory;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
-
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.tools.aul.stages.NullNetworkCreator;
 
 /**
  * Architecture analysis main class.
@@ -61,7 +60,7 @@ public class AllenUpperLimitMain extends AbstractService<TeetimeConfiguration, S
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }
@@ -73,7 +72,7 @@ public class AllenUpperLimitMain extends AbstractService<TeetimeConfiguration, S
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (this.settings.getInputDirectory() == null && this.settings.getNodes() == null) {
+        if ((this.settings.getInputDirectory() == null) && (this.settings.getNodes() == null)) {
             this.logger.error("Must specify either a model or the number of nodes for an generated model.");
             return false;
         }
