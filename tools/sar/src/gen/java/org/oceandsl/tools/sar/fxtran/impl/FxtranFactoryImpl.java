@@ -5,43 +5,38 @@ package org.oceandsl.tools.sar.fxtran.impl;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 import org.oceandsl.tools.sar.fxtran.*;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model <b>Factory</b>.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model <b>Factory</b>. <!-- end-user-doc -->
+ *
  * @generated
  */
 public class FxtranFactoryImpl extends EFactoryImpl implements FxtranFactory {
     /**
-     * Creates the default factory implementation.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * Creates the default factory implementation. <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     public static FxtranFactory init() {
         try {
-            FxtranFactory theFxtranFactory = (FxtranFactory)EPackage.Registry.INSTANCE.getEFactory(FxtranPackage.eNS_URI);
+            final FxtranFactory theFxtranFactory = (FxtranFactory) EPackage.Registry.INSTANCE
+                    .getEFactory(FxtranPackage.eNS_URI);
             if (theFxtranFactory != null) {
                 return theFxtranFactory;
             }
-        }
-        catch (Exception exception) {
+        } catch (final Exception exception) {
             EcorePlugin.INSTANCE.log(exception);
         }
         return new FxtranFactoryImpl();
     }
 
     /**
-     * Creates an instance of the factory.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * Creates an instance of the factory. <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     public FxtranFactoryImpl() {
@@ -49,1515 +44,1786 @@ public class FxtranFactoryImpl extends EFactoryImpl implements FxtranFactory {
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public EObject create(EClass eClass) {
+    public EObject create(final EClass eClass) {
         switch (eClass.getClassifierID()) {
-            case FxtranPackage.ACTION_STMT_TYPE: return createActionStmtType();
-            case FxtranPackage.AC_VALUE_LT_TYPE: return createAcValueLTType();
-            case FxtranPackage.AC_VALUE_TYPE: return createAcValueType();
-            case FxtranPackage.ALLOCATE_STMT_TYPE: return createAllocateStmtType();
-            case FxtranPackage.ARG_NTYPE: return createArgNType();
-            case FxtranPackage.ARG_SPEC_TYPE: return createArgSpecType();
-            case FxtranPackage.ARG_TYPE: return createArgType();
-            case FxtranPackage.ARRAY_CONSTRUCTOR_ETYPE: return createArrayConstructorEType();
-            case FxtranPackage.ARRAY_RTYPE: return createArrayRType();
-            case FxtranPackage.ARRAY_SPEC_TYPE: return createArraySpecType();
-            case FxtranPackage.ASTMT_TYPE: return createAStmtType();
-            case FxtranPackage.ATTRIBUTE_TYPE: return createAttributeType();
-            case FxtranPackage.CALL_STMT_TYPE: return createCallStmtType();
-            case FxtranPackage.CASE_ETYPE: return createCaseEType();
-            case FxtranPackage.CASE_SELECTOR_TYPE: return createCaseSelectorType();
-            case FxtranPackage.CASE_STMT_TYPE: return createCaseStmtType();
-            case FxtranPackage.CASE_VALUE_RANGE_LT_TYPE: return createCaseValueRangeLTType();
-            case FxtranPackage.CASE_VALUE_RANGE_TYPE: return createCaseValueRangeType();
-            case FxtranPackage.CASE_VALUE_TYPE: return createCaseValueType();
-            case FxtranPackage.CHAR_SELECTOR_TYPE: return createCharSelectorType();
-            case FxtranPackage.CHAR_SPEC_TYPE: return createCharSpecType();
-            case FxtranPackage.CLOSE_SPEC_SPEC_TYPE: return createCloseSpecSpecType();
-            case FxtranPackage.CLOSE_SPEC_TYPE: return createCloseSpecType();
-            case FxtranPackage.CLOSE_STMT_TYPE: return createCloseStmtType();
-            case FxtranPackage.COMPONENT_DECL_STMT_TYPE: return createComponentDeclStmtType();
-            case FxtranPackage.COMPONENT_RTYPE: return createComponentRType();
-            case FxtranPackage.CONDITION_ETYPE: return createConditionEType();
-            case FxtranPackage.CONNECT_SPEC_SPEC_TYPE: return createConnectSpecSpecType();
-            case FxtranPackage.CONNECT_SPEC_TYPE: return createConnectSpecType();
-            case FxtranPackage.CYCLE_STMT_TYPE: return createCycleStmtType();
-            case FxtranPackage.DEALLOCATE_STMT_TYPE: return createDeallocateStmtType();
-            case FxtranPackage.DERIVED_TSPEC_TYPE: return createDerivedTSpecType();
-            case FxtranPackage.DOCUMENT_ROOT: return createDocumentRoot();
-            case FxtranPackage.DO_STMT_TYPE: return createDoStmtType();
-            case FxtranPackage.DO_VTYPE: return createDoVType();
-            case FxtranPackage.DUMMY_ARG_LT_TYPE: return createDummyArgLTType();
-            case FxtranPackage.E1_TYPE: return createE1Type();
-            case FxtranPackage.E2_TYPE: return createE2Type();
-            case FxtranPackage.ELEMENT_LT_TYPE: return createElementLTType();
-            case FxtranPackage.ELEMENT_TYPE: return createElementType();
-            case FxtranPackage.ELSE_IF_STMT_TYPE: return createElseIfStmtType();
-            case FxtranPackage.END_DO_STMT_TYPE: return createEndDoStmtType();
-            case FxtranPackage.EN_DECL_LT_TYPE: return createENDeclLTType();
-            case FxtranPackage.EN_DECL_TYPE: return createENDeclType();
-            case FxtranPackage.END_FORALL_STMT_TYPE: return createEndForallStmtType();
-            case FxtranPackage.END_FUNCTION_STMT_TYPE: return createEndFunctionStmtType();
-            case FxtranPackage.END_INTERFACE_STMT_TYPE: return createEndInterfaceStmtType();
-            case FxtranPackage.END_MODULE_STMT_TYPE: return createEndModuleStmtType();
-            case FxtranPackage.END_PROGRAM_STMT_TYPE: return createEndProgramStmtType();
-            case FxtranPackage.END_SELECT_CASE_STMT_TYPE: return createEndSelectCaseStmtType();
-            case FxtranPackage.END_SUBROUTINE_STMT_TYPE: return createEndSubroutineStmtType();
-            case FxtranPackage.END_TSTMT_TYPE: return createEndTStmtType();
-            case FxtranPackage.ENLT_TYPE: return createENLTType();
-            case FxtranPackage.ENN_TYPE: return createENNType();
-            case FxtranPackage.EN_TYPE: return createENType();
-            case FxtranPackage.ERROR_TYPE: return createErrorType();
-            case FxtranPackage.FILE_TYPE: return createFileType();
-            case FxtranPackage.FORALL_CONSTRUCT_STMT_TYPE: return createForallConstructStmtType();
-            case FxtranPackage.FORALL_STMT_TYPE: return createForallStmtType();
-            case FxtranPackage.FORALL_TRIPLET_SPEC_LT_TYPE: return createForallTripletSpecLTType();
-            case FxtranPackage.FORALL_TRIPLET_SPEC_TYPE: return createForallTripletSpecType();
-            case FxtranPackage.FUNCTION_NTYPE: return createFunctionNType();
-            case FxtranPackage.FUNCTION_STMT_TYPE: return createFunctionStmtType();
-            case FxtranPackage.IF_STMT_TYPE: return createIfStmtType();
-            case FxtranPackage.IF_THEN_STMT_TYPE: return createIfThenStmtType();
-            case FxtranPackage.INIT_ETYPE: return createInitEType();
-            case FxtranPackage.INQUIRE_STMT_TYPE: return createInquireStmtType();
-            case FxtranPackage.INQUIRY_SPEC_SPEC_TYPE: return createInquirySpecSpecType();
-            case FxtranPackage.INQUIRY_SPEC_TYPE: return createInquirySpecType();
-            case FxtranPackage.INTERFACE_STMT_TYPE: return createInterfaceStmtType();
-            case FxtranPackage.INTRINSIC_TSPEC_TYPE: return createIntrinsicTSpecType();
-            case FxtranPackage.IO_CONTROL_SPEC_TYPE: return createIoControlSpecType();
-            case FxtranPackage.IO_CONTROL_TYPE: return createIoControlType();
-            case FxtranPackage.ITERATOR_DEFINITION_LT_TYPE: return createIteratorDefinitionLTType();
-            case FxtranPackage.ITERATOR_ELEMENT_TYPE: return createIteratorElementType();
-            case FxtranPackage.ITERATOR_TYPE: return createIteratorType();
-            case FxtranPackage.KSELECTOR_TYPE: return createKSelectorType();
-            case FxtranPackage.KSPEC_TYPE: return createKSpecType();
-            case FxtranPackage.LABEL_TYPE: return createLabelType();
-            case FxtranPackage.LITERAL_ETYPE: return createLiteralEType();
-            case FxtranPackage.LOWER_BOUND_TYPE: return createLowerBoundType();
-            case FxtranPackage.MASK_ETYPE: return createMaskEType();
-            case FxtranPackage.MODULE_NTYPE: return createModuleNType();
-            case FxtranPackage.MODULE_PROCEDURE_NLT_TYPE: return createModuleProcedureNLTType();
-            case FxtranPackage.MODULE_STMT_TYPE: return createModuleStmtType();
-            case FxtranPackage.NAMED_ETYPE: return createNamedEType();
-            case FxtranPackage.NAMELIST_GROUP_NTYPE: return createNamelistGroupNType();
-            case FxtranPackage.NAMELIST_GROUP_OBJ_LT_TYPE: return createNamelistGroupObjLTType();
-            case FxtranPackage.NAMELIST_GROUP_OBJ_NTYPE: return createNamelistGroupObjNType();
-            case FxtranPackage.NAMELIST_GROUP_OBJ_TYPE: return createNamelistGroupObjType();
-            case FxtranPackage.NAMELIST_STMT_TYPE: return createNamelistStmtType();
-            case FxtranPackage.NTYPE: return createNType();
-            case FxtranPackage.NULLIFY_STMT_TYPE: return createNullifyStmtType();
-            case FxtranPackage.OBJECT_TYPE: return createObjectType();
-            case FxtranPackage.OPEN_STMT_TYPE: return createOpenStmtType();
-            case FxtranPackage.OP_ETYPE: return createOpEType();
-            case FxtranPackage.OP_TYPE: return createOpType();
-            case FxtranPackage.OUTPUT_ITEM_LT_TYPE: return createOutputItemLTType();
-            case FxtranPackage.OUTPUT_ITEM_TYPE: return createOutputItemType();
-            case FxtranPackage.PARENS_ETYPE: return createParensEType();
-            case FxtranPackage.PARENS_RTYPE: return createParensRType();
-            case FxtranPackage.POINTER_ASTMT_TYPE: return createPointerAStmtType();
-            case FxtranPackage.POINTER_STMT_TYPE: return createPointerStmtType();
-            case FxtranPackage.PROCEDURE_DESIGNATOR_TYPE: return createProcedureDesignatorType();
-            case FxtranPackage.PROCEDURE_STMT_TYPE: return createProcedureStmtType();
-            case FxtranPackage.PROGRAM_NTYPE: return createProgramNType();
-            case FxtranPackage.PROGRAM_STMT_TYPE: return createProgramStmtType();
-            case FxtranPackage.PUBLIC_STMT_TYPE: return createPublicStmtType();
-            case FxtranPackage.READ_STMT_TYPE: return createReadStmtType();
-            case FxtranPackage.RENAME_LT_TYPE: return createRenameLTType();
-            case FxtranPackage.RENAME_TYPE: return createRenameType();
-            case FxtranPackage.RESULT_SPEC_TYPE: return createResultSpecType();
-            case FxtranPackage.RLT_TYPE: return createRLTType();
-            case FxtranPackage.SECTION_SUBSCRIPT_LT_TYPE: return createSectionSubscriptLTType();
-            case FxtranPackage.SECTION_SUBSCRIPT_TYPE: return createSectionSubscriptType();
-            case FxtranPackage.SELECT_CASE_STMT_TYPE: return createSelectCaseStmtType();
-            case FxtranPackage.SHAPE_SPEC_LT_TYPE: return createShapeSpecLTType();
-            case FxtranPackage.SHAPE_SPEC_TYPE: return createShapeSpecType();
-            case FxtranPackage.STOP_STMT_TYPE: return createStopStmtType();
-            case FxtranPackage.STRING_ETYPE: return createStringEType();
-            case FxtranPackage.SUBROUTINE_NTYPE: return createSubroutineNType();
-            case FxtranPackage.SUBROUTINE_STMT_TYPE: return createSubroutineStmtType();
-            case FxtranPackage.TDECL_STMT_TYPE: return createTDeclStmtType();
-            case FxtranPackage.TEST_ETYPE: return createTestEType();
-            case FxtranPackage.TN_TYPE: return createTNType();
-            case FxtranPackage.TSPEC_TYPE: return createTSpecType();
-            case FxtranPackage.TSTMT_TYPE: return createTStmtType();
-            case FxtranPackage.UPPER_BOUND_TYPE: return createUpperBoundType();
-            case FxtranPackage.USE_NTYPE: return createUseNType();
-            case FxtranPackage.USE_STMT_TYPE: return createUseStmtType();
-            case FxtranPackage.VN_TYPE: return createVNType();
-            case FxtranPackage.VTYPE: return createVType();
-            case FxtranPackage.WHERE_CONSTRUCT_STMT_TYPE: return createWhereConstructStmtType();
-            case FxtranPackage.WHERE_STMT_TYPE: return createWhereStmtType();
-            case FxtranPackage.WRITE_STMT_TYPE: return createWriteStmtType();
-            default:
-                throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+        case FxtranPackage.ACTION_STMT_TYPE:
+            return this.createActionStmtType();
+        case FxtranPackage.AC_VALUE_LT_TYPE:
+            return this.createAcValueLTType();
+        case FxtranPackage.AC_VALUE_TYPE:
+            return this.createAcValueType();
+        case FxtranPackage.ALLOCATE_STMT_TYPE:
+            return this.createAllocateStmtType();
+        case FxtranPackage.ARG_NTYPE:
+            return this.createArgNType();
+        case FxtranPackage.ARG_SPEC_TYPE:
+            return this.createArgSpecType();
+        case FxtranPackage.ARG_TYPE:
+            return this.createArgType();
+        case FxtranPackage.ARRAY_CONSTRUCTOR_ETYPE:
+            return this.createArrayConstructorEType();
+        case FxtranPackage.ARRAY_RTYPE:
+            return this.createArrayRType();
+        case FxtranPackage.ARRAY_SPEC_TYPE:
+            return this.createArraySpecType();
+        case FxtranPackage.ASTMT_TYPE:
+            return this.createAStmtType();
+        case FxtranPackage.ATTRIBUTE_TYPE:
+            return this.createAttributeType();
+        case FxtranPackage.CALL_STMT_TYPE:
+            return this.createCallStmtType();
+        case FxtranPackage.CASE_ETYPE:
+            return this.createCaseEType();
+        case FxtranPackage.CASE_SELECTOR_TYPE:
+            return this.createCaseSelectorType();
+        case FxtranPackage.CASE_STMT_TYPE:
+            return this.createCaseStmtType();
+        case FxtranPackage.CASE_VALUE_RANGE_LT_TYPE:
+            return this.createCaseValueRangeLTType();
+        case FxtranPackage.CASE_VALUE_RANGE_TYPE:
+            return this.createCaseValueRangeType();
+        case FxtranPackage.CASE_VALUE_TYPE:
+            return this.createCaseValueType();
+        case FxtranPackage.CHAR_SELECTOR_TYPE:
+            return this.createCharSelectorType();
+        case FxtranPackage.CHAR_SPEC_TYPE:
+            return this.createCharSpecType();
+        case FxtranPackage.CLOSE_SPEC_SPEC_TYPE:
+            return this.createCloseSpecSpecType();
+        case FxtranPackage.CLOSE_SPEC_TYPE:
+            return this.createCloseSpecType();
+        case FxtranPackage.CLOSE_STMT_TYPE:
+            return this.createCloseStmtType();
+        case FxtranPackage.COMPONENT_DECL_STMT_TYPE:
+            return this.createComponentDeclStmtType();
+        case FxtranPackage.COMPONENT_RTYPE:
+            return this.createComponentRType();
+        case FxtranPackage.CONDITION_ETYPE:
+            return this.createConditionEType();
+        case FxtranPackage.CONNECT_SPEC_SPEC_TYPE:
+            return this.createConnectSpecSpecType();
+        case FxtranPackage.CONNECT_SPEC_TYPE:
+            return this.createConnectSpecType();
+        case FxtranPackage.CYCLE_STMT_TYPE:
+            return this.createCycleStmtType();
+        case FxtranPackage.DEALLOCATE_STMT_TYPE:
+            return this.createDeallocateStmtType();
+        case FxtranPackage.DERIVED_TSPEC_TYPE:
+            return this.createDerivedTSpecType();
+        case FxtranPackage.DOCUMENT_ROOT:
+            return this.createDocumentRoot();
+        case FxtranPackage.DO_STMT_TYPE:
+            return this.createDoStmtType();
+        case FxtranPackage.DO_VTYPE:
+            return this.createDoVType();
+        case FxtranPackage.DUMMY_ARG_LT_TYPE:
+            return this.createDummyArgLTType();
+        case FxtranPackage.E1_TYPE:
+            return this.createE1Type();
+        case FxtranPackage.E2_TYPE:
+            return this.createE2Type();
+        case FxtranPackage.ELEMENT_LT_TYPE:
+            return this.createElementLTType();
+        case FxtranPackage.ELEMENT_TYPE:
+            return this.createElementType();
+        case FxtranPackage.ELSE_IF_STMT_TYPE:
+            return this.createElseIfStmtType();
+        case FxtranPackage.END_DO_STMT_TYPE:
+            return this.createEndDoStmtType();
+        case FxtranPackage.EN_DECL_LT_TYPE:
+            return this.createENDeclLTType();
+        case FxtranPackage.EN_DECL_TYPE:
+            return this.createENDeclType();
+        case FxtranPackage.END_FORALL_STMT_TYPE:
+            return this.createEndForallStmtType();
+        case FxtranPackage.END_FUNCTION_STMT_TYPE:
+            return this.createEndFunctionStmtType();
+        case FxtranPackage.END_INTERFACE_STMT_TYPE:
+            return this.createEndInterfaceStmtType();
+        case FxtranPackage.END_MODULE_STMT_TYPE:
+            return this.createEndModuleStmtType();
+        case FxtranPackage.END_PROGRAM_STMT_TYPE:
+            return this.createEndProgramStmtType();
+        case FxtranPackage.END_SELECT_CASE_STMT_TYPE:
+            return this.createEndSelectCaseStmtType();
+        case FxtranPackage.END_SUBROUTINE_STMT_TYPE:
+            return this.createEndSubroutineStmtType();
+        case FxtranPackage.END_TSTMT_TYPE:
+            return this.createEndTStmtType();
+        case FxtranPackage.ENLT_TYPE:
+            return this.createENLTType();
+        case FxtranPackage.ENN_TYPE:
+            return this.createENNType();
+        case FxtranPackage.EN_TYPE:
+            return this.createENType();
+        case FxtranPackage.ERROR_TYPE:
+            return this.createErrorType();
+        case FxtranPackage.FILE_TYPE:
+            return this.createFileType();
+        case FxtranPackage.FORALL_CONSTRUCT_STMT_TYPE:
+            return this.createForallConstructStmtType();
+        case FxtranPackage.FORALL_STMT_TYPE:
+            return this.createForallStmtType();
+        case FxtranPackage.FORALL_TRIPLET_SPEC_LT_TYPE:
+            return this.createForallTripletSpecLTType();
+        case FxtranPackage.FORALL_TRIPLET_SPEC_TYPE:
+            return this.createForallTripletSpecType();
+        case FxtranPackage.FUNCTION_NTYPE:
+            return this.createFunctionNType();
+        case FxtranPackage.FUNCTION_STMT_TYPE:
+            return this.createFunctionStmtType();
+        case FxtranPackage.IF_STMT_TYPE:
+            return this.createIfStmtType();
+        case FxtranPackage.IF_THEN_STMT_TYPE:
+            return this.createIfThenStmtType();
+        case FxtranPackage.INIT_ETYPE:
+            return this.createInitEType();
+        case FxtranPackage.INQUIRE_STMT_TYPE:
+            return this.createInquireStmtType();
+        case FxtranPackage.INQUIRY_SPEC_SPEC_TYPE:
+            return this.createInquirySpecSpecType();
+        case FxtranPackage.INQUIRY_SPEC_TYPE:
+            return this.createInquirySpecType();
+        case FxtranPackage.INTERFACE_STMT_TYPE:
+            return this.createInterfaceStmtType();
+        case FxtranPackage.INTRINSIC_TSPEC_TYPE:
+            return this.createIntrinsicTSpecType();
+        case FxtranPackage.IO_CONTROL_SPEC_TYPE:
+            return this.createIoControlSpecType();
+        case FxtranPackage.IO_CONTROL_TYPE:
+            return this.createIoControlType();
+        case FxtranPackage.ITERATOR_DEFINITION_LT_TYPE:
+            return this.createIteratorDefinitionLTType();
+        case FxtranPackage.ITERATOR_ELEMENT_TYPE:
+            return this.createIteratorElementType();
+        case FxtranPackage.ITERATOR_TYPE:
+            return this.createIteratorType();
+        case FxtranPackage.KSELECTOR_TYPE:
+            return this.createKSelectorType();
+        case FxtranPackage.KSPEC_TYPE:
+            return this.createKSpecType();
+        case FxtranPackage.LABEL_TYPE:
+            return this.createLabelType();
+        case FxtranPackage.LITERAL_ETYPE:
+            return this.createLiteralEType();
+        case FxtranPackage.LOWER_BOUND_TYPE:
+            return this.createLowerBoundType();
+        case FxtranPackage.MASK_ETYPE:
+            return this.createMaskEType();
+        case FxtranPackage.MODULE_NTYPE:
+            return this.createModuleNType();
+        case FxtranPackage.MODULE_PROCEDURE_NLT_TYPE:
+            return this.createModuleProcedureNLTType();
+        case FxtranPackage.MODULE_STMT_TYPE:
+            return this.createModuleStmtType();
+        case FxtranPackage.NAMED_ETYPE:
+            return this.createNamedEType();
+        case FxtranPackage.NAMELIST_GROUP_NTYPE:
+            return this.createNamelistGroupNType();
+        case FxtranPackage.NAMELIST_GROUP_OBJ_LT_TYPE:
+            return this.createNamelistGroupObjLTType();
+        case FxtranPackage.NAMELIST_GROUP_OBJ_NTYPE:
+            return this.createNamelistGroupObjNType();
+        case FxtranPackage.NAMELIST_GROUP_OBJ_TYPE:
+            return this.createNamelistGroupObjType();
+        case FxtranPackage.NAMELIST_STMT_TYPE:
+            return this.createNamelistStmtType();
+        case FxtranPackage.NTYPE:
+            return this.createNType();
+        case FxtranPackage.NULLIFY_STMT_TYPE:
+            return this.createNullifyStmtType();
+        case FxtranPackage.OBJECT_TYPE:
+            return this.createObjectType();
+        case FxtranPackage.OPEN_STMT_TYPE:
+            return this.createOpenStmtType();
+        case FxtranPackage.OP_ETYPE:
+            return this.createOpEType();
+        case FxtranPackage.OP_TYPE:
+            return this.createOpType();
+        case FxtranPackage.OUTPUT_ITEM_LT_TYPE:
+            return this.createOutputItemLTType();
+        case FxtranPackage.OUTPUT_ITEM_TYPE:
+            return this.createOutputItemType();
+        case FxtranPackage.PARENS_ETYPE:
+            return this.createParensEType();
+        case FxtranPackage.PARENS_RTYPE:
+            return this.createParensRType();
+        case FxtranPackage.POINTER_ASTMT_TYPE:
+            return this.createPointerAStmtType();
+        case FxtranPackage.POINTER_STMT_TYPE:
+            return this.createPointerStmtType();
+        case FxtranPackage.PROCEDURE_DESIGNATOR_TYPE:
+            return this.createProcedureDesignatorType();
+        case FxtranPackage.PROCEDURE_STMT_TYPE:
+            return this.createProcedureStmtType();
+        case FxtranPackage.PROGRAM_NTYPE:
+            return this.createProgramNType();
+        case FxtranPackage.PROGRAM_STMT_TYPE:
+            return this.createProgramStmtType();
+        case FxtranPackage.PUBLIC_STMT_TYPE:
+            return this.createPublicStmtType();
+        case FxtranPackage.READ_STMT_TYPE:
+            return this.createReadStmtType();
+        case FxtranPackage.RENAME_LT_TYPE:
+            return this.createRenameLTType();
+        case FxtranPackage.RENAME_TYPE:
+            return this.createRenameType();
+        case FxtranPackage.RESULT_SPEC_TYPE:
+            return this.createResultSpecType();
+        case FxtranPackage.RLT_TYPE:
+            return this.createRLTType();
+        case FxtranPackage.SECTION_SUBSCRIPT_LT_TYPE:
+            return this.createSectionSubscriptLTType();
+        case FxtranPackage.SECTION_SUBSCRIPT_TYPE:
+            return this.createSectionSubscriptType();
+        case FxtranPackage.SELECT_CASE_STMT_TYPE:
+            return this.createSelectCaseStmtType();
+        case FxtranPackage.SHAPE_SPEC_LT_TYPE:
+            return this.createShapeSpecLTType();
+        case FxtranPackage.SHAPE_SPEC_TYPE:
+            return this.createShapeSpecType();
+        case FxtranPackage.STOP_STMT_TYPE:
+            return this.createStopStmtType();
+        case FxtranPackage.STRING_ETYPE:
+            return this.createStringEType();
+        case FxtranPackage.SUBROUTINE_NTYPE:
+            return this.createSubroutineNType();
+        case FxtranPackage.SUBROUTINE_STMT_TYPE:
+            return this.createSubroutineStmtType();
+        case FxtranPackage.TDECL_STMT_TYPE:
+            return this.createTDeclStmtType();
+        case FxtranPackage.TEST_ETYPE:
+            return this.createTestEType();
+        case FxtranPackage.TN_TYPE:
+            return this.createTNType();
+        case FxtranPackage.TSPEC_TYPE:
+            return this.createTSpecType();
+        case FxtranPackage.TSTMT_TYPE:
+            return this.createTStmtType();
+        case FxtranPackage.UPPER_BOUND_TYPE:
+            return this.createUpperBoundType();
+        case FxtranPackage.USE_NTYPE:
+            return this.createUseNType();
+        case FxtranPackage.USE_STMT_TYPE:
+            return this.createUseStmtType();
+        case FxtranPackage.VN_TYPE:
+            return this.createVNType();
+        case FxtranPackage.VTYPE:
+            return this.createVType();
+        case FxtranPackage.WHERE_CONSTRUCT_STMT_TYPE:
+            return this.createWhereConstructStmtType();
+        case FxtranPackage.WHERE_STMT_TYPE:
+            return this.createWhereStmtType();
+        case FxtranPackage.WRITE_STMT_TYPE:
+            return this.createWriteStmtType();
+        default:
+            throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ActionStmtType createActionStmtType() {
-        ActionStmtTypeImpl actionStmtType = new ActionStmtTypeImpl();
+        final ActionStmtTypeImpl actionStmtType = new ActionStmtTypeImpl();
         return actionStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public AcValueLTType createAcValueLTType() {
-        AcValueLTTypeImpl acValueLTType = new AcValueLTTypeImpl();
+        final AcValueLTTypeImpl acValueLTType = new AcValueLTTypeImpl();
         return acValueLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public AcValueType createAcValueType() {
-        AcValueTypeImpl acValueType = new AcValueTypeImpl();
+        final AcValueTypeImpl acValueType = new AcValueTypeImpl();
         return acValueType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public AllocateStmtType createAllocateStmtType() {
-        AllocateStmtTypeImpl allocateStmtType = new AllocateStmtTypeImpl();
+        final AllocateStmtTypeImpl allocateStmtType = new AllocateStmtTypeImpl();
         return allocateStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ArgNType createArgNType() {
-        ArgNTypeImpl argNType = new ArgNTypeImpl();
+        final ArgNTypeImpl argNType = new ArgNTypeImpl();
         return argNType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ArgSpecType createArgSpecType() {
-        ArgSpecTypeImpl argSpecType = new ArgSpecTypeImpl();
+        final ArgSpecTypeImpl argSpecType = new ArgSpecTypeImpl();
         return argSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ArgType createArgType() {
-        ArgTypeImpl argType = new ArgTypeImpl();
+        final ArgTypeImpl argType = new ArgTypeImpl();
         return argType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ArrayConstructorEType createArrayConstructorEType() {
-        ArrayConstructorETypeImpl arrayConstructorEType = new ArrayConstructorETypeImpl();
+        final ArrayConstructorETypeImpl arrayConstructorEType = new ArrayConstructorETypeImpl();
         return arrayConstructorEType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ArrayRType createArrayRType() {
-        ArrayRTypeImpl arrayRType = new ArrayRTypeImpl();
+        final ArrayRTypeImpl arrayRType = new ArrayRTypeImpl();
         return arrayRType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ArraySpecType createArraySpecType() {
-        ArraySpecTypeImpl arraySpecType = new ArraySpecTypeImpl();
+        final ArraySpecTypeImpl arraySpecType = new ArraySpecTypeImpl();
         return arraySpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public AStmtType createAStmtType() {
-        AStmtTypeImpl aStmtType = new AStmtTypeImpl();
+        final AStmtTypeImpl aStmtType = new AStmtTypeImpl();
         return aStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public AttributeType createAttributeType() {
-        AttributeTypeImpl attributeType = new AttributeTypeImpl();
+        final AttributeTypeImpl attributeType = new AttributeTypeImpl();
         return attributeType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CallStmtType createCallStmtType() {
-        CallStmtTypeImpl callStmtType = new CallStmtTypeImpl();
+        final CallStmtTypeImpl callStmtType = new CallStmtTypeImpl();
         return callStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CaseEType createCaseEType() {
-        CaseETypeImpl caseEType = new CaseETypeImpl();
+        final CaseETypeImpl caseEType = new CaseETypeImpl();
         return caseEType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CaseSelectorType createCaseSelectorType() {
-        CaseSelectorTypeImpl caseSelectorType = new CaseSelectorTypeImpl();
+        final CaseSelectorTypeImpl caseSelectorType = new CaseSelectorTypeImpl();
         return caseSelectorType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CaseStmtType createCaseStmtType() {
-        CaseStmtTypeImpl caseStmtType = new CaseStmtTypeImpl();
+        final CaseStmtTypeImpl caseStmtType = new CaseStmtTypeImpl();
         return caseStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CaseValueRangeLTType createCaseValueRangeLTType() {
-        CaseValueRangeLTTypeImpl caseValueRangeLTType = new CaseValueRangeLTTypeImpl();
+        final CaseValueRangeLTTypeImpl caseValueRangeLTType = new CaseValueRangeLTTypeImpl();
         return caseValueRangeLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CaseValueRangeType createCaseValueRangeType() {
-        CaseValueRangeTypeImpl caseValueRangeType = new CaseValueRangeTypeImpl();
+        final CaseValueRangeTypeImpl caseValueRangeType = new CaseValueRangeTypeImpl();
         return caseValueRangeType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CaseValueType createCaseValueType() {
-        CaseValueTypeImpl caseValueType = new CaseValueTypeImpl();
+        final CaseValueTypeImpl caseValueType = new CaseValueTypeImpl();
         return caseValueType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CharSelectorType createCharSelectorType() {
-        CharSelectorTypeImpl charSelectorType = new CharSelectorTypeImpl();
+        final CharSelectorTypeImpl charSelectorType = new CharSelectorTypeImpl();
         return charSelectorType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CharSpecType createCharSpecType() {
-        CharSpecTypeImpl charSpecType = new CharSpecTypeImpl();
+        final CharSpecTypeImpl charSpecType = new CharSpecTypeImpl();
         return charSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CloseSpecSpecType createCloseSpecSpecType() {
-        CloseSpecSpecTypeImpl closeSpecSpecType = new CloseSpecSpecTypeImpl();
+        final CloseSpecSpecTypeImpl closeSpecSpecType = new CloseSpecSpecTypeImpl();
         return closeSpecSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CloseSpecType createCloseSpecType() {
-        CloseSpecTypeImpl closeSpecType = new CloseSpecTypeImpl();
+        final CloseSpecTypeImpl closeSpecType = new CloseSpecTypeImpl();
         return closeSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CloseStmtType createCloseStmtType() {
-        CloseStmtTypeImpl closeStmtType = new CloseStmtTypeImpl();
+        final CloseStmtTypeImpl closeStmtType = new CloseStmtTypeImpl();
         return closeStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ComponentDeclStmtType createComponentDeclStmtType() {
-        ComponentDeclStmtTypeImpl componentDeclStmtType = new ComponentDeclStmtTypeImpl();
+        final ComponentDeclStmtTypeImpl componentDeclStmtType = new ComponentDeclStmtTypeImpl();
         return componentDeclStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ComponentRType createComponentRType() {
-        ComponentRTypeImpl componentRType = new ComponentRTypeImpl();
+        final ComponentRTypeImpl componentRType = new ComponentRTypeImpl();
         return componentRType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ConditionEType createConditionEType() {
-        ConditionETypeImpl conditionEType = new ConditionETypeImpl();
+        final ConditionETypeImpl conditionEType = new ConditionETypeImpl();
         return conditionEType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ConnectSpecSpecType createConnectSpecSpecType() {
-        ConnectSpecSpecTypeImpl connectSpecSpecType = new ConnectSpecSpecTypeImpl();
+        final ConnectSpecSpecTypeImpl connectSpecSpecType = new ConnectSpecSpecTypeImpl();
         return connectSpecSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ConnectSpecType createConnectSpecType() {
-        ConnectSpecTypeImpl connectSpecType = new ConnectSpecTypeImpl();
+        final ConnectSpecTypeImpl connectSpecType = new ConnectSpecTypeImpl();
         return connectSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public CycleStmtType createCycleStmtType() {
-        CycleStmtTypeImpl cycleStmtType = new CycleStmtTypeImpl();
+        final CycleStmtTypeImpl cycleStmtType = new CycleStmtTypeImpl();
         return cycleStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public DeallocateStmtType createDeallocateStmtType() {
-        DeallocateStmtTypeImpl deallocateStmtType = new DeallocateStmtTypeImpl();
+        final DeallocateStmtTypeImpl deallocateStmtType = new DeallocateStmtTypeImpl();
         return deallocateStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public DerivedTSpecType createDerivedTSpecType() {
-        DerivedTSpecTypeImpl derivedTSpecType = new DerivedTSpecTypeImpl();
+        final DerivedTSpecTypeImpl derivedTSpecType = new DerivedTSpecTypeImpl();
         return derivedTSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public DocumentRoot createDocumentRoot() {
-        DocumentRootImpl documentRoot = new DocumentRootImpl();
+        final DocumentRootImpl documentRoot = new DocumentRootImpl();
         return documentRoot;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public DoStmtType createDoStmtType() {
-        DoStmtTypeImpl doStmtType = new DoStmtTypeImpl();
+        final DoStmtTypeImpl doStmtType = new DoStmtTypeImpl();
         return doStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public DoVType createDoVType() {
-        DoVTypeImpl doVType = new DoVTypeImpl();
+        final DoVTypeImpl doVType = new DoVTypeImpl();
         return doVType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public DummyArgLTType createDummyArgLTType() {
-        DummyArgLTTypeImpl dummyArgLTType = new DummyArgLTTypeImpl();
+        final DummyArgLTTypeImpl dummyArgLTType = new DummyArgLTTypeImpl();
         return dummyArgLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public E1Type createE1Type() {
-        E1TypeImpl e1Type = new E1TypeImpl();
+        final E1TypeImpl e1Type = new E1TypeImpl();
         return e1Type;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public E2Type createE2Type() {
-        E2TypeImpl e2Type = new E2TypeImpl();
+        final E2TypeImpl e2Type = new E2TypeImpl();
         return e2Type;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ElementLTType createElementLTType() {
-        ElementLTTypeImpl elementLTType = new ElementLTTypeImpl();
+        final ElementLTTypeImpl elementLTType = new ElementLTTypeImpl();
         return elementLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ElementType createElementType() {
-        ElementTypeImpl elementType = new ElementTypeImpl();
+        final ElementTypeImpl elementType = new ElementTypeImpl();
         return elementType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ElseIfStmtType createElseIfStmtType() {
-        ElseIfStmtTypeImpl elseIfStmtType = new ElseIfStmtTypeImpl();
+        final ElseIfStmtTypeImpl elseIfStmtType = new ElseIfStmtTypeImpl();
         return elseIfStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EndDoStmtType createEndDoStmtType() {
-        EndDoStmtTypeImpl endDoStmtType = new EndDoStmtTypeImpl();
+        final EndDoStmtTypeImpl endDoStmtType = new EndDoStmtTypeImpl();
         return endDoStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ENDeclLTType createENDeclLTType() {
-        ENDeclLTTypeImpl enDeclLTType = new ENDeclLTTypeImpl();
+        final ENDeclLTTypeImpl enDeclLTType = new ENDeclLTTypeImpl();
         return enDeclLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ENDeclType createENDeclType() {
-        ENDeclTypeImpl enDeclType = new ENDeclTypeImpl();
+        final ENDeclTypeImpl enDeclType = new ENDeclTypeImpl();
         return enDeclType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EndForallStmtType createEndForallStmtType() {
-        EndForallStmtTypeImpl endForallStmtType = new EndForallStmtTypeImpl();
+        final EndForallStmtTypeImpl endForallStmtType = new EndForallStmtTypeImpl();
         return endForallStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EndFunctionStmtType createEndFunctionStmtType() {
-        EndFunctionStmtTypeImpl endFunctionStmtType = new EndFunctionStmtTypeImpl();
+        final EndFunctionStmtTypeImpl endFunctionStmtType = new EndFunctionStmtTypeImpl();
         return endFunctionStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EndInterfaceStmtType createEndInterfaceStmtType() {
-        EndInterfaceStmtTypeImpl endInterfaceStmtType = new EndInterfaceStmtTypeImpl();
+        final EndInterfaceStmtTypeImpl endInterfaceStmtType = new EndInterfaceStmtTypeImpl();
         return endInterfaceStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EndModuleStmtType createEndModuleStmtType() {
-        EndModuleStmtTypeImpl endModuleStmtType = new EndModuleStmtTypeImpl();
+        final EndModuleStmtTypeImpl endModuleStmtType = new EndModuleStmtTypeImpl();
         return endModuleStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EndProgramStmtType createEndProgramStmtType() {
-        EndProgramStmtTypeImpl endProgramStmtType = new EndProgramStmtTypeImpl();
+        final EndProgramStmtTypeImpl endProgramStmtType = new EndProgramStmtTypeImpl();
         return endProgramStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EndSelectCaseStmtType createEndSelectCaseStmtType() {
-        EndSelectCaseStmtTypeImpl endSelectCaseStmtType = new EndSelectCaseStmtTypeImpl();
+        final EndSelectCaseStmtTypeImpl endSelectCaseStmtType = new EndSelectCaseStmtTypeImpl();
         return endSelectCaseStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EndSubroutineStmtType createEndSubroutineStmtType() {
-        EndSubroutineStmtTypeImpl endSubroutineStmtType = new EndSubroutineStmtTypeImpl();
+        final EndSubroutineStmtTypeImpl endSubroutineStmtType = new EndSubroutineStmtTypeImpl();
         return endSubroutineStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EndTStmtType createEndTStmtType() {
-        EndTStmtTypeImpl endTStmtType = new EndTStmtTypeImpl();
+        final EndTStmtTypeImpl endTStmtType = new EndTStmtTypeImpl();
         return endTStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ENLTType createENLTType() {
-        ENLTTypeImpl enltType = new ENLTTypeImpl();
+        final ENLTTypeImpl enltType = new ENLTTypeImpl();
         return enltType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ENNType createENNType() {
-        ENNTypeImpl ennType = new ENNTypeImpl();
+        final ENNTypeImpl ennType = new ENNTypeImpl();
         return ennType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ENType createENType() {
-        ENTypeImpl enType = new ENTypeImpl();
+        final ENTypeImpl enType = new ENTypeImpl();
         return enType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ErrorType createErrorType() {
-        ErrorTypeImpl errorType = new ErrorTypeImpl();
+        final ErrorTypeImpl errorType = new ErrorTypeImpl();
         return errorType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public FileType createFileType() {
-        FileTypeImpl fileType = new FileTypeImpl();
+        final FileTypeImpl fileType = new FileTypeImpl();
         return fileType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ForallConstructStmtType createForallConstructStmtType() {
-        ForallConstructStmtTypeImpl forallConstructStmtType = new ForallConstructStmtTypeImpl();
+        final ForallConstructStmtTypeImpl forallConstructStmtType = new ForallConstructStmtTypeImpl();
         return forallConstructStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ForallStmtType createForallStmtType() {
-        ForallStmtTypeImpl forallStmtType = new ForallStmtTypeImpl();
+        final ForallStmtTypeImpl forallStmtType = new ForallStmtTypeImpl();
         return forallStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ForallTripletSpecLTType createForallTripletSpecLTType() {
-        ForallTripletSpecLTTypeImpl forallTripletSpecLTType = new ForallTripletSpecLTTypeImpl();
+        final ForallTripletSpecLTTypeImpl forallTripletSpecLTType = new ForallTripletSpecLTTypeImpl();
         return forallTripletSpecLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ForallTripletSpecType createForallTripletSpecType() {
-        ForallTripletSpecTypeImpl forallTripletSpecType = new ForallTripletSpecTypeImpl();
+        final ForallTripletSpecTypeImpl forallTripletSpecType = new ForallTripletSpecTypeImpl();
         return forallTripletSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public FunctionNType createFunctionNType() {
-        FunctionNTypeImpl functionNType = new FunctionNTypeImpl();
+        final FunctionNTypeImpl functionNType = new FunctionNTypeImpl();
         return functionNType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public FunctionStmtType createFunctionStmtType() {
-        FunctionStmtTypeImpl functionStmtType = new FunctionStmtTypeImpl();
+        final FunctionStmtTypeImpl functionStmtType = new FunctionStmtTypeImpl();
         return functionStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public IfStmtType createIfStmtType() {
-        IfStmtTypeImpl ifStmtType = new IfStmtTypeImpl();
+        final IfStmtTypeImpl ifStmtType = new IfStmtTypeImpl();
         return ifStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public IfThenStmtType createIfThenStmtType() {
-        IfThenStmtTypeImpl ifThenStmtType = new IfThenStmtTypeImpl();
+        final IfThenStmtTypeImpl ifThenStmtType = new IfThenStmtTypeImpl();
         return ifThenStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public InitEType createInitEType() {
-        InitETypeImpl initEType = new InitETypeImpl();
+        final InitETypeImpl initEType = new InitETypeImpl();
         return initEType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public InquireStmtType createInquireStmtType() {
-        InquireStmtTypeImpl inquireStmtType = new InquireStmtTypeImpl();
+        final InquireStmtTypeImpl inquireStmtType = new InquireStmtTypeImpl();
         return inquireStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public InquirySpecSpecType createInquirySpecSpecType() {
-        InquirySpecSpecTypeImpl inquirySpecSpecType = new InquirySpecSpecTypeImpl();
+        final InquirySpecSpecTypeImpl inquirySpecSpecType = new InquirySpecSpecTypeImpl();
         return inquirySpecSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public InquirySpecType createInquirySpecType() {
-        InquirySpecTypeImpl inquirySpecType = new InquirySpecTypeImpl();
+        final InquirySpecTypeImpl inquirySpecType = new InquirySpecTypeImpl();
         return inquirySpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public InterfaceStmtType createInterfaceStmtType() {
-        InterfaceStmtTypeImpl interfaceStmtType = new InterfaceStmtTypeImpl();
+        final InterfaceStmtTypeImpl interfaceStmtType = new InterfaceStmtTypeImpl();
         return interfaceStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public IntrinsicTSpecType createIntrinsicTSpecType() {
-        IntrinsicTSpecTypeImpl intrinsicTSpecType = new IntrinsicTSpecTypeImpl();
+        final IntrinsicTSpecTypeImpl intrinsicTSpecType = new IntrinsicTSpecTypeImpl();
         return intrinsicTSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public IoControlSpecType createIoControlSpecType() {
-        IoControlSpecTypeImpl ioControlSpecType = new IoControlSpecTypeImpl();
+        final IoControlSpecTypeImpl ioControlSpecType = new IoControlSpecTypeImpl();
         return ioControlSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public IoControlType createIoControlType() {
-        IoControlTypeImpl ioControlType = new IoControlTypeImpl();
+        final IoControlTypeImpl ioControlType = new IoControlTypeImpl();
         return ioControlType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public IteratorDefinitionLTType createIteratorDefinitionLTType() {
-        IteratorDefinitionLTTypeImpl iteratorDefinitionLTType = new IteratorDefinitionLTTypeImpl();
+        final IteratorDefinitionLTTypeImpl iteratorDefinitionLTType = new IteratorDefinitionLTTypeImpl();
         return iteratorDefinitionLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public IteratorElementType createIteratorElementType() {
-        IteratorElementTypeImpl iteratorElementType = new IteratorElementTypeImpl();
+        final IteratorElementTypeImpl iteratorElementType = new IteratorElementTypeImpl();
         return iteratorElementType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public IteratorType createIteratorType() {
-        IteratorTypeImpl iteratorType = new IteratorTypeImpl();
+        final IteratorTypeImpl iteratorType = new IteratorTypeImpl();
         return iteratorType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public KSelectorType createKSelectorType() {
-        KSelectorTypeImpl kSelectorType = new KSelectorTypeImpl();
+        final KSelectorTypeImpl kSelectorType = new KSelectorTypeImpl();
         return kSelectorType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public KSpecType createKSpecType() {
-        KSpecTypeImpl kSpecType = new KSpecTypeImpl();
+        final KSpecTypeImpl kSpecType = new KSpecTypeImpl();
         return kSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public LabelType createLabelType() {
-        LabelTypeImpl labelType = new LabelTypeImpl();
+        final LabelTypeImpl labelType = new LabelTypeImpl();
         return labelType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public LiteralEType createLiteralEType() {
-        LiteralETypeImpl literalEType = new LiteralETypeImpl();
+        final LiteralETypeImpl literalEType = new LiteralETypeImpl();
         return literalEType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public LowerBoundType createLowerBoundType() {
-        LowerBoundTypeImpl lowerBoundType = new LowerBoundTypeImpl();
+        final LowerBoundTypeImpl lowerBoundType = new LowerBoundTypeImpl();
         return lowerBoundType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public MaskEType createMaskEType() {
-        MaskETypeImpl maskEType = new MaskETypeImpl();
+        final MaskETypeImpl maskEType = new MaskETypeImpl();
         return maskEType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ModuleNType createModuleNType() {
-        ModuleNTypeImpl moduleNType = new ModuleNTypeImpl();
+        final ModuleNTypeImpl moduleNType = new ModuleNTypeImpl();
         return moduleNType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ModuleProcedureNLTType createModuleProcedureNLTType() {
-        ModuleProcedureNLTTypeImpl moduleProcedureNLTType = new ModuleProcedureNLTTypeImpl();
+        final ModuleProcedureNLTTypeImpl moduleProcedureNLTType = new ModuleProcedureNLTTypeImpl();
         return moduleProcedureNLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ModuleStmtType createModuleStmtType() {
-        ModuleStmtTypeImpl moduleStmtType = new ModuleStmtTypeImpl();
+        final ModuleStmtTypeImpl moduleStmtType = new ModuleStmtTypeImpl();
         return moduleStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public NamedEType createNamedEType() {
-        NamedETypeImpl namedEType = new NamedETypeImpl();
+        final NamedETypeImpl namedEType = new NamedETypeImpl();
         return namedEType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public NamelistGroupNType createNamelistGroupNType() {
-        NamelistGroupNTypeImpl namelistGroupNType = new NamelistGroupNTypeImpl();
+        final NamelistGroupNTypeImpl namelistGroupNType = new NamelistGroupNTypeImpl();
         return namelistGroupNType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public NamelistGroupObjLTType createNamelistGroupObjLTType() {
-        NamelistGroupObjLTTypeImpl namelistGroupObjLTType = new NamelistGroupObjLTTypeImpl();
+        final NamelistGroupObjLTTypeImpl namelistGroupObjLTType = new NamelistGroupObjLTTypeImpl();
         return namelistGroupObjLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public NamelistGroupObjNType createNamelistGroupObjNType() {
-        NamelistGroupObjNTypeImpl namelistGroupObjNType = new NamelistGroupObjNTypeImpl();
+        final NamelistGroupObjNTypeImpl namelistGroupObjNType = new NamelistGroupObjNTypeImpl();
         return namelistGroupObjNType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public NamelistGroupObjType createNamelistGroupObjType() {
-        NamelistGroupObjTypeImpl namelistGroupObjType = new NamelistGroupObjTypeImpl();
+        final NamelistGroupObjTypeImpl namelistGroupObjType = new NamelistGroupObjTypeImpl();
         return namelistGroupObjType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public NamelistStmtType createNamelistStmtType() {
-        NamelistStmtTypeImpl namelistStmtType = new NamelistStmtTypeImpl();
+        final NamelistStmtTypeImpl namelistStmtType = new NamelistStmtTypeImpl();
         return namelistStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public NType createNType() {
-        NTypeImpl nType = new NTypeImpl();
+        final NTypeImpl nType = new NTypeImpl();
         return nType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public NullifyStmtType createNullifyStmtType() {
-        NullifyStmtTypeImpl nullifyStmtType = new NullifyStmtTypeImpl();
+        final NullifyStmtTypeImpl nullifyStmtType = new NullifyStmtTypeImpl();
         return nullifyStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ObjectType createObjectType() {
-        ObjectTypeImpl objectType = new ObjectTypeImpl();
+        final ObjectTypeImpl objectType = new ObjectTypeImpl();
         return objectType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public OpenStmtType createOpenStmtType() {
-        OpenStmtTypeImpl openStmtType = new OpenStmtTypeImpl();
+        final OpenStmtTypeImpl openStmtType = new OpenStmtTypeImpl();
         return openStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public OpEType createOpEType() {
-        OpETypeImpl opEType = new OpETypeImpl();
+        final OpETypeImpl opEType = new OpETypeImpl();
         return opEType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public OpType createOpType() {
-        OpTypeImpl opType = new OpTypeImpl();
+        final OpTypeImpl opType = new OpTypeImpl();
         return opType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public OutputItemLTType createOutputItemLTType() {
-        OutputItemLTTypeImpl outputItemLTType = new OutputItemLTTypeImpl();
+        final OutputItemLTTypeImpl outputItemLTType = new OutputItemLTTypeImpl();
         return outputItemLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public OutputItemType createOutputItemType() {
-        OutputItemTypeImpl outputItemType = new OutputItemTypeImpl();
+        final OutputItemTypeImpl outputItemType = new OutputItemTypeImpl();
         return outputItemType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ParensEType createParensEType() {
-        ParensETypeImpl parensEType = new ParensETypeImpl();
+        final ParensETypeImpl parensEType = new ParensETypeImpl();
         return parensEType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ParensRType createParensRType() {
-        ParensRTypeImpl parensRType = new ParensRTypeImpl();
+        final ParensRTypeImpl parensRType = new ParensRTypeImpl();
         return parensRType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public PointerAStmtType createPointerAStmtType() {
-        PointerAStmtTypeImpl pointerAStmtType = new PointerAStmtTypeImpl();
+        final PointerAStmtTypeImpl pointerAStmtType = new PointerAStmtTypeImpl();
         return pointerAStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public PointerStmtType createPointerStmtType() {
-        PointerStmtTypeImpl pointerStmtType = new PointerStmtTypeImpl();
+        final PointerStmtTypeImpl pointerStmtType = new PointerStmtTypeImpl();
         return pointerStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ProcedureDesignatorType createProcedureDesignatorType() {
-        ProcedureDesignatorTypeImpl procedureDesignatorType = new ProcedureDesignatorTypeImpl();
+        final ProcedureDesignatorTypeImpl procedureDesignatorType = new ProcedureDesignatorTypeImpl();
         return procedureDesignatorType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ProcedureStmtType createProcedureStmtType() {
-        ProcedureStmtTypeImpl procedureStmtType = new ProcedureStmtTypeImpl();
+        final ProcedureStmtTypeImpl procedureStmtType = new ProcedureStmtTypeImpl();
         return procedureStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ProgramNType createProgramNType() {
-        ProgramNTypeImpl programNType = new ProgramNTypeImpl();
+        final ProgramNTypeImpl programNType = new ProgramNTypeImpl();
         return programNType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ProgramStmtType createProgramStmtType() {
-        ProgramStmtTypeImpl programStmtType = new ProgramStmtTypeImpl();
+        final ProgramStmtTypeImpl programStmtType = new ProgramStmtTypeImpl();
         return programStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public PublicStmtType createPublicStmtType() {
-        PublicStmtTypeImpl publicStmtType = new PublicStmtTypeImpl();
+        final PublicStmtTypeImpl publicStmtType = new PublicStmtTypeImpl();
         return publicStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ReadStmtType createReadStmtType() {
-        ReadStmtTypeImpl readStmtType = new ReadStmtTypeImpl();
+        final ReadStmtTypeImpl readStmtType = new ReadStmtTypeImpl();
         return readStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public RenameLTType createRenameLTType() {
-        RenameLTTypeImpl renameLTType = new RenameLTTypeImpl();
+        final RenameLTTypeImpl renameLTType = new RenameLTTypeImpl();
         return renameLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public RenameType createRenameType() {
-        RenameTypeImpl renameType = new RenameTypeImpl();
+        final RenameTypeImpl renameType = new RenameTypeImpl();
         return renameType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ResultSpecType createResultSpecType() {
-        ResultSpecTypeImpl resultSpecType = new ResultSpecTypeImpl();
+        final ResultSpecTypeImpl resultSpecType = new ResultSpecTypeImpl();
         return resultSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public RLTType createRLTType() {
-        RLTTypeImpl rltType = new RLTTypeImpl();
+        final RLTTypeImpl rltType = new RLTTypeImpl();
         return rltType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public SectionSubscriptLTType createSectionSubscriptLTType() {
-        SectionSubscriptLTTypeImpl sectionSubscriptLTType = new SectionSubscriptLTTypeImpl();
+        final SectionSubscriptLTTypeImpl sectionSubscriptLTType = new SectionSubscriptLTTypeImpl();
         return sectionSubscriptLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public SectionSubscriptType createSectionSubscriptType() {
-        SectionSubscriptTypeImpl sectionSubscriptType = new SectionSubscriptTypeImpl();
+        final SectionSubscriptTypeImpl sectionSubscriptType = new SectionSubscriptTypeImpl();
         return sectionSubscriptType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public SelectCaseStmtType createSelectCaseStmtType() {
-        SelectCaseStmtTypeImpl selectCaseStmtType = new SelectCaseStmtTypeImpl();
+        final SelectCaseStmtTypeImpl selectCaseStmtType = new SelectCaseStmtTypeImpl();
         return selectCaseStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ShapeSpecLTType createShapeSpecLTType() {
-        ShapeSpecLTTypeImpl shapeSpecLTType = new ShapeSpecLTTypeImpl();
+        final ShapeSpecLTTypeImpl shapeSpecLTType = new ShapeSpecLTTypeImpl();
         return shapeSpecLTType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public ShapeSpecType createShapeSpecType() {
-        ShapeSpecTypeImpl shapeSpecType = new ShapeSpecTypeImpl();
+        final ShapeSpecTypeImpl shapeSpecType = new ShapeSpecTypeImpl();
         return shapeSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public StopStmtType createStopStmtType() {
-        StopStmtTypeImpl stopStmtType = new StopStmtTypeImpl();
+        final StopStmtTypeImpl stopStmtType = new StopStmtTypeImpl();
         return stopStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public StringEType createStringEType() {
-        StringETypeImpl stringEType = new StringETypeImpl();
+        final StringETypeImpl stringEType = new StringETypeImpl();
         return stringEType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public SubroutineNType createSubroutineNType() {
-        SubroutineNTypeImpl subroutineNType = new SubroutineNTypeImpl();
+        final SubroutineNTypeImpl subroutineNType = new SubroutineNTypeImpl();
         return subroutineNType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public SubroutineStmtType createSubroutineStmtType() {
-        SubroutineStmtTypeImpl subroutineStmtType = new SubroutineStmtTypeImpl();
+        final SubroutineStmtTypeImpl subroutineStmtType = new SubroutineStmtTypeImpl();
         return subroutineStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public TDeclStmtType createTDeclStmtType() {
-        TDeclStmtTypeImpl tDeclStmtType = new TDeclStmtTypeImpl();
+        final TDeclStmtTypeImpl tDeclStmtType = new TDeclStmtTypeImpl();
         return tDeclStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public TestEType createTestEType() {
-        TestETypeImpl testEType = new TestETypeImpl();
+        final TestETypeImpl testEType = new TestETypeImpl();
         return testEType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public TNType createTNType() {
-        TNTypeImpl tnType = new TNTypeImpl();
+        final TNTypeImpl tnType = new TNTypeImpl();
         return tnType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public TSpecType createTSpecType() {
-        TSpecTypeImpl tSpecType = new TSpecTypeImpl();
+        final TSpecTypeImpl tSpecType = new TSpecTypeImpl();
         return tSpecType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public TStmtType createTStmtType() {
-        TStmtTypeImpl tStmtType = new TStmtTypeImpl();
+        final TStmtTypeImpl tStmtType = new TStmtTypeImpl();
         return tStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public UpperBoundType createUpperBoundType() {
-        UpperBoundTypeImpl upperBoundType = new UpperBoundTypeImpl();
+        final UpperBoundTypeImpl upperBoundType = new UpperBoundTypeImpl();
         return upperBoundType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public UseNType createUseNType() {
-        UseNTypeImpl useNType = new UseNTypeImpl();
+        final UseNTypeImpl useNType = new UseNTypeImpl();
         return useNType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public UseStmtType createUseStmtType() {
-        UseStmtTypeImpl useStmtType = new UseStmtTypeImpl();
+        final UseStmtTypeImpl useStmtType = new UseStmtTypeImpl();
         return useStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public VNType createVNType() {
-        VNTypeImpl vnType = new VNTypeImpl();
+        final VNTypeImpl vnType = new VNTypeImpl();
         return vnType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public VType createVType() {
-        VTypeImpl vType = new VTypeImpl();
+        final VTypeImpl vType = new VTypeImpl();
         return vType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public WhereConstructStmtType createWhereConstructStmtType() {
-        WhereConstructStmtTypeImpl whereConstructStmtType = new WhereConstructStmtTypeImpl();
+        final WhereConstructStmtTypeImpl whereConstructStmtType = new WhereConstructStmtTypeImpl();
         return whereConstructStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public WhereStmtType createWhereStmtType() {
-        WhereStmtTypeImpl whereStmtType = new WhereStmtTypeImpl();
+        final WhereStmtTypeImpl whereStmtType = new WhereStmtTypeImpl();
         return whereStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public WriteStmtType createWriteStmtType() {
-        WriteStmtTypeImpl writeStmtType = new WriteStmtTypeImpl();
+        final WriteStmtTypeImpl writeStmtType = new WriteStmtTypeImpl();
         return writeStmtType;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public FxtranPackage getFxtranPackage() {
-        return (FxtranPackage)getEPackage();
+        return (FxtranPackage) this.getEPackage();
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @deprecated
      * @generated
      */
@@ -1566,4 +1832,4 @@ public class FxtranFactoryImpl extends EFactoryImpl implements FxtranFactory {
         return FxtranPackage.eINSTANCE;
     }
 
-} //FxtranFactoryImpl
+} // FxtranFactoryImpl

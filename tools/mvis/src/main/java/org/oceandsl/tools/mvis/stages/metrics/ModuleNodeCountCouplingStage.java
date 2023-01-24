@@ -46,13 +46,17 @@ public class ModuleNodeCountCouplingStage extends AbstractTransformation<IGraph<
         for (final INode vertex : graph.getGraph().nodes()) {
             result.addRow(this.getFilepath(vertex.getId()), graph.getGraph().inDegree(vertex),
                     graph.getGraph().outDegree(vertex));
+
         }
 
         this.outputPort.send(result);
     }
 
-    private String getFilepath(final Object id) throws ConfigurationException {
-        return this.getComponentType(id).getSignature();
+    private String getFilepath(final Object id) {
+        final String stringId = (String) id;
+        String filepath = stringId.split("\\.f")[0];
+        filepath = filepath.split("@")[1];
+        return filepath.concat(".f");
     }
 
     private ComponentType getComponentType(final Object id) throws ConfigurationException {

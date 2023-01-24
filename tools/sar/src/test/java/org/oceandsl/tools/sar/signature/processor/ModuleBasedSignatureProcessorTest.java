@@ -15,8 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.signature.processor;
 
-import java.util.Locale;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +34,7 @@ class ModuleBasedSignatureProcessorTest {
         Assertions.assertEquals(processor.getErrorMessage(), null, "there should never be an error message");
         Assertions.assertEquals(processor.getComponentSignature(), ModuleBasedSignatureProcessorTest.COMPONENT,
                 "component name should not be lower case");
-        Assertions.assertEquals(processor.getOperationSignature(), ModuleBasedSignatureProcessorTest.OPERATION,
+        Assertions.assertEquals(processor.getElementSignature(), ModuleBasedSignatureProcessorTest.OPERATION,
                 "operation name should not be lower case");
     }
 
@@ -48,11 +46,9 @@ class ModuleBasedSignatureProcessorTest {
         Assertions.assertTrue(result, "File-based processor should never fail.");
         Assertions.assertEquals(processor.getErrorMessage(), null, "there should never be an error message");
         Assertions.assertEquals(processor.getComponentSignature(),
-                ModuleBasedSignatureProcessorTest.COMPONENT.toLowerCase(Locale.getDefault()),
-                "component name should be lower case");
-        Assertions.assertEquals(processor.getOperationSignature(),
-                ModuleBasedSignatureProcessorTest.OPERATION.toLowerCase(Locale.getDefault()),
-                "operation name should be lower case");
+                ModuleBasedSignatureProcessorTest.COMPONENT.toLowerCase(), "component name should be lower case");
+        Assertions.assertEquals(processor.getElementSignature(),
+                ModuleBasedSignatureProcessorTest.OPERATION.toLowerCase(), "operation name should be lower case");
     }
 
 }

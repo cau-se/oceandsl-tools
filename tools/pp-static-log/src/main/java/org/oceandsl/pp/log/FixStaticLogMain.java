@@ -15,7 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.pp.log;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -51,7 +50,7 @@ public class FixStaticLogMain extends AbstractService<FixStaticLogTeetimeConfigu
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }

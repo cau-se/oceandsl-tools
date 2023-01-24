@@ -96,6 +96,11 @@ public final class ArchitectureModelManagementUtils {
         // utility class do not instantiate
     }
 
+    public static ModelRepository createModelRepository(final String experimentName, final boolean mapFile) {
+        return ArchitectureModelManagementUtils
+                .createModelRepository(String.format("%s-%s", experimentName, mapFile ? "map" : "file"));
+    }
+
     public static ModelRepository createModelRepository(final String repositoryName) {
         final ModelRepository repository = new ModelRepository(repositoryName);
         repository.register(ArchitectureModelManagementUtils.TYPE_MODEL_DESCRIPTOR,
@@ -184,6 +189,7 @@ public final class ArchitectureModelManagementUtils {
 
         // store models
         final ResourceSet resourceSet = new ResourceSetImpl();
+        resourceSet.setResourceFactoryRegistry(registry);
 
         if (!Files.exists(outputDirectory)) {
             Files.createDirectory(outputDirectory);
@@ -228,4 +234,5 @@ public final class ArchitectureModelManagementUtils {
     private static File createWriteModelFileHandle(final Path path, final String filename) {
         return new File(path.toFile().getAbsolutePath() + File.separator + filename);
     }
+
 }

@@ -129,16 +129,14 @@ public class OperationAndCallGeneratorStage extends AbstractConsumerStage<IFlowR
                     componentSignature, operationSignature);
             if (!traceData.getOperationStack().empty()) {
                 this.operationOutputPort.send(newEvent);
+            } else if (this.createEntryCall) {
+                final OperationEvent triggerEvent = new OperationEvent("external", "<unknown>", "<unknown>");
+                this.operationOutputPort.send(triggerEvent);
+                this.operationOutputPort.send(newEvent);
+                traceData.getOperationStack().push(triggerEvent);
+                traceData.getStartTimeStack().push(Instant.ofEpochSecond(0, beforeOperationEvent.getTimestamp()));
             } else {
-                if (this.createEntryCall) {
-                    final OperationEvent triggerEvent = new OperationEvent("external", "<unknown>", "<unknown>");
-                    this.operationOutputPort.send(triggerEvent);
-                    this.operationOutputPort.send(newEvent);
-                    traceData.getOperationStack().push(triggerEvent);
-                    traceData.getStartTimeStack().push(Instant.ofEpochSecond(0, beforeOperationEvent.getTimestamp()));
-                } else {
-                    this.operationOutputPort.send(newEvent);
-                }
+                this.operationOutputPort.send(newEvent);
             }
             traceData.getOperationStack().push(newEvent);
             traceData.getStartTimeStack().push(Instant.ofEpochSecond(0, beforeOperationEvent.getTimestamp()));

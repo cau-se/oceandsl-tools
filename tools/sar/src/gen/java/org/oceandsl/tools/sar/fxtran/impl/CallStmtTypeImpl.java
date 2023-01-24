@@ -5,14 +5,10 @@ package org.oceandsl.tools.sar.fxtran.impl;
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
 import org.eclipse.emf.ecore.util.BasicFeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -23,27 +19,27 @@ import org.oceandsl.tools.sar.fxtran.FxtranPackage;
 import org.oceandsl.tools.sar.fxtran.ProcedureDesignatorType;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Call Stmt Type</b></em>'.
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Call Stmt Type</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.oceandsl.tools.sar.fxtran.impl.CallStmtTypeImpl#getMixed <em>Mixed</em>}</li>
- *   <li>{@link org.oceandsl.tools.sar.fxtran.impl.CallStmtTypeImpl#getGroup <em>Group</em>}</li>
- *   <li>{@link org.oceandsl.tools.sar.fxtran.impl.CallStmtTypeImpl#getArgSpec <em>Arg Spec</em>}</li>
- *   <li>{@link org.oceandsl.tools.sar.fxtran.impl.CallStmtTypeImpl#getCnt <em>Cnt</em>}</li>
- *   <li>{@link org.oceandsl.tools.sar.fxtran.impl.CallStmtTypeImpl#getProcedureDesignator <em>Procedure Designator</em>}</li>
+ * <li>{@link org.oceandsl.tools.sar.fxtran.impl.CallStmtTypeImpl#getMixed <em>Mixed</em>}</li>
+ * <li>{@link org.oceandsl.tools.sar.fxtran.impl.CallStmtTypeImpl#getGroup <em>Group</em>}</li>
+ * <li>{@link org.oceandsl.tools.sar.fxtran.impl.CallStmtTypeImpl#getArgSpec <em>Arg Spec</em>}</li>
+ * <li>{@link org.oceandsl.tools.sar.fxtran.impl.CallStmtTypeImpl#getCnt <em>Cnt</em>}</li>
+ * <li>{@link org.oceandsl.tools.sar.fxtran.impl.CallStmtTypeImpl#getProcedureDesignator
+ * <em>Procedure Designator</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class CallStmtTypeImpl extends MinimalEObjectImpl.Container implements CallStmtType {
     /**
-     * The cached value of the '{@link #getMixed() <em>Mixed</em>}' attribute list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The cached value of the '{@link #getMixed() <em>Mixed</em>}' attribute list. <!--
+     * begin-user-doc --> <!-- end-user-doc -->
+     *
      * @see #getMixed()
      * @generated
      * @ordered
@@ -51,8 +47,8 @@ public class CallStmtTypeImpl extends MinimalEObjectImpl.Container implements Ca
     protected FeatureMap mixed;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     protected CallStmtTypeImpl() {
@@ -60,8 +56,8 @@ public class CallStmtTypeImpl extends MinimalEObjectImpl.Container implements Ca
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
@@ -70,191 +66,203 @@ public class CallStmtTypeImpl extends MinimalEObjectImpl.Container implements Ca
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public FeatureMap getMixed() {
-        if (mixed == null) {
-            mixed = new BasicFeatureMap(this, FxtranPackage.CALL_STMT_TYPE__MIXED);
-        }
-        return mixed;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public FeatureMap getGroup() {
-        return (FeatureMap)getMixed().<FeatureMap.Entry>list(FxtranPackage.eINSTANCE.getCallStmtType_Group());
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EList<ArgSpecType> getArgSpec() {
-        return getGroup().list(FxtranPackage.eINSTANCE.getCallStmtType_ArgSpec());
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EList<String> getCnt() {
-        return getGroup().list(FxtranPackage.eINSTANCE.getCallStmtType_Cnt());
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EList<ProcedureDesignatorType> getProcedureDesignator() {
-        return getGroup().list(FxtranPackage.eINSTANCE.getCallStmtType_ProcedureDesignator());
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+    public FeatureMap getMixed() {
+        if (this.mixed == null) {
+            this.mixed = new BasicFeatureMap(this, FxtranPackage.CALL_STMT_TYPE__MIXED);
+        }
+        return this.mixed;
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @generated
+     */
+    @Override
+    public FeatureMap getGroup() {
+        return (FeatureMap) this.getMixed().<FeatureMap.Entry> list(FxtranPackage.eINSTANCE.getCallStmtType_Group());
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @generated
+     */
+    @Override
+    public EList<ArgSpecType> getArgSpec() {
+        return this.getGroup().list(FxtranPackage.eINSTANCE.getCallStmtType_ArgSpec());
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @generated
+     */
+    @Override
+    public EList<String> getCnt() {
+        return this.getGroup().list(FxtranPackage.eINSTANCE.getCallStmtType_Cnt());
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @generated
+     */
+    @Override
+    public EList<ProcedureDesignatorType> getProcedureDesignator() {
+        return this.getGroup().list(FxtranPackage.eINSTANCE.getCallStmtType_ProcedureDesignator());
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @generated
+     */
+    @Override
+    public NotificationChain eInverseRemove(final InternalEObject otherEnd, final int featureID,
+            final NotificationChain msgs) {
         switch (featureID) {
-            case FxtranPackage.CALL_STMT_TYPE__MIXED:
-                return ((InternalEList<?>)getMixed()).basicRemove(otherEnd, msgs);
-            case FxtranPackage.CALL_STMT_TYPE__GROUP:
-                return ((InternalEList<?>)getGroup()).basicRemove(otherEnd, msgs);
-            case FxtranPackage.CALL_STMT_TYPE__ARG_SPEC:
-                return ((InternalEList<?>)getArgSpec()).basicRemove(otherEnd, msgs);
-            case FxtranPackage.CALL_STMT_TYPE__PROCEDURE_DESIGNATOR:
-                return ((InternalEList<?>)getProcedureDesignator()).basicRemove(otherEnd, msgs);
+        case FxtranPackage.CALL_STMT_TYPE__MIXED:
+            return ((InternalEList<?>) this.getMixed()).basicRemove(otherEnd, msgs);
+        case FxtranPackage.CALL_STMT_TYPE__GROUP:
+            return ((InternalEList<?>) this.getGroup()).basicRemove(otherEnd, msgs);
+        case FxtranPackage.CALL_STMT_TYPE__ARG_SPEC:
+            return ((InternalEList<?>) this.getArgSpec()).basicRemove(otherEnd, msgs);
+        case FxtranPackage.CALL_STMT_TYPE__PROCEDURE_DESIGNATOR:
+            return ((InternalEList<?>) this.getProcedureDesignator()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public Object eGet(int featureID, boolean resolve, boolean coreType) {
+    public Object eGet(final int featureID, final boolean resolve, final boolean coreType) {
         switch (featureID) {
-            case FxtranPackage.CALL_STMT_TYPE__MIXED:
-                if (coreType) return getMixed();
-                return ((FeatureMap.Internal)getMixed()).getWrapper();
-            case FxtranPackage.CALL_STMT_TYPE__GROUP:
-                if (coreType) return getGroup();
-                return ((FeatureMap.Internal)getGroup()).getWrapper();
-            case FxtranPackage.CALL_STMT_TYPE__ARG_SPEC:
-                return getArgSpec();
-            case FxtranPackage.CALL_STMT_TYPE__CNT:
-                return getCnt();
-            case FxtranPackage.CALL_STMT_TYPE__PROCEDURE_DESIGNATOR:
-                return getProcedureDesignator();
+        case FxtranPackage.CALL_STMT_TYPE__MIXED:
+            if (coreType) {
+                return this.getMixed();
+            }
+            return ((FeatureMap.Internal) this.getMixed()).getWrapper();
+        case FxtranPackage.CALL_STMT_TYPE__GROUP:
+            if (coreType) {
+                return this.getGroup();
+            }
+            return ((FeatureMap.Internal) this.getGroup()).getWrapper();
+        case FxtranPackage.CALL_STMT_TYPE__ARG_SPEC:
+            return this.getArgSpec();
+        case FxtranPackage.CALL_STMT_TYPE__CNT:
+            return this.getCnt();
+        case FxtranPackage.CALL_STMT_TYPE__PROCEDURE_DESIGNATOR:
+            return this.getProcedureDesignator();
         }
         return super.eGet(featureID, resolve, coreType);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void eSet(int featureID, Object newValue) {
+    public void eSet(final int featureID, final Object newValue) {
         switch (featureID) {
-            case FxtranPackage.CALL_STMT_TYPE__MIXED:
-                ((FeatureMap.Internal)getMixed()).set(newValue);
-                return;
-            case FxtranPackage.CALL_STMT_TYPE__GROUP:
-                ((FeatureMap.Internal)getGroup()).set(newValue);
-                return;
-            case FxtranPackage.CALL_STMT_TYPE__ARG_SPEC:
-                getArgSpec().clear();
-                getArgSpec().addAll((Collection<? extends ArgSpecType>)newValue);
-                return;
-            case FxtranPackage.CALL_STMT_TYPE__CNT:
-                getCnt().clear();
-                getCnt().addAll((Collection<? extends String>)newValue);
-                return;
-            case FxtranPackage.CALL_STMT_TYPE__PROCEDURE_DESIGNATOR:
-                getProcedureDesignator().clear();
-                getProcedureDesignator().addAll((Collection<? extends ProcedureDesignatorType>)newValue);
-                return;
+        case FxtranPackage.CALL_STMT_TYPE__MIXED:
+            ((FeatureMap.Internal) this.getMixed()).set(newValue);
+            return;
+        case FxtranPackage.CALL_STMT_TYPE__GROUP:
+            ((FeatureMap.Internal) this.getGroup()).set(newValue);
+            return;
+        case FxtranPackage.CALL_STMT_TYPE__ARG_SPEC:
+            this.getArgSpec().clear();
+            this.getArgSpec().addAll((Collection<? extends ArgSpecType>) newValue);
+            return;
+        case FxtranPackage.CALL_STMT_TYPE__CNT:
+            this.getCnt().clear();
+            this.getCnt().addAll((Collection<? extends String>) newValue);
+            return;
+        case FxtranPackage.CALL_STMT_TYPE__PROCEDURE_DESIGNATOR:
+            this.getProcedureDesignator().clear();
+            this.getProcedureDesignator().addAll((Collection<? extends ProcedureDesignatorType>) newValue);
+            return;
         }
         super.eSet(featureID, newValue);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public void eUnset(int featureID) {
+    public void eUnset(final int featureID) {
         switch (featureID) {
-            case FxtranPackage.CALL_STMT_TYPE__MIXED:
-                getMixed().clear();
-                return;
-            case FxtranPackage.CALL_STMT_TYPE__GROUP:
-                getGroup().clear();
-                return;
-            case FxtranPackage.CALL_STMT_TYPE__ARG_SPEC:
-                getArgSpec().clear();
-                return;
-            case FxtranPackage.CALL_STMT_TYPE__CNT:
-                getCnt().clear();
-                return;
-            case FxtranPackage.CALL_STMT_TYPE__PROCEDURE_DESIGNATOR:
-                getProcedureDesignator().clear();
-                return;
+        case FxtranPackage.CALL_STMT_TYPE__MIXED:
+            this.getMixed().clear();
+            return;
+        case FxtranPackage.CALL_STMT_TYPE__GROUP:
+            this.getGroup().clear();
+            return;
+        case FxtranPackage.CALL_STMT_TYPE__ARG_SPEC:
+            this.getArgSpec().clear();
+            return;
+        case FxtranPackage.CALL_STMT_TYPE__CNT:
+            this.getCnt().clear();
+            return;
+        case FxtranPackage.CALL_STMT_TYPE__PROCEDURE_DESIGNATOR:
+            this.getProcedureDesignator().clear();
+            return;
         }
         super.eUnset(featureID);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public boolean eIsSet(int featureID) {
+    public boolean eIsSet(final int featureID) {
         switch (featureID) {
-            case FxtranPackage.CALL_STMT_TYPE__MIXED:
-                return mixed != null && !mixed.isEmpty();
-            case FxtranPackage.CALL_STMT_TYPE__GROUP:
-                return !getGroup().isEmpty();
-            case FxtranPackage.CALL_STMT_TYPE__ARG_SPEC:
-                return !getArgSpec().isEmpty();
-            case FxtranPackage.CALL_STMT_TYPE__CNT:
-                return !getCnt().isEmpty();
-            case FxtranPackage.CALL_STMT_TYPE__PROCEDURE_DESIGNATOR:
-                return !getProcedureDesignator().isEmpty();
+        case FxtranPackage.CALL_STMT_TYPE__MIXED:
+            return this.mixed != null && !this.mixed.isEmpty();
+        case FxtranPackage.CALL_STMT_TYPE__GROUP:
+            return !this.getGroup().isEmpty();
+        case FxtranPackage.CALL_STMT_TYPE__ARG_SPEC:
+            return !this.getArgSpec().isEmpty();
+        case FxtranPackage.CALL_STMT_TYPE__CNT:
+            return !this.getCnt().isEmpty();
+        case FxtranPackage.CALL_STMT_TYPE__PROCEDURE_DESIGNATOR:
+            return !this.getProcedureDesignator().isEmpty();
         }
         return super.eIsSet(featureID);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
     public String toString() {
-        if (eIsProxy()) return super.toString();
+        if (this.eIsProxy()) {
+            return super.toString();
+        }
 
-        StringBuilder result = new StringBuilder(super.toString());
+        final StringBuilder result = new StringBuilder(super.toString());
         result.append(" (mixed: ");
-        result.append(mixed);
+        result.append(this.mixed);
         result.append(')');
         return result.toString();
     }
 
-} //CallStmtTypeImpl
+} // CallStmtTypeImpl

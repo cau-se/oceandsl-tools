@@ -15,14 +15,13 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis;
 
-import java.util.Iterator;
-
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeployedStorage;
 
 /**
  * @author Reiner Jung
@@ -38,6 +37,11 @@ public final class FullyQualifiedNamesFactory {
     public static String createFullyQualifiedName(final DeployedOperation operation) {
         return String.format("%s.%s", FullyQualifiedNamesFactory.createFullyQualifiedName(operation.getComponent()),
                 operation.getAssemblyOperation().getOperationType().getSignature());
+    }
+
+    public static String createFullyQualifiedName(final DeployedStorage storage) {
+        return String.format("%s.%s", FullyQualifiedNamesFactory.createFullyQualifiedName(storage.getComponent()),
+                storage.getAssemblyStorage().getStorageType().getType());
     }
 
     public static String createFullyQualifiedName(final DeployedComponent component) {
@@ -62,11 +66,8 @@ public final class FullyQualifiedNamesFactory {
     }
 
     public static int findIndexNumber(final AssemblyComponent component) {
-        final Iterator<AssemblyComponent> iterator = ((AssemblyModel) (component.eContainer().eContainer()))
-                .getComponents().values().iterator();
         final int numberOfComponent = 0;
-        while (iterator.hasNext()) {
-            final AssemblyComponent value = iterator.next();
+        for (AssemblyComponent value : ((AssemblyModel) component.eContainer().eContainer()).getComponents().values()) {
             if (value.equals(component)) {
                 return numberOfComponent;
             }
@@ -75,10 +76,8 @@ public final class FullyQualifiedNamesFactory {
     }
 
     public static int findIndexNumber(final DeployedComponent component) {
-        final Iterator<DeployedComponent> iterator = component.getContext().getComponents().values().iterator();
         final int numberOfComponent = 0;
-        while (iterator.hasNext()) {
-            final DeployedComponent value = iterator.next();
+        for (DeployedComponent value : component.getContext().getComponents().values()) {
             if (value.equals(component)) {
                 return numberOfComponent;
             }

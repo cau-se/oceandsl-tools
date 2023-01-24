@@ -128,12 +128,10 @@ public final class CheckModelIntegrityMain {
             if (targetMap == null) {
                 targetMap = new HashMap<>();
                 targetMap.put(invocation.getCallee(), invocation);
-            } else {
-                if (targetMap.get(invocation.getCallee()) != null) {
-                    System.out.printf("Found duplicate %s -> %s\n", // NOPMD
-                            invocation.getCaller().getAssemblyOperation().getOperationType().getName(),
-                            invocation.getCallee().getAssemblyOperation().getOperationType().getName());
-                }
+            } else if (targetMap.get(invocation.getCallee()) != null) {
+                System.out.printf("Found duplicate %s -> %s\n", // NOPMD
+                        invocation.getCaller().getAssemblyOperation().getOperationType().getName(),
+                        invocation.getCallee().getAssemblyOperation().getOperationType().getName());
             }
         }
 

@@ -20,6 +20,8 @@ import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 
 /**
  * Interface for a node and edge selector for graphs to realize diff and subtract.
@@ -34,6 +36,10 @@ public interface IGraphElementSelector {
     boolean nodeIsSelected(EObject value);
 
     boolean edgeIsSelected(Invocation value);
+
+    boolean edgeIsSelected(OperationDataflow value);
+
+    boolean edgeIsSelected(StorageDataflow value);
 
     String getFilePrefix();
 

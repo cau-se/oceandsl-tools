@@ -23,7 +23,7 @@ public abstract class AbstractSignatureProcessor {
 
     protected boolean caseInsensitive;
     protected String componentSignature;
-    protected String operationSignature;
+    protected String elementSignature;
 
     public AbstractSignatureProcessor(final boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
@@ -43,15 +43,26 @@ public abstract class AbstractSignatureProcessor {
 
     public abstract String getErrorMessage();
 
-    public abstract boolean processSignatures(String path, String componentSignature, String operationSignature); // NOCS
-                                                                                                                  // hiding
-                                                                                                                  // fields
+    /**
+     * Process component and element signature of an operation or storage.
+     *
+     * @param path
+     *            file path of the element
+     * @param componentSignature
+     *            component signature of an element
+     * @param elementSignature
+     *            the element signature, i.e., operation or storage signature
+     * @return true when the processing worked
+     */
+    public abstract boolean processSignatures(String path, String componentSignature, String elementSignature); // NOCS
+                                                                                                                // hiding
+                                                                                                                // fields
 
     public String getComponentSignature() {
         return this.componentSignature;
     }
 
-    public String getOperationSignature() {
-        return this.operationSignature;
+    public String getElementSignature() {
+        return this.elementSignature;
     }
 }

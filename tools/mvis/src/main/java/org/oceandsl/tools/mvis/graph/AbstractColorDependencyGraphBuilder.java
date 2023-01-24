@@ -18,6 +18,7 @@ package org.oceandsl.tools.mvis.graph;
 import java.time.temporal.ChronoUnit;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.dependency.AbstractDependencyGraphBuilder;
@@ -29,8 +30,10 @@ import kieker.analysis.generic.graph.IEdge;
 import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
 import kieker.model.analysismodel.deployment.DeployedStorage;
+import kieker.model.analysismodel.execution.EDirection;
 import kieker.model.analysismodel.execution.ExecutionPackage;
 import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
 import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.source.SourceModel;
 import kieker.model.analysismodel.source.SourcePackage;
@@ -96,11 +99,15 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
         this.executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
         this.statisticsModel = repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
         this.responseTimeDecorator = new ResponseTimeDecorator(this.statisticsModel, ChronoUnit.NANOS);
+
         for (final Invocation invocation : this.executionModel.getInvocations().values()) {
             this.handleInvocation(invocation);
         }
         for (final StorageDataflow storageDataflow : this.executionModel.getStorageDataflows().values()) {
             this.handleStorageDataflow(storageDataflow);
+        }
+        for (final OperationDataflow operationDataflow : this.executionModel.getOperationDataflows().values()) {
+            this.handleOperationDataflow(operationDataflow);
         }
         return this.graph;
     }
@@ -125,6 +132,50 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
 
         final long calls = (Long) statisticRecord.getProperties().get(PropertyConstants.CALLS);
         this.addEdge(sourceVertex, targetVertex, calls);
+
+        // TODO add this if useful: how to add values to the edge for dataflow
+//        EDirection direction = storageAccess.getDirection();
+//        switch(direction){
+//            case WRITE:
+//                this.addEdge(sourceVertex, targetVertex, 1);
+//                break;
+//            case READ:
+//                this.addEdge(targetVertex, sourceVertex, 0);
+//                break;
+//            case BOTH:
+//                this.addEdge(sourceVertex, targetVertex, 2);
+//                this.addEdge(targetVertex, sourceVertex, 2);
+//                break;
+//        }
+    }
+
+    private void handleOperationDataflow(final OperationDataflow operationDataflow) {
+        final INode sourceVertex = operationDataflow.getCaller() != null ? this.addVertex(operationDataflow.getCaller())
+                : this.addVertexForEntry(); // NOCS (declarative)
+        final INode targetVertex = this.addVertex(operationDataflow.getCallee());
+
+        final EMap<EObject, StatisticRecord> statisticsMap = this.statisticsModel.getStatistics();
+        /*
+         * final Statistics statistics = statisticsMap.get(operationDataflow); final
+         * EMap<EPredefinedUnits, StatisticRecord> recordMap = statistics.getStatistics(); final
+         * StatisticRecord record = recordMap.get(EPredefinedUnits.INVOCATION); final
+         * EMap<EPropertyType, Object> properties = record.getProperties();
+         *
+         * final long calls = (Long) properties.get(EPropertyType.COUNT);
+         */
+        final EDirection direction = operationDataflow.getDirection();
+        switch (direction) {
+        case WRITE:
+            this.addEdge(sourceVertex, targetVertex, 1);
+            break;
+        case READ:
+            this.addEdge(targetVertex, sourceVertex, 0);
+            break;
+        case BOTH:
+            this.addEdge(sourceVertex, targetVertex, 2);
+            this.addEdge(targetVertex, sourceVertex, 2);
+            break;
+        }
     }
 
     protected abstract INode addStorageVertex(final DeployedStorage deployedStorage);

@@ -25,5 +25,14 @@ package org.oceandsl.analysis.code.stages.data;
  */
 public interface ICsvRecordFactory<T extends ICsvRecord> {
 
+    /**
+     * Create a record based on the given values and header labels
+     *
+     * @param headerLabels
+     *            column names of a CSV file
+     * @param values
+     *            corresponding values for one row
+     * @return the instantiated record
+     */
     T createRecord(String[] headerLabels, String[] values);
 }

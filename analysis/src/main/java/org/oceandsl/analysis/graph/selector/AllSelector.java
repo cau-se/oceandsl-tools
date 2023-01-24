@@ -20,6 +20,8 @@ import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 
@@ -41,6 +43,16 @@ public class AllSelector implements IGraphElementSelector {
 
     @Override
     public boolean edgeIsSelected(final Invocation value) {
+        return true;
+    }
+
+    @Override
+    public boolean edgeIsSelected(final OperationDataflow value) {
+        return true;
+    }
+
+    @Override
+    public boolean edgeIsSelected(final StorageDataflow value) {
         return true;
     }
 

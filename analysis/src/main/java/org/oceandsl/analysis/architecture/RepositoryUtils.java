@@ -67,15 +67,13 @@ public final class RepositoryUtils {
                         }
                     }
                     System.out.printf("%s}\n", offset); // NOPMD testing tool
+                } else if (result instanceof EObject) {
+                    ((EObject) result).eCrossReferences();
+                    final boolean proxy = ((EObject) result).eIsProxy();
+                    System.out.printf("%sref %s = %b %s\n", offset, reference.getName(), proxy, // NOPMD
+                            RepositoryUtils.getName((EObject) result));
                 } else {
-                    if (result instanceof EObject) {
-                        ((EObject) result).eCrossReferences();
-                        final boolean proxy = ((EObject) result).eIsProxy();
-                        System.out.printf("%sref %s = %b %s\n", offset, reference.getName(), proxy, // NOPMD
-                                RepositoryUtils.getName((EObject) result));
-                    } else {
-                        System.out.printf("%sERROR\n", offset); // NOPMD
-                    }
+                    System.out.printf("%sERROR\n", offset); // NOPMD
                 }
             }
         }
@@ -112,13 +110,11 @@ public final class RepositoryUtils {
                     }
                 }
                 System.out.printf("%s}\n", offset); // NOPMD
+            } else if (result instanceof EObject) {
+                System.out.printf("%s%s = \n", offset, contained.getName()); // NOPMD
+                RepositoryUtils.print((EObject) result, "  " + offset);
             } else {
-                if (result instanceof EObject) {
-                    System.out.printf("%s%s = \n", offset, contained.getName()); // NOPMD
-                    RepositoryUtils.print((EObject) result, "  " + offset);
-                } else {
-                    System.out.printf("%sERROR\n", offset); // NOPMD
-                }
+                System.out.printf("%sERROR\n", offset); // NOPMD
             }
         }
     }

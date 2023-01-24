@@ -3,9 +3,7 @@
 package org.oceandsl.tools.sar.fxtran.impl;
 
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
@@ -13,23 +11,22 @@ import org.oceandsl.tools.sar.fxtran.ErrorType;
 import org.oceandsl.tools.sar.fxtran.FxtranPackage;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Error Type</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Error Type</b></em>'. <!--
+ * end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.oceandsl.tools.sar.fxtran.impl.ErrorTypeImpl#getMsg <em>Msg</em>}</li>
+ * <li>{@link org.oceandsl.tools.sar.fxtran.impl.ErrorTypeImpl#getMsg <em>Msg</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class ErrorTypeImpl extends MinimalEObjectImpl.Container implements ErrorType {
     /**
-     * The default value of the '{@link #getMsg() <em>Msg</em>}' attribute.
-     * <!-- begin-user-doc -->
+     * The default value of the '{@link #getMsg() <em>Msg</em>}' attribute. <!-- begin-user-doc -->
      * <!-- end-user-doc -->
+     *
      * @see #getMsg()
      * @generated
      * @ordered
@@ -37,9 +34,9 @@ public class ErrorTypeImpl extends MinimalEObjectImpl.Container implements Error
     protected static final Object MSG_EDEFAULT = null;
 
     /**
-     * The cached value of the '{@link #getMsg() <em>Msg</em>}' attribute.
-     * <!-- begin-user-doc -->
+     * The cached value of the '{@link #getMsg() <em>Msg</em>}' attribute. <!-- begin-user-doc -->
      * <!-- end-user-doc -->
+     *
      * @see #getMsg()
      * @generated
      * @ordered
@@ -47,8 +44,8 @@ public class ErrorTypeImpl extends MinimalEObjectImpl.Container implements Error
     protected Object msg = MSG_EDEFAULT;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     protected ErrorTypeImpl() {
@@ -56,8 +53,8 @@ public class ErrorTypeImpl extends MinimalEObjectImpl.Container implements Error
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
@@ -66,98 +63,104 @@ public class ErrorTypeImpl extends MinimalEObjectImpl.Container implements Error
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Object getMsg() {
-        return msg;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setMsg(Object newMsg) {
-        Object oldMsg = msg;
-        msg = newMsg;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, FxtranPackage.ERROR_TYPE__MSG, oldMsg, msg));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public Object eGet(int featureID, boolean resolve, boolean coreType) {
+    public Object getMsg() {
+        return this.msg;
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @generated
+     */
+    @Override
+    public void setMsg(final Object newMsg) {
+        final Object oldMsg = this.msg;
+        this.msg = newMsg;
+        if (this.eNotificationRequired()) {
+            this.eNotify(
+                    new ENotificationImpl(this, Notification.SET, FxtranPackage.ERROR_TYPE__MSG, oldMsg, this.msg));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @generated
+     */
+    @Override
+    public Object eGet(final int featureID, final boolean resolve, final boolean coreType) {
         switch (featureID) {
-            case FxtranPackage.ERROR_TYPE__MSG:
-                return getMsg();
+        case FxtranPackage.ERROR_TYPE__MSG:
+            return this.getMsg();
         }
         return super.eGet(featureID, resolve, coreType);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public void eSet(int featureID, Object newValue) {
+    public void eSet(final int featureID, final Object newValue) {
         switch (featureID) {
-            case FxtranPackage.ERROR_TYPE__MSG:
-                setMsg(newValue);
-                return;
+        case FxtranPackage.ERROR_TYPE__MSG:
+            this.setMsg(newValue);
+            return;
         }
         super.eSet(featureID, newValue);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public void eUnset(int featureID) {
+    public void eUnset(final int featureID) {
         switch (featureID) {
-            case FxtranPackage.ERROR_TYPE__MSG:
-                setMsg(MSG_EDEFAULT);
-                return;
+        case FxtranPackage.ERROR_TYPE__MSG:
+            this.setMsg(MSG_EDEFAULT);
+            return;
         }
         super.eUnset(featureID);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public boolean eIsSet(int featureID) {
+    public boolean eIsSet(final int featureID) {
         switch (featureID) {
-            case FxtranPackage.ERROR_TYPE__MSG:
-                return MSG_EDEFAULT == null ? msg != null : !MSG_EDEFAULT.equals(msg);
+        case FxtranPackage.ERROR_TYPE__MSG:
+            return MSG_EDEFAULT == null ? this.msg != null : !MSG_EDEFAULT.equals(this.msg);
         }
         return super.eIsSet(featureID);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
     public String toString() {
-        if (eIsProxy()) return super.toString();
+        if (this.eIsProxy()) {
+            return super.toString();
+        }
 
-        StringBuilder result = new StringBuilder(super.toString());
+        final StringBuilder result = new StringBuilder(super.toString());
         result.append(" (msg: ");
-        result.append(msg);
+        result.append(this.msg);
         result.append(')');
         return result.toString();
     }
 
-} //ErrorTypeImpl
+} // ErrorTypeImpl
