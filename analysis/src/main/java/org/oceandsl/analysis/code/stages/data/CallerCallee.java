@@ -87,9 +87,9 @@ public class CallerCallee implements ICsvRecord {
     }
 
     private boolean checkString(final String left, final String right) {
-        if ((left == null) && (right == null)) {
+        if (left == null && right == null) {
             return true;
-        } else if ((left != null) && (right != null)) {
+        } else if (left != null && right != null) {
             return left.equals(right);
         } else {
             return false;

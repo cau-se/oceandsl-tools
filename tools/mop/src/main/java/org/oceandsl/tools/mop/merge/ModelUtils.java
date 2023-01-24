@@ -177,12 +177,10 @@ public final class ModelUtils {
     public static boolean isEqual(final String leftSignature, final String signature) {
         if (leftSignature == null) {
             return signature == null;
+        } else if (signature == null) {
+            return false;
         } else {
-            if (signature == null) {
-                return false;
-            } else {
-                return leftSignature.equals(signature);
-            }
+            return leftSignature.equals(signature);
         }
     }
 

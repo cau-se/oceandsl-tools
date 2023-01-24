@@ -15,7 +15,7 @@ plugins {
 
 
 dependencies {
-	implementation 'net.kieker-monitoring:kieker:1.16-SNAPSHOT'
+	implementation 'net.kieker-monitoring:kieker:1.15.1'
 }
 
 sourceSets {

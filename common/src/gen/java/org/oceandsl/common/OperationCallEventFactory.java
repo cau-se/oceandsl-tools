@@ -6,7 +6,7 @@ import kieker.common.record.io.IValueDeserializer;
 
 /**
  * @author Reiner Jung
- * 
+ *
  * @since 1.0
  */
 public final class OperationCallEventFactory implements IRecordFactory<OperationCallEvent> {
@@ -26,6 +26,7 @@ public final class OperationCallEventFactory implements IRecordFactory<Operation
         return OperationCallEvent.TYPES; // NOPMD
     }
 
+    @Override
     public int getRecordSizeInBytes() {
         return OperationCallEvent.SIZE;
     }

@@ -32,6 +32,13 @@ import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
 
+/**
+ * Test @{link ArichtectureModelManagementUtils}.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ *
+ */
 class ArchitectureModelManagementUtilsTest {
 
     private static final String EXPERIMENT_NAME = "test-experiment";

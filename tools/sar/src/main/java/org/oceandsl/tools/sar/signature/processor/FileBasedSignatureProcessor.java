@@ -30,7 +30,7 @@ public class FileBasedSignatureProcessor extends AbstractSignatureProcessor {
 
     @Override
     public boolean processSignatures(final String pathString, final String componentSignature,
-            final String operationSignature) {
+            final String elementSignature) {
         if ("<no-file>".equals(pathString)) {
             this.componentSignature = pathString;
         } else {
@@ -38,7 +38,7 @@ public class FileBasedSignatureProcessor extends AbstractSignatureProcessor {
             this.componentSignature = this.convertToLowerCase(path.getName(path.getNameCount() - 1).toString());
         }
 
-        this.operationSignature = this.convertToLowerCase(operationSignature);
+        this.elementSignature = this.convertToLowerCase(elementSignature);
         return true;
     }
 

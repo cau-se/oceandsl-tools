@@ -21,21 +21,6 @@ import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Cohesion;
 import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Complexity;
 import org.mosim.refactorlizar.architecture.evaluation.codemetrics.Coupling;
 import org.mosim.refactorlizar.architecture.evaluation.codemetrics.HyperGraphSize;
-
-import kieker.analysis.architecture.dependency.DependencyGraphCreatorStage;
-import kieker.analysis.architecture.recovery.signature.NameBuilder;
-import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.analysis.generic.graph.IEdge;
-import kieker.analysis.generic.graph.IGraph;
-import kieker.analysis.generic.graph.INode;
-import kieker.analysis.generic.sink.graph.dot.DotFileWriterStage;
-import kieker.analysis.generic.sink.graph.graphml.GraphMLFileWriterStage;
-import kieker.model.analysismodel.deployment.DeployedComponent;
-
-import teetime.framework.Configuration;
-import teetime.stage.basic.distributor.Distributor;
-import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
-
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.stages.TableCSVSink;
@@ -54,6 +39,19 @@ import org.oceandsl.tools.mvis.stages.graph.OperationCallGraphStage;
 import org.oceandsl.tools.mvis.stages.metrics.ModuleNodeCountCouplingStage;
 import org.oceandsl.tools.mvis.stages.metrics.NumberOfCallsStage;
 import org.oceandsl.tools.mvis.stages.metrics.OperationNodeCountCouplingStage;
+
+import kieker.analysis.architecture.dependency.DependencyGraphCreatorStage;
+import kieker.analysis.architecture.recovery.signature.NameBuilder;
+import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.generic.graph.IEdge;
+import kieker.analysis.generic.graph.IGraph;
+import kieker.analysis.generic.graph.INode;
+import kieker.analysis.generic.sink.graph.dot.DotFileWriterStage;
+import kieker.analysis.generic.sink.graph.graphml.GraphMLFileWriterStage;
+import kieker.model.analysismodel.deployment.DeployedComponent;
+import teetime.framework.Configuration;
+import teetime.stage.basic.distributor.Distributor;
+import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -163,6 +161,7 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
         this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());
 
+        // Fehlerhaft in functionNodeCouplingStage
         this.connectPorts(statisticsDistributor.getNewOutputPort(), functionCallGraphStage.getInputPort());
         this.connectPorts(functionCallGraphStage.getOutputPort(), functionNodeCouplingStage.getInputPort());
         this.connectPorts(functionNodeCouplingStage.getOutputPort(), distinctOperationDegreeSink.getInputPort());

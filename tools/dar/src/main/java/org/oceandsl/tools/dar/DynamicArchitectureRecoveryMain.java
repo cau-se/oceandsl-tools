@@ -15,7 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.dar;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,16 +23,15 @@ import java.util.Locale;
 
 import com.beust.jcommander.JCommander;
 
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.EModuleMode;
 import org.slf4j.LoggerFactory;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
-
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.generic.EModuleMode;
 
 /**
  * Architecture analysis main class.
@@ -93,7 +91,7 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }
@@ -134,7 +132,7 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
             }
         }
         if (this.settings.getModuleModes().contains(EModuleMode.MAP_MODE)) {
-            if (this.settings.getComponentMapFiles() != null && this.settings.getComponentMapFiles().size() > 0) {
+            if ((this.settings.getComponentMapFiles() != null) && (this.settings.getComponentMapFiles().size() > 0)) {
                 for (final Path path : this.settings.getComponentMapFiles()) {
                     if (!Files.isReadable(path)) {
                         this.logger.error("Cannot read map file: {}", path.toString());
