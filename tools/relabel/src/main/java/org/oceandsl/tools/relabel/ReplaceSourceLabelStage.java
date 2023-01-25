@@ -18,13 +18,13 @@ package org.oceandsl.tools.relabel;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.source.SourceModel;
 import kieker.model.analysismodel.source.SourcePackage;
-
 import teetime.stage.basic.AbstractFilter;
 
 /**
@@ -43,9 +43,33 @@ public class ReplaceSourceLabelStage extends AbstractFilter<ModelRepository> {
     protected void execute(final ModelRepository repository) throws Exception {
         final SourceModel sourceModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
         for (final Replacement replacement : this.replacements) {
-            this.processModel(sourceModel, replacement);
+            if ("".equals(replacement.getSources().get(0))) {
+                this.annotateAllModels(repository, sourceModel, replacement);
+            } else {
+                this.processModel(sourceModel, replacement);
+            }
         }
         this.outputPort.send(repository);
+    }
+
+    private void annotateAllModels(final ModelRepository repository, final SourceModel sourceModel,
+            final Replacement replacement) {
+        for (final EObject model : repository.getModels().values()) {
+            if (!(model instanceof SourceModel)) {
+                this.annotateModel(model, sourceModel, replacement);
+            }
+        }
+    }
+
+    private void annotateModel(final EObject model, final SourceModel sourceModel, final Replacement replacement) {
+        final EList<String> targets = this.makeElist(replacement.getTargets());
+        model.eAllContents().forEachRemaining(object -> sourceModel.getSources().put(object, targets));
+    }
+
+    private EList<String> makeElist(final List<String> targets) {
+        final EList<String> list = new BasicEList<>();
+        list.addAll(targets);
+        return list;
     }
 
     private void processModel(final SourceModel sourceModel, final Replacement replacement) {
