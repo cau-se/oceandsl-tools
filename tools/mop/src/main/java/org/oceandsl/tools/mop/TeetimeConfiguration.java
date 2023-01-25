@@ -17,12 +17,14 @@ package org.oceandsl.tools.mop;
 
 import java.io.IOException;
 
-import teetime.framework.Configuration;
-
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryReaderStage;
 import org.oceandsl.analysis.architecture.stages.ModelSink;
 import org.oceandsl.analysis.architecture.stages.ModelSource;
-import org.oceandsl.tools.mop.stages.ModelProcessor;
+import org.oceandsl.tools.mop.stages.AbstractModelOperationStage;
+import org.oceandsl.tools.mop.stages.ModelMergeStage;
+import org.oceandsl.tools.mop.stages.ModelSelectStage;
+
+import teetime.framework.Configuration;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -32,15 +34,27 @@ import org.oceandsl.tools.mop.stages.ModelProcessor;
  */
 public class TeetimeConfiguration extends Configuration {
 
-    public TeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
+    public TeetimeConfiguration(final Settings settings) throws IOException {
 
-        final ModelSource modelSource = new ModelSource(parameterConfiguration.getInputModelPaths());
+        final ModelSource modelSource = new ModelSource(settings.getInputModelPaths());
         final ModelRepositoryReaderStage modelReader = new ModelRepositoryReaderStage();
-        final ModelProcessor modelProcessor = new ModelProcessor(parameterConfiguration.getExperimentName());
-        final ModelSink modelSink = new ModelSink(parameterConfiguration.getOutputDirectory());
+        final AbstractModelOperationStage modelOperationStage;
+
+        switch (settings.getOperation()) {
+        case MERGE:
+            modelOperationStage = new ModelMergeStage(settings.getExperimentName());
+            break;
+        case SELECT:
+            modelOperationStage = new ModelSelectStage(settings.getSelectionCriteriaPatterns());
+            break;
+        default:
+            modelOperationStage = new ModelMergeStage(settings.getExperimentName());
+            break;
+        }
+        final ModelSink modelSink = new ModelSink(settings.getOutputDirectory());
 
         this.connectPorts(modelSource.getOutputPort(), modelReader.getInputPort());
-        this.connectPorts(modelReader.getOutputPort(), modelProcessor.getInputPort());
-        this.connectPorts(modelProcessor.getOutputPort(), modelSink.getInputPort());
+        this.connectPorts(modelReader.getOutputPort(), modelOperationStage.getInputPort());
+        this.connectPorts(modelOperationStage.getOutputPort(), modelSink.getInputPort());
     }
 }

@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop.operations;
+package org.oceandsl.tools.mop.merge;
 
 import java.util.Map.Entry;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.oceandsl.tools.mop.AbstractModelTestFactory;
+import org.oceandsl.tools.mop.DarModelFactory;
+import org.oceandsl.tools.mop.SarModelFactory;
 
 import kieker.analysis.architecture.repository.ArchitectureModelUtils;
 import kieker.analysis.architecture.repository.ModelRepository;
@@ -40,8 +43,6 @@ import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
-
-import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
 
 /**
  * @author Reiner Jung
