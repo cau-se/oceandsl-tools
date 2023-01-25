@@ -137,23 +137,24 @@ public final class ArchitectureModelManagementUtils {
         packageRegistry.put(SourcePackage.eNS_URI, SourcePackage.eINSTANCE);
 
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.TYPE_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.TYPE_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.ASSEMBLY_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.ASSEMBLY_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.DEPLOYMENT_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.DEPLOYMENT_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.EXECUTION_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.EXECUTION_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.STATISTICS_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.STATISTICS_MODEL_DESCRIPTOR, path, false);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.SOURCE_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.SOURCE_MODEL_DESCRIPTOR, path, false);
 
         return repository;
     }
 
     private static <T extends EObject> void readModel(final ResourceSet resourceSet, final ModelRepository repository,
-            final ModelDescriptor modelDescriptor, final Path path) throws ConfigurationException {
+            final ModelDescriptor modelDescriptor, final Path path, final boolean required)
+            throws ConfigurationException {
         ArchitectureModelManagementUtils.LOGGER.info("Loading model {}", modelDescriptor.getFilename());
         final File modelFile = ArchitectureModelManagementUtils.createReadModelFileHandle(path,
                 modelDescriptor.getFilename());
@@ -173,10 +174,17 @@ public final class ArchitectureModelManagementUtils {
                 iterator.next().eCrossReferences();
             }
         } else {
-            ArchitectureModelManagementUtils.LOGGER.error("Error reading model file {}. File does not exist.",
-                    modelFile.getAbsoluteFile());
-            throw new ConfigurationException(
-                    String.format("Error reading model file %s. File does not exist.", modelFile.getAbsoluteFile()));
+            if (required) {
+                ArchitectureModelManagementUtils.LOGGER.error("Error reading model file {}. File does not exist.",
+                        modelFile.getAbsoluteFile());
+                throw new ConfigurationException(String.format("Error reading model file %s. File does not exist.",
+                        modelFile.getAbsoluteFile()));
+            } else {
+                ArchitectureModelManagementUtils.LOGGER.warn("Warn reading model file {}. File does not exist.",
+                        modelFile.getAbsoluteFile());
+                repository.register(modelDescriptor,
+                        modelDescriptor.getFactory().create(modelDescriptor.getRootClass()));
+            }
         }
     }
 
