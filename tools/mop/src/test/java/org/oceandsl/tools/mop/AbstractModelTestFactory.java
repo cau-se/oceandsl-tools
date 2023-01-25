@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop.operations;
+package org.oceandsl.tools.mop;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -178,7 +178,7 @@ public abstract class AbstractModelTestFactory { // NOCS cannot be final, NOPMD 
         return record;
     }
 
-    protected static SourceModel createSourceModel(final TypeModel typeModel, final AssemblyModel assemblyModel,
+    public static SourceModel createSourceModel(final TypeModel typeModel, final AssemblyModel assemblyModel,
             final DeploymentModel deploymentModel, final ExecutionModel executionModel, final String source) {
         final SourceFactory factory = SourceFactory.eINSTANCE;
 
@@ -186,22 +186,22 @@ public abstract class AbstractModelTestFactory { // NOCS cannot be final, NOPMD 
 
         /** type */
         typeModel.eAllContents().forEachRemaining(item -> {
-            if (item instanceof ComponentType || item instanceof OperationType) {
+            if ((item instanceof ComponentType) || (item instanceof OperationType)) {
                 result.getSources().put(item, AbstractModelTestFactory.createList(source));
             }
         });
 
         /** assembly */
         assemblyModel.eAllContents().forEachRemaining(item -> {
-            if (item instanceof AssemblyComponent || item instanceof AssemblyOperation) {
+            if ((item instanceof AssemblyComponent) || (item instanceof AssemblyOperation)) {
                 result.getSources().put(item, AbstractModelTestFactory.createList(source));
             }
         });
 
         /** deployment */
         deploymentModel.eAllContents().forEachRemaining(item -> {
-            if (item instanceof DeploymentContext || item instanceof DeployedComponent
-                    || item instanceof DeployedOperation) {
+            if ((item instanceof DeploymentContext) || (item instanceof DeployedComponent)
+                    || (item instanceof DeployedOperation)) {
                 result.getSources().put(item, AbstractModelTestFactory.createList(source));
             }
         });
