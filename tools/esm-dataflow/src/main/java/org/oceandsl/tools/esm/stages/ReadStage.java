@@ -24,5 +24,7 @@ public class ReadStage extends AbstractProducerStage<List<File>> {
 		List<File> files =Arrays.asList(folder.listFiles());
 		this.outputPort.send(files);
 	}
+	
+	
 
 }
