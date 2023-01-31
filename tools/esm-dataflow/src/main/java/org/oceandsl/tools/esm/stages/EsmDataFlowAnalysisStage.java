@@ -1,6 +1,7 @@
 package org.oceandsl.tools.esm.stages;
 
 import java.io.File;
+import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -9,10 +10,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.tools.ant.types.CharSet;
 import org.oceandsl.tools.esm.util.FileContentsStageOutput;
 import org.oceandsl.tools.esm.util.XPathParser;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 import kieker.analysis.generic.graph.mtree.utils.Pair;
 import teetime.framework.AbstractConsumerStage;
@@ -22,13 +30,24 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 	private List<String> dataflow;
 	@Override
 	protected void execute(FileContentsStageOutput element) throws Exception {
+
+		XPath xpath = XPathFactory.newInstance().newXPath();
+		
+		
 		for(File file : element.getFiles()) {
-			String xml = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
-			List<String> fileContent;
-			List<String> subRoutineBodies = XPathParser.getSubroutineContents(xml);
-			List<String> functionBodies = XPathParser.getFuncContents(xml);
-			String main = XPathParser.getMain(xml);
+			//Document doc = builder.parse(file);
 			
+			//Extract xml file 
+			
+			String xml = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
+			InputSource inputXML = new InputSource(new StringReader(xml));
+			List<String> fileContent;
+			List<List<Node>> subRoutineBodies = XPathParser.getSubroutineContents(xml);
+			List<List<Node>> functionBodies = XPathParser.getFuncContents(xml);
+			List<Node> main = XPathParser.getMain(xml);
+			analyzeSubRoutines(subRoutineBodies);
+			analyzeFunctions(functionBodies);
+			analyzeMain(main);
 			
 			//TODO if main analyze it
 			
@@ -36,10 +55,10 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 		
 	}
 
-	private void analyzeSubRoutines(List<String> subRoutineBodies) {
+	private void analyzeSubRoutines(List<List<Node>> subRoutineBodies) {
 		
 		List<String> dataflowInSub = new ArrayList();
-		for(String body:subRoutineBodies) {
+		for(List<Node> body:subRoutineBodies) {
 			String name = "TODO";
 			List<String> commonBlocks = XPathParser.getCommonBlocks(name);
 			String contentLine = "TODO";
@@ -52,10 +71,10 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 		}
 	}
 	
-	private void analyzeFunctions(List<String> funcBodies) {
+	private void analyzeFunctions(List<List<Node>> funcBodies) {
 
 		List<String> dataflowInFunc = new ArrayList();
-		for (String body : funcBodies) {
+		for (List<Node> body : funcBodies) {
 			String name = "TODO";
 			List<String> commonBlocks = XPathParser.getCommonBlocks(name);
 			String contentLine = "TODO";
@@ -67,7 +86,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 		}
 	}
 	
-	private void analyzeMain(String main) {
+	private void analyzeMain(List<Node> mainBodie) {
 		List<String>dataflowInMain = new ArrayList();
 		String name = "TODO";
 		List<String> commonBlocks = XPathParser.getCommonBlocks(name);
@@ -75,15 +94,16 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 		dataflow.add(contentLine);
 
 		String dataFlowLine = "TODO";
-		dataflowInMain = analyzeExecutionPart(main, commonBlocks, null, dataFlowLine);
+		dataflowInMain = analyzeExecutionPart(mainBodie, commonBlocks, null, dataFlowLine);
 	}
     
-	private List<String> analyzeExecutionPart(String xml, List<String>commonBlocks, List<String>blacklist, String dataFlowLine) {
+	private List<String> analyzeExecutionPart(List<Node> body, List<String>commonBlocks, List<String>blacklist, String dataFlowLine) {
 		
 		List<String> dataflowExecPart = new ArrayList();
+		String xml = convertNodeListToXml();
 		//Dataflow call stmt
-		List<String> callStmts = XPathParser.getCallStmts(xml);
-		List<String> calls = analyzeCallStatements(callStmts, commonBlocks, blacklist);
+		List<List<Node>> callStmts = XPathParser.getCallStmts(xml);
+		List<String> calls = analyzeCallStatements(xml, commonBlocks, blacklist);
 		for(String call: calls) {
 			dataflowExecPart.add(dataFlowLine+call);
 		}
@@ -125,6 +145,11 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 	}
 
 	
+
+	private String convertNodeListToXml() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	private List<String> analyzeCallStatements(List<String>callStatements, List<String>commonBlocList, List<String>blacklist) {
 		List<String> dataflowLineRest = new ArrayList();
