@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.tools.ant.types.CharSet;
 import org.oceandsl.tools.esm.util.FileContentsStageOutput;
+import org.oceandsl.tools.esm.util.Output;
 import org.oceandsl.tools.esm.util.XPathParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -24,108 +25,116 @@ import org.xml.sax.InputSource;
 
 import kieker.analysis.generic.graph.mtree.utils.Pair;
 import teetime.framework.AbstractConsumerStage;
+import teetime.stage.basic.AbstractTransformation;
 
-public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContentsStageOutput> {
+public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>, Output> {
 
-	private List<String> dataflow;
+	private List<String> dataflow = new ArrayList<String>();
+	private List<String> contentFile = new ArrayList<String>();
 	@Override
-	protected void execute(FileContentsStageOutput element) throws Exception {
+	protected void execute(List<File> files) throws Exception {
 
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		
 		
-		for(File file : element.getFiles()) {
-			//Document doc = builder.parse(file);
-			
-			//Extract xml file 
-			
+		for(File file : files) {
+			//Extract xml
 			String xml = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
-			InputSource inputXML = new InputSource(new StringReader(xml));
-			List<String> fileContent;
+			// Get main structures
 			List<List<Node>> subRoutineBodies = XPathParser.getSubroutineContents(xml);
 			List<List<Node>> functionBodies = XPathParser.getFuncContents(xml);
 			List<Node> main = XPathParser.getMain(xml);
-			analyzeSubRoutines(subRoutineBodies);
-			analyzeFunctions(functionBodies);
-			analyzeMain(main);
 			
-			//TODO if main analyze it
+			// analyze
+			List<String> dfInSub =  analyzeSubRoutines(subRoutineBodies,file.getName());
+			List<String> dfInFunc = analyzeFunctions(functionBodies, file.getName());
+			List<String> dfInMain = analyzeMain(main, file.getName());
+			// aggregate
+			dataflow.addAll(dfInSub);
+			dataflow.addAll(dfInFunc);
+			dataflow.addAll(dfInMain);
+			
+			Output out = new Output();
+			out.setDataflow(dataflow);
+			out.setFileContent(contentFile);
+			this.outputPort.send(out);
+			
+			
 			
 		}
 		
 	}
 
-	private void analyzeSubRoutines(List<List<Node>> subRoutineBodies) {
+	private List<String> analyzeSubRoutines(List<List<Node>> subRoutineBodies, String fileId) {
 		
-		List<String> dataflowInSub = new ArrayList();
+		List<String> dataflowInSub = new ArrayList<String>();
 		for(List<Node> body:subRoutineBodies) {
-			String name = "TODO";
-			List<String> commonBlocks = XPathParser.getCommonBlocks(name);
-			String contentLine = "TODO";
-			dataflow.add(contentLine);
+			String name = XPathParser.getsubroutineId(body);
+			List<Node> commonBlocks = XPathParser.getCommonBlocks(body);
+			String contentLine = "{"+fileId+"};{"+name+"};SUBROUTINE";
+			this.contentFile.add(contentLine);
 			
-			String dataFlowLine = "TODO";
+			String dataFlowLine = "{"+fileId+"};"+name+"};";
 			dataflowInSub = analyzeExecutionPart(body,commonBlocks, null, dataFlowLine);
-			
-			
 		}
+		return dataflowInSub;
 	}
 	
-	private void analyzeFunctions(List<List<Node>> funcBodies) {
+	private List<String> analyzeFunctions(List<List<Node>> funcBodies, String fileId) {
 
-		List<String> dataflowInFunc = new ArrayList();
+		List<String> dataflowInFunc = new ArrayList<String>();
 		for (List<Node> body : funcBodies) {
-			String name = "TODO";
-			List<String> commonBlocks = XPathParser.getCommonBlocks(name);
-			String contentLine = "TODO";
-			dataflow.add(contentLine);
+			String name = XPathParser.getFunctionId(body);
+			List<Node> commonBlocks = XPathParser.getCommonBlocks(body);
+			String contentLine = "{"+fileId+"};{"+name+"};FUNCTION";
+			this.contentFile.add(contentLine);
 
-			String dataFlowLine = "TODO";
+			String dataFlowLine = "{"+fileId+"};"+name+"};";
 			dataflowInFunc = analyzeExecutionPart(body, commonBlocks, null, dataFlowLine);
-
 		}
+		return dataflowInFunc;
 	}
 	
-	private void analyzeMain(List<Node> mainBodie) {
+	private List<String> analyzeMain(List<Node> mainBody, String fileId) {
 		List<String>dataflowInMain = new ArrayList();
-		String name = "TODO";
-		List<String> commonBlocks = XPathParser.getCommonBlocks(name);
-		String contentLine = "TODO";
-		dataflow.add(contentLine);
+		
+		List<Node> commonBlocks = XPathParser.getCommonBlocks(mainBody);
 
-		String dataFlowLine = "TODO";
-		dataflowInMain = analyzeExecutionPart(mainBodie, commonBlocks, null, dataFlowLine);
+
+		String dataFlowLine = "{"+fileId+"}"+";main";
+		dataflowInMain = analyzeExecutionPart(mainBody, commonBlocks, null, dataFlowLine);
+		return dataflowInMain;
 	}
     
-	private List<String> analyzeExecutionPart(List<Node> body, List<String>commonBlocks, List<String>blacklist, String dataFlowLine) {
+	private List<String> analyzeExecutionPart(List<Node> body, List<Node>commonBlocks, List<String>blacklist, String dataFlowLine) {
 		
-		List<String> dataflowExecPart = new ArrayList();
-		String xml = convertNodeListToXml();
+		List<String> dataflowExecPart = new ArrayList<String>();
+		
 		//Dataflow call stmt
-		List<List<Node>> callStmts = XPathParser.getCallStmts(xml);
-		List<String> calls = analyzeCallStatements(xml, commonBlocks, blacklist);
+		List<Node> callStmts = XPathParser.getCallStmts(body);
+		List<String> calls = analyzeCallStatements(callStmts, commonBlocks, blacklist);
 		for(String call: calls) {
 			dataflowExecPart.add(dataFlowLine+call);
 		}
 		//Dataflow ifelse
-		List<String> ifElseStmts = XPathParser.getIfElseStmts(xml);
+		List<Node> ifElseStmts = XPathParser.getIfElseStmts(body);
 		List<String> ifElseReads = analyzeReadsFromStatements(ifElseStmts,commonBlocks, blacklist);
 		for(String read: ifElseReads) {
 			dataflowExecPart.add(dataFlowLine+read);
 		}
 		//Dataflow select case
-		List<String> selectStmts = XPathParser.getSelectStmts(xml);
+		List<Node> selectStmts = XPathParser.getSelectStmts(body);
 		List<String> selectReads = analyzeReadsFromStatements(selectStmts,commonBlocks, blacklist);
 		for(String read: ifElseReads) {
 			dataflowExecPart.add(dataFlowLine+read);
 		}
 		//Dataflow do while
-		List<String> loopCtrlStmts = XPathParser.getLoopCtrlStmts(xml);
-		for(String loopCtrl : loopCtrlStmts) {
+		List<Node> loopCtrlStmts = XPathParser.getLoopCtrlStmts(body);
+		for(Node loopCtrl : loopCtrlStmts) {
 			String loopAssignedVar = XPathParser.getLoopControlVar(loopCtrl);
 			List<String> isInBlock = isVarFromCommonBlock(loopAssignedVar,commonBlocks);
 			if (!isInBlock.isEmpty()) {
-				String line = "TODOWRITE";
+				String line = "WRITE/{"+isInBlock.get(0)+"}/;";
 				dataflowExecPart.add(dataFlowLine+line);
 			}
 		}
@@ -136,7 +145,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 		}
 		
 		//Dataflow assignments
-		List<String> assignStmts = XPathParser.getAssignmentStmts(xml);
+		List<Node> assignStmts = XPathParser.getAssignmentStmts(body);
 		List<String>assigns = analyzeAssignmentStatements(assignStmts, commonBlocks,blacklist);
 		for(String assign : assigns) {
 			dataflowExecPart.add(dataFlowLine+assign);
@@ -146,19 +155,14 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 
 	
 
-	private String convertNodeListToXml() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private List<String> analyzeCallStatements(List<String>callStatements, List<String>commonBlocList, List<String>blacklist) {
+	private List<String> analyzeCallStatements(List<Node> callStatements, List<Node>commonBlocList, List<String>blacklist) {
 		List<String> dataflowLineRest = new ArrayList();
 		
-		for(String callStmt : callStatements) {
+		for(Node callStmt : callStatements) {
 			List<String> args = XPathParser.callHasArgs(callStmt);
 			if(!args.isEmpty()) {
 				checkArgsWithCommon(args, commonBlocList, dataflowLineRest);
-				String line = "WRITE";
+				String line = "WRITE;{"+XPathParser.getCallStmtId(callStmt);
 				dataflowLineRest.add(line);
 			}
 		}
@@ -167,9 +171,9 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 	
 	
 
-	private List<String> analyzeReadsFromStatements(List<String>stmts, List<String>commonBlocks, List<String>blacklist) {
+	private List<String> analyzeReadsFromStatements(List<Node>stmts, List<Node>commonBlocks, List<String>blacklist) {
 		List<String> dataflowLineRest = new ArrayList();
-		for(String stmt: stmts) {
+		for(Node stmt: stmts) {
 			List<String> names = XPathParser.getNamesFromStatement(stmt);
 			List<String> blocks = checkNamesWithCommon(names, commonBlocks);
 			for(String block : blocks) {
@@ -182,18 +186,18 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 	
 
 
-	private List<String> analyzeAssignmentStatements(List<String> stmts, List<String> commonBlocks, List<String> bl) {
+	private List<String> analyzeAssignmentStatements(List<Node> stmts, List<Node> commonBlocks, List<String> bl) {
 		List<String> dataflowLinesRest = new ArrayList();
 		
-		for(String stmt : stmts) {
-			List<String> assignedContent = getAssignedContent();
-			List<String> assigningContent = getAssigningContent();
+		for(Node stmt : stmts) {
+			List<Node> assignedContent = getAssignedContent();
+			List<Node> assigningContent = getAssigningContent();
 			
 			String assignedVar = XPathParser.getAssignTargetIdentifier(stmt);
 			List<String> blockIdentifierAssign=isVarFromCommonBlock(assignedVar, commonBlocks);
 				
-			List<String> partRefNodeList = XPathParser.assignmentStatementHasPartRef(assigningContent);
-			List<String> structureConstructorNodes = XPathParser.assignmentStatementHasStructureConstructor(assigningContent);
+			List<Node> partRefNodeList = XPathParser.assignmentStatementHasPartRef(assigningContent);
+			List<Node> structureConstructorNodes = XPathParser.assignmentStatementHasStructureConstructor(assigningContent);
 				
 			if(!partRefNodeList.isEmpty()) {
 					List<String> blockIdentifierList = analyzePartRefNodesInAssignmentStmt(partRefNodeList, commonBlocks,bl,dataflowLinesRest);
@@ -213,10 +217,10 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 					}
 					
 			}else if(!structureConstructorNodes.isEmpty()) {
-					for(String s: structureConstructorNodes) {
+					for(Node cons: structureConstructorNodes) {
 						assignedVar = XPathParser.getAssignTargetIdentifier(stmt);
 						checkAssignWithCommon(assignedVar, commonBlocks,dataflowLinesRest);
-						String functionId = XPathParser.getStructureConstructorIdentifier(s);
+						String functionId = XPathParser.getStructureConstructorIdentifier(cons);
 						
 						String line = "READ;{"+functionId+"};";
 						dataflowLinesRest.add(line);
@@ -247,21 +251,21 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 		return dataflowLinesRest;
 	}
 	
-	private List<String> analyzePartRefNodesInAssignmentStmt(List<String> stmts, List<String> commonBlocks, List<String> bl, List<String> dfLinesRest) {
+	private List<String> analyzePartRefNodesInAssignmentStmt(List<Node> stmts, List<Node> commonBlocks, List<String> bl, List<String> dfLinesRest) {
 		List<String> blockIdentifierList = new ArrayList();
-		for(String s : stmts) {
-			String functionIdentifier = XPathParser.getPartRefNodeIdentifier(s);
+		for(Node stmt : stmts) {
+			String functionIdentifier = XPathParser.getPartRefNodeIdentifier(stmt);
 			List<String>functionInCommonBlockList = isVarFromCommonBlock(functionIdentifier, commonBlocks);
 			
 			if(functionInCommonBlockList.size()>0) {
 				blockIdentifierList.addAll(functionInCommonBlockList);
-				List<String>args = XPathParser.getArgumentList(s);
+				List<String>args = XPathParser.getArgumentList(stmt);
 				for(String arg : args) {
 					blockIdentifierList.addAll(isVarFromCommonBlock(arg,commonBlocks));
 				}
 				
 			}else if(!bl.contains(functionIdentifier)) {
-				List<String> args = XPathParser.getArgumentList(s);
+				List<String> args = XPathParser.getArgumentList(stmt);
 				if(args.size()>0) {
 					for(String arg : args) {
 						blockIdentifierList.addAll(isVarFromCommonBlock(arg, commonBlocks));
@@ -280,9 +284,9 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 		return blockIdentifierList;
 	}
 
-	private void writeCommonDataflow(Object blockIdentifierAssign, List<String> blockIdentifierList, List<String> dataflowLinesRest) {
+	private void writeCommonDataflow(Node blockIdentifierAssign, List<Node> blockIdentifierList, List<String> dataflowLinesRest) {
 		
-		for(String blockIdentifier: blockIdentifierList) {
+		for(Node blockIdentifier: blockIdentifierList) {
 			/*if(blockIdentifierAssign[0].equals(blocIdentifier)){
 			 * String line = "BOTH/{"+blockIdentifier}/;";
 			 * dataflowLIneRest.add(line);
@@ -298,35 +302,26 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 		
 	}
 	
-	private Object getCommonBlocks(String xml) {
-		if(xml.isEmpty()) {
-			return (Object)new ArrayList();
-		}
-		List<String>commonStmt = XPathParser.getCommonBlocks(xml);
-		return commonStmt;
-		
-	}
-	
-	
+
 
 	/**
 	 * 
-	 * @param assigningContentList
+	 * @param assigningContent2
 	 * @return
 	 */
 
-	private List<String> collectNames(List<String> assigningContentList) {
+	private List<String> collectNames(List<Node> assigningContent2) {
 		List<String>nameList = new ArrayList();
-		for(String assigningContent : assigningContentList) {
+		for(Node assigningContent : assigningContent2) {
 			
 		}
 		return nameList;
 	}
 
-	private List<String> isVarFromCommonBlock(String variable, List<String> commonBlocks) {
+	private List<String> isVarFromCommonBlock(String variable, List<Node> commonBlocks) {
 		List<String> blockIdentifierList = new ArrayList();
-		for(String s:commonBlocks) {
-			String blockIdentifier = s;//bloc[0]
+		for(Node commonBlock:commonBlocks) {
+			String blockIdentifier = XPathParser.getCommonBlockId(commonBlock);//bloc[0]
 			List<String> varList = new ArrayList();//= block[1];
 			for(String var:varList) {
 				if(variable.equals(var)) {
@@ -337,7 +332,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 		return blockIdentifierList;
 	}
 
-	private void checkAssignWithCommon(String assignedVar, List<String> commonBlocks, List<String> dataflowLinesRest) {
+	private void checkAssignWithCommon(String assignedVar, List<Node> commonBlocks, List<String> dataflowLinesRest) {
 		
 		List<String> blockIdentifierList = isVarFromCommonBlock(assignedVar,commonBlocks);
 		if(blockIdentifierList.size()>0) {
@@ -349,10 +344,10 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 		
 	}
 	
-	private void checkArgsWithCommon(List<String> args, List<String> commonBlockList, List<String> dataflowLineRest) {
+	private void checkArgsWithCommon(List<String> args, List<Node> commonBlocList, List<String> dataflowLineRest) {
 		
 		for(String arg :args) {
-			List<String> blockIdentifierList = isVarFromCommonBlock(arg,commonBlockList);
+			List<String> blockIdentifierList = isVarFromCommonBlock(arg,commonBlocList);
 			if(blockIdentifierList.size()>0) {
 				for(String bId: blockIdentifierList) {
 					String line = "WRITE;/{"+bId+"}/;";
@@ -363,7 +358,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 		
 	}
 
-	private List<String> checkNamesWithCommon(List<String> names, List<String> commonBlocks) {
+	private List<String> checkNamesWithCommon(List<String> names, List<Node> commonBlocks) {
 		List<String> blockIdentifierList = new ArrayList();
 		for(String name: names) {
 			blockIdentifierList.addAll(isVarFromCommonBlock(name, commonBlocks));
@@ -374,12 +369,12 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<FileContents
 
 
 	//-----------------------
-	private List<String> getAssigningContent() {
+	private List<Node> getAssigningContent() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private List<String> getAssignedContent() {
+	private List<Node> getAssignedContent() {
 		// TODO Auto-generated method stub
 		return null;
 	}

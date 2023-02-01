@@ -22,7 +22,7 @@ import cau.agse.hs.staticfortran.model.FortranProjectModel;
 public class FileContentsExtractor extends AbstractTransformation<List<File>, FileContentsStageOutput>{
 
 
-		
+	/*	
 	
 
 	@Override
@@ -57,3 +57,4 @@ public class FileContentsExtractor extends AbstractTransformation<List<File>, Fi
 
 }
 }
+*/

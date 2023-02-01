@@ -12,17 +12,19 @@ import teetime.framework.AbstractProducerStage;
 
 public class ReadStage extends AbstractProducerStage<List<File>> {
 	
-	private final Path rootPath;
+	private final List<Path> rootPath;
 
 	
-	public ReadStage(Path path) {
-		this.rootPath = path;
+	public ReadStage(List<Path> list) {
+		this.rootPath = list;
 	}
 	@Override
 	protected void execute() throws Exception {
-		File folder = new File(rootPath.toAbsolutePath().toString());
+		for(Path path: rootPath) {
+		File folder = new File(path.toAbsolutePath().toString());
 		List<File> files =Arrays.asList(folder.listFiles());
 		this.outputPort.send(files);
+		}
 	}
 	
 	

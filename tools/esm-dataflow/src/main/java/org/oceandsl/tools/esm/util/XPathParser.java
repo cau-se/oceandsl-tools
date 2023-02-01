@@ -11,34 +11,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 public class XPathParser {
 	
-
-	/**
-	 * Return number of subroutine definitions in given xml
-	 * @param xml - XML string which is analyzed
-	 * @return numer of Suboutine definitions
-	 */
-	public static int getSubroutineNum(String xml) {
-		return 0;
-	}
-
-	
-	/**
-	 * Return number of function definitions in given xml
-	 * @param xml - XML string which is analyzed
-	 * @return numer of function definitions
-	 */
-	public static int getFuncNum(String xml) {
-		return 0;
-	}
-	public static List<Node> getMain(String xml) {
-		return null;
-	}
 	
 	/**
 	 * Return list of bodies of subroutines
@@ -46,8 +25,7 @@ public class XPathParser {
 	 * @return return list of subroutine bodies
 	 */
 	public static List<List<Node>> getSubroutineContents(String xml){
-		List<String> result = new ArrayList();
-		List<List<Node>> subRs = new ArrayList();
+		List<List<Node>> subRs = new ArrayList<List<Node>>();
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder dbuilder = dbFactory.newDocumentBuilder();
@@ -58,8 +36,9 @@ public class XPathParser {
 			
 			for(int i = 0; i<nList.getLength();i++) {
 				Node node = nList.item(i);
-				List<Node> currentNList = new ArrayList();
-				while(node.getNextSibling()!=null && node.getNextSibling().getNodeName().equals("end-subroutine-stmt")) {
+				List<Node> currentNList = new ArrayList<Node>();
+				currentNList.add(node);
+				while(node.getNextSibling()!=null && !node.getNextSibling().getNodeName().equals("end-subroutine-stmt")) {
 					currentNList.add(node.getNextSibling());
 					node = node.getNextSibling();
 				}
@@ -81,18 +60,13 @@ public class XPathParser {
 		
 	}
 	
-	public static List<List<Node>> getCallStmts(String xml){
-		//TODO USE HENNING
-		return null;
-		
-	}
+
 	/**
 	 * Return list of bodies of functions
 	 * @param xml
 	 * @return return list of functions bodies
 	 */
 	public static List<List<Node>> getFuncContents(String xml){
-		List<String> result = new ArrayList();
 		List<List<Node>> subRs = new ArrayList();
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		try {
@@ -105,6 +79,7 @@ public class XPathParser {
 			for(int i = 0; i<nList.getLength();i++) {
 				Node node = nList.item(i);
 				List<Node> currentNList = new ArrayList();
+				currentNList.add(node);
 				while(node.getNextSibling()!=null && node.getNextSibling().getNodeName().equals("end-function-stmt")) {
 					currentNList.add(node.getNextSibling());
 					node = node.getNextSibling();
@@ -126,67 +101,132 @@ public class XPathParser {
 		return subRs;
 	}
 	
-	public static List<String>getCommonBlocks(String xml){
-		//Use Henning
-		return null;
+	
+	public static List<Node> getCallStmts(List<Node> body){
+		
+		List<Node> result = new ArrayList<Node>();
+		for(Node node:body) {
+			if(node.getNodeName().equals("call-stmt")) {
+				result.add(node);
+			}
+		}
+		return result;
+		
+	}
+	
+	
+	public static List<Node>getCommonBlocks(List<Node>body){
+		List<Node> result = new ArrayList<Node>();
+		for(Node node:body) {
+			if(node.getNodeName().equals("common-stmt")) {
+				result.add(node);
+			}
+		}
+		return result;
+		
+		
 	}
 
 
-	public static List<String> getIfElseStmts(String xml) {
+	public static List<Node> getIfElseStmts(List <Node>body) {
+		List<Node> result = new ArrayList<Node>();
+		for(Node node:body) {
+			if(node.getNodeName().equals("if-then-stmt")) {
+				result.add(node);
+			}
+		}
+		return result;
+	}
+
+
+	public static List<Node> getSelectStmts(List<Node> body) {
+		List<Node> result = new ArrayList<Node>();
+		for(Node node:body) {
+			if(node.getNodeName().equals("select-case-stmt")) {
+				result.add(node);
+			}
+		}
+		return result;
+		
+	}
+
+
+	public static List<Node> getLoopCtrlStmts(List <Node> body) {
+		List<Node> result = new ArrayList<Node>();
+		for(Node node:body) {
+			if(node.getNodeName().equals("do-stmt")) {
+				result.add(node);
+			}
+		}
+		return result;
+		
+		}
+
+
+	public static String getLoopControlVar(Node loopStatement) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-	public static List<String> getSelectStmts(String xml) {
+	public static List<Node> getAssignmentStmts(List <Node> body) {
+		List<Node> result = new ArrayList<Node>();
+		for(Node node:body) {
+			if(node.getNodeName().equals("a-stmt")) {
+				result.add(node);
+			}
+		}
+		return result;
+		
+	
+	}
+	
+
+
+
+	public static List<String> callHasArgs(Node callStmt) {
+		List<String>result = new ArrayList <String> ();
+		if(callStmt instanceof Element) {
+			Element e = (Element)callStmt;
+			NodeList args = e.getElementsByTagName("arg");
+			
+			for(int i = 0; i<args.getLength();i++) {
+				Element arg = (Element)args.item(i);
+				String name=arg.getElementsByTagName("n").item(0).getNodeValue();
+				result.add(name);
+			}
+		}
+		return result;
+	}
+
+
+	public static List<String> getNamesFromStatement(Node stmt) {
+		List<String> result = new ArrayList<String>();
+		Element e = (Element)stmt;
+		NodeList nameElems = e.getElementsByTagName("n");
+		
+		for(int i=0;i<nameElems.getLength();i++) {
+		    result.add(nameElems.item(i).getNodeValue());	
+		}
+		
+		
+		return result;
+	}
+
+
+	public static String getAssignTargetIdentifier(Node aStmt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-	public static List<String> getLoopCtrlStmts(String xml) {
+	public static List<Node> assignmentStatementHasPartRef(List<Node> assigningContent) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-	public static String getLoopControlVar(String loopCtrl) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public static List<String> getAssignmentStmts(String xml) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public static List<String> callHasArgs(String callStmt) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public static List<String> getNamesFromStatement(String stmt) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public static String getAssignTargetIdentifier(String stmt) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public static List<String> assignmentStatementHasPartRef(List<String> assigningContent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public static List<String> assignmentStatementHasStructureConstructor(List<String> assigningContent) {
+	public static List<Node> assignmentStatementHasStructureConstructor(List<Node> assigningContent) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -198,21 +238,49 @@ public class XPathParser {
 	}
 
 
-	public static String getStructureConstructorIdentifier(String s) {
+	public static String getStructureConstructorIdentifier(Node cons) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-	public static String getPartRefNodeIdentifier(String s) {
+	public static String getPartRefNodeIdentifier(Node stmt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-	public static List<String> getArgumentList(String s) {
+	public static List<String> getArgumentList(Node s) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public static List<Node> getMain(String xml) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static String getsubroutineId(List<Node> body) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static String getFunctionId(List<Node> body) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public static String getCallStmtId(Node callStmt) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public static String getCommonBlockId(Node commonBlock) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
