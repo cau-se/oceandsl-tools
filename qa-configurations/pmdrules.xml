@@ -60,8 +60,6 @@
 		<priority>2</priority>
 	</rule>
 
-	<rule ref="category/java/errorprone.xml/ProperLogger" />
-
 	<rule ref="category/java/documentation.xml">
 		<exclude name="CommentSize" />
 	</rule>		
@@ -75,7 +73,6 @@
 			<property name="publicMethodCommentRequirement" value="Ignored" />
 		</properties>
 	</rule>
-
 
 	<rule ref="category/java/multithreading.xml">
 		<exclude name="DoNotUseThreads" />

@@ -16,6 +16,7 @@
 package org.oceandsl.tools.dar;
 
 import com.beust.jcommander.IStringConverter;
+import com.beust.jcommander.ParameterException;
 
 /**
  * Convert command line input for class and operation name conversion.
@@ -32,7 +33,7 @@ public class ESignatureExtractorConverter implements IStringConverter<ESignature
                 return element;
             }
         }
-        return null;
+        throw new ParameterException(String.format("%s is not a valued signature extractor.", value));
     }
 
 }
