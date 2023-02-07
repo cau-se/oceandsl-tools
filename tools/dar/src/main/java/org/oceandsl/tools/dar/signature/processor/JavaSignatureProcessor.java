@@ -13,4 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.dar.extractors;
+package org.oceandsl.tools.dar.signature.processor;
+
+import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
+
+/**
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
+public class JavaSignatureProcessor extends AbstractSignatureProcessor {
+
+    public JavaSignatureProcessor(final boolean caseInsensitive) {
+        super(caseInsensitive);
+    }
+
+    @Override
+    public void processSignatures(final String componentSignature, final String operationSignature) {
+        this.componentSignature = componentSignature;
+        this.operationSignature = operationSignature.replaceAll("[0-9A-Za-z$_.]*\\.", "");
+    }
+
+}

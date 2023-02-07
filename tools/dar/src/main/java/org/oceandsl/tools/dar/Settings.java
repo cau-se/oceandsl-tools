@@ -66,7 +66,7 @@ public class Settings { // NOPMD data class
     private String experimentName;
 
     @Parameter(names = { "-s",
-            "--signature-extractor" }, required = true, converter = ESignatureExtractorConverter.class, description = "Type of extractor used for component and operation signatures")
+            "--signature-extractor" }, required = true, converter = ESignatureExtractorConverter.class, description = "Type of extractor used for component and operation signatures: elf, python, java")
     private ESignatureExtractor signatureExtractor;
 
     @Parameter(names = { "-k",
@@ -74,7 +74,7 @@ public class Settings { // NOPMD data class
     private boolean keepMetaDataOnCompletedTraces;
 
     @Parameter(names = { "-m",
-            "--module-modes" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategies: file-mode, map-mode, module-mode")
+            "--module-modes" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategies: file-mode, map-mode, module-mode, java-class-mode, java-class-long-mode")
     private List<EModuleMode> moduleModes;
 
     @Parameter(names = { "-ms",
