@@ -62,6 +62,7 @@ import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
 import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
 import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
 import org.oceandsl.tools.dar.signature.processor.FileBasedSignatureProcessor;
+import org.oceandsl.tools.dar.signature.processor.JavaSignatureProcessor;
 import org.oceandsl.tools.dar.signature.processor.MapBasedSignatureProcessor;
 import org.oceandsl.tools.dar.signature.processor.ModuleSignatureProcessor;
 import org.oceandsl.tools.dar.stages.OperationAndCallGeneratorStage;
@@ -169,6 +170,9 @@ public class TeetimeConfiguration extends Configuration {
                 processors.add(this.createModuleBasedProcessor(logger, settings));
                 break;
             case JAVA_CLASS_MODE:
+                processors.add(this.createJavaProcessor(logger, settings));
+                break;
+            case JAVA_CLASS_LONG_MODE:
                 break;
             case PYTHON_CLASS_MODE:
                 break;
@@ -180,6 +184,11 @@ public class TeetimeConfiguration extends Configuration {
         }
 
         return processors;
+    }
+
+    private AbstractSignatureProcessor createJavaProcessor(final Logger logger, final Settings settings) {
+        logger.info("Java class based flat component definition");
+        return new JavaSignatureProcessor(settings.isCaseInsensitive());
     }
 
     private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger, final Settings settings) {
