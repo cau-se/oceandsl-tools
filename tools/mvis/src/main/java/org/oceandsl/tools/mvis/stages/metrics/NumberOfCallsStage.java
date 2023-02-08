@@ -70,7 +70,7 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
                         value.getCallee().getAssemblyOperation().getComponent().getComponentType().getSignature(),
                         value.getCallee().getAssemblyOperation().getOperationType().getSignature(), data);
             } else {
-                this.logger.error("Missing statistics for invocation {} -> {}",
+                this.logger.warn("Missing statistics for invocation {} -> {}",
                         RepositoryUtils.getName(invocationEntry.getValue().getCaller()),
                         RepositoryUtils.getName(invocationEntry.getValue().getCallee()));
             }

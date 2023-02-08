@@ -119,8 +119,12 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
 
         final StatisticRecord statisticRecord = this.statisticsModel.getStatistics().get(invocation);
 
-        final long calls = (Long) statisticRecord.getProperties().get(PropertyConstants.CALLS);
-        this.addEdge(sourceVertex, targetVertex, calls);
+        if (statisticRecord != null) {
+            final long calls = (Long) statisticRecord.getProperties().get(PropertyConstants.CALLS);
+            this.addEdge(sourceVertex, targetVertex, calls);
+        } else {
+            this.addEdge(sourceVertex, targetVertex, 0);
+        }
     }
 
     private void handleStorageDataflow(final StorageDataflow storageDataflow) {
@@ -174,6 +178,8 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
         case BOTH:
             this.addEdge(sourceVertex, targetVertex, 2);
             this.addEdge(targetVertex, sourceVertex, 2);
+            break;
+        default:
             break;
         }
     }
