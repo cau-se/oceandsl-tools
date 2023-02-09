@@ -17,10 +17,6 @@ package org.oceandsl.tools.mvis.stages.graph;
 
 import java.util.Optional;
 
-import org.oceandsl.analysis.graph.EGraphGenerationMode;
-import org.oceandsl.analysis.graph.IGraphElementSelector;
-import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
-
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.analysis.generic.graph.GraphFactory;
 import kieker.analysis.generic.graph.IEdge;
@@ -33,7 +29,12 @@ import kieker.model.analysismodel.execution.ExecutionPackage;
 import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.OperationDataflow;
 import kieker.model.analysismodel.execution.StorageDataflow;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.graph.EGraphGenerationMode;
+import org.oceandsl.analysis.graph.IGraphElementSelector;
+import org.oceandsl.tools.mvis.FullyQualifiedNamesFactory;
 
 /**
  * Compute a graph based on the module structure of the architecture limited to nodes and modules
@@ -174,6 +175,8 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
         case BOTH:
             graph.getGraph().addEdge(targetNode.get(), sourceNode.get(), GraphFactory.createEdge(null));
             graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
+            break;
+        default:
             break;
         }
     }
