@@ -52,6 +52,9 @@ public class Settings { // NOPMD
             "--graphs" }, required = false, variableArity = true, converter = GraphTypeConverter.class, description = "Specify which output graphs must be generated")
     private List<EOutputGraph> outputGraphs;
 
+    @Parameter(names = "--ignore-statistics", required = false, description = "When specified statistics are ignored.")
+    private boolean ignoreStatistics;
+
     @Parameter(names = { "-m",
             "--mode" }, required = true, variableArity = true, converter = GraphGenerationConverter.class, description = "Mode deciding whether an edge is added when its nodes are not selected")
     private EGraphGenerationMode graphGenerationMode;
@@ -74,6 +77,10 @@ public class Settings { // NOPMD
 
     public IGraphElementSelector getSelector() {
         return this.selector;
+    }
+
+    public boolean isIgnoreStatistics() {
+        return this.ignoreStatistics;
     }
 
     public EGraphGenerationMode getGraphGenerationMode() {
