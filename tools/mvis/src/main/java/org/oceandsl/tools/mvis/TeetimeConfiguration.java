@@ -75,8 +75,10 @@ public class TeetimeConfiguration extends Configuration {
 
         this.connectPorts(readerStage.getOutputPort(), statisticsDistributor.getInputPort());
 
-        this.createStatisticsStages(settings, statisticsDistributor);
-        this.createAllenMetricStages(settings, statisticsDistributor);
+        this.createNumberOfCallsStatistics(settings, statisticsDistributor);
+        this.createOperationCouplingStatistics(settings, statisticsDistributor);
+        this.createModuleCouplingStatistics(settings, statisticsDistributor);
+        this.createAllenMetricStatistics(settings, statisticsDistributor);
 
         final Distributor<ModelRepository> triggerDistributor = new Distributor<>(new CopyByReferenceStrategy());
 
@@ -141,10 +143,9 @@ public class TeetimeConfiguration extends Configuration {
 
     }
 
-    private void createStatisticsStages(final Settings settings,
+    private void createNumberOfCallsStatistics(final Settings settings,
             final Distributor<ModelRepository> statisticsDistributor) {
-        /** compute statistics. */
-        if (!settings.isIgnoreStatistics()) {
+        if (settings.getComputeStatistics().contains(EStatistics.NUM_OF_CALLS)) {
             final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
             final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputDirectory(), String
                     .format("%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.OPERATION_CALLS_CSV));
@@ -152,42 +153,56 @@ public class TeetimeConfiguration extends Configuration {
             this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
             this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());
         }
-        final OperationCallGraphStage functionCallGraphStage = new OperationCallGraphStage(settings.getSelector(),
-                settings.getGraphGenerationMode());
-        final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
-        final ModuleCallGraphStage moduleCallGraphStage = new ModuleCallGraphStage(settings.getSelector(),
-                settings.getGraphGenerationMode());
-        final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
-
-        /** Sinks for metrics writing to CSV files. */
-        final TableCSVSink distinctOperationDegreeSink = new TableCSVSink(settings.getOutputDirectory(), String.format(
-                "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV));
-        final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(settings.getOutputDirectory(), String.format(
-                "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
-
-        this.connectPorts(statisticsDistributor.getNewOutputPort(), functionCallGraphStage.getInputPort());
-        this.connectPorts(functionCallGraphStage.getOutputPort(), functionNodeCouplingStage.getInputPort());
-        this.connectPorts(functionNodeCouplingStage.getOutputPort(), distinctOperationDegreeSink.getInputPort());
-
-        this.connectPorts(statisticsDistributor.getNewOutputPort(), moduleCallGraphStage.getInputPort());
-        this.connectPorts(moduleCallGraphStage.getOutputPort(), moduleNodeCouplingStage.getInputPort());
-        this.connectPorts(moduleNodeCouplingStage.getOutputPort(), distinctModuleDegreeSink.getInputPort());
     }
 
-    private void createAllenMetricStages(final Settings settings,
+    private void createOperationCouplingStatistics(final Settings settings,
             final Distributor<ModelRepository> statisticsDistributor) {
-        /** setup allen metrics. */
-        final AllenDeployedArchitectureGraphStage allenArchitectureModularGraphStage = new AllenDeployedArchitectureGraphStage(
-                settings.getSelector(), settings.getGraphGenerationMode());
-        final ComputeAllenComplexityMetrics<DeployedComponent> computeAllenComplexityStage = new ComputeAllenComplexityMetrics<>(
-                new KiekerArchitectureModelSystemGraphUtils(), HyperGraphSize.class, Complexity.class, Coupling.class,
-                Cohesion.class);
-        final SaveAllenDataStage saveAllenDataStage = new SaveAllenDataStage(settings.getOutputDirectory());
+        if (settings.getComputeStatistics().contains(EStatistics.OP_COUPLING)) {
+            final OperationCallGraphStage functionCallGraphStage = new OperationCallGraphStage(settings.getSelector(),
+                    settings.getGraphGenerationMode());
+            final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
 
-        this.connectPorts(statisticsDistributor.getNewOutputPort(), allenArchitectureModularGraphStage.getInputPort());
-        this.connectPorts(allenArchitectureModularGraphStage.getOutputPort(),
-                computeAllenComplexityStage.getInputPort());
-        this.connectPorts(computeAllenComplexityStage.getOutputPort(), saveAllenDataStage.getInputPort());
+            final TableCSVSink distinctOperationDegreeSink = new TableCSVSink(settings.getOutputDirectory(),
+                    String.format("%s-%s", settings.getSelector().getFilePrefix(),
+                            TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV));
 
+            this.connectPorts(statisticsDistributor.getNewOutputPort(), functionCallGraphStage.getInputPort());
+            this.connectPorts(functionCallGraphStage.getOutputPort(), functionNodeCouplingStage.getInputPort());
+            this.connectPorts(functionNodeCouplingStage.getOutputPort(), distinctOperationDegreeSink.getInputPort());
+        }
+    }
+
+    private void createModuleCouplingStatistics(final Settings settings,
+            final Distributor<ModelRepository> statisticsDistributor) {
+        if (settings.getComputeStatistics().contains(EStatistics.MODULE_COUPLING)) {
+            final ModuleCallGraphStage moduleCallGraphStage = new ModuleCallGraphStage(settings.getSelector(),
+                    settings.getGraphGenerationMode());
+            final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
+
+            final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(settings.getOutputDirectory(), String.format(
+                    "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
+
+            this.connectPorts(statisticsDistributor.getNewOutputPort(), moduleCallGraphStage.getInputPort());
+            this.connectPorts(moduleCallGraphStage.getOutputPort(), moduleNodeCouplingStage.getInputPort());
+            this.connectPorts(moduleNodeCouplingStage.getOutputPort(), distinctModuleDegreeSink.getInputPort());
+        }
+    }
+
+    private void createAllenMetricStatistics(final Settings settings,
+            final Distributor<ModelRepository> statisticsDistributor) {
+        if (settings.getComputeStatistics().contains(EStatistics.ALLEN)) {
+            final AllenDeployedArchitectureGraphStage allenArchitectureModularGraphStage = new AllenDeployedArchitectureGraphStage(
+                    settings.getSelector(), settings.getGraphGenerationMode());
+            final ComputeAllenComplexityMetrics<DeployedComponent> computeAllenComplexityStage = new ComputeAllenComplexityMetrics<>(
+                    new KiekerArchitectureModelSystemGraphUtils(), HyperGraphSize.class, Complexity.class,
+                    Coupling.class, Cohesion.class);
+            final SaveAllenDataStage saveAllenDataStage = new SaveAllenDataStage(settings.getOutputDirectory());
+
+            this.connectPorts(statisticsDistributor.getNewOutputPort(),
+                    allenArchitectureModularGraphStage.getInputPort());
+            this.connectPorts(allenArchitectureModularGraphStage.getOutputPort(),
+                    computeAllenComplexityStage.getInputPort());
+            this.connectPorts(computeAllenComplexityStage.getOutputPort(), saveAllenDataStage.getInputPort());
+        }
     }
 }
