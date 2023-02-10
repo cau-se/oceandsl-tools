@@ -15,19 +15,14 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.stages.metrics;
 
-import kieker.analysis.generic.graph.IEdge;
-import kieker.analysis.generic.graph.IGraph;
-import kieker.analysis.generic.graph.INode;
-import kieker.common.exception.ConfigurationException;
-import kieker.model.analysismodel.assembly.AssemblyComponent;
-import kieker.model.analysismodel.deployment.DeployedComponent;
-import kieker.model.analysismodel.type.ComponentType;
-
-import teetime.stage.basic.AbstractTransformation;
-
 import org.oceandsl.analysis.code.stages.data.LongValueHandler;
 import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
+
+import kieker.analysis.generic.graph.IEdge;
+import kieker.analysis.generic.graph.IGraph;
+import kieker.analysis.generic.graph.INode;
+import teetime.stage.basic.AbstractTransformation;
 
 /**
  * Counts the incoming and outgoing edges for each node. Where nodes represent modules/components in
@@ -57,17 +52,5 @@ public class ModuleNodeCountCouplingStage extends AbstractTransformation<IGraph<
         String filepath = stringId.split("\\.f")[0];
         filepath = filepath.split("@")[1];
         return filepath.concat(".f");
-    }
-
-    private ComponentType getComponentType(final Object id) throws ConfigurationException {
-        if (id instanceof DeployedComponent) {
-            return this.getComponentType(((DeployedComponent) id).getAssemblyComponent());
-        } else if (id instanceof AssemblyComponent) {
-            return this.getComponentType(((AssemblyComponent) id).getComponentType());
-        } else if (id instanceof ComponentType) {
-            return (ComponentType) id;
-        } else {
-            throw new ConfigurationException("Vertex does not relate to an operation.");
-        }
     }
 }

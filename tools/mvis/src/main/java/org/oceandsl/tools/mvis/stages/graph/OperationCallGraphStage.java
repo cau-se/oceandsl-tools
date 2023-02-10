@@ -204,13 +204,6 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
         return graph.findNode(fullyQualifiedName);
     }
 
-    private void addEdge(final IGraph<INode, IEdge> graph, final DeployedOperation source,
-            final DeployedOperation target) {
-        final Optional<INode> sourceNode = this.findOperationNode(graph, source);
-        final Optional<INode> targetNode = this.findOperationNode(graph, target);
-        graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
-    }
-
     private Optional<INode> findStorageNode(final IGraph<INode, IEdge> graph, final DeployedStorage storage) {
         final String fullyQualifiedName = FullyQualifiedNamesFactory.createFullyQualifiedName(storage);
         return graph.findNode(fullyQualifiedName);

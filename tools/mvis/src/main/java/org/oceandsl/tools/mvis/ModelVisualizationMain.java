@@ -22,13 +22,14 @@ import java.util.Locale;
 
 import com.beust.jcommander.JCommander;
 
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.graph.EGraphGenerationMode;
 import org.slf4j.LoggerFactory;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
+
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.graph.EGraphGenerationMode;
 
 /**
  * Architecture analysis main class.
