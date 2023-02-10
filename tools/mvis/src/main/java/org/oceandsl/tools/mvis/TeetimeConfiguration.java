@@ -144,7 +144,14 @@ public class TeetimeConfiguration extends Configuration {
     private void createStatisticsStages(final Settings settings,
             final Distributor<ModelRepository> statisticsDistributor) {
         /** compute statistics. */
-        final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
+        if (!settings.isIgnoreStatistics()) {
+            final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
+            final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputDirectory(), String
+                    .format("%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.OPERATION_CALLS_CSV));
+
+            this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
+            this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());
+        }
         final OperationCallGraphStage functionCallGraphStage = new OperationCallGraphStage(settings.getSelector(),
                 settings.getGraphGenerationMode());
         final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
@@ -153,17 +160,11 @@ public class TeetimeConfiguration extends Configuration {
         final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
 
         /** Sinks for metrics writing to CSV files. */
-        final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputDirectory(), String.format("%s-%s",
-                settings.getSelector().getFilePrefix(), TeetimeConfiguration.OPERATION_CALLS_CSV));
         final TableCSVSink distinctOperationDegreeSink = new TableCSVSink(settings.getOutputDirectory(), String.format(
                 "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV));
         final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(settings.getOutputDirectory(), String.format(
                 "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
 
-        this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
-        this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());
-
-        // Fehlerhaft in functionNodeCouplingStage
         this.connectPorts(statisticsDistributor.getNewOutputPort(), functionCallGraphStage.getInputPort());
         this.connectPorts(functionCallGraphStage.getOutputPort(), functionNodeCouplingStage.getInputPort());
         this.connectPorts(functionNodeCouplingStage.getOutputPort(), distinctOperationDegreeSink.getInputPort());
