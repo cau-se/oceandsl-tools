@@ -35,7 +35,7 @@ public final class FullyQualifiedNamesFactory {
     }
 
     public static String createFullyQualifiedName(final DeployedOperation operation) {
-        return String.format("%s.%s", FullyQualifiedNamesFactory.createFullyQualifiedName(operation.getComponent()),
+        return String.format("%s.%s", FullyQualifiedNamesFactory.createFullyQualifiedName(operation.getComponent()), // NOPMD
                 operation.getAssemblyOperation().getOperationType().getSignature());
     }
 

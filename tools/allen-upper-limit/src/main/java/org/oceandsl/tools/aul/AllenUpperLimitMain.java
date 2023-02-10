@@ -82,7 +82,7 @@ public class AllenUpperLimitMain extends AbstractService<TeetimeConfiguration, S
             return false;
         }
         if (this.settings.getInputDirectory() != null) {
-            if (!Files.isDirectory(this.settings.getInputDirectory())) {
+            if (!Files.isDirectory(this.settings.getInputDirectory())) { // NOPMD
                 this.logger.error("Input path {} is not directory", this.settings.getInputDirectory());
                 return false;
             }

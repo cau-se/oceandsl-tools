@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 class CreateGraph4AllenMetricStageTest {
 
     @Test
-    void test() {
+    public void test() {
         Assertions.fail("Not yet implemented");
     }
 
