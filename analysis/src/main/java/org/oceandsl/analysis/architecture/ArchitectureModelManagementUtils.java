@@ -15,6 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.analysis.architecture; // NOPMD excessiveImports
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -203,6 +204,8 @@ public final class ArchitectureModelManagementUtils {
             Files.createDirectory(outputDirectory);
         }
 
+        ArchitectureModelManagementUtils.writeEclipseProject(outputDirectory, repository.getName());
+
         ArchitectureModelManagementUtils.writeModel(resourceSet, outputDirectory,
                 ArchitectureModelManagementUtils.TYPE_MODEL_DESCRIPTOR, repository);
         ArchitectureModelManagementUtils.writeModel(resourceSet, outputDirectory,
@@ -215,6 +218,24 @@ public final class ArchitectureModelManagementUtils {
                 ArchitectureModelManagementUtils.STATISTICS_MODEL_DESCRIPTOR, repository);
         ArchitectureModelManagementUtils.writeModel(resourceSet, outputDirectory,
                 ArchitectureModelManagementUtils.SOURCE_MODEL_DESCRIPTOR, repository);
+    }
+
+    private static void writeEclipseProject(final Path outputDirectory, final String name) throws IOException {
+        final Path projectPath = outputDirectory.resolve(".project");
+        try (BufferedWriter writer = Files.newBufferedWriter(projectPath)) {
+            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            writer.write("<projectDescription>\n");
+            writer.write(String.format("    <name>%s</name>\n", name));
+            writer.write("    <comment></comment>\n");
+            writer.write("    <projects>\n");
+            writer.write("    </projects>\n");
+            writer.write("    <buildSpec>\n");
+            writer.write("    </buildSpec>\n");
+            writer.write("    <natures>\n");
+            writer.write("    </natures>\n");
+            writer.write("</projectDescription>\n");
+            writer.close();
+        }
     }
 
     private static <T extends EObject> void writeModel(final ResourceSet resourceSet, final Path outputDirectory,
