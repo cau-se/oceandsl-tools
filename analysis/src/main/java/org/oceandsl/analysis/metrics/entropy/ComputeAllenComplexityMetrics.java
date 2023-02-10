@@ -53,7 +53,7 @@ public class ComputeAllenComplexityMetrics<T>
 
     @SafeVarargs
     public ComputeAllenComplexityMetrics(final SystemGraphUtils<T> systemGraphUtils, // NOPMD
-            final Class<? extends CodeMetric>... metrics) {
+            final Class<? extends CodeMetric>... metrics) { // NOPMD array storage
         this.metrics = metrics;
         this.systemGraphUtils = systemGraphUtils;
     }

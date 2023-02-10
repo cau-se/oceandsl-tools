@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -76,8 +77,10 @@ class MapBasedSignatureProcessorTest {
         Assertions.assertTrue(result, "File-based processor should never fail.");
         Assertions.assertEquals(processor.getErrorMessage(), null, "there should never be an error message");
         Assertions.assertEquals(processor.getComponentSignature(),
-                MapBasedSignatureProcessorTest.COMPONENT.toLowerCase(), "component name should not be lower case");
-        Assertions.assertEquals(processor.getElementSignature(), MapBasedSignatureProcessorTest.OPERATION.toLowerCase(),
+                MapBasedSignatureProcessorTest.COMPONENT.toLowerCase(Locale.getDefault()),
+                "component name should not be lower case");
+        Assertions.assertEquals(processor.getElementSignature(),
+                MapBasedSignatureProcessorTest.OPERATION.toLowerCase(Locale.getDefault()),
                 "operation name should not be lower case");
     }
 

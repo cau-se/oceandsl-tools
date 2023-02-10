@@ -51,7 +51,7 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
     }
 
     public static final Function<DataflowEvent, EObject> createForDataflow(final ExecutionModel executionModel) {
-        return dataflow -> {
+        return dataflow -> { // NOCS
             final StorageDataflow result = CountUniqueDataflowCallsStage.getStorageDataflow(executionModel,
                     CountUniqueDataflowCallsStage.getStorageKeyTuple(dataflow, executionModel));
 
@@ -79,7 +79,7 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
                 .getStorageDataflows().entrySet()) {
             final Tuple<DeployedOperation, DeployedStorage> key = entry.getKey();
 
-            if (dataflow.getSource() instanceof OperationEvent && dataflow.getTarget() instanceof StorageEvent) {
+            if ((dataflow.getSource() instanceof OperationEvent) && (dataflow.getTarget() instanceof StorageEvent)) {
                 final OperationEvent operationEvent = (OperationEvent) dataflow.getSource();
                 final StorageEvent storageEvent = (StorageEvent) dataflow.getTarget();
                 if (key.getFirst().getAssemblyOperation().getOperationType().getSignature()
@@ -90,7 +90,8 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
                         && key.getSecond().getComponent().getSignature().equals(storageEvent.getComponentSignature())) {
                     return key;
                 }
-            } else if (dataflow.getSource() instanceof StorageEvent && dataflow.getTarget() instanceof OperationEvent) {
+            } else if ((dataflow.getSource() instanceof StorageEvent)
+                    && (dataflow.getTarget() instanceof OperationEvent)) {
                 final OperationEvent operationEvent = (OperationEvent) dataflow.getTarget();
                 final StorageEvent storageEvent = (StorageEvent) dataflow.getSource();
                 if (key.getFirst().getAssemblyOperation().getOperationType().getSignature()
@@ -112,7 +113,7 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
                 .getOperationDataflows().entrySet()) {
             final Tuple<DeployedOperation, DeployedOperation> key = entry.getKey();
 
-            if (dataflow.getSource() instanceof OperationEvent && dataflow.getTarget() instanceof OperationEvent) {
+            if ((dataflow.getSource() instanceof OperationEvent) && (dataflow.getTarget() instanceof OperationEvent)) {
                 final OperationEvent sourceOperationEvent = (OperationEvent) dataflow.getSource();
                 final OperationEvent targetOperationEvent = (OperationEvent) dataflow.getTarget();
                 if (key.getFirst().getAssemblyOperation().getOperationType().getSignature()

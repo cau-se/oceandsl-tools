@@ -131,8 +131,8 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
      *            of the dataflow step, stored in Deployment model
      * @param accessedStorage
      *            of the dataflow step, stored in Deployment model
-     * @param dataTransferObject
-     *            TransferObject containing all dataflow information in one step.
+     * @param direction
+     *            dataflow direction
      */
     private void createStorageDataflow(final Tuple<DeployedOperation, DeployedStorage> key,
             final DeployedOperation sourceOperation, final DeployedStorage accessedStorage,
@@ -154,8 +154,8 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
      *            of the dataflow step, stored in Deployment model
      * @param targetOperation
      *            of the dataflow step, stored in Deployment model
-     * @param dataTransferObject
-     *            TransferObject containing all dataflow information in one step.
+     * @param direction
+     *            dataflow direction
      */
     private void createOperationDataflow(final Tuple<DeployedOperation, DeployedOperation> key,
             final DeployedOperation sourceOperation, final DeployedOperation targetOperation,

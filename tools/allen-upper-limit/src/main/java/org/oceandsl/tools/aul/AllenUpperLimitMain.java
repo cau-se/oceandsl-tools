@@ -21,13 +21,14 @@ import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.tools.aul.stages.NullNetworkCreator;
 import org.slf4j.LoggerFactory;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
+
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.tools.aul.stages.NullNetworkCreator;
 
 /**
  * Architecture analysis main class.

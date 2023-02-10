@@ -67,7 +67,8 @@ public final class FullyQualifiedNamesFactory {
 
     public static int findIndexNumber(final AssemblyComponent component) {
         final int numberOfComponent = 0;
-        for (AssemblyComponent value : ((AssemblyModel) component.eContainer().eContainer()).getComponents().values()) {
+        for (final AssemblyComponent value : ((AssemblyModel) component.eContainer().eContainer()).getComponents()
+                .values()) {
             if (value.equals(component)) {
                 return numberOfComponent;
             }
@@ -77,7 +78,7 @@ public final class FullyQualifiedNamesFactory {
 
     public static int findIndexNumber(final DeployedComponent component) {
         final int numberOfComponent = 0;
-        for (DeployedComponent value : component.getContext().getComponents().values()) {
+        for (final DeployedComponent value : component.getContext().getComponents().values()) {
             if (value.equals(component)) {
                 return numberOfComponent;
             }
