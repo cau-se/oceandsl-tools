@@ -25,11 +25,6 @@ import org.oceandsl.analysis.code.stages.data.LongValueHandler;
 import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
 
-import kieker.analysis.generic.graph.IEdge;
-import kieker.analysis.generic.graph.IGraph;
-import kieker.analysis.generic.graph.INode;
-import teetime.stage.basic.AbstractTransformation;
-
 /**
  * Counts the incoming and outgoing edges for each node. Where nodes represent modules/components in
  * the architecture.
