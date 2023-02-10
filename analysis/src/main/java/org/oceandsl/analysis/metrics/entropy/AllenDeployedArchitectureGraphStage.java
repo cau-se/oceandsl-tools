@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EMap;
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 
 import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.exception.InternalErrorException;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
@@ -61,20 +62,21 @@ public class AllenDeployedArchitectureGraphStage
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        // RepositoryUtils.print(repository);
-
         final DeploymentModel deploymentModel = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
         final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
         final MutableGraph<Node<DeployedComponent>> graph = GraphBuilder.undirected().allowsSelfLoops(true).build();
 
-        this.selector.setRepository(repository);
+        try {
+            this.selector.setRepository(repository);
 
-        this.createNodes(graph, deploymentModel.getContexts());
-        this.processInvocations(graph, executionModel.getInvocations());
-        this.processOperationDataflows(graph, executionModel.getOperationDataflows());
-        this.processStorageDataflows(graph, executionModel.getStorageDataflows());
-
-        this.outputPort.send(graph);
+            this.createNodes(graph, deploymentModel.getContexts());
+            this.processInvocations(graph, executionModel.getInvocations());
+            this.processOperationDataflows(graph, executionModel.getOperationDataflows());
+            this.processStorageDataflows(graph, executionModel.getStorageDataflows());
+            this.outputPort.send(graph);
+        } catch (final InternalErrorException e) {
+            this.logger.error(e.getLocalizedMessage());
+        }
     }
 
     private void createNodes(final MutableGraph<Node<DeployedComponent>> graph,

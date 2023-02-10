@@ -57,6 +57,7 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
         final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
+        this.selector.setRepository(repository);
 
         final IGraph<INode, IEdge> graph = GraphFactory.createGraph(repository.getName());
 
