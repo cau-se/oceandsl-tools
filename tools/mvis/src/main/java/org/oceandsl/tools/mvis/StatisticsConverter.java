@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,4 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.graph.selector;
+package org.oceandsl.tools.mvis;
+
+import java.util.Locale;
+
+import com.beust.jcommander.IStringConverter;
+
+/**
+ * @author Reiner Jung
+ * @since 1.3
+ *
+ */
+public class StatisticsConverter implements IStringConverter<EStatistics> {
+
+    @Override
+    public EStatistics convert(final String value) {
+        for (final EStatistics outputGraph : EStatistics.values()) {
+            if (outputGraph.name().toLowerCase(Locale.ROOT).replace("_", "-").equals(value)) {
+                return outputGraph;
+            }
+        }
+        throw new IllegalArgumentException(String.format("Statistics %s is not supported.", value));
+
+    }
+
+}

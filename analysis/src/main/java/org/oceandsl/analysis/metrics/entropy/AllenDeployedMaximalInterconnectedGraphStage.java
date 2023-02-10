@@ -25,7 +25,6 @@ import com.google.common.graph.MutableGraph;
 
 import org.eclipse.emf.common.util.EMap;
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
-import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedComponent;
@@ -34,7 +33,10 @@ import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.deployment.DeploymentPackage;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
  * Compute a graph where every node is connected with every edge.

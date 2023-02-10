@@ -13,4 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.graph.selector;
+package org.oceandsl.tools.mvis;
+
+/**
+ * Parameter enumeration of the available statistics.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
+public enum EStatistics {
+    ALLEN, NUM_OF_CALLS, OP_COUPLING, MODULE_COUPLING
+}

@@ -27,9 +27,9 @@ import kieker.model.analysismodel.execution.OperationDataflow;
  * Central node class for graphs.
  *
  * @param <T>
- *            type representing modules <<<<<<< HEAD =======
+ *            type representing modules
  * @param <E>
- *            type representing nodes >>>>>>> update-to-new-sar-input-format
+ *            type representing nodes
  *
  * @author Reiner Jung
  * @since 1.0
