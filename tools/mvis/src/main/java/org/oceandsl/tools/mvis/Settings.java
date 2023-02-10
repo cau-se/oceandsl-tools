@@ -17,6 +17,7 @@ package org.oceandsl.tools.mvis;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
@@ -52,8 +53,9 @@ public class Settings { // NOPMD
             "--graphs" }, required = false, variableArity = true, converter = GraphTypeConverter.class, description = "Specify which output graphs must be generated")
     private List<EOutputGraph> outputGraphs;
 
-    @Parameter(names = "--ignore-statistics", required = false, description = "When specified statistics are ignored.")
-    private boolean ignoreStatistics;
+    @Parameter(names = { "-c",
+            "--compute-statistics" }, variableArity = true, required = false, converter = StatisticsConverter.class, description = "Generate the listed statistics.")
+    private Set<EStatistics> computeStatistics;
 
     @Parameter(names = { "-m",
             "--mode" }, required = true, variableArity = true, converter = GraphGenerationConverter.class, description = "Mode deciding whether an edge is added when its nodes are not selected")
@@ -79,8 +81,8 @@ public class Settings { // NOPMD
         return this.selector;
     }
 
-    public boolean isIgnoreStatistics() {
-        return this.ignoreStatistics;
+    public Set<EStatistics> getComputeStatistics() {
+        return this.computeStatistics;
     }
 
     public EGraphGenerationMode getGraphGenerationMode() {
