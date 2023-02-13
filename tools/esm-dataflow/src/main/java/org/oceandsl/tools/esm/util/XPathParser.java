@@ -102,6 +102,11 @@ public class XPathParser {
 	}
 	
 	
+	public static List<Node> getMain(String xml) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public static List<Node> getCallStmts(List<Node> body){
 		
 		List<Node> result = new ArrayList<Node>();
@@ -213,71 +218,153 @@ public class XPathParser {
 		return result;
 	}
 
-
-	public static String getAssignTargetIdentifier(Node aStmt) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	/**
+	 * Get variable name frome left part of an assignment as a string
+	 * @param aStmt
+	 * @return
+	 */
+	public static String getAssignTargetIdentifier(Node left) {
+		List<String> result = new ArrayList<String>();
+		Element e = (Element)left;
+		NodeList nameElems = e.getElementsByTagName("n");
+		
+		for(int i=0;i<nameElems.getLength();i++) {
+		    result.add(nameElems.item(i).getNodeValue());	
+		}
+		
+		
+		return result.get(0);
 	}
 
 
-	public static List<Node> assignmentStatementHasPartRef(List<Node> assigningContent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
-	public static List<Node> assignmentStatementHasStructureConstructor(List<Node> assigningContent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public static List<String> convertListNodeToString(Object collectNames) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
 	public static String getStructureConstructorIdentifier(Node cons) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> result = new ArrayList<String>();
+		Element e = (Element)cons;
+		NodeList nameElems = e.getElementsByTagName("n");
+		
+		for(int i=0;i<nameElems.getLength();i++) {
+		    result.add(nameElems.item(i).getNodeValue());	
+		}
+		
+		
+		return result.get(0);
 	}
 
 
-	public static String getPartRefNodeIdentifier(Node stmt) {
-		// TODO Auto-generated method stub
-		return null;
+	public static String getPartRefNodeIdentifier(Node partRef) {
+		List<String> result = new ArrayList<String>();
+		Element e = (Element)partRef;
+		NodeList nameElems = e.getElementsByTagName("n");
+		
+		for(int i=0;i<nameElems.getLength();i++) {
+		    result.add(nameElems.item(i).getNodeValue());	
+		}
+		
+		
+		return result.get(0);
 	}
 
 
-	public static List<String> getArgumentList(Node s) {
-		// TODO Auto-generated method stub
-		return null;
+	public static List<String> getArgumentList(Node procedure) {
+		List<String> result = new ArrayList<String>();
+		Element e = (Element)procedure;
+		NodeList nameElems = e.getElementsByTagName("element");
+		
+		for(int i=0;i<nameElems.getLength();i++) {
+		    result.add(nameElems.item(i).getNodeValue());	
+		}
+		
+		
+		return result;
 	}
 
-	public static List<Node> getMain(String xml) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	public static String getsubroutineId(List<Node> body) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> result = new ArrayList<String>();
+		Element e = (Element)body;
+		NodeList nameElems = e.getElementsByTagName("n");
+		
+		for(int i=0;i<nameElems.getLength();i++) {
+		    result.add(nameElems.item(i).getNodeValue());	
+		}
+		
+		
+		return result.get(0);
 	}
 
 	public static String getFunctionId(List<Node> body) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> result = new ArrayList<String>();
+		Element e = (Element)body;
+		NodeList nameElems = e.getElementsByTagName("n");
+		
+		for(int i=0;i<nameElems.getLength();i++) {
+		    result.add(nameElems.item(i).getNodeValue());	
+		}
+		
+		
+		return result.get(0);
 	}
 
 
 	public static String getCallStmtId(Node callStmt) {
+		List<String> result = new ArrayList<String>();
+		Element e = (Element)callStmt;
+		NodeList nameElems = e.getElementsByTagName("n");
+		
+		for(int i=0;i<nameElems.getLength();i++) {
+		    result.add(nameElems.item(i).getNodeValue());	
+		}
+		
+		
+		return result.get(0);
+	}
+
+
+	public static String getCommonBlockId(Node commonBlock) {
+		List<String> result = new ArrayList<String>();
+		Element e = (Element)commonBlock;
+		NodeList nameElems = e.getElementsByTagName("n");
+		
+		for(int i=0;i<nameElems.getLength();i++) {
+		    result.add(nameElems.item(i).getNodeValue());	
+		}
+		
+		
+		return result.get(0);
+	}
+
+
+	public static boolean isPotentialFunction(String assigningContent) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	public static boolean funcHasArgs(String assigningContent) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	public static List<Node> getPoptentialFuncs(List<Node> assigningContent) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-	public static String getCommonBlockId(Node commonBlock) {
+	public static List<Node> getNonArgsFunc(List<Node> assigningContent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public static List<Node> getNames(List<Node> assigningContent) {
 		// TODO Auto-generated method stub
 		return null;
 	}

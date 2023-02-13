@@ -190,82 +190,86 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 		List<String> dataflowLinesRest = new ArrayList();
 		
 		for(Node stmt : stmts) {
-			List<Node> assignedContent = getAssignedContent();
-			List<Node> assigningContent = getAssigningContent();
+			Node assignedContent = getAssignedContent(stmt); //left part
+			List<Node> assigningContent = getAssigningContent(stmt); //right part
 			
-			String assignedVar = XPathParser.getAssignTargetIdentifier(stmt);
-			List<String> blockIdentifierAssign=isVarFromCommonBlock(assignedVar, commonBlocks);
+			
+			String assignedVar = XPathParser.getAssignTargetIdentifier(stmt); //getName as Strin
+			List<String> blockIdentifierAssign=isVarFromCommonBlock(assignedVar, commonBlocks);//left part is in common Block
+			
+			List<Node> namesRight = XPathParser.getNames(assigningContent); //neither funcs or arrays
+			List<Node> potentialFuncs = XPathParser.getPoptentialFuncs(assigningContent); //something with args
+			List<Node> nonArgsFunc =  XPathParser.getNonArgsFunc(assigningContent); //func no args
+			
+			
+			if(potentialFuncs.size()>0) { //potential function analysis
+				List<String> blockIdentifierList = analyzePotentialFuncStmt(assigningContent, commonBlocks, bl, dataflowLinesRest);
+			    blockIdentifierList.addAll(checkNamesWithCommon(blockIdentifierList, namesRight));
+			    //delete duplicates
 				
-			List<Node> partRefNodeList = XPathParser.assignmentStatementHasPartRef(assigningContent);
-			List<Node> structureConstructorNodes = XPathParser.assignmentStatementHasStructureConstructor(assigningContent);
-				
-			if(!partRefNodeList.isEmpty()) {
-					List<String> blockIdentifierList = analyzePartRefNodesInAssignmentStmt(partRefNodeList, commonBlocks,bl,dataflowLinesRest);
-					blockIdentifierList.addAll(checkNamesWithCommon(collectNames(assigningContent), commonBlocks));
-					//blockIdentifierList  delete duplicates TODO;
-					
-					if(blockIdentifierList.size()==0) {
-						for(String blockId : blockIdentifierList) {
-							String line = "READ;/{" + blockId+"}/;";
-							dataflowLinesRest.add(line);
-						}
-					}else if (blockIdentifierList.size()>0) {
-						writeCommonDataflow(blockIdentifierAssign.get(0),blockIdentifierList, dataflowLinesRest);
-					}else {
-						String line = "WRITE;/{" + blockIdentifierList.get(0)+"}/;";
+			    if(blockIdentifierAssign.size()==0) {
+			    	for(String blockId : blockIdentifierList) {
+			    		String line = "READ;/{" + blockId + "}/;";
 						dataflowLinesRest.add(line);
-					}
-					
-			}else if(!structureConstructorNodes.isEmpty()) {
-					for(Node cons: structureConstructorNodes) {
-						assignedVar = XPathParser.getAssignTargetIdentifier(stmt);
-						checkAssignWithCommon(assignedVar, commonBlocks,dataflowLinesRest);
-						String functionId = XPathParser.getStructureConstructorIdentifier(cons);
-						
-						String line = "READ;{"+functionId+"};";
-						dataflowLinesRest.add(line);
-					}
+			    	}
+			    }else if(blockIdentifierList.size()>0) {
+			    	writeCommonDataflow(blockIdentifierAssign.get(0),blockIdentifierList, dataflowLinesRest);
+			    }else {
+			    	String line = "WRITE;/{" + blockIdentifierList.get(0) + "}/;";
+					dataflowLinesRest.add(line);
+			    }
+			}else if(nonArgsFunc.size()>0) {
+				for(Node cons: nonArgsFunc) {
+					checkAssignWithCommon(assignedVar, commonBlocks,dataflowLinesRest);
+					String functionId = XPathParser.getStructureConstructorIdentifier(cons);
+					String line = "READ;{"+functionId+"};";
+					dataflowLinesRest.add(line);
+				}
 			}else {
-				List<String> nameList = collectNames(assigningContent);
-				List<String>blockIdentifierList = checkNamesWithCommon(nameList, commonBlocks);
+				List<String> namesAsString =convertToString(namesRight);
+				List<String>blockIdentifierList = checkNamesWithCommon(namesAsString, commonBlocks);
 				
-				if(blockIdentifierAssign.size()>0) {
+				if(blockIdentifierAssign.size()>0){
 					
 					if(blockIdentifierList.size()==0) {
 						String line = "WRITE;/{"+blockIdentifierAssign.get(0)+"}/;";
 						dataflowLinesRest.add(line);
 					}else {
-						writeCommonDataflow(blockIdentifierAssign.get(0),blockIdentifierList,dataflowLinesRest);
+						writeCommonDataflow(blockIdentifierAssign.get(0),blockIdentifierList, dataflowLinesRest);
 					}
 				}else {
-					blockIdentifierList = checkNamesWithCommon(nameList,commonBlocks);
-					for(String blockId : blockIdentifierList) {
+					for(String blockId: blockIdentifierList) {
 						String line = "READ;/{"+blockId+"}/;";
 						dataflowLinesRest.add(line);
 					}
 				}
 			}
-			}
-			
-		
+		}
+						
 		return dataflowLinesRest;
-	}
+		}
 	
-	private List<String> analyzePartRefNodesInAssignmentStmt(List<Node> stmts, List<Node> commonBlocks, List<String> bl, List<String> dfLinesRest) {
-		List<String> blockIdentifierList = new ArrayList();
-		for(Node stmt : stmts) {
-			String functionIdentifier = XPathParser.getPartRefNodeIdentifier(stmt);
+	private List<String> convertToString(List<Node> namesRight) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private List<String> analyzePotentialFuncStmt(List<Node> funcs, List<Node> commonBlocks, List<String> bl,
+			List<String> dataflowLinesRest) {
+		List<String> blockIdentifierList = new ArrayList<String>();
+		for (Node funcNode : funcs) {
+			String functionIdentifier = XPathParser.getPartRefNodeIdentifier(funcNode);
 			List<String>functionInCommonBlockList = isVarFromCommonBlock(functionIdentifier, commonBlocks);
 			
 			if(functionInCommonBlockList.size()>0) {
 				blockIdentifierList.addAll(functionInCommonBlockList);
-				List<String>args = XPathParser.getArgumentList(stmt);
+				List<String>args = XPathParser.getArgumentList(funcNode);
 				for(String arg : args) {
 					blockIdentifierList.addAll(isVarFromCommonBlock(arg,commonBlocks));
 				}
 				
 			}else if(!bl.contains(functionIdentifier)) {
-				List<String> args = XPathParser.getArgumentList(stmt);
+				List<String> args = XPathParser.getArgumentList(funcNode);
 				if(args.size()>0) {
 					for(String arg : args) {
 						blockIdentifierList.addAll(isVarFromCommonBlock(arg, commonBlocks));
@@ -284,39 +288,27 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 		return blockIdentifierList;
 	}
 
-	private void writeCommonDataflow(Node blockIdentifierAssign, List<Node> blockIdentifierList, List<String> dataflowLinesRest) {
+
+
+	private void writeCommonDataflow(String blockIdentifierAssign, List<String> blockIdentifierList, List<String> dataflowLinesRest) {
 		
-		for(Node blockIdentifier: blockIdentifierList) {
-			/*if(blockIdentifierAssign[0].equals(blocIdentifier)){
-			 * String line = "BOTH/{"+blockIdentifier}/;";
-			 * dataflowLIneRest.add(line);
-			 * }else{
-			 * String line = "READ/{"+blockIdentifier}/;";
-			 * dataflowLIneRest.add(line);
-			 * line = "WRITE/{"+blockIdentifier}/;";
-			 * dataflowLIneRest.add(line);
-			 * }
-			 * 
-			 */
+		for(String blockIdentifier: blockIdentifierList) {
+			if(blockIdentifierAssign.equals(blockIdentifier)) {
+				String line =  "BOTH;/{"+blockIdentifier+"}/;";
+				dataflowLinesRest.add(line);
+			}else {
+				String line =  "READ;/{"+blockIdentifier+"}/;";
+				dataflowLinesRest.add(line);				
+				
+				line =  "WRITE;/{"+blockIdentifierAssign+"}/;";
+				dataflowLinesRest.add(line);
+			}
 		}
 		
 	}
 	
 
 
-	/**
-	 * 
-	 * @param assigningContent2
-	 * @return
-	 */
-
-	private List<String> collectNames(List<Node> assigningContent2) {
-		List<String>nameList = new ArrayList();
-		for(Node assigningContent : assigningContent2) {
-			
-		}
-		return nameList;
-	}
 
 	private List<String> isVarFromCommonBlock(String variable, List<Node> commonBlocks) {
 		List<String> blockIdentifierList = new ArrayList();
@@ -369,12 +361,12 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 
 
 	//-----------------------
-	private List<Node> getAssigningContent() {
+	private List<Node> getAssigningContent(Node stmt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private List<Node> getAssignedContent() {
+	private Node getAssignedContent(Node stmt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
