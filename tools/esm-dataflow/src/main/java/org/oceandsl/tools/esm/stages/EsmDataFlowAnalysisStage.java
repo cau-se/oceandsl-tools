@@ -34,7 +34,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 	@Override
 	protected void execute(List<File> files) throws Exception {
 
-		XPath xpath = XPathFactory.newInstance().newXPath();
+	
 		
 		
 		for(File file : files) {
@@ -68,6 +68,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 	private List<String> analyzeSubRoutines(List<List<Node>> subRoutineBodies, String fileId) {
 		
 		List<String> dataflowInSub = new ArrayList<String>();
+		List<String> blackList=XPathParser.getArraysDecl(subRoutineBodies);
 		for(List<Node> body:subRoutineBodies) {
 			String name = XPathParser.getsubroutineId(body);
 			List<Node> commonBlocks = XPathParser.getCommonBlocks(body);
@@ -75,7 +76,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 			this.contentFile.add(contentLine);
 			
 			String dataFlowLine = "{"+fileId+"};"+name+"};";
-			dataflowInSub = analyzeExecutionPart(body,commonBlocks, null, dataFlowLine);
+			dataflowInSub = analyzeExecutionPart(body,commonBlocks, blackList, dataFlowLine);
 		}
 		return dataflowInSub;
 	}
@@ -83,6 +84,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 	private List<String> analyzeFunctions(List<List<Node>> funcBodies, String fileId) {
 
 		List<String> dataflowInFunc = new ArrayList<String>();
+		List<String> blackList=XPathParser.getArraysDecl(funcBodies);
 		for (List<Node> body : funcBodies) {
 			String name = XPathParser.getFunctionId(body);
 			List<Node> commonBlocks = XPathParser.getCommonBlocks(body);
@@ -90,7 +92,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 			this.contentFile.add(contentLine);
 
 			String dataFlowLine = "{"+fileId+"};"+name+"};";
-			dataflowInFunc = analyzeExecutionPart(body, commonBlocks, null, dataFlowLine);
+			dataflowInFunc = analyzeExecutionPart(body, commonBlocks, blackList, dataFlowLine);
 		}
 		return dataflowInFunc;
 	}
@@ -125,7 +127,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 		//Dataflow select case
 		List<Node> selectStmts = XPathParser.getSelectStmts(body);
 		List<String> selectReads = analyzeReadsFromStatements(selectStmts,commonBlocks, blacklist);
-		for(String read: ifElseReads) {
+		for(String read: selectReads) {
 			dataflowExecPart.add(dataFlowLine+read);
 		}
 		//Dataflow do while
@@ -156,7 +158,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 	
 
 	private List<String> analyzeCallStatements(List<Node> callStatements, List<Node>commonBlocList, List<String>blacklist) {
-		List<String> dataflowLineRest = new ArrayList();
+		List<String> dataflowLineRest = new ArrayList<String>();
 		
 		for(Node callStmt : callStatements) {
 			List<String> args = XPathParser.callHasArgs(callStmt);
@@ -172,7 +174,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 	
 
 	private List<String> analyzeReadsFromStatements(List<Node>stmts, List<Node>commonBlocks, List<String>blacklist) {
-		List<String> dataflowLineRest = new ArrayList();
+		List<String> dataflowLineRest = new ArrayList<String>();
 		for(Node stmt: stmts) {
 			List<String> names = XPathParser.getNamesFromStatement(stmt);
 			List<String> blocks = checkNamesWithCommon(names, commonBlocks);
@@ -190,20 +192,20 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 		List<String> dataflowLinesRest = new ArrayList();
 		
 		for(Node stmt : stmts) {
-			Node assignedContent = getAssignedContent(stmt); //left part
-			List<Node> assigningContent = getAssigningContent(stmt); //right part
+			Node assignedContent = XPathParser.getAssignedContent(stmt); //left part
+			Node assigningContent = XPathParser.getAssigningContent(stmt); //right part
 			
 			
 			String assignedVar = XPathParser.getAssignTargetIdentifier(stmt); //getName as Strin
 			List<String> blockIdentifierAssign=isVarFromCommonBlock(assignedVar, commonBlocks);//left part is in common Block
 			
 			List<Node> namesRight = XPathParser.getNames(assigningContent); //neither funcs or arrays
-			List<Node> potentialFuncs = XPathParser.getPoptentialFuncs(assigningContent); //something with args
+			List<Node> potentialFuncs = XPathParser.getPotentialFuncs(assigningContent); //something with args
 			List<Node> nonArgsFunc =  XPathParser.getNonArgsFunc(assigningContent); //func no args
 			
 			
 			if(potentialFuncs.size()>0) { //potential function analysis
-				List<String> blockIdentifierList = analyzePotentialFuncStmt(assigningContent, commonBlocks, bl, dataflowLinesRest);
+				List<String> blockIdentifierList = analyzePotentialFuncStmt(potentialFuncs, commonBlocks, bl, dataflowLinesRest);
 			    blockIdentifierList.addAll(checkNamesWithCommon(blockIdentifierList, namesRight));
 			    //delete duplicates
 				
@@ -360,16 +362,6 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 	
 
 
-	//-----------------------
-	private List<Node> getAssigningContent(Node stmt) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private Node getAssignedContent(Node stmt) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	//------------------------------------
+	
 
 }

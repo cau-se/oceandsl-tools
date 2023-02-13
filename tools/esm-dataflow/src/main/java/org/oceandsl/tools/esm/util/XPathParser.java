@@ -340,34 +340,118 @@ public class XPathParser {
 	}
 
 
-	public static boolean isPotentialFunction(String assigningContent) {
-		// TODO Auto-generated method stub
-		return false;
+
+
+	public static List<Node> getPotentialFuncs(Node assigningContent) {
+		
+		List<Node> result = new ArrayList<Node>();
+		Element e = (Element)assigningContent;
+		//check if named expressions exist
+		NodeList nameExpr = e.getElementsByTagName("name-E");
+		
+		if(nameExpr.getLength()>0) {
+			for(int i=0;i<nameExpr.getLength();i++) {
+				//check if parenthesis exist
+				  Element currentNode = (Element) nameExpr.item(i);
+				  NodeList parensElems =currentNode.getElementsByTagName("parens-R");
+				  if(parensElems.getLength()>0) {
+					  //check if arguments exists
+					  for(int j=0; j<parensElems.getLength();j++) {
+						  parensElems.item(j);
+						  NodeList elemElems =currentNode.getElementsByTagName("elem");
+						  if(elemElems.getLength()>0) {
+							  //all checls passed! Add the named expression to the list!
+							  result.add(currentNode);
+						  }
+					  }
+				  }
+				}
+		}
+		
+		return result;
 	}
 
 
-	public static boolean funcHasArgs(String assigningContent) {
-		// TODO Auto-generated method stub
-		return false;
+	public static List<Node> getNonArgsFunc(Node assigningContent) {
+		List<Node> result = new ArrayList<Node>();
+		Element e = (Element)assigningContent;
+		//check if named expressions exist
+		NodeList nameExpr = e.getElementsByTagName("name-E");
+		
+		if(nameExpr.getLength()>0) {
+			for(int i=0;i<nameExpr.getLength();i++) {
+				//check if parenthesis exist
+				  Element currentNode = (Element) nameExpr.item(i);
+				  NodeList parensElems =currentNode.getElementsByTagName("parens-R");
+				  if(parensElems.getLength()>0) {
+					  //check if arguments exists
+					  for(int j=0; j<parensElems.getLength();j++) {
+						  parensElems.item(j);
+						  NodeList elemElems =currentNode.getElementsByTagName("elem");
+						  if(elemElems.getLength()==0) {
+							  //parenthesis but no args. Add
+							  //all checls passed! Add the named expression to the list!
+							  result.add(currentNode);
+						  }
+					  }
+				  }
+				}
+		}
+		
+		return result;
 	}
 
 
-	public static List<Node> getPoptentialFuncs(List<Node> assigningContent) {
-		// TODO Auto-generated method stub
-		return null;
+	public static List<Node> getNames(Node assigningContent) {
+		List<Node> result = new ArrayList<Node>();
+		Element e = (Element)assigningContent;
+		NodeList nameElems = e.getElementsByTagName("n");
+		
+		for(int i=0;i<nameElems.getLength();i++) {
+		    result.add(nameElems.item(i));	
+		}
+		
+		
+		return result;
 	}
-
-
-	public static List<Node> getNonArgsFunc(List<Node> assigningContent) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	
+	
+	
+	public static List<String> getArraysDecl(List<List<Node>> bodies){
+	List<String> result = new ArrayList<String>();
+		for(List<Node> body : bodies) {
+			for(Node node : body) {
+				if(node.getNodeName().equals("T-decl")) {
+					if(node.getNodeType()==Node.ELEMENT_NODE) {
+						Element elem = (Element) node;
+						NodeList elems =  elem.getElementsByTagName("array-spec");
+						if(elems.getLength()>0) {
+							NodeList declName =  elem.getElementsByTagName("EN-decl-LT");
+							Node name = declName.item(0);
+							result.add(name.getTextContent());
+						}
+						
+					}
+				}
+			}
+		}
+		return result;
 	}
+	
+	//-----------------------
+		public static Node getAssigningContent(Node stmt) { //right
+			Element e = (Element)stmt;
+			NodeList elems = e.getElementsByTagName("E-2");
+			return  elems.item(0);
+		}
 
-
-	public static List<Node> getNames(List<Node> assigningContent) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		public static Node getAssignedContent(Node stmt) { //left
+			Element e = (Element)stmt;
+			NodeList elems = e.getElementsByTagName("E-2");
+			return  elems.item(0);
+		}
+		//------------------------------------
 
 
 }
