@@ -17,6 +17,7 @@ package org.oceandsl.tools.esm;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -56,11 +57,6 @@ public class EsmMain extends AbstractService<TeetimeConfiguration, Settings> {
         }
     }
 
-    @Override
-    protected File getConfigurationFile() {
-        // we do not use a configuration file
-        return null;
-    }
 
     @Override
     protected boolean checkConfiguration(final Configuration configuration, final JCommander commander) {
@@ -77,4 +73,12 @@ public class EsmMain extends AbstractService<TeetimeConfiguration, Settings> {
     protected void shutdownService() {
         // No special operation necessary.
     }
+
+
+
+	@Override
+	protected Path getConfigurationPath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
