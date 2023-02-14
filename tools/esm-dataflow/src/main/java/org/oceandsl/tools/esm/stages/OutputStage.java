@@ -1,13 +1,13 @@
 package org.oceandsl.tools.esm.stages;
 
-import java.io.File;
-import java.nio.charset.Charset;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 
-import org.apache.commons.io.FileUtils;
 import org.oceandsl.tools.esm.util.Output;
 
-import kieker.analysis.architecture.repository.ModelRepository;
+
 import teetime.framework.AbstractConsumerStage;
 
 public class OutputStage extends AbstractConsumerStage<Output>{
@@ -19,9 +19,26 @@ public class OutputStage extends AbstractConsumerStage<Output>{
 	}
 	@Override
 	protected void execute(Output element) throws Exception {
-		FileUtils.writeLines(new File("dataflow.txt"),  element.getDataflow());
-		FileUtils.writeLines(new File("filecontent.txt"),  element.getFileContent());
 		
+		 try {
+	            FileWriter writerdf = new FileWriter(outputPath.toString()+"/"+"dataflow");
+	            FileWriter writerfc = new FileWriter(outputPath.toString()+"/"+"filecontent");
+	            for (String line : element.getDataflow()) {
+	                writerdf.write(line + System.lineSeparator());
+	            }
+	            writerdf.close();
+	            for (String line : element.getFileContent()) {
+	                writerfc.write(line + System.lineSeparator());
+	            }
+	            writerdf.close();
+	            writerfc.close();
+	            System.out.println("Successfully wrote lines to files.");
+	        } catch (IOException e) {
+	            System.out.println("An error occurred while writing to the file.");
+	            e.printStackTrace();
+	        }
+
+	
 		
 		
 	}
