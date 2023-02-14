@@ -15,8 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.maa;
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -50,7 +50,8 @@ public class ModelArchitectureAnalysisMain extends AbstractService<TeetimeConfig
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
+        // we do not use a configuration file
         return null;
     }
 
@@ -69,12 +70,11 @@ public class ModelArchitectureAnalysisMain extends AbstractService<TeetimeConfig
             this.logger.error("Output path '{}' cannot be found.", this.settings.getOutputModelPath().toString());
             return false;
         }
-        if (this.settings.getMapFiles() != null) {
-            if (this.settings.getSeparator() == null) {
-                this.logger.error("Missing separator string for grouping CSV file.");
-                return false;
-            }
+        if ((this.settings.getMapFiles() != null) && (this.settings.getSeparator() == null)) {
+            this.logger.error("Missing separator string for grouping CSV file.");
+            return false;
         }
+
         return true;
     }
 

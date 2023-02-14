@@ -15,11 +15,11 @@
  ***************************************************************************/
 package org.oceandsl.tools.dar;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 
 import com.beust.jcommander.JCommander;
 
@@ -74,10 +74,11 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
     }
 
     private String createModuleModesString(final List<EModuleMode> moduleModes) {
-        if (moduleModes.size() > 0) {
+        if (!moduleModes.isEmpty()) {
             String modes = null;
             for (final EModuleMode mode : moduleModes) {
-                final String modeName = mode.name().toLowerCase().substring(0, mode.name().indexOf('_'));
+                final String modeName = mode.name().toLowerCase(Locale.getDefault()).substring(0,
+                        mode.name().indexOf('_'));
                 if (modes == null) {
                     modes = modeName;
                 } else {
@@ -91,7 +92,7 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }
@@ -113,8 +114,15 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
                 return false;
             }
         } else {
-            if (!Files.isDirectory(this.settings.getInputFile())) {
-                this.logger.error("Input path {} is not a directory", this.settings.getInputFile());
+            this.settings.getInputPaths().forEach(path -> {
+                if (!Files.isDirectory(path)) {
+                    this.logger.error("Input path {} is not a directory", path.toString());
+                } else {
+                    this.settings.getInputFiles().add(path.toFile());
+                }
+            });
+            if (this.settings.getInputFiles().isEmpty()) {
+                this.logger.error("No valid input directories found.");
                 return false;
             }
         }

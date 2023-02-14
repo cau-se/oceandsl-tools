@@ -20,24 +20,28 @@ import java.util.Objects;
 import org.mosim.refactorlizar.architecture.evaluation.graphs.Node;
 
 import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeployedStorage;
+import kieker.model.analysismodel.execution.OperationDataflow;
 
 /**
  * Central node class for graphs.
  *
  * @param <T>
  *            type representing modules
- * @param <R>
+ * @param <E>
  *            type representing nodes
  *
  * @author Reiner Jung
  * @since 1.0
  */
-public class KiekerNode<T> implements Node<T> {
+public class KiekerNode<T, E> implements Node<T> {
 
-    private final DeployedOperation member;
+    private final E member;
 
-    /** @param member */
-    public KiekerNode(final DeployedOperation member) {
+    /**
+     * @param member
+     */
+    public KiekerNode(final E member) {
         this.member = member;
     }
 
@@ -68,7 +72,7 @@ public class KiekerNode<T> implements Node<T> {
         }
 
         @SuppressWarnings("unchecked")
-        final KiekerNode<T> other = (KiekerNode<T>) obj;
+        final KiekerNode<T, E> other = (KiekerNode<T, E>) obj;
         return Objects.equals(this.member, other.member);
     }
 
@@ -76,13 +80,28 @@ public class KiekerNode<T> implements Node<T> {
     @Override
     public T getModule() {
         if (this.member != null) {
-            return (T) this.member.eContainer().eContainer();
+            if (this.member instanceof DeployedOperation) {
+                final DeployedOperation memberLocal = (DeployedOperation) this.member;
+                return (T) memberLocal.eContainer().eContainer();
+
+            } else if (this.member instanceof DeployedStorage) {
+                final DeployedStorage memberLocal = (DeployedStorage) this.member;
+                return (T) memberLocal.eContainer().eContainer();
+            } else {
+                System.err.println(
+                        "[Kieker Node Object] Invalid Kieker Node detected! Member is either an instance of DeployedOperation nor DeployedStorage.");
+                return null;
+            }
         } else {
             return null;
         }
     }
 
-    public DeployedOperation getMember() {
+    public E getMember() {
         return this.member;
+    }
+
+    public boolean isOperation() {
+        return this.member instanceof OperationDataflow;
     }
 }

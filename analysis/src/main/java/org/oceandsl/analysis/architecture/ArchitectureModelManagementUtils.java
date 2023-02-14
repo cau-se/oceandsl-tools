@@ -15,6 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.analysis.architecture; // NOPMD excessiveImports
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -96,6 +97,11 @@ public final class ArchitectureModelManagementUtils {
         // utility class do not instantiate
     }
 
+    public static ModelRepository createModelRepository(final String experimentName, final boolean mapFile) {
+        return ArchitectureModelManagementUtils
+                .createModelRepository(String.format("%s-%s", experimentName, mapFile ? "map" : "file"));
+    }
+
     public static ModelRepository createModelRepository(final String repositoryName) {
         final ModelRepository repository = new ModelRepository(repositoryName);
         repository.register(ArchitectureModelManagementUtils.TYPE_MODEL_DESCRIPTOR,
@@ -132,23 +138,24 @@ public final class ArchitectureModelManagementUtils {
         packageRegistry.put(SourcePackage.eNS_URI, SourcePackage.eINSTANCE);
 
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.TYPE_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.TYPE_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.ASSEMBLY_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.ASSEMBLY_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.DEPLOYMENT_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.DEPLOYMENT_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.EXECUTION_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.EXECUTION_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.STATISTICS_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.STATISTICS_MODEL_DESCRIPTOR, path, false);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.SOURCE_MODEL_DESCRIPTOR, path);
+                ArchitectureModelManagementUtils.SOURCE_MODEL_DESCRIPTOR, path, false);
 
         return repository;
     }
 
     private static <T extends EObject> void readModel(final ResourceSet resourceSet, final ModelRepository repository,
-            final ModelDescriptor modelDescriptor, final Path path) throws ConfigurationException {
+            final ModelDescriptor modelDescriptor, final Path path, final boolean required)
+            throws ConfigurationException {
         ArchitectureModelManagementUtils.LOGGER.info("Loading model {}", modelDescriptor.getFilename());
         final File modelFile = ArchitectureModelManagementUtils.createReadModelFileHandle(path,
                 modelDescriptor.getFilename());
@@ -168,10 +175,17 @@ public final class ArchitectureModelManagementUtils {
                 iterator.next().eCrossReferences();
             }
         } else {
-            ArchitectureModelManagementUtils.LOGGER.error("Error reading model file {}. File does not exist.",
-                    modelFile.getAbsoluteFile());
-            throw new ConfigurationException(
-                    String.format("Error reading model file %s. File does not exist.", modelFile.getAbsoluteFile()));
+            if (required) {
+                ArchitectureModelManagementUtils.LOGGER.error("Error reading model file {}. File does not exist.",
+                        modelFile.getAbsoluteFile());
+                throw new ConfigurationException(String.format("Error reading model file %s. File does not exist.",
+                        modelFile.getAbsoluteFile()));
+            } else {
+                ArchitectureModelManagementUtils.LOGGER.warn("Warn reading model file {}. File does not exist.",
+                        modelFile.getAbsoluteFile());
+                repository.register(modelDescriptor,
+                        modelDescriptor.getFactory().create(modelDescriptor.getRootClass()));
+            }
         }
     }
 
@@ -184,10 +198,13 @@ public final class ArchitectureModelManagementUtils {
 
         // store models
         final ResourceSet resourceSet = new ResourceSetImpl();
+        resourceSet.setResourceFactoryRegistry(registry);
 
         if (!Files.exists(outputDirectory)) {
             Files.createDirectory(outputDirectory);
         }
+
+        ArchitectureModelManagementUtils.writeEclipseProject(outputDirectory, repository.getName());
 
         ArchitectureModelManagementUtils.writeModel(resourceSet, outputDirectory,
                 ArchitectureModelManagementUtils.TYPE_MODEL_DESCRIPTOR, repository);
@@ -201,6 +218,24 @@ public final class ArchitectureModelManagementUtils {
                 ArchitectureModelManagementUtils.STATISTICS_MODEL_DESCRIPTOR, repository);
         ArchitectureModelManagementUtils.writeModel(resourceSet, outputDirectory,
                 ArchitectureModelManagementUtils.SOURCE_MODEL_DESCRIPTOR, repository);
+    }
+
+    private static void writeEclipseProject(final Path outputDirectory, final String name) throws IOException {
+        final Path projectPath = outputDirectory.resolve(".project");
+        try (BufferedWriter writer = Files.newBufferedWriter(projectPath)) {
+            writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            writer.write("<projectDescription>\n");
+            writer.write(String.format("    <name>%s</name>\n", name));
+            writer.write("    <comment></comment>\n");
+            writer.write("    <projects>\n");
+            writer.write("    </projects>\n");
+            writer.write("    <buildSpec>\n");
+            writer.write("    </buildSpec>\n");
+            writer.write("    <natures>\n");
+            writer.write("    </natures>\n");
+            writer.write("</projectDescription>\n");
+            writer.close();
+        }
     }
 
     private static <T extends EObject> void writeModel(final ResourceSet resourceSet, final Path outputDirectory,
@@ -228,4 +263,5 @@ public final class ArchitectureModelManagementUtils {
     private static File createWriteModelFileHandle(final Path path, final String filename) {
         return new File(path.toFile().getAbsolutePath() + File.separator + filename);
     }
+
 }

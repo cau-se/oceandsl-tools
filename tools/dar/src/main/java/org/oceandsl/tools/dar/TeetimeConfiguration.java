@@ -15,7 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.dar;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +34,12 @@ import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtrac
 import kieker.analysis.architecture.recovery.signature.JavaComponentSignatureExtractor;
 import kieker.analysis.architecture.recovery.signature.JavaOperationSignatureExtractor;
 import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.generic.DynamicEventDispatcher;
+import kieker.analysis.generic.IEventMatcher;
+import kieker.analysis.generic.ImplementsEventMatcher;
 import kieker.analysis.statistics.CallStatisticsStage;
 import kieker.common.record.IMonitoringRecord;
+import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.common.record.flow.IFlowRecord;
 import kieker.model.analysismodel.assembly.AssemblyPackage;
 import kieker.model.analysismodel.deployment.DeploymentPackage;
@@ -48,7 +51,7 @@ import kieker.tools.source.LogsReaderCompositeStage;
 
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
-import teetime.stage.InstanceOfFilter;
+import teetime.stage.basic.merger.Merger;
 
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.EModuleMode;
@@ -59,9 +62,11 @@ import org.oceandsl.tools.dar.extractors.ELFOperationSignatureExtractor;
 import org.oceandsl.tools.dar.extractors.PythonComponentSignatureExtractor;
 import org.oceandsl.tools.dar.extractors.PythonOperationSignatureExtractor;
 import org.oceandsl.tools.dar.signature.processor.FileBasedSignatureProcessor;
+import org.oceandsl.tools.dar.signature.processor.JavaSignatureProcessor;
 import org.oceandsl.tools.dar.signature.processor.MapBasedSignatureProcessor;
 import org.oceandsl.tools.dar.signature.processor.ModuleSignatureProcessor;
 import org.oceandsl.tools.dar.stages.OperationAndCallGeneratorStage;
+import org.oceandsl.tools.dar.stages.OperationExecutionTraceConverterStage;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -77,9 +82,7 @@ public class TeetimeConfiguration extends Configuration {
         final OutputPort<? extends IMonitoringRecord> readerPort;
 
         logger.info("Processing Kieker log");
-        final List<File> files = new ArrayList<>();
-        files.add(settings.getInputFile().toFile());
-        final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(files, false, 8192);
+        final LogsReaderCompositeStage reader = new LogsReaderCompositeStage(settings.getInputFiles(), false, 8192);
 
         if (settings.getModelExecutable() != null) {
             final RewriteBeforeAndAfterEventsStage rewriteBeforeAndAfterEventsStage = new RewriteBeforeAndAfterEventsStage(
@@ -90,8 +93,18 @@ public class TeetimeConfiguration extends Configuration {
             readerPort = reader.getOutputPort();
         }
 
-        final InstanceOfFilter<IMonitoringRecord, IFlowRecord> instanceOfFilter = new InstanceOfFilter<>(
-                IFlowRecord.class);
+        final DynamicEventDispatcher eventDispatcher = new DynamicEventDispatcher(null, false, true, false);
+        final IEventMatcher<IFlowRecord> flowEventMatcher = new ImplementsEventMatcher<>(IFlowRecord.class, null);
+        final IEventMatcher<OperationExecutionRecord> operationExecutionRecordMatcher = new ImplementsEventMatcher<>(
+                OperationExecutionRecord.class, null);
+
+        eventDispatcher.registerOutput(flowEventMatcher);
+        eventDispatcher.registerOutput(operationExecutionRecordMatcher);
+
+        final OperationExecutionTraceConverterStage operationExecutionTraceConverterStage = new OperationExecutionTraceConverterStage();
+
+        final Merger<IFlowRecord> merger = new Merger<>();
+        merger.declareActive();
 
         final CountEventsStage<IFlowRecord> counter = new CountEventsStage<>(1000000);
 
@@ -128,8 +141,11 @@ public class TeetimeConfiguration extends Configuration {
                 repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
 
         /** connecting ports. */
-        this.connectPorts(readerPort, instanceOfFilter.getInputPort());
-        this.connectPorts(instanceOfFilter.getMatchedOutputPort(), counter.getInputPort());
+        this.connectPorts(readerPort, eventDispatcher.getInputPort());
+        this.connectPorts(flowEventMatcher.getOutputPort(), merger.getNewInputPort());
+        this.connectPorts(operationExecutionRecordMatcher.getOutputPort(),
+                operationExecutionTraceConverterStage.getInputPort());
+        this.connectPorts(operationExecutionTraceConverterStage.getOutputPort(), counter.getInputPort());
         this.connectPorts(counter.getOutputPort(), operationAndCallStage.getInputPort());
 
         this.connectPorts(operationAndCallStage.getOperationOutputPort(), typeModelAssemblerStage.getInputPort());
@@ -154,6 +170,9 @@ public class TeetimeConfiguration extends Configuration {
                 processors.add(this.createModuleBasedProcessor(logger, settings));
                 break;
             case JAVA_CLASS_MODE:
+                processors.add(this.createJavaProcessor(logger, settings));
+                break;
+            case JAVA_CLASS_LONG_MODE:
                 break;
             case PYTHON_CLASS_MODE:
                 break;
@@ -165,6 +184,11 @@ public class TeetimeConfiguration extends Configuration {
         }
 
         return processors;
+    }
+
+    private AbstractSignatureProcessor createJavaProcessor(final Logger logger, final Settings settings) {
+        logger.info("Java class based flat component definition");
+        return new JavaSignatureProcessor(settings.isCaseInsensitive());
     }
 
     private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger, final Settings settings) {

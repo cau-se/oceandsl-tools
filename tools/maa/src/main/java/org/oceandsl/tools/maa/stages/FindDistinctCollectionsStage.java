@@ -59,33 +59,8 @@ public class FindDistinctCollectionsStage extends
         final Map<OperationType, Set<ComponentType>> calleeToCallerComponentSetMap = this
                 .createCalleeOperationToCallerComponentSetMap(connections);
 
-        for (final Entry<OperationType, Set<ComponentType>> entry : calleeToCallerComponentSetMap.entrySet()) {
-            System.err.printf("%s:%s ", entry.getKey().getComponentType().getSignature(),
-                    entry.getKey().getSignature());
-            for (final ComponentType caller : entry.getValue()) {
-                System.err.printf("r:%s ", caller.getSignature());
-            }
-            System.err.println();
-        }
-
         final Map<ComponentType, Map<Set<ComponentType>, Set<OperationType>>> protointerfaceSourceGroupedOperations = this
                 .groupCalleesByCallerComponentSet(providedOperationsMap, calleeToCallerComponentSetMap);
-
-        for (final Entry<ComponentType, Map<Set<ComponentType>, Set<OperationType>>> entry : protointerfaceSourceGroupedOperations
-                .entrySet()) {
-            System.err.printf("callee:%s\n", entry.getKey().getSignature());
-            for (final Entry<Set<ComponentType>, Set<OperationType>> callerEntry : entry.getValue().entrySet()) {
-                System.err.print("\tcaller components: ");
-                for (final ComponentType caller : callerEntry.getKey()) {
-                    System.err.printf("r:%s ", caller.getSignature());
-                }
-                System.err.print("\n\toperations: ");
-                for (final OperationType op : callerEntry.getValue()) {
-                    System.err.printf("o:%s ", op.getSignature());
-                }
-                System.err.println();
-            }
-        }
 
         this.outputPort.send(new Tuple<>(repository, protointerfaceSourceGroupedOperations));
     }
@@ -96,14 +71,13 @@ public class FindDistinctCollectionsStage extends
      *
      * @param providedOperationsMap
      * @param calleeToCallerComponentSetMap
-     * @return
+     * @return returns map
      */
     private Map<ComponentType, Map<Set<ComponentType>, Set<OperationType>>> groupCalleesByCallerComponentSet(
             final Map<ComponentType, Set<OperationType>> providedOperationsMap,
             final Map<OperationType, Set<ComponentType>> calleeToCallerComponentSetMap) {
         final Map<ComponentType, Map<Set<ComponentType>, Set<OperationType>>> protointerfaceSourceGroupedOperations = new HashMap<>();
         providedOperationsMap.entrySet().forEach(entry -> {
-            System.err.printf(">> ce:%s\n", entry.getKey().getSignature());
             protointerfaceSourceGroupedOperations.put(entry.getKey(), // callee component
                     this.createSourceGroupedOperations(entry.getValue(), // callee operation
                             calleeToCallerComponentSetMap));
@@ -126,11 +100,6 @@ public class FindDistinctCollectionsStage extends
         final Map<Set<ComponentType>, Set<OperationType>> callerComponentsToCalleesMap = new HashMap<>();
         providedOperations.forEach(providedOperation -> {
             final Set<ComponentType> callerComponentSet = calleeToCallerComponentSetMap.get(providedOperation);
-            System.err.printf("\t callers ");
-            for (final ComponentType ct : callerComponentSet) {
-                System.err.printf("cr:%s ", ct.getSignature());
-            }
-            System.err.println();
             final Set<OperationType> operationTypeSet = this.findOperationSetByCallerComponentSet(callerComponentSet,
                     callerComponentsToCalleesMap);
             operationTypeSet.add(providedOperation);

@@ -23,6 +23,8 @@ import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.source.SourceModel;
 import kieker.model.analysismodel.source.SourcePackage;
 
@@ -70,6 +72,18 @@ public class IntersectSelector implements IGraphElementSelector {
         return this.isSelected(sources);
     }
 
+    @Override
+    public boolean edgeIsSelected(final OperationDataflow value) {
+        final EList<String> sources = this.sourceModel.getSources().get(value);
+        return this.isSelected(sources);
+    }
+
+    @Override
+    public boolean edgeIsSelected(final StorageDataflow value) {
+        final EList<String> sources = this.sourceModel.getSources().get(value);
+        return this.isSelected(sources);
+    }
+
     private boolean isSelected(final EList<String> sources) {
         return this.groupA.stream().allMatch(element -> sources.stream().anyMatch(source -> source.equals(element)))
                 && this.groupB.stream()
@@ -87,7 +101,7 @@ public class IntersectSelector implements IGraphElementSelector {
             return this.isGroupSelected(sources, this.groupA) && this.isGroupSelected(sources, this.groupB);
         } else if (group == 1) {
             return this.isGroupSelected(sources, this.groupA);
-        } else if (group == 1) {
+        } else if (group == 2) {
             return this.isGroupSelected(sources, this.groupB);
         } else {
             return false;

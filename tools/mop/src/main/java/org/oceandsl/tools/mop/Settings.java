@@ -16,7 +16,9 @@
 package org.oceandsl.tools.mop;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
@@ -40,6 +42,15 @@ public class Settings { // NOPMD data class
     @Parameter(names = { "-e", "--experiment" }, required = true, description = "Experiment name")
     private String experimentName;
 
+    @Parameter(converter = OperationConverter.class, description = "Specify an operation merge, select")
+    private EOperation operation;
+
+    @Parameter(names = { "-s",
+            "--selection-criteria" }, required = false, converter = PathConverter.class, description = "Element selection criteria file")
+    private Path selectionCriteriaPath;
+
+    final private List<Pattern> selectionCriteriaPatterns = new ArrayList<>();
+
     public List<Path> getInputModelPaths() {
         return this.inputModelPaths;
     }
@@ -50,6 +61,18 @@ public class Settings { // NOPMD data class
 
     public String getExperimentName() {
         return this.experimentName;
+    }
+
+    public EOperation getOperation() {
+        return this.operation;
+    }
+
+    public Path getSelectionCriteriaPath() {
+        return this.selectionCriteriaPath;
+    }
+
+    public List<Pattern> getSelectionCriteriaPatterns() {
+        return this.selectionCriteriaPatterns;
     }
 
 }

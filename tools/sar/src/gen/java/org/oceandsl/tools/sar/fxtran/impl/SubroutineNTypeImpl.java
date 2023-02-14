@@ -4,10 +4,8 @@ package org.oceandsl.tools.sar.fxtran.impl;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
@@ -16,23 +14,22 @@ import org.oceandsl.tools.sar.fxtran.NType;
 import org.oceandsl.tools.sar.fxtran.SubroutineNType;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Subroutine NType</b></em>'.
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>Subroutine NType</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.oceandsl.tools.sar.fxtran.impl.SubroutineNTypeImpl#getN <em>N</em>}</li>
+ * <li>{@link org.oceandsl.tools.sar.fxtran.impl.SubroutineNTypeImpl#getN <em>N</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class SubroutineNTypeImpl extends MinimalEObjectImpl.Container implements SubroutineNType {
     /**
-     * The cached value of the '{@link #getN() <em>N</em>}' containment reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The cached value of the '{@link #getN() <em>N</em>}' containment reference. <!--
+     * begin-user-doc --> <!-- end-user-doc -->
+     *
      * @see #getN()
      * @generated
      * @ordered
@@ -40,8 +37,8 @@ public class SubroutineNTypeImpl extends MinimalEObjectImpl.Container implements
     protected NType n;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     protected SubroutineNTypeImpl() {
@@ -49,8 +46,8 @@ public class SubroutineNTypeImpl extends MinimalEObjectImpl.Container implements
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
@@ -59,118 +56,132 @@ public class SubroutineNTypeImpl extends MinimalEObjectImpl.Container implements
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public NType getN() {
-        return n;
+        return this.n;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
-    public NotificationChain basicSetN(NType newN, NotificationChain msgs) {
-        NType oldN = n;
-        n = newN;
-        if (eNotificationRequired()) {
-            ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, FxtranPackage.SUBROUTINE_NTYPE__N, oldN, newN);
-            if (msgs == null) msgs = notification; else msgs.add(notification);
+    public NotificationChain basicSetN(final NType newN, NotificationChain msgs) {
+        final NType oldN = this.n;
+        this.n = newN;
+        if (this.eNotificationRequired()) {
+            final ENotificationImpl notification = new ENotificationImpl(this, Notification.SET,
+                    FxtranPackage.SUBROUTINE_NTYPE__N, oldN, newN);
+            if (msgs == null) {
+                msgs = notification;
+            } else {
+                msgs.add(notification);
+            }
         }
         return msgs;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setN(NType newN) {
-        if (newN != n) {
-            NotificationChain msgs = null;
-            if (n != null)
-                msgs = ((InternalEObject)n).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - FxtranPackage.SUBROUTINE_NTYPE__N, null, msgs);
-            if (newN != null)
-                msgs = ((InternalEObject)newN).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - FxtranPackage.SUBROUTINE_NTYPE__N, null, msgs);
-            msgs = basicSetN(newN, msgs);
-            if (msgs != null) msgs.dispatch();
-        }
-        else if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, FxtranPackage.SUBROUTINE_NTYPE__N, newN, newN));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+    public void setN(final NType newN) {
+        if (newN != this.n) {
+            NotificationChain msgs = null;
+            if (this.n != null) {
+                msgs = ((InternalEObject) this.n).eInverseRemove(this,
+                        EOPPOSITE_FEATURE_BASE - FxtranPackage.SUBROUTINE_NTYPE__N, null, msgs);
+            }
+            if (newN != null) {
+                msgs = ((InternalEObject) newN).eInverseAdd(this,
+                        EOPPOSITE_FEATURE_BASE - FxtranPackage.SUBROUTINE_NTYPE__N, null, msgs);
+            }
+            msgs = this.basicSetN(newN, msgs);
+            if (msgs != null) {
+                msgs.dispatch();
+            }
+        } else if (this.eNotificationRequired()) {
+            this.eNotify(new ENotificationImpl(this, Notification.SET, FxtranPackage.SUBROUTINE_NTYPE__N, newN, newN));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @generated
+     */
+    @Override
+    public NotificationChain eInverseRemove(final InternalEObject otherEnd, final int featureID,
+            final NotificationChain msgs) {
         switch (featureID) {
-            case FxtranPackage.SUBROUTINE_NTYPE__N:
-                return basicSetN(null, msgs);
+        case FxtranPackage.SUBROUTINE_NTYPE__N:
+            return this.basicSetN(null, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public Object eGet(int featureID, boolean resolve, boolean coreType) {
+    public Object eGet(final int featureID, final boolean resolve, final boolean coreType) {
         switch (featureID) {
-            case FxtranPackage.SUBROUTINE_NTYPE__N:
-                return getN();
+        case FxtranPackage.SUBROUTINE_NTYPE__N:
+            return this.getN();
         }
         return super.eGet(featureID, resolve, coreType);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public void eSet(int featureID, Object newValue) {
+    public void eSet(final int featureID, final Object newValue) {
         switch (featureID) {
-            case FxtranPackage.SUBROUTINE_NTYPE__N:
-                setN((NType)newValue);
-                return;
+        case FxtranPackage.SUBROUTINE_NTYPE__N:
+            this.setN((NType) newValue);
+            return;
         }
         super.eSet(featureID, newValue);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public void eUnset(int featureID) {
+    public void eUnset(final int featureID) {
         switch (featureID) {
-            case FxtranPackage.SUBROUTINE_NTYPE__N:
-                setN((NType)null);
-                return;
+        case FxtranPackage.SUBROUTINE_NTYPE__N:
+            this.setN((NType) null);
+            return;
         }
         super.eUnset(featureID);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public boolean eIsSet(int featureID) {
+    public boolean eIsSet(final int featureID) {
         switch (featureID) {
-            case FxtranPackage.SUBROUTINE_NTYPE__N:
-                return n != null;
+        case FxtranPackage.SUBROUTINE_NTYPE__N:
+            return this.n != null;
         }
         return super.eIsSet(featureID);
     }
 
-} //SubroutineNTypeImpl
+} // SubroutineNTypeImpl

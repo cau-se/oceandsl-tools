@@ -9,7 +9,7 @@ import kieker.common.record.io.IValueSerializer;
 
 /**
  * @author Reiner Jung API compatibility: Kieker 1.15.0
- * 
+ *
  * @since 1.0
  */
 public class OperationCallEvent extends AbstractMonitoringRecord {
@@ -44,7 +44,7 @@ public class OperationCallEvent extends AbstractMonitoringRecord {
 
     /**
      * Creates a new instance of this class using the given parameters.
-     * 
+     *
      * @param sourceComponent
      *            sourceComponent
      * @param sourceOperation
@@ -126,16 +126,7 @@ public class OperationCallEvent extends AbstractMonitoringRecord {
         }
 
         final OperationCallEvent castedRecord = (OperationCallEvent) obj;
-        if (this.getLoggingTimestamp() != castedRecord.getLoggingTimestamp()) {
-            return false;
-        }
-        if (!this.getSourceComponent().equals(castedRecord.getSourceComponent())) {
-            return false;
-        }
-        if (!this.getSourceOperation().equals(castedRecord.getSourceOperation())) {
-            return false;
-        }
-        if (!this.getTargetComponent().equals(castedRecord.getTargetComponent())) {
+        if ((this.getLoggingTimestamp() != castedRecord.getLoggingTimestamp()) || !this.getSourceComponent().equals(castedRecord.getSourceComponent()) || !this.getSourceOperation().equals(castedRecord.getSourceOperation()) || !this.getTargetComponent().equals(castedRecord.getTargetComponent())) {
             return false;
         }
         if (!this.getTargetOperation().equals(castedRecord.getTargetOperation())) {

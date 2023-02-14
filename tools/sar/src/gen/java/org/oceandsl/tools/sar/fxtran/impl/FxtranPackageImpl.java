@@ -3,998 +3,990 @@
 package org.oceandsl.tools.sar.fxtran.impl;
 
 import java.io.IOException;
-
 import java.net.URL;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-
 import org.eclipse.emf.ecore.resource.Resource;
-
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
-
 import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 
 import org.oceandsl.tools.sar.fxtran.FxtranFactory;
 import org.oceandsl.tools.sar.fxtran.FxtranPackage;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model <b>Package</b>.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model <b>Package</b>. <!-- end-user-doc -->
+ *
  * @generated
  */
 public class FxtranPackageImpl extends EPackageImpl implements FxtranPackage {
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     protected String packageFilename = "fxtran.ecore";
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass actionStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass acValueLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass acValueTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass allocateStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass argNTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass argSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass argTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass arrayConstructorETypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass arrayRTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass arraySpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass aStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass attributeTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass callStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass caseETypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass caseSelectorTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass caseStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass caseValueRangeLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass caseValueRangeTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass caseValueTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass charSelectorTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass charSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass closeSpecSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass closeSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass closeStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass componentDeclStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass componentRTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass conditionETypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass connectSpecSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass connectSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass cycleStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass deallocateStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass derivedTSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass documentRootEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass doStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass doVTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass dummyArgLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass e1TypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass e2TypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass elementLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass elementTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass elseIfStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass endDoStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass enDeclLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass enDeclTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass endForallStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass endFunctionStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass endInterfaceStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass endModuleStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass endProgramStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass endSelectCaseStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass endSubroutineStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass endTStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass enltTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass ennTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass enTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass errorTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass fileTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass forallConstructStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass forallStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass forallTripletSpecLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass forallTripletSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass functionNTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass functionStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass ifStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass ifThenStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass initETypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass inquireStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass inquirySpecSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass inquirySpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass interfaceStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass intrinsicTSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass ioControlSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass ioControlTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass iteratorDefinitionLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass iteratorElementTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass iteratorTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass kSelectorTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass kSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass labelTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass literalETypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass lowerBoundTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass maskETypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass moduleNTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass moduleProcedureNLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass moduleStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass namedETypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass namelistGroupNTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass namelistGroupObjLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass namelistGroupObjNTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass namelistGroupObjTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass namelistStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass nTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass nullifyStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass objectTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass openStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass opETypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass opTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass outputItemLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass outputItemTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass parensETypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass parensRTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass pointerAStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass pointerStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass procedureDesignatorTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass procedureStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass programNTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass programStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass publicStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass readStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass renameLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass renameTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass resultSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass rltTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass sectionSubscriptLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass sectionSubscriptTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass selectCaseStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass shapeSpecLTTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass shapeSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass stopStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass stringETypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass subroutineNTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass subroutineStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass tDeclStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass testETypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass tnTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass tSpecTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass tStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass upperBoundTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass useNTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass useStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass vnTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass vTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass whereConstructStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass whereStmtTypeEClass = null;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private EClass writeStmtTypeEClass = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
-     * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
-     * package URI value.
-     * <p>Note: the correct way to create the package is via the static
-     * factory method {@link #init init()}, which also performs
-     * initialization of the package, or returns the registered package,
-     * if one already exists.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package package URI
+     * value.
+     * <p>
+     * Note: the correct way to create the package is via the static factory method {@link #init
+     * init()}, which also performs initialization of the package, or returns the registered
+     * package, if one already exists. <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @see org.eclipse.emf.ecore.EPackage.Registry
      * @see org.oceandsl.tools.sar.fxtran.FxtranPackage#eNS_URI
      * @see #init()
@@ -1005,28 +997,34 @@ public class FxtranPackageImpl extends EPackageImpl implements FxtranPackage {
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private static boolean isInited = false;
 
     /**
-     * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
+     * Creates, registers, and initializes the <b>Package</b> for this model, and for any others
+     * upon which it depends.
      *
-     * <p>This method is used to initialize {@link FxtranPackage#eINSTANCE} when that field is accessed.
-     * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <p>
+     * This method is used to initialize {@link FxtranPackage#eINSTANCE} when that field is
+     * accessed. Clients should not invoke it directly. Instead, they should simply access that
+     * field to obtain the package. <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @see #eNS_URI
      * @generated
      */
     public static FxtranPackage init() {
-        if (isInited) return (FxtranPackage)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI);
+        if (isInited) {
+            return (FxtranPackage) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI);
+        }
 
         // Obtain or create and register package
-        Object registeredFxtranPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-        FxtranPackageImpl theFxtranPackage = registeredFxtranPackage instanceof FxtranPackageImpl ? (FxtranPackageImpl)registeredFxtranPackage : new FxtranPackageImpl();
+        final Object registeredFxtranPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+        final FxtranPackageImpl theFxtranPackage = registeredFxtranPackage instanceof FxtranPackageImpl
+                ? (FxtranPackageImpl) registeredFxtranPackage
+                : new FxtranPackageImpl();
 
         isInited = true;
 
@@ -1048,7405 +1046,8312 @@ public class FxtranPackageImpl extends EPackageImpl implements FxtranPackage {
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getActionStmtType() {
-        if (actionStmtTypeEClass == null) {
-            actionStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(0);
+        if (this.actionStmtTypeEClass == null) {
+            this.actionStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(0);
         }
-        return actionStmtTypeEClass;
+        return this.actionStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getActionStmtType_ReturnStmt() {
-        return (EAttribute)getActionStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getActionStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getActionStmtType_WhereStmt() {
-        return (EReference)getActionStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getActionStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getActionStmtType_AStmt() {
-        return (EReference)getActionStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getActionStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getActionStmtType_AllocateStmt() {
-        return (EReference)getActionStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getActionStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getActionStmtType_CallStmt() {
-        return (EReference)getActionStmtType().getEStructuralFeatures().get(4);
+        return (EReference) this.getActionStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getActionStmtType_DeallocateStmt() {
-        return (EReference)getActionStmtType().getEStructuralFeatures().get(5);
+        return (EReference) this.getActionStmtType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getActionStmtType_ExitStmt() {
-        return (EAttribute)getActionStmtType().getEStructuralFeatures().get(6);
+        return (EAttribute) this.getActionStmtType().getEStructuralFeatures().get(6);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getActionStmtType_PointerAStmt() {
-        return (EReference)getActionStmtType().getEStructuralFeatures().get(7);
+        return (EReference) this.getActionStmtType().getEStructuralFeatures().get(7);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getActionStmtType_CycleStmt() {
-        return (EReference)getActionStmtType().getEStructuralFeatures().get(8);
+        return (EReference) this.getActionStmtType().getEStructuralFeatures().get(8);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getAcValueLTType() {
-        if (acValueLTTypeEClass == null) {
-            acValueLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(1);
+        if (this.acValueLTTypeEClass == null) {
+            this.acValueLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(1);
         }
-        return acValueLTTypeEClass;
+        return this.acValueLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getAcValueLTType_Mixed() {
-        return (EAttribute)getAcValueLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getAcValueLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getAcValueLTType_Group() {
-        return (EAttribute)getAcValueLTType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getAcValueLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getAcValueLTType_C() {
-        return (EAttribute)getAcValueLTType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getAcValueLTType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getAcValueLTType_Cnt() {
-        return (EAttribute)getAcValueLTType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getAcValueLTType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getAcValueLTType_AcValue() {
-        return (EReference)getAcValueLTType().getEStructuralFeatures().get(4);
+        return (EReference) this.getAcValueLTType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getAcValueType() {
-        if (acValueTypeEClass == null) {
-            acValueTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(2);
+        if (this.acValueTypeEClass == null) {
+            this.acValueTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(2);
         }
-        return acValueTypeEClass;
+        return this.acValueTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getAcValueType_LiteralE() {
-        return (EReference)getAcValueType().getEStructuralFeatures().get(0);
+        return (EReference) this.getAcValueType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getAcValueType_NamedE() {
-        return (EReference)getAcValueType().getEStructuralFeatures().get(1);
+        return (EReference) this.getAcValueType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getAcValueType_OpE() {
-        return (EReference)getAcValueType().getEStructuralFeatures().get(2);
+        return (EReference) this.getAcValueType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getAcValueType_ParensE() {
-        return (EReference)getAcValueType().getEStructuralFeatures().get(3);
+        return (EReference) this.getAcValueType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getAllocateStmtType() {
-        if (allocateStmtTypeEClass == null) {
-            allocateStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(3);
+        if (this.allocateStmtTypeEClass == null) {
+            this.allocateStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(3);
         }
-        return allocateStmtTypeEClass;
+        return this.allocateStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getAllocateStmtType_Mixed() {
-        return (EAttribute)getAllocateStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getAllocateStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getAllocateStmtType_ArgSpec() {
-        return (EReference)getAllocateStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getAllocateStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getArgNType() {
-        if (argNTypeEClass == null) {
-            argNTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(4);
+        if (this.argNTypeEClass == null) {
+            this.argNTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(4);
         }
-        return argNTypeEClass;
+        return this.argNTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArgNType_N() {
-        return (EReference)getArgNType().getEStructuralFeatures().get(0);
+        return (EReference) this.getArgNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArgNType_K() {
-        return (EAttribute)getArgNType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getArgNType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArgNType_N1() {
-        return (EAttribute)getArgNType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getArgNType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getArgSpecType() {
-        if (argSpecTypeEClass == null) {
-            argSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(5);
+        if (this.argSpecTypeEClass == null) {
+            this.argSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(5);
         }
-        return argSpecTypeEClass;
+        return this.argSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArgSpecType_Mixed() {
-        return (EAttribute)getArgSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getArgSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArgSpecType_Group() {
-        return (EAttribute)getArgSpecType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getArgSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArgSpecType_Cnt() {
-        return (EAttribute)getArgSpecType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getArgSpecType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArgSpecType_Arg() {
-        return (EReference)getArgSpecType().getEStructuralFeatures().get(3);
+        return (EReference) this.getArgSpecType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getArgType() {
-        if (argTypeEClass == null) {
-            argTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(6);
+        if (this.argTypeEClass == null) {
+            this.argTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(6);
         }
-        return argTypeEClass;
+        return this.argTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArgType_Mixed() {
-        return (EAttribute)getArgType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getArgType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArgType_Group() {
-        return (EAttribute)getArgType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getArgType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArgType_ArgN() {
-        return (EReference)getArgType().getEStructuralFeatures().get(2);
+        return (EReference) this.getArgType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArgType_ArrayConstructorE() {
-        return (EReference)getArgType().getEStructuralFeatures().get(3);
+        return (EReference) this.getArgType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArgType_LiteralE() {
-        return (EReference)getArgType().getEStructuralFeatures().get(4);
+        return (EReference) this.getArgType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArgType_NamedE() {
-        return (EReference)getArgType().getEStructuralFeatures().get(5);
+        return (EReference) this.getArgType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArgType_OpE() {
-        return (EReference)getArgType().getEStructuralFeatures().get(6);
+        return (EReference) this.getArgType().getEStructuralFeatures().get(6);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArgType_ParensE() {
-        return (EReference)getArgType().getEStructuralFeatures().get(7);
+        return (EReference) this.getArgType().getEStructuralFeatures().get(7);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArgType_StringE() {
-        return (EReference)getArgType().getEStructuralFeatures().get(8);
+        return (EReference) this.getArgType().getEStructuralFeatures().get(8);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getArrayConstructorEType() {
-        if (arrayConstructorETypeEClass == null) {
-            arrayConstructorETypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(7);
+        if (this.arrayConstructorETypeEClass == null) {
+            this.arrayConstructorETypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(7);
         }
-        return arrayConstructorETypeEClass;
+        return this.arrayConstructorETypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArrayConstructorEType_Mixed() {
-        return (EAttribute)getArrayConstructorEType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getArrayConstructorEType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArrayConstructorEType_Group() {
-        return (EAttribute)getArrayConstructorEType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getArrayConstructorEType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArrayConstructorEType_C() {
-        return (EAttribute)getArrayConstructorEType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getArrayConstructorEType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArrayConstructorEType_Cnt() {
-        return (EAttribute)getArrayConstructorEType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getArrayConstructorEType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArrayConstructorEType_AcValueLT() {
-        return (EReference)getArrayConstructorEType().getEStructuralFeatures().get(4);
+        return (EReference) this.getArrayConstructorEType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getArrayRType() {
-        if (arrayRTypeEClass == null) {
-            arrayRTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(8);
+        if (this.arrayRTypeEClass == null) {
+            this.arrayRTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(8);
         }
-        return arrayRTypeEClass;
+        return this.arrayRTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArrayRType_Mixed() {
-        return (EAttribute)getArrayRType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getArrayRType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArrayRType_SectionSubscriptLT() {
-        return (EReference)getArrayRType().getEStructuralFeatures().get(1);
+        return (EReference) this.getArrayRType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getArraySpecType() {
-        if (arraySpecTypeEClass == null) {
-            arraySpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(9);
+        if (this.arraySpecTypeEClass == null) {
+            this.arraySpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(9);
         }
-        return arraySpecTypeEClass;
+        return this.arraySpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getArraySpecType_Mixed() {
-        return (EAttribute)getArraySpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getArraySpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getArraySpecType_ShapeSpecLT() {
-        return (EReference)getArraySpecType().getEStructuralFeatures().get(1);
+        return (EReference) this.getArraySpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getAStmtType() {
-        if (aStmtTypeEClass == null) {
-            aStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(10);
+        if (this.aStmtTypeEClass == null) {
+            this.aStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(10);
         }
-        return aStmtTypeEClass;
+        return this.aStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getAStmtType_E1() {
-        return (EReference)getAStmtType().getEStructuralFeatures().get(0);
+        return (EReference) this.getAStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getAStmtType_A() {
-        return (EAttribute)getAStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getAStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getAStmtType_E2() {
-        return (EReference)getAStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getAStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getAttributeType() {
-        if (attributeTypeEClass == null) {
-            attributeTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(11);
+        if (this.attributeTypeEClass == null) {
+            this.attributeTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(11);
         }
-        return attributeTypeEClass;
+        return this.attributeTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getAttributeType_Mixed() {
-        return (EAttribute)getAttributeType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getAttributeType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getAttributeType_Group() {
-        return (EAttribute)getAttributeType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getAttributeType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getAttributeType_ArraySpec() {
-        return (EReference)getAttributeType().getEStructuralFeatures().get(2);
+        return (EReference) this.getAttributeType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getAttributeType_AttributeN() {
-        return (EAttribute)getAttributeType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getAttributeType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getAttributeType_IntentSpec() {
-        return (EAttribute)getAttributeType().getEStructuralFeatures().get(4);
+        return (EAttribute) this.getAttributeType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCallStmtType() {
-        if (callStmtTypeEClass == null) {
-            callStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(12);
+        if (this.callStmtTypeEClass == null) {
+            this.callStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(12);
         }
-        return callStmtTypeEClass;
+        return this.callStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCallStmtType_Mixed() {
-        return (EAttribute)getCallStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getCallStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCallStmtType_Group() {
-        return (EAttribute)getCallStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getCallStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCallStmtType_ArgSpec() {
-        return (EReference)getCallStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getCallStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCallStmtType_Cnt() {
-        return (EAttribute)getCallStmtType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getCallStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCallStmtType_ProcedureDesignator() {
-        return (EReference)getCallStmtType().getEStructuralFeatures().get(4);
+        return (EReference) this.getCallStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCaseEType() {
-        if (caseETypeEClass == null) {
-            caseETypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(13);
+        if (this.caseETypeEClass == null) {
+            this.caseETypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(13);
         }
-        return caseETypeEClass;
+        return this.caseETypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCaseEType_NamedE() {
-        return (EReference)getCaseEType().getEStructuralFeatures().get(0);
+        return (EReference) this.getCaseEType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCaseSelectorType() {
-        if (caseSelectorTypeEClass == null) {
-            caseSelectorTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(14);
+        if (this.caseSelectorTypeEClass == null) {
+            this.caseSelectorTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(14);
         }
-        return caseSelectorTypeEClass;
+        return this.caseSelectorTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCaseSelectorType_Mixed() {
-        return (EAttribute)getCaseSelectorType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getCaseSelectorType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCaseSelectorType_CaseValueRangeLT() {
-        return (EReference)getCaseSelectorType().getEStructuralFeatures().get(1);
+        return (EReference) this.getCaseSelectorType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCaseStmtType() {
-        if (caseStmtTypeEClass == null) {
-            caseStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(15);
+        if (this.caseStmtTypeEClass == null) {
+            this.caseStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(15);
         }
-        return caseStmtTypeEClass;
+        return this.caseStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCaseStmtType_Mixed() {
-        return (EAttribute)getCaseStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getCaseStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCaseStmtType_CaseSelector() {
-        return (EReference)getCaseStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getCaseStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCaseValueRangeLTType() {
-        if (caseValueRangeLTTypeEClass == null) {
-            caseValueRangeLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(16);
+        if (this.caseValueRangeLTTypeEClass == null) {
+            this.caseValueRangeLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(16);
         }
-        return caseValueRangeLTTypeEClass;
+        return this.caseValueRangeLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCaseValueRangeLTType_Mixed() {
-        return (EAttribute)getCaseValueRangeLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getCaseValueRangeLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCaseValueRangeLTType_CaseValueRange() {
-        return (EReference)getCaseValueRangeLTType().getEStructuralFeatures().get(1);
+        return (EReference) this.getCaseValueRangeLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCaseValueRangeType() {
-        if (caseValueRangeTypeEClass == null) {
-            caseValueRangeTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(17);
+        if (this.caseValueRangeTypeEClass == null) {
+            this.caseValueRangeTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(17);
         }
-        return caseValueRangeTypeEClass;
+        return this.caseValueRangeTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCaseValueRangeType_CaseValue() {
-        return (EReference)getCaseValueRangeType().getEStructuralFeatures().get(0);
+        return (EReference) this.getCaseValueRangeType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCaseValueType() {
-        if (caseValueTypeEClass == null) {
-            caseValueTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(18);
+        if (this.caseValueTypeEClass == null) {
+            this.caseValueTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(18);
         }
-        return caseValueTypeEClass;
+        return this.caseValueTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCaseValueType_LiteralE() {
-        return (EReference)getCaseValueType().getEStructuralFeatures().get(0);
+        return (EReference) this.getCaseValueType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCaseValueType_StringE() {
-        return (EReference)getCaseValueType().getEStructuralFeatures().get(1);
+        return (EReference) this.getCaseValueType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCharSelectorType() {
-        if (charSelectorTypeEClass == null) {
-            charSelectorTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(19);
+        if (this.charSelectorTypeEClass == null) {
+            this.charSelectorTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(19);
         }
-        return charSelectorTypeEClass;
+        return this.charSelectorTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCharSelectorType_Mixed() {
-        return (EAttribute)getCharSelectorType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getCharSelectorType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCharSelectorType_CharSpec() {
-        return (EReference)getCharSelectorType().getEStructuralFeatures().get(1);
+        return (EReference) this.getCharSelectorType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCharSpecType() {
-        if (charSpecTypeEClass == null) {
-            charSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(20);
+        if (this.charSpecTypeEClass == null) {
+            this.charSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(20);
         }
-        return charSpecTypeEClass;
+        return this.charSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCharSpecType_Mixed() {
-        return (EAttribute)getCharSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getCharSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCharSpecType_Group() {
-        return (EAttribute)getCharSpecType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getCharSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCharSpecType_ArgN() {
-        return (EReference)getCharSpecType().getEStructuralFeatures().get(2);
+        return (EReference) this.getCharSpecType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCharSpecType_Label() {
-        return (EReference)getCharSpecType().getEStructuralFeatures().get(3);
+        return (EReference) this.getCharSpecType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCharSpecType_LiteralE() {
-        return (EReference)getCharSpecType().getEStructuralFeatures().get(4);
+        return (EReference) this.getCharSpecType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCharSpecType_NamedE() {
-        return (EReference)getCharSpecType().getEStructuralFeatures().get(5);
+        return (EReference) this.getCharSpecType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCharSpecType_OpE() {
-        return (EReference)getCharSpecType().getEStructuralFeatures().get(6);
+        return (EReference) this.getCharSpecType().getEStructuralFeatures().get(6);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCharSpecType_StarE() {
-        return (EAttribute)getCharSpecType().getEStructuralFeatures().get(7);
+        return (EAttribute) this.getCharSpecType().getEStructuralFeatures().get(7);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCloseSpecSpecType() {
-        if (closeSpecSpecTypeEClass == null) {
-            closeSpecSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(21);
+        if (this.closeSpecSpecTypeEClass == null) {
+            this.closeSpecSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(21);
         }
-        return closeSpecSpecTypeEClass;
+        return this.closeSpecSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCloseSpecSpecType_Mixed() {
-        return (EAttribute)getCloseSpecSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getCloseSpecSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCloseSpecSpecType_CloseSpec() {
-        return (EReference)getCloseSpecSpecType().getEStructuralFeatures().get(1);
+        return (EReference) this.getCloseSpecSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCloseSpecType() {
-        if (closeSpecTypeEClass == null) {
-            closeSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(22);
+        if (this.closeSpecTypeEClass == null) {
+            this.closeSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(22);
         }
-        return closeSpecTypeEClass;
+        return this.closeSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCloseSpecType_Mixed() {
-        return (EAttribute)getCloseSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getCloseSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCloseSpecType_Group() {
-        return (EAttribute)getCloseSpecType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getCloseSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCloseSpecType_ArgN() {
-        return (EReference)getCloseSpecType().getEStructuralFeatures().get(2);
+        return (EReference) this.getCloseSpecType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCloseSpecType_LiteralE() {
-        return (EReference)getCloseSpecType().getEStructuralFeatures().get(3);
+        return (EReference) this.getCloseSpecType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCloseSpecType_NamedE() {
-        return (EReference)getCloseSpecType().getEStructuralFeatures().get(4);
+        return (EReference) this.getCloseSpecType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCloseStmtType() {
-        if (closeStmtTypeEClass == null) {
-            closeStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(23);
+        if (this.closeStmtTypeEClass == null) {
+            this.closeStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(23);
         }
-        return closeStmtTypeEClass;
+        return this.closeStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCloseStmtType_Mixed() {
-        return (EAttribute)getCloseStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getCloseStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCloseStmtType_CloseSpecSpec() {
-        return (EReference)getCloseStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getCloseStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getComponentDeclStmtType() {
-        if (componentDeclStmtTypeEClass == null) {
-            componentDeclStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(24);
+        if (this.componentDeclStmtTypeEClass == null) {
+            this.componentDeclStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(24);
         }
-        return componentDeclStmtTypeEClass;
+        return this.componentDeclStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getComponentDeclStmtType_Mixed() {
-        return (EAttribute)getComponentDeclStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getComponentDeclStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getComponentDeclStmtType_Group() {
-        return (EAttribute)getComponentDeclStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getComponentDeclStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getComponentDeclStmtType_ENDeclLT() {
-        return (EReference)getComponentDeclStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getComponentDeclStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getComponentDeclStmtType_TSpec() {
-        return (EReference)getComponentDeclStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getComponentDeclStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getComponentDeclStmtType_Attribute() {
-        return (EReference)getComponentDeclStmtType().getEStructuralFeatures().get(4);
+        return (EReference) this.getComponentDeclStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getComponentRType() {
-        if (componentRTypeEClass == null) {
-            componentRTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(25);
+        if (this.componentRTypeEClass == null) {
+            this.componentRTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(25);
         }
-        return componentRTypeEClass;
+        return this.componentRTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getComponentRType_Mixed() {
-        return (EAttribute)getComponentRType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getComponentRType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getComponentRType_Ct() {
-        return (EAttribute)getComponentRType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getComponentRType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getConditionEType() {
-        if (conditionETypeEClass == null) {
-            conditionETypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(26);
+        if (this.conditionETypeEClass == null) {
+            this.conditionETypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(26);
         }
-        return conditionETypeEClass;
+        return this.conditionETypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getConditionEType_NamedE() {
-        return (EReference)getConditionEType().getEStructuralFeatures().get(0);
+        return (EReference) this.getConditionEType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getConditionEType_OpE() {
-        return (EReference)getConditionEType().getEStructuralFeatures().get(1);
+        return (EReference) this.getConditionEType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getConnectSpecSpecType() {
-        if (connectSpecSpecTypeEClass == null) {
-            connectSpecSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(27);
+        if (this.connectSpecSpecTypeEClass == null) {
+            this.connectSpecSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(27);
         }
-        return connectSpecSpecTypeEClass;
+        return this.connectSpecSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getConnectSpecSpecType_Mixed() {
-        return (EAttribute)getConnectSpecSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getConnectSpecSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getConnectSpecSpecType_Group() {
-        return (EAttribute)getConnectSpecSpecType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getConnectSpecSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getConnectSpecSpecType_Cnt() {
-        return (EAttribute)getConnectSpecSpecType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getConnectSpecSpecType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getConnectSpecSpecType_ConnectSpec() {
-        return (EReference)getConnectSpecSpecType().getEStructuralFeatures().get(3);
+        return (EReference) this.getConnectSpecSpecType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getConnectSpecType() {
-        if (connectSpecTypeEClass == null) {
-            connectSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(28);
+        if (this.connectSpecTypeEClass == null) {
+            this.connectSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(28);
         }
-        return connectSpecTypeEClass;
+        return this.connectSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getConnectSpecType_Mixed() {
-        return (EAttribute)getConnectSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getConnectSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getConnectSpecType_Group() {
-        return (EAttribute)getConnectSpecType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getConnectSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getConnectSpecType_ArgN() {
-        return (EReference)getConnectSpecType().getEStructuralFeatures().get(2);
+        return (EReference) this.getConnectSpecType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getConnectSpecType_LiteralE() {
-        return (EReference)getConnectSpecType().getEStructuralFeatures().get(3);
+        return (EReference) this.getConnectSpecType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getConnectSpecType_NamedE() {
-        return (EReference)getConnectSpecType().getEStructuralFeatures().get(4);
+        return (EReference) this.getConnectSpecType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getConnectSpecType_StringE() {
-        return (EReference)getConnectSpecType().getEStructuralFeatures().get(5);
+        return (EReference) this.getConnectSpecType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getCycleStmtType() {
-        if (cycleStmtTypeEClass == null) {
-            cycleStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(29);
+        if (this.cycleStmtTypeEClass == null) {
+            this.cycleStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(29);
         }
-        return cycleStmtTypeEClass;
+        return this.cycleStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getCycleStmtType_Mixed() {
-        return (EAttribute)getCycleStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getCycleStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getCycleStmtType_N() {
-        return (EReference)getCycleStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getCycleStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getDeallocateStmtType() {
-        if (deallocateStmtTypeEClass == null) {
-            deallocateStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(30);
+        if (this.deallocateStmtTypeEClass == null) {
+            this.deallocateStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(30);
         }
-        return deallocateStmtTypeEClass;
+        return this.deallocateStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDeallocateStmtType_Mixed() {
-        return (EAttribute)getDeallocateStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getDeallocateStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDeallocateStmtType_ArgSpec() {
-        return (EReference)getDeallocateStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getDeallocateStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getDerivedTSpecType() {
-        if (derivedTSpecTypeEClass == null) {
-            derivedTSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(31);
+        if (this.derivedTSpecTypeEClass == null) {
+            this.derivedTSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(31);
         }
-        return derivedTSpecTypeEClass;
+        return this.derivedTSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDerivedTSpecType_Mixed() {
-        return (EAttribute)getDerivedTSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getDerivedTSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDerivedTSpecType_TN() {
-        return (EReference)getDerivedTSpecType().getEStructuralFeatures().get(1);
+        return (EReference) this.getDerivedTSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getDocumentRoot() {
-        if (documentRootEClass == null) {
-            documentRootEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(32);
+        if (this.documentRootEClass == null) {
+            this.documentRootEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(32);
         }
-        return documentRootEClass;
+        return this.documentRootEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_Mixed() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_XMLNSPrefixMap() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(1);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_XSISchemaLocation() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(2);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_TSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(3);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_A() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(4);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_AStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(5);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_AcValue() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(6);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(6);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_AcValueLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(7);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(7);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ActionStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(8);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(8);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_AllocateStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(9);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(9);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_Arg() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(10);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(10);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ArgN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(11);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(11);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ArgSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(12);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(12);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ArrayConstructorE() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(13);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(13);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ArrayR() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(14);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(14);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ArraySpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(15);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(15);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_Attribute() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(16);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(16);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_AttributeN() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(17);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(17);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_C() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(18);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(18);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CallStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(19);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(19);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CaseE() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(20);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(20);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CaseSelector() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(21);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(21);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CaseStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(22);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(22);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CaseValue() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(23);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(23);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CaseValueRange() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(24);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(24);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CaseValueRangeLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(25);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(25);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CharSelector() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(26);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(26);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CharSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(27);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(27);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CloseSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(28);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(28);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CloseSpecSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(29);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(29);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CloseStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(30);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(30);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_Cnt() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(31);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(31);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ComponentDeclStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(32);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(32);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ComponentR() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(33);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(33);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ConditionE() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(34);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(34);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ConnectSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(35);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(35);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ConnectSpecSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(36);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(36);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_ContainsStmt() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(37);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(37);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_Cpp() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(38);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(38);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_Ct() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(39);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(39);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_CycleStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(40);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(40);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_DeallocateStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(41);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(41);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_DerivedTSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(42);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(42);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_DoStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(43);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(43);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_DoV() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(44);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(44);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_DummyArgLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(45);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(45);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_E1() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(46);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(46);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_E2() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(47);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(47);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_Element() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(48);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(48);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ElementLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(49);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(49);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ElseIfStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(50);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(50);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_ElseStmt() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(51);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(51);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_ElseWhereStmt() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(52);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(52);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_EN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(53);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(53);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ENDecl() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(54);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(54);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ENDeclLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(55);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(55);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ENLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(56);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(56);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ENN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(57);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(57);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_EndDoStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(58);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(58);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_EndForallStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(59);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(59);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_EndFunctionStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(60);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(60);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_EndIfStmt() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(61);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(61);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_EndInterfaceStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(62);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(62);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_EndModuleStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(63);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(63);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_EndProgramStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(64);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(64);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_EndSelectCaseStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(65);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(65);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_EndSubroutineStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(66);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(66);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_EndTStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(67);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(67);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_EndWhereStmt() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(68);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(68);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_Error() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(69);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(69);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_ExitStmt() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(70);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(70);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_File() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(71);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(71);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ForallConstructStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(72);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(72);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ForallStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(73);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(73);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ForallTripletSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(74);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(74);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ForallTripletSpecLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(75);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(75);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_FunctionN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(76);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(76);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_FunctionStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(77);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(77);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_IfStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(78);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(78);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_IfThenStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(79);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(79);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_ImplicitNoneStmt() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(80);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(80);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_InitE() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(81);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(81);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_InquireStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(82);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(82);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_InquirySpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(83);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(83);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_InquirySpecSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(84);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(84);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_IntentSpec() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(85);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(85);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_InterfaceStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(86);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(86);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_IntrinsicTSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(87);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(87);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_IoControl() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(88);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(88);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_IoControlSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(89);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(89);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_Iterator() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(90);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(90);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_IteratorDefinitionLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(91);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(91);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_IteratorElement() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(92);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(92);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_K() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(93);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(93);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_KSelector() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(94);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(94);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_KSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(95);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(95);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_L() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(96);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(96);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_Label() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(97);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(97);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_LiteralE() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(98);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(98);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_LowerBound() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(99);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(99);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_MaskE() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(100);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(100);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ModuleN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(101);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(101);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ModuleProcedureNLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(102);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(102);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ModuleStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(103);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(103);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_N() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(104);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(104);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_N1() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(105);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(105);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_NamedE() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(106);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(106);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_NamelistGroupN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(107);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(107);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_NamelistGroupObj() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(108);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(108);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_NamelistGroupObjLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(109);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(109);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_NamelistGroupObjN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(110);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(110);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_NamelistStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(111);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(111);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_NullifyStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(112);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(112);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_O() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(113);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(113);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_Object() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(114);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(114);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_Op() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(115);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(115);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_OpE() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(116);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(116);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_OpenStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(117);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(117);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_OutputItem() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(118);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(118);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_OutputItemLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(119);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(119);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ParensE() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(120);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(120);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ParensR() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(121);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(121);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_PointerAStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(122);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(122);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_PointerStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(123);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(123);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_Prefix() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(124);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(124);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_PrivateStmt() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(125);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(125);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ProcedureDesignator() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(126);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(126);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ProcedureStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(127);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(127);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ProgramN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(128);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(128);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ProgramStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(129);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(129);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_PublicStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(130);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(130);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_RLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(131);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(131);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ReadStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(132);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(132);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_Rename() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(133);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(133);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_RenameLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(134);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(134);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ResultSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(135);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(135);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_ReturnStmt() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(136);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(136);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_S() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(137);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(137);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_SaveStmt() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(138);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(138);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_SectionSubscript() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(139);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(139);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_SectionSubscriptLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(140);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(140);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_SelectCaseStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(141);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(141);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ShapeSpec() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(142);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(142);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_ShapeSpecLT() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(143);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(143);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_StarE() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(144);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(144);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDocumentRoot_StopCode() {
-        return (EAttribute)getDocumentRoot().getEStructuralFeatures().get(145);
+        return (EAttribute) this.getDocumentRoot().getEStructuralFeatures().get(145);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_StopStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(146);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(146);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_StringE() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(147);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(147);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_SubroutineN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(148);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(148);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_SubroutineStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(149);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(149);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_TDeclStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(150);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(150);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_TN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(151);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(151);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_TStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(152);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(152);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_TestE() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(153);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(153);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_UpperBound() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(154);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(154);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_UseN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(155);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(155);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_UseStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(156);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(156);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_V() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(157);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(157);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_VN() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(158);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(158);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_WhereConstructStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(159);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(159);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_WhereStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(160);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(160);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDocumentRoot_WriteStmt() {
-        return (EReference)getDocumentRoot().getEStructuralFeatures().get(161);
+        return (EReference) this.getDocumentRoot().getEStructuralFeatures().get(161);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getDoStmtType() {
-        if (doStmtTypeEClass == null) {
-            doStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(33);
+        if (this.doStmtTypeEClass == null) {
+            this.doStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(33);
         }
-        return doStmtTypeEClass;
+        return this.doStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDoStmtType_Mixed() {
-        return (EAttribute)getDoStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getDoStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDoStmtType_Group() {
-        return (EAttribute)getDoStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getDoStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDoStmtType_N() {
-        return (EReference)getDoStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getDoStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDoStmtType_LowerBound() {
-        return (EReference)getDoStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getDoStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDoStmtType_UpperBound() {
-        return (EReference)getDoStmtType().getEStructuralFeatures().get(4);
+        return (EReference) this.getDoStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDoStmtType_DoV() {
-        return (EReference)getDoStmtType().getEStructuralFeatures().get(5);
+        return (EReference) this.getDoStmtType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDoStmtType_TestE() {
-        return (EReference)getDoStmtType().getEStructuralFeatures().get(6);
+        return (EReference) this.getDoStmtType().getEStructuralFeatures().get(6);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getDoVType() {
-        if (doVTypeEClass == null) {
-            doVTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(34);
+        if (this.doVTypeEClass == null) {
+            this.doVTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(34);
         }
-        return doVTypeEClass;
+        return this.doVTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDoVType_NamedE() {
-        return (EReference)getDoVType().getEStructuralFeatures().get(0);
+        return (EReference) this.getDoVType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getDummyArgLTType() {
-        if (dummyArgLTTypeEClass == null) {
-            dummyArgLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(35);
+        if (this.dummyArgLTTypeEClass == null) {
+            this.dummyArgLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(35);
         }
-        return dummyArgLTTypeEClass;
+        return this.dummyArgLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDummyArgLTType_Mixed() {
-        return (EAttribute)getDummyArgLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getDummyArgLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDummyArgLTType_Group() {
-        return (EAttribute)getDummyArgLTType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getDummyArgLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getDummyArgLTType_ArgN() {
-        return (EReference)getDummyArgLTType().getEStructuralFeatures().get(2);
+        return (EReference) this.getDummyArgLTType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getDummyArgLTType_Cnt() {
-        return (EAttribute)getDummyArgLTType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getDummyArgLTType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getE1Type() {
-        if (e1TypeEClass == null) {
-            e1TypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(36);
+        if (this.e1TypeEClass == null) {
+            this.e1TypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers()
+                    .get(36);
         }
-        return e1TypeEClass;
+        return this.e1TypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getE1Type_NamedE() {
-        return (EReference)getE1Type().getEStructuralFeatures().get(0);
+        return (EReference) this.getE1Type().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getE2Type() {
-        if (e2TypeEClass == null) {
-            e2TypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(37);
+        if (this.e2TypeEClass == null) {
+            this.e2TypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers()
+                    .get(37);
         }
-        return e2TypeEClass;
+        return this.e2TypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getE2Type_ArrayConstructorE() {
-        return (EReference)getE2Type().getEStructuralFeatures().get(0);
+        return (EReference) this.getE2Type().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getE2Type_LiteralE() {
-        return (EReference)getE2Type().getEStructuralFeatures().get(1);
+        return (EReference) this.getE2Type().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getE2Type_NamedE() {
-        return (EReference)getE2Type().getEStructuralFeatures().get(2);
+        return (EReference) this.getE2Type().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getE2Type_OpE() {
-        return (EReference)getE2Type().getEStructuralFeatures().get(3);
+        return (EReference) this.getE2Type().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getE2Type_ParensE() {
-        return (EReference)getE2Type().getEStructuralFeatures().get(4);
+        return (EReference) this.getE2Type().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getE2Type_StringE() {
-        return (EReference)getE2Type().getEStructuralFeatures().get(5);
+        return (EReference) this.getE2Type().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getElementLTType() {
-        if (elementLTTypeEClass == null) {
-            elementLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(38);
+        if (this.elementLTTypeEClass == null) {
+            this.elementLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(38);
         }
-        return elementLTTypeEClass;
+        return this.elementLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getElementLTType_Mixed() {
-        return (EAttribute)getElementLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getElementLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getElementLTType_Group() {
-        return (EAttribute)getElementLTType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getElementLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getElementLTType_Cnt() {
-        return (EAttribute)getElementLTType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getElementLTType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getElementLTType_Element() {
-        return (EReference)getElementLTType().getEStructuralFeatures().get(3);
+        return (EReference) this.getElementLTType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getElementType() {
-        if (elementTypeEClass == null) {
-            elementTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(39);
+        if (this.elementTypeEClass == null) {
+            this.elementTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(39);
         }
-        return elementTypeEClass;
+        return this.elementTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getElementType_ArrayConstructorE() {
-        return (EReference)getElementType().getEStructuralFeatures().get(0);
+        return (EReference) this.getElementType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getElementType_Group() {
-        return (EAttribute)getElementType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getElementType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getElementType_NamedE() {
-        return (EReference)getElementType().getEStructuralFeatures().get(2);
+        return (EReference) this.getElementType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getElementType_OpE() {
-        return (EReference)getElementType().getEStructuralFeatures().get(3);
+        return (EReference) this.getElementType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getElementType_LiteralE() {
-        return (EReference)getElementType().getEStructuralFeatures().get(4);
+        return (EReference) this.getElementType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getElementType_StringE() {
-        return (EReference)getElementType().getEStructuralFeatures().get(5);
+        return (EReference) this.getElementType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getElseIfStmtType() {
-        if (elseIfStmtTypeEClass == null) {
-            elseIfStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(40);
+        if (this.elseIfStmtTypeEClass == null) {
+            this.elseIfStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(40);
         }
-        return elseIfStmtTypeEClass;
+        return this.elseIfStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getElseIfStmtType_Mixed() {
-        return (EAttribute)getElseIfStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getElseIfStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getElseIfStmtType_ConditionE() {
-        return (EReference)getElseIfStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getElseIfStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getEndDoStmtType() {
-        if (endDoStmtTypeEClass == null) {
-            endDoStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(41);
+        if (this.endDoStmtTypeEClass == null) {
+            this.endDoStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(41);
         }
-        return endDoStmtTypeEClass;
+        return this.endDoStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getEndDoStmtType_Mixed() {
-        return (EAttribute)getEndDoStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getEndDoStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getEndDoStmtType_N() {
-        return (EReference)getEndDoStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getEndDoStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getENDeclLTType() {
-        if (enDeclLTTypeEClass == null) {
-            enDeclLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(42);
+        if (this.enDeclLTTypeEClass == null) {
+            this.enDeclLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(42);
         }
-        return enDeclLTTypeEClass;
+        return this.enDeclLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getENDeclLTType_Mixed() {
-        return (EAttribute)getENDeclLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getENDeclLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getENDeclLTType_Group() {
-        return (EAttribute)getENDeclLTType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getENDeclLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getENDeclLTType_Cnt() {
-        return (EAttribute)getENDeclLTType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getENDeclLTType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getENDeclLTType_ENDecl() {
-        return (EReference)getENDeclLTType().getEStructuralFeatures().get(3);
+        return (EReference) this.getENDeclLTType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getENDeclType() {
-        if (enDeclTypeEClass == null) {
-            enDeclTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(43);
+        if (this.enDeclTypeEClass == null) {
+            this.enDeclTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(43);
         }
-        return enDeclTypeEClass;
+        return this.enDeclTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getENDeclType_Mixed() {
-        return (EAttribute)getENDeclType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getENDeclType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getENDeclType_Group() {
-        return (EAttribute)getENDeclType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getENDeclType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getENDeclType_ArraySpec() {
-        return (EReference)getENDeclType().getEStructuralFeatures().get(2);
+        return (EReference) this.getENDeclType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getENDeclType_ENN() {
-        return (EReference)getENDeclType().getEStructuralFeatures().get(3);
+        return (EReference) this.getENDeclType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getENDeclType_InitE() {
-        return (EReference)getENDeclType().getEStructuralFeatures().get(4);
+        return (EReference) this.getENDeclType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getEndForallStmtType() {
-        if (endForallStmtTypeEClass == null) {
-            endForallStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(44);
+        if (this.endForallStmtTypeEClass == null) {
+            this.endForallStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(44);
         }
-        return endForallStmtTypeEClass;
+        return this.endForallStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getEndForallStmtType_Mixed() {
-        return (EAttribute)getEndForallStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getEndForallStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getEndForallStmtType_N() {
-        return (EReference)getEndForallStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getEndForallStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getEndFunctionStmtType() {
-        if (endFunctionStmtTypeEClass == null) {
-            endFunctionStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(45);
+        if (this.endFunctionStmtTypeEClass == null) {
+            this.endFunctionStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(45);
         }
-        return endFunctionStmtTypeEClass;
+        return this.endFunctionStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getEndFunctionStmtType_Mixed() {
-        return (EAttribute)getEndFunctionStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getEndFunctionStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getEndFunctionStmtType_FunctionN() {
-        return (EReference)getEndFunctionStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getEndFunctionStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getEndInterfaceStmtType() {
-        if (endInterfaceStmtTypeEClass == null) {
-            endInterfaceStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(46);
+        if (this.endInterfaceStmtTypeEClass == null) {
+            this.endInterfaceStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(46);
         }
-        return endInterfaceStmtTypeEClass;
+        return this.endInterfaceStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getEndInterfaceStmtType_Mixed() {
-        return (EAttribute)getEndInterfaceStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getEndInterfaceStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getEndInterfaceStmtType_N() {
-        return (EReference)getEndInterfaceStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getEndInterfaceStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getEndModuleStmtType() {
-        if (endModuleStmtTypeEClass == null) {
-            endModuleStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(47);
+        if (this.endModuleStmtTypeEClass == null) {
+            this.endModuleStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(47);
         }
-        return endModuleStmtTypeEClass;
+        return this.endModuleStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getEndModuleStmtType_Mixed() {
-        return (EAttribute)getEndModuleStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getEndModuleStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getEndModuleStmtType_ModuleN() {
-        return (EReference)getEndModuleStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getEndModuleStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getEndProgramStmtType() {
-        if (endProgramStmtTypeEClass == null) {
-            endProgramStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(48);
+        if (this.endProgramStmtTypeEClass == null) {
+            this.endProgramStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(48);
         }
-        return endProgramStmtTypeEClass;
+        return this.endProgramStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getEndProgramStmtType_Mixed() {
-        return (EAttribute)getEndProgramStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getEndProgramStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getEndProgramStmtType_ProgramN() {
-        return (EReference)getEndProgramStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getEndProgramStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getEndSelectCaseStmtType() {
-        if (endSelectCaseStmtTypeEClass == null) {
-            endSelectCaseStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(49);
+        if (this.endSelectCaseStmtTypeEClass == null) {
+            this.endSelectCaseStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(49);
         }
-        return endSelectCaseStmtTypeEClass;
+        return this.endSelectCaseStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getEndSelectCaseStmtType_Mixed() {
-        return (EAttribute)getEndSelectCaseStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getEndSelectCaseStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getEndSelectCaseStmtType_N() {
-        return (EReference)getEndSelectCaseStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getEndSelectCaseStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getEndSubroutineStmtType() {
-        if (endSubroutineStmtTypeEClass == null) {
-            endSubroutineStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(50);
+        if (this.endSubroutineStmtTypeEClass == null) {
+            this.endSubroutineStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(50);
         }
-        return endSubroutineStmtTypeEClass;
+        return this.endSubroutineStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getEndSubroutineStmtType_Mixed() {
-        return (EAttribute)getEndSubroutineStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getEndSubroutineStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getEndSubroutineStmtType_SubroutineN() {
-        return (EReference)getEndSubroutineStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getEndSubroutineStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getEndTStmtType() {
-        if (endTStmtTypeEClass == null) {
-            endTStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(51);
+        if (this.endTStmtTypeEClass == null) {
+            this.endTStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(51);
         }
-        return endTStmtTypeEClass;
+        return this.endTStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getEndTStmtType_Mixed() {
-        return (EAttribute)getEndTStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getEndTStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getEndTStmtType_TN() {
-        return (EReference)getEndTStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getEndTStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getENLTType() {
-        if (enltTypeEClass == null) {
-            enltTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(52);
+        if (this.enltTypeEClass == null) {
+            this.enltTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(52);
         }
-        return enltTypeEClass;
+        return this.enltTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getENLTType_Mixed() {
-        return (EAttribute)getENLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getENLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getENLTType_Group() {
-        return (EAttribute)getENLTType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getENLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getENLTType_Cnt() {
-        return (EAttribute)getENLTType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getENLTType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getENLTType_EN() {
-        return (EReference)getENLTType().getEStructuralFeatures().get(3);
+        return (EReference) this.getENLTType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getENNType() {
-        if (ennTypeEClass == null) {
-            ennTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(53);
+        if (this.ennTypeEClass == null) {
+            this.ennTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(53);
         }
-        return ennTypeEClass;
+        return this.ennTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getENNType_N() {
-        return (EReference)getENNType().getEStructuralFeatures().get(0);
+        return (EReference) this.getENNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getENType() {
-        if (enTypeEClass == null) {
-            enTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(54);
+        if (this.enTypeEClass == null) {
+            this.enTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers()
+                    .get(54);
         }
-        return enTypeEClass;
+        return this.enTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getENType_N() {
-        return (EReference)getENType().getEStructuralFeatures().get(0);
+        return (EReference) this.getENType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getErrorType() {
-        if (errorTypeEClass == null) {
-            errorTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(55);
+        if (this.errorTypeEClass == null) {
+            this.errorTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(55);
         }
-        return errorTypeEClass;
+        return this.errorTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getErrorType_Msg() {
-        return (EAttribute)getErrorType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getErrorType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getFileType() {
-        if (fileTypeEClass == null) {
-            fileTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(56);
+        if (this.fileTypeEClass == null) {
+            this.fileTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(56);
         }
-        return fileTypeEClass;
+        return this.fileTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_Group() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_C() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_AStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(2);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_AllocateStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(3);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_CallStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(4);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_DeallocateStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(5);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_ExitStmt() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(6);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(6);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_PointerAStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(7);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(7);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_ReturnStmt() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(8);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(8);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_WhereStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(9);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(9);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_TDeclStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(10);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(10);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_TStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(11);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(11);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_CaseStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(12);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(12);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_CloseStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(13);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(13);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_ComponentDeclStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(14);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(14);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_ContainsStmt() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(15);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(15);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_Cpp() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(16);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(16);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_DoStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(17);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(17);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_ElseIfStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(18);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(18);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_ElseStmt() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(19);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(19);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_ElseWhereStmt() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(20);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(20);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_EndTStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(21);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(21);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_EndDoStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(22);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(22);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_EndForallStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(23);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(23);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_EndFunctionStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(24);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(24);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_EndIfStmt() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(25);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(25);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_EndInterfaceStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(26);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(26);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_EndSelectCaseStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(27);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(27);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_EndSubroutineStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(28);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(28);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_EndWhereStmt() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(29);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(29);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_ForallConstructStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(30);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(30);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_ForallStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(31);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(31);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_FunctionStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(32);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(32);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_IfStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(33);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(33);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_IfThenStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(34);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(34);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_ImplicitNoneStmt() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(35);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(35);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_InquireStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(36);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(36);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_InterfaceStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(37);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(37);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_ModuleStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(38);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(38);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_NamelistStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(39);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(39);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_NullifyStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(40);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(40);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_OpenStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(41);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(41);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_PointerStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(42);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(42);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_PrivateStmt() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(43);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(43);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_ProcedureStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(44);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(44);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_ProgramStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(45);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(45);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_PublicStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(46);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(46);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_ReadStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(47);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(47);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_SaveStmt() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(48);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(48);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_SelectCaseStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(49);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(49);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_StopStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(50);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(50);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_SubroutineStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(51);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(51);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_UseStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(52);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(52);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_WhereConstructStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(53);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(53);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_WriteStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(54);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(54);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_EndModuleStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(55);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(55);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFileType_EndProgramStmt() {
-        return (EReference)getFileType().getEStructuralFeatures().get(56);
+        return (EReference) this.getFileType().getEStructuralFeatures().get(56);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFileType_Name() {
-        return (EAttribute)getFileType().getEStructuralFeatures().get(57);
+        return (EAttribute) this.getFileType().getEStructuralFeatures().get(57);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getForallConstructStmtType() {
-        if (forallConstructStmtTypeEClass == null) {
-            forallConstructStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(57);
+        if (this.forallConstructStmtTypeEClass == null) {
+            this.forallConstructStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(57);
         }
-        return forallConstructStmtTypeEClass;
+        return this.forallConstructStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getForallConstructStmtType_Mixed() {
-        return (EAttribute)getForallConstructStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getForallConstructStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getForallConstructStmtType_Group() {
-        return (EAttribute)getForallConstructStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getForallConstructStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getForallConstructStmtType_N() {
-        return (EReference)getForallConstructStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getForallConstructStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getForallConstructStmtType_ForallTripletSpecLT() {
-        return (EReference)getForallConstructStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getForallConstructStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getForallStmtType() {
-        if (forallStmtTypeEClass == null) {
-            forallStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(58);
+        if (this.forallStmtTypeEClass == null) {
+            this.forallStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(58);
         }
-        return forallStmtTypeEClass;
+        return this.forallStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getForallStmtType_Mixed() {
-        return (EAttribute)getForallStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getForallStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getForallStmtType_Group() {
-        return (EAttribute)getForallStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getForallStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getForallStmtType_ActionStmt() {
-        return (EReference)getForallStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getForallStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getForallStmtType_Cnt() {
-        return (EAttribute)getForallStmtType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getForallStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getForallStmtType_ForallTripletSpecLT() {
-        return (EReference)getForallStmtType().getEStructuralFeatures().get(4);
+        return (EReference) this.getForallStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getForallStmtType_MaskE() {
-        return (EReference)getForallStmtType().getEStructuralFeatures().get(5);
+        return (EReference) this.getForallStmtType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getForallTripletSpecLTType() {
-        if (forallTripletSpecLTTypeEClass == null) {
-            forallTripletSpecLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(59);
+        if (this.forallTripletSpecLTTypeEClass == null) {
+            this.forallTripletSpecLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(59);
         }
-        return forallTripletSpecLTTypeEClass;
+        return this.forallTripletSpecLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getForallTripletSpecLTType_Mixed() {
-        return (EAttribute)getForallTripletSpecLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getForallTripletSpecLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getForallTripletSpecLTType_ForallTripletSpec() {
-        return (EReference)getForallTripletSpecLTType().getEStructuralFeatures().get(1);
+        return (EReference) this.getForallTripletSpecLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getForallTripletSpecType() {
-        if (forallTripletSpecTypeEClass == null) {
-            forallTripletSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(60);
+        if (this.forallTripletSpecTypeEClass == null) {
+            this.forallTripletSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(60);
         }
-        return forallTripletSpecTypeEClass;
+        return this.forallTripletSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getForallTripletSpecType_Mixed() {
-        return (EAttribute)getForallTripletSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getForallTripletSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getForallTripletSpecType_Group() {
-        return (EAttribute)getForallTripletSpecType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getForallTripletSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getForallTripletSpecType_LowerBound() {
-        return (EReference)getForallTripletSpecType().getEStructuralFeatures().get(2);
+        return (EReference) this.getForallTripletSpecType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getForallTripletSpecType_UpperBound() {
-        return (EReference)getForallTripletSpecType().getEStructuralFeatures().get(3);
+        return (EReference) this.getForallTripletSpecType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getForallTripletSpecType_V() {
-        return (EReference)getForallTripletSpecType().getEStructuralFeatures().get(4);
+        return (EReference) this.getForallTripletSpecType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getFunctionNType() {
-        if (functionNTypeEClass == null) {
-            functionNTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(61);
+        if (this.functionNTypeEClass == null) {
+            this.functionNTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(61);
         }
-        return functionNTypeEClass;
+        return this.functionNTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFunctionNType_N() {
-        return (EReference)getFunctionNType().getEStructuralFeatures().get(0);
+        return (EReference) this.getFunctionNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getFunctionStmtType() {
-        if (functionStmtTypeEClass == null) {
-            functionStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(62);
+        if (this.functionStmtTypeEClass == null) {
+            this.functionStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(62);
         }
-        return functionStmtTypeEClass;
+        return this.functionStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFunctionStmtType_Mixed() {
-        return (EAttribute)getFunctionStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getFunctionStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFunctionStmtType_Group() {
-        return (EAttribute)getFunctionStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getFunctionStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFunctionStmtType_DerivedTSpec() {
-        return (EReference)getFunctionStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getFunctionStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFunctionStmtType_DummyArgLT() {
-        return (EReference)getFunctionStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getFunctionStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFunctionStmtType_FunctionN() {
-        return (EReference)getFunctionStmtType().getEStructuralFeatures().get(4);
+        return (EReference) this.getFunctionStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFunctionStmtType_IntrinsicTSpec() {
-        return (EReference)getFunctionStmtType().getEStructuralFeatures().get(5);
+        return (EReference) this.getFunctionStmtType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getFunctionStmtType_Prefix() {
-        return (EAttribute)getFunctionStmtType().getEStructuralFeatures().get(6);
+        return (EAttribute) this.getFunctionStmtType().getEStructuralFeatures().get(6);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getFunctionStmtType_ResultSpec() {
-        return (EReference)getFunctionStmtType().getEStructuralFeatures().get(7);
+        return (EReference) this.getFunctionStmtType().getEStructuralFeatures().get(7);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getIfStmtType() {
-        if (ifStmtTypeEClass == null) {
-            ifStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(63);
+        if (this.ifStmtTypeEClass == null) {
+            this.ifStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(63);
         }
-        return ifStmtTypeEClass;
+        return this.ifStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getIfStmtType_Mixed() {
-        return (EAttribute)getIfStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getIfStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getIfStmtType_Group() {
-        return (EAttribute)getIfStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getIfStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIfStmtType_ActionStmt() {
-        return (EReference)getIfStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getIfStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getIfStmtType_Cnt() {
-        return (EAttribute)getIfStmtType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getIfStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIfStmtType_ConditionE() {
-        return (EReference)getIfStmtType().getEStructuralFeatures().get(4);
+        return (EReference) this.getIfStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getIfThenStmtType() {
-        if (ifThenStmtTypeEClass == null) {
-            ifThenStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(64);
+        if (this.ifThenStmtTypeEClass == null) {
+            this.ifThenStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(64);
         }
-        return ifThenStmtTypeEClass;
+        return this.ifThenStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getIfThenStmtType_Mixed() {
-        return (EAttribute)getIfThenStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getIfThenStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIfThenStmtType_ConditionE() {
-        return (EReference)getIfThenStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getIfThenStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getInitEType() {
-        if (initETypeEClass == null) {
-            initETypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(65);
+        if (this.initETypeEClass == null) {
+            this.initETypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(65);
         }
-        return initETypeEClass;
+        return this.initETypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getInitEType_LiteralE() {
-        return (EReference)getInitEType().getEStructuralFeatures().get(0);
+        return (EReference) this.getInitEType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getInitEType_NamedE() {
-        return (EReference)getInitEType().getEStructuralFeatures().get(1);
+        return (EReference) this.getInitEType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getInitEType_OpE() {
-        return (EReference)getInitEType().getEStructuralFeatures().get(2);
+        return (EReference) this.getInitEType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getInitEType_StringE() {
-        return (EReference)getInitEType().getEStructuralFeatures().get(3);
+        return (EReference) this.getInitEType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getInquireStmtType() {
-        if (inquireStmtTypeEClass == null) {
-            inquireStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(66);
+        if (this.inquireStmtTypeEClass == null) {
+            this.inquireStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(66);
         }
-        return inquireStmtTypeEClass;
+        return this.inquireStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getInquireStmtType_Mixed() {
-        return (EAttribute)getInquireStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getInquireStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getInquireStmtType_InquirySpecSpec() {
-        return (EReference)getInquireStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getInquireStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getInquirySpecSpecType() {
-        if (inquirySpecSpecTypeEClass == null) {
-            inquirySpecSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(67);
+        if (this.inquirySpecSpecTypeEClass == null) {
+            this.inquirySpecSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(67);
         }
-        return inquirySpecSpecTypeEClass;
+        return this.inquirySpecSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getInquirySpecSpecType_Mixed() {
-        return (EAttribute)getInquirySpecSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getInquirySpecSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getInquirySpecSpecType_InquirySpec() {
-        return (EReference)getInquirySpecSpecType().getEStructuralFeatures().get(1);
+        return (EReference) this.getInquirySpecSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getInquirySpecType() {
-        if (inquirySpecTypeEClass == null) {
-            inquirySpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(68);
+        if (this.inquirySpecTypeEClass == null) {
+            this.inquirySpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(68);
         }
-        return inquirySpecTypeEClass;
+        return this.inquirySpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getInquirySpecType_Mixed() {
-        return (EAttribute)getInquirySpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getInquirySpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getInquirySpecType_Group() {
-        return (EAttribute)getInquirySpecType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getInquirySpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getInquirySpecType_ArgN() {
-        return (EReference)getInquirySpecType().getEStructuralFeatures().get(2);
+        return (EReference) this.getInquirySpecType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getInquirySpecType_NamedE() {
-        return (EReference)getInquirySpecType().getEStructuralFeatures().get(3);
+        return (EReference) this.getInquirySpecType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getInterfaceStmtType() {
-        if (interfaceStmtTypeEClass == null) {
-            interfaceStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(69);
+        if (this.interfaceStmtTypeEClass == null) {
+            this.interfaceStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(69);
         }
-        return interfaceStmtTypeEClass;
+        return this.interfaceStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getInterfaceStmtType_Mixed() {
-        return (EAttribute)getInterfaceStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getInterfaceStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getInterfaceStmtType_N() {
-        return (EReference)getInterfaceStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getInterfaceStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getIntrinsicTSpecType() {
-        if (intrinsicTSpecTypeEClass == null) {
-            intrinsicTSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(70);
+        if (this.intrinsicTSpecTypeEClass == null) {
+            this.intrinsicTSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(70);
         }
-        return intrinsicTSpecTypeEClass;
+        return this.intrinsicTSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIntrinsicTSpecType_TN() {
-        return (EReference)getIntrinsicTSpecType().getEStructuralFeatures().get(0);
+        return (EReference) this.getIntrinsicTSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIntrinsicTSpecType_KSelector() {
-        return (EReference)getIntrinsicTSpecType().getEStructuralFeatures().get(1);
+        return (EReference) this.getIntrinsicTSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIntrinsicTSpecType_CharSelector() {
-        return (EReference)getIntrinsicTSpecType().getEStructuralFeatures().get(2);
+        return (EReference) this.getIntrinsicTSpecType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getIoControlSpecType() {
-        if (ioControlSpecTypeEClass == null) {
-            ioControlSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(71);
+        if (this.ioControlSpecTypeEClass == null) {
+            this.ioControlSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(71);
         }
-        return ioControlSpecTypeEClass;
+        return this.ioControlSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getIoControlSpecType_Mixed() {
-        return (EAttribute)getIoControlSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getIoControlSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIoControlSpecType_IoControl() {
-        return (EReference)getIoControlSpecType().getEStructuralFeatures().get(1);
+        return (EReference) this.getIoControlSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getIoControlType() {
-        if (ioControlTypeEClass == null) {
-            ioControlTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(72);
+        if (this.ioControlTypeEClass == null) {
+            this.ioControlTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(72);
         }
-        return ioControlTypeEClass;
+        return this.ioControlTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getIoControlType_Mixed() {
-        return (EAttribute)getIoControlType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getIoControlType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getIoControlType_Group() {
-        return (EAttribute)getIoControlType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getIoControlType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIoControlType_ArgN() {
-        return (EReference)getIoControlType().getEStructuralFeatures().get(2);
+        return (EReference) this.getIoControlType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIoControlType_Label() {
-        return (EReference)getIoControlType().getEStructuralFeatures().get(3);
+        return (EReference) this.getIoControlType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIoControlType_LiteralE() {
-        return (EReference)getIoControlType().getEStructuralFeatures().get(4);
+        return (EReference) this.getIoControlType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIoControlType_NamedE() {
-        return (EReference)getIoControlType().getEStructuralFeatures().get(5);
+        return (EReference) this.getIoControlType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIoControlType_StringE() {
-        return (EReference)getIoControlType().getEStructuralFeatures().get(6);
+        return (EReference) this.getIoControlType().getEStructuralFeatures().get(6);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getIteratorDefinitionLTType() {
-        if (iteratorDefinitionLTTypeEClass == null) {
-            iteratorDefinitionLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(73);
+        if (this.iteratorDefinitionLTTypeEClass == null) {
+            this.iteratorDefinitionLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(73);
         }
-        return iteratorDefinitionLTTypeEClass;
+        return this.iteratorDefinitionLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getIteratorDefinitionLTType_Mixed() {
-        return (EAttribute)getIteratorDefinitionLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getIteratorDefinitionLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIteratorDefinitionLTType_IteratorElement() {
-        return (EReference)getIteratorDefinitionLTType().getEStructuralFeatures().get(1);
+        return (EReference) this.getIteratorDefinitionLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getIteratorElementType() {
-        if (iteratorElementTypeEClass == null) {
-            iteratorElementTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(74);
+        if (this.iteratorElementTypeEClass == null) {
+            this.iteratorElementTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(74);
         }
-        return iteratorElementTypeEClass;
+        return this.iteratorElementTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getIteratorElementType_Mixed() {
-        return (EAttribute)getIteratorElementType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getIteratorElementType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getIteratorElementType_Group() {
-        return (EAttribute)getIteratorElementType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getIteratorElementType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIteratorElementType_VN() {
-        return (EReference)getIteratorElementType().getEStructuralFeatures().get(2);
+        return (EReference) this.getIteratorElementType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIteratorElementType_LiteralE() {
-        return (EReference)getIteratorElementType().getEStructuralFeatures().get(3);
+        return (EReference) this.getIteratorElementType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIteratorElementType_NamedE() {
-        return (EReference)getIteratorElementType().getEStructuralFeatures().get(4);
+        return (EReference) this.getIteratorElementType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getIteratorType() {
-        if (iteratorTypeEClass == null) {
-            iteratorTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(75);
+        if (this.iteratorTypeEClass == null) {
+            this.iteratorTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(75);
         }
-        return iteratorTypeEClass;
+        return this.iteratorTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getIteratorType_Mixed() {
-        return (EAttribute)getIteratorType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getIteratorType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getIteratorType_IteratorDefinitionLT() {
-        return (EReference)getIteratorType().getEStructuralFeatures().get(1);
+        return (EReference) this.getIteratorType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getKSelectorType() {
-        if (kSelectorTypeEClass == null) {
-            kSelectorTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(76);
+        if (this.kSelectorTypeEClass == null) {
+            this.kSelectorTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(76);
         }
-        return kSelectorTypeEClass;
+        return this.kSelectorTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getKSelectorType_Mixed() {
-        return (EAttribute)getKSelectorType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getKSelectorType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getKSelectorType_KSpec() {
-        return (EReference)getKSelectorType().getEStructuralFeatures().get(1);
+        return (EReference) this.getKSelectorType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getKSpecType() {
-        if (kSpecTypeEClass == null) {
-            kSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(77);
+        if (this.kSpecTypeEClass == null) {
+            this.kSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(77);
         }
-        return kSpecTypeEClass;
+        return this.kSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getKSpecType_Mixed() {
-        return (EAttribute)getKSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getKSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getKSpecType_Group() {
-        return (EAttribute)getKSpecType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getKSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getKSpecType_N() {
-        return (EReference)getKSpecType().getEStructuralFeatures().get(2);
+        return (EReference) this.getKSpecType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getKSpecType_L() {
-        return (EAttribute)getKSpecType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getKSpecType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getKSpecType_LiteralE() {
-        return (EReference)getKSpecType().getEStructuralFeatures().get(4);
+        return (EReference) this.getKSpecType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getKSpecType_NamedE() {
-        return (EReference)getKSpecType().getEStructuralFeatures().get(5);
+        return (EReference) this.getKSpecType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getLabelType() {
-        if (labelTypeEClass == null) {
-            labelTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(78);
+        if (this.labelTypeEClass == null) {
+            this.labelTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(78);
         }
-        return labelTypeEClass;
+        return this.labelTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getLabelType_Error() {
-        return (EReference)getLabelType().getEStructuralFeatures().get(0);
+        return (EReference) this.getLabelType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getLiteralEType() {
-        if (literalETypeEClass == null) {
-            literalETypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(79);
+        if (this.literalETypeEClass == null) {
+            this.literalETypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(79);
         }
-        return literalETypeEClass;
+        return this.literalETypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getLiteralEType_Mixed() {
-        return (EAttribute)getLiteralEType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getLiteralEType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getLiteralEType_Group() {
-        return (EAttribute)getLiteralEType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getLiteralEType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getLiteralEType_KSpec() {
-        return (EReference)getLiteralEType().getEStructuralFeatures().get(2);
+        return (EReference) this.getLiteralEType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getLiteralEType_L() {
-        return (EAttribute)getLiteralEType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getLiteralEType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getLowerBoundType() {
-        if (lowerBoundTypeEClass == null) {
-            lowerBoundTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(80);
+        if (this.lowerBoundTypeEClass == null) {
+            this.lowerBoundTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(80);
         }
-        return lowerBoundTypeEClass;
+        return this.lowerBoundTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getLowerBoundType_LiteralE() {
-        return (EReference)getLowerBoundType().getEStructuralFeatures().get(0);
+        return (EReference) this.getLowerBoundType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getLowerBoundType_NamedE() {
-        return (EReference)getLowerBoundType().getEStructuralFeatures().get(1);
+        return (EReference) this.getLowerBoundType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getLowerBoundType_OpE() {
-        return (EReference)getLowerBoundType().getEStructuralFeatures().get(2);
+        return (EReference) this.getLowerBoundType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getMaskEType() {
-        if (maskETypeEClass == null) {
-            maskETypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(81);
+        if (this.maskETypeEClass == null) {
+            this.maskETypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(81);
         }
-        return maskETypeEClass;
+        return this.maskETypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getMaskEType_OpE() {
-        return (EReference)getMaskEType().getEStructuralFeatures().get(0);
+        return (EReference) this.getMaskEType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getModuleNType() {
-        if (moduleNTypeEClass == null) {
-            moduleNTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(82);
+        if (this.moduleNTypeEClass == null) {
+            this.moduleNTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(82);
         }
-        return moduleNTypeEClass;
+        return this.moduleNTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getModuleNType_N() {
-        return (EReference)getModuleNType().getEStructuralFeatures().get(0);
+        return (EReference) this.getModuleNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getModuleProcedureNLTType() {
-        if (moduleProcedureNLTTypeEClass == null) {
-            moduleProcedureNLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(83);
+        if (this.moduleProcedureNLTTypeEClass == null) {
+            this.moduleProcedureNLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(83);
         }
-        return moduleProcedureNLTTypeEClass;
+        return this.moduleProcedureNLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getModuleProcedureNLTType_Mixed() {
-        return (EAttribute)getModuleProcedureNLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getModuleProcedureNLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getModuleProcedureNLTType_N() {
-        return (EReference)getModuleProcedureNLTType().getEStructuralFeatures().get(1);
+        return (EReference) this.getModuleProcedureNLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getModuleStmtType() {
-        if (moduleStmtTypeEClass == null) {
-            moduleStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(84);
+        if (this.moduleStmtTypeEClass == null) {
+            this.moduleStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(84);
         }
-        return moduleStmtTypeEClass;
+        return this.moduleStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getModuleStmtType_Mixed() {
-        return (EAttribute)getModuleStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getModuleStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getModuleStmtType_ModuleN() {
-        return (EReference)getModuleStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getModuleStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getNamedEType() {
-        if (namedETypeEClass == null) {
-            namedETypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(85);
+        if (this.namedETypeEClass == null) {
+            this.namedETypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(85);
         }
-        return namedETypeEClass;
+        return this.namedETypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNamedEType_Group() {
-        return (EAttribute)getNamedEType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getNamedEType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getNamedEType_N() {
-        return (EReference)getNamedEType().getEStructuralFeatures().get(1);
+        return (EReference) this.getNamedEType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getNamedEType_RLT() {
-        return (EReference)getNamedEType().getEStructuralFeatures().get(2);
+        return (EReference) this.getNamedEType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getNamelistGroupNType() {
-        if (namelistGroupNTypeEClass == null) {
-            namelistGroupNTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(86);
+        if (this.namelistGroupNTypeEClass == null) {
+            this.namelistGroupNTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(86);
         }
-        return namelistGroupNTypeEClass;
+        return this.namelistGroupNTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNamelistGroupNType_N() {
-        return (EAttribute)getNamelistGroupNType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getNamelistGroupNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getNamelistGroupObjLTType() {
-        if (namelistGroupObjLTTypeEClass == null) {
-            namelistGroupObjLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(87);
+        if (this.namelistGroupObjLTTypeEClass == null) {
+            this.namelistGroupObjLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(87);
         }
-        return namelistGroupObjLTTypeEClass;
+        return this.namelistGroupObjLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNamelistGroupObjLTType_Mixed() {
-        return (EAttribute)getNamelistGroupObjLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getNamelistGroupObjLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNamelistGroupObjLTType_Group() {
-        return (EAttribute)getNamelistGroupObjLTType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getNamelistGroupObjLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNamelistGroupObjLTType_C() {
-        return (EAttribute)getNamelistGroupObjLTType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getNamelistGroupObjLTType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNamelistGroupObjLTType_Cnt() {
-        return (EAttribute)getNamelistGroupObjLTType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getNamelistGroupObjLTType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getNamelistGroupObjLTType_NamelistGroupObj() {
-        return (EReference)getNamelistGroupObjLTType().getEStructuralFeatures().get(4);
+        return (EReference) this.getNamelistGroupObjLTType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getNamelistGroupObjNType() {
-        if (namelistGroupObjNTypeEClass == null) {
-            namelistGroupObjNTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(88);
+        if (this.namelistGroupObjNTypeEClass == null) {
+            this.namelistGroupObjNTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(88);
         }
-        return namelistGroupObjNTypeEClass;
+        return this.namelistGroupObjNTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getNamelistGroupObjNType_N() {
-        return (EReference)getNamelistGroupObjNType().getEStructuralFeatures().get(0);
+        return (EReference) this.getNamelistGroupObjNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getNamelistGroupObjType() {
-        if (namelistGroupObjTypeEClass == null) {
-            namelistGroupObjTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(89);
+        if (this.namelistGroupObjTypeEClass == null) {
+            this.namelistGroupObjTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(89);
         }
-        return namelistGroupObjTypeEClass;
+        return this.namelistGroupObjTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getNamelistGroupObjType_NamelistGroupObjN() {
-        return (EReference)getNamelistGroupObjType().getEStructuralFeatures().get(0);
+        return (EReference) this.getNamelistGroupObjType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getNamelistStmtType() {
-        if (namelistStmtTypeEClass == null) {
-            namelistStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(90);
+        if (this.namelistStmtTypeEClass == null) {
+            this.namelistStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(90);
         }
-        return namelistStmtTypeEClass;
+        return this.namelistStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNamelistStmtType_Mixed() {
-        return (EAttribute)getNamelistStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getNamelistStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNamelistStmtType_Group() {
-        return (EAttribute)getNamelistStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getNamelistStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNamelistStmtType_Cnt() {
-        return (EAttribute)getNamelistStmtType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getNamelistStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getNamelistStmtType_NamelistGroupN() {
-        return (EReference)getNamelistStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getNamelistStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getNamelistStmtType_NamelistGroupObjLT() {
-        return (EReference)getNamelistStmtType().getEStructuralFeatures().get(4);
+        return (EReference) this.getNamelistStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getNType() {
-        if (nTypeEClass == null) {
-            nTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(91);
+        if (this.nTypeEClass == null) {
+            this.nTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers()
+                    .get(91);
         }
-        return nTypeEClass;
+        return this.nTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNType_Mixed() {
-        return (EAttribute)getNType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNType_Group() {
-        return (EAttribute)getNType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getNType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getNType_N() {
-        return (EReference)getNType().getEStructuralFeatures().get(2);
+        return (EReference) this.getNType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNType_N1() {
-        return (EAttribute)getNType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getNType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getNType_Op() {
-        return (EReference)getNType().getEStructuralFeatures().get(4);
+        return (EReference) this.getNType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getNullifyStmtType() {
-        if (nullifyStmtTypeEClass == null) {
-            nullifyStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(92);
+        if (this.nullifyStmtTypeEClass == null) {
+            this.nullifyStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(92);
         }
-        return nullifyStmtTypeEClass;
+        return this.nullifyStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getNullifyStmtType_Mixed() {
-        return (EAttribute)getNullifyStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getNullifyStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getNullifyStmtType_ArgSpec() {
-        return (EReference)getNullifyStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getNullifyStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getObjectType() {
-        if (objectTypeEClass == null) {
-            objectTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(93);
+        if (this.objectTypeEClass == null) {
+            this.objectTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(93);
         }
-        return objectTypeEClass;
+        return this.objectTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getObjectType_File() {
-        return (EReference)getObjectType().getEStructuralFeatures().get(0);
+        return (EReference) this.getObjectType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getObjectType_Openacc() {
-        return (EAttribute)getObjectType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getObjectType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getObjectType_Openmp() {
-        return (EAttribute)getObjectType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getObjectType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getObjectType_SourceForm() {
-        return (EAttribute)getObjectType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getObjectType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getObjectType_SourceWidth() {
-        return (EAttribute)getObjectType().getEStructuralFeatures().get(4);
+        return (EAttribute) this.getObjectType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getOpenStmtType() {
-        if (openStmtTypeEClass == null) {
-            openStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(94);
+        if (this.openStmtTypeEClass == null) {
+            this.openStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(94);
         }
-        return openStmtTypeEClass;
+        return this.openStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getOpenStmtType_Mixed() {
-        return (EAttribute)getOpenStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getOpenStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getOpenStmtType_Group() {
-        return (EAttribute)getOpenStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getOpenStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getOpenStmtType_Cnt() {
-        return (EAttribute)getOpenStmtType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getOpenStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOpenStmtType_ConnectSpecSpec() {
-        return (EReference)getOpenStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getOpenStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getOpEType() {
-        if (opETypeEClass == null) {
-            opETypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(95);
+        if (this.opETypeEClass == null) {
+            this.opETypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(95);
         }
-        return opETypeEClass;
+        return this.opETypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getOpEType_Group() {
-        return (EAttribute)getOpEType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getOpEType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getOpEType_Cnt() {
-        return (EAttribute)getOpEType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getOpEType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOpEType_LiteralE() {
-        return (EReference)getOpEType().getEStructuralFeatures().get(2);
+        return (EReference) this.getOpEType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOpEType_NamedE() {
-        return (EReference)getOpEType().getEStructuralFeatures().get(3);
+        return (EReference) this.getOpEType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOpEType_Op() {
-        return (EReference)getOpEType().getEStructuralFeatures().get(4);
+        return (EReference) this.getOpEType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOpEType_OpE() {
-        return (EReference)getOpEType().getEStructuralFeatures().get(5);
+        return (EReference) this.getOpEType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOpEType_ParensE() {
-        return (EReference)getOpEType().getEStructuralFeatures().get(6);
+        return (EReference) this.getOpEType().getEStructuralFeatures().get(6);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOpEType_StringE() {
-        return (EReference)getOpEType().getEStructuralFeatures().get(7);
+        return (EReference) this.getOpEType().getEStructuralFeatures().get(7);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getOpType() {
-        if (opTypeEClass == null) {
-            opTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(96);
+        if (this.opTypeEClass == null) {
+            this.opTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers()
+                    .get(96);
         }
-        return opTypeEClass;
+        return this.opTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getOpType_O() {
-        return (EAttribute)getOpType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getOpType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getOutputItemLTType() {
-        if (outputItemLTTypeEClass == null) {
-            outputItemLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(97);
+        if (this.outputItemLTTypeEClass == null) {
+            this.outputItemLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(97);
         }
-        return outputItemLTTypeEClass;
+        return this.outputItemLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getOutputItemLTType_Mixed() {
-        return (EAttribute)getOutputItemLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getOutputItemLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOutputItemLTType_OutputItem() {
-        return (EReference)getOutputItemLTType().getEStructuralFeatures().get(1);
+        return (EReference) this.getOutputItemLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getOutputItemType() {
-        if (outputItemTypeEClass == null) {
-            outputItemTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(98);
+        if (this.outputItemTypeEClass == null) {
+            this.outputItemTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(98);
         }
-        return outputItemTypeEClass;
+        return this.outputItemTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOutputItemType_LiteralE() {
-        return (EReference)getOutputItemType().getEStructuralFeatures().get(0);
+        return (EReference) this.getOutputItemType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOutputItemType_NamedE() {
-        return (EReference)getOutputItemType().getEStructuralFeatures().get(1);
+        return (EReference) this.getOutputItemType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOutputItemType_OpE() {
-        return (EReference)getOutputItemType().getEStructuralFeatures().get(2);
+        return (EReference) this.getOutputItemType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getOutputItemType_StringE() {
-        return (EReference)getOutputItemType().getEStructuralFeatures().get(3);
+        return (EReference) this.getOutputItemType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getParensEType() {
-        if (parensETypeEClass == null) {
-            parensETypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(99);
+        if (this.parensETypeEClass == null) {
+            this.parensETypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(99);
         }
-        return parensETypeEClass;
+        return this.parensETypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getParensEType_Mixed() {
-        return (EAttribute)getParensEType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getParensEType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getParensEType_Group() {
-        return (EAttribute)getParensEType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getParensEType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getParensEType_Cnt() {
-        return (EAttribute)getParensEType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getParensEType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getParensEType_OpE() {
-        return (EReference)getParensEType().getEStructuralFeatures().get(3);
+        return (EReference) this.getParensEType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getParensEType_Iterator() {
-        return (EReference)getParensEType().getEStructuralFeatures().get(4);
+        return (EReference) this.getParensEType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getParensRType() {
-        if (parensRTypeEClass == null) {
-            parensRTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(100);
+        if (this.parensRTypeEClass == null) {
+            this.parensRTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(100);
         }
-        return parensRTypeEClass;
+        return this.parensRTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getParensRType_Mixed() {
-        return (EAttribute)getParensRType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getParensRType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getParensRType_Group() {
-        return (EAttribute)getParensRType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getParensRType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getParensRType_ArgSpec() {
-        return (EReference)getParensRType().getEStructuralFeatures().get(2);
+        return (EReference) this.getParensRType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getParensRType_Cnt() {
-        return (EAttribute)getParensRType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getParensRType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getParensRType_ElementLT() {
-        return (EReference)getParensRType().getEStructuralFeatures().get(4);
+        return (EReference) this.getParensRType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getPointerAStmtType() {
-        if (pointerAStmtTypeEClass == null) {
-            pointerAStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(101);
+        if (this.pointerAStmtTypeEClass == null) {
+            this.pointerAStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(101);
         }
-        return pointerAStmtTypeEClass;
+        return this.pointerAStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getPointerAStmtType_E1() {
-        return (EReference)getPointerAStmtType().getEStructuralFeatures().get(0);
+        return (EReference) this.getPointerAStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getPointerAStmtType_A() {
-        return (EAttribute)getPointerAStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getPointerAStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getPointerAStmtType_E2() {
-        return (EReference)getPointerAStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getPointerAStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getPointerStmtType() {
-        if (pointerStmtTypeEClass == null) {
-            pointerStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(102);
+        if (this.pointerStmtTypeEClass == null) {
+            this.pointerStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(102);
         }
-        return pointerStmtTypeEClass;
+        return this.pointerStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getPointerStmtType_Mixed() {
-        return (EAttribute)getPointerStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getPointerStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getPointerStmtType_ENDeclLT() {
-        return (EReference)getPointerStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getPointerStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getProcedureDesignatorType() {
-        if (procedureDesignatorTypeEClass == null) {
-            procedureDesignatorTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(103);
+        if (this.procedureDesignatorTypeEClass == null) {
+            this.procedureDesignatorTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(103);
         }
-        return procedureDesignatorTypeEClass;
+        return this.procedureDesignatorTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getProcedureDesignatorType_NamedE() {
-        return (EReference)getProcedureDesignatorType().getEStructuralFeatures().get(0);
+        return (EReference) this.getProcedureDesignatorType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getProcedureStmtType() {
-        if (procedureStmtTypeEClass == null) {
-            procedureStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(104);
+        if (this.procedureStmtTypeEClass == null) {
+            this.procedureStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(104);
         }
-        return procedureStmtTypeEClass;
+        return this.procedureStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getProcedureStmtType_Mixed() {
-        return (EAttribute)getProcedureStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getProcedureStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getProcedureStmtType_ModuleProcedureNLT() {
-        return (EReference)getProcedureStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getProcedureStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getProgramNType() {
-        if (programNTypeEClass == null) {
-            programNTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(105);
+        if (this.programNTypeEClass == null) {
+            this.programNTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(105);
         }
-        return programNTypeEClass;
+        return this.programNTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getProgramNType_N() {
-        return (EReference)getProgramNType().getEStructuralFeatures().get(0);
+        return (EReference) this.getProgramNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getProgramStmtType() {
-        if (programStmtTypeEClass == null) {
-            programStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(106);
+        if (this.programStmtTypeEClass == null) {
+            this.programStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(106);
         }
-        return programStmtTypeEClass;
+        return this.programStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getProgramStmtType_Mixed() {
-        return (EAttribute)getProgramStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getProgramStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getProgramStmtType_ProgramN() {
-        return (EReference)getProgramStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getProgramStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getPublicStmtType() {
-        if (publicStmtTypeEClass == null) {
-            publicStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(107);
+        if (this.publicStmtTypeEClass == null) {
+            this.publicStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(107);
         }
-        return publicStmtTypeEClass;
+        return this.publicStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getPublicStmtType_Mixed() {
-        return (EAttribute)getPublicStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getPublicStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getPublicStmtType_ENLT() {
-        return (EReference)getPublicStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getPublicStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getReadStmtType() {
-        if (readStmtTypeEClass == null) {
-            readStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(108);
+        if (this.readStmtTypeEClass == null) {
+            this.readStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(108);
         }
-        return readStmtTypeEClass;
+        return this.readStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getReadStmtType_Mixed() {
-        return (EAttribute)getReadStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getReadStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getReadStmtType_IoControlSpec() {
-        return (EReference)getReadStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getReadStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getRenameLTType() {
-        if (renameLTTypeEClass == null) {
-            renameLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(109);
+        if (this.renameLTTypeEClass == null) {
+            this.renameLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(109);
         }
-        return renameLTTypeEClass;
+        return this.renameLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getRenameLTType_Mixed() {
-        return (EAttribute)getRenameLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getRenameLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getRenameLTType_Group() {
-        return (EAttribute)getRenameLTType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getRenameLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getRenameLTType_Cnt() {
-        return (EAttribute)getRenameLTType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getRenameLTType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getRenameLTType_Rename() {
-        return (EReference)getRenameLTType().getEStructuralFeatures().get(3);
+        return (EReference) this.getRenameLTType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getRenameType() {
-        if (renameTypeEClass == null) {
-            renameTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(110);
+        if (this.renameTypeEClass == null) {
+            this.renameTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(110);
         }
-        return renameTypeEClass;
+        return this.renameTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getRenameType_UseN() {
-        return (EReference)getRenameType().getEStructuralFeatures().get(0);
+        return (EReference) this.getRenameType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getResultSpecType() {
-        if (resultSpecTypeEClass == null) {
-            resultSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(111);
+        if (this.resultSpecTypeEClass == null) {
+            this.resultSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(111);
         }
-        return resultSpecTypeEClass;
+        return this.resultSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getResultSpecType_Mixed() {
-        return (EAttribute)getResultSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getResultSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getResultSpecType_N() {
-        return (EReference)getResultSpecType().getEStructuralFeatures().get(1);
+        return (EReference) this.getResultSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getRLTType() {
-        if (rltTypeEClass == null) {
-            rltTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(112);
+        if (this.rltTypeEClass == null) {
+            this.rltTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(112);
         }
-        return rltTypeEClass;
+        return this.rltTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getRLTType_Group() {
-        return (EAttribute)getRLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getRLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getRLTType_ArrayR() {
-        return (EReference)getRLTType().getEStructuralFeatures().get(1);
+        return (EReference) this.getRLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getRLTType_ComponentR() {
-        return (EReference)getRLTType().getEStructuralFeatures().get(2);
+        return (EReference) this.getRLTType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getRLTType_ParensR() {
-        return (EReference)getRLTType().getEStructuralFeatures().get(3);
+        return (EReference) this.getRLTType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getSectionSubscriptLTType() {
-        if (sectionSubscriptLTTypeEClass == null) {
-            sectionSubscriptLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(113);
+        if (this.sectionSubscriptLTTypeEClass == null) {
+            this.sectionSubscriptLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(113);
         }
-        return sectionSubscriptLTTypeEClass;
+        return this.sectionSubscriptLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getSectionSubscriptLTType_Mixed() {
-        return (EAttribute)getSectionSubscriptLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getSectionSubscriptLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getSectionSubscriptLTType_SectionSubscript() {
-        return (EReference)getSectionSubscriptLTType().getEStructuralFeatures().get(1);
+        return (EReference) this.getSectionSubscriptLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getSectionSubscriptType() {
-        if (sectionSubscriptTypeEClass == null) {
-            sectionSubscriptTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(114);
+        if (this.sectionSubscriptTypeEClass == null) {
+            this.sectionSubscriptTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(114);
         }
-        return sectionSubscriptTypeEClass;
+        return this.sectionSubscriptTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getSectionSubscriptType_Mixed() {
-        return (EAttribute)getSectionSubscriptType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getSectionSubscriptType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getSectionSubscriptType_Group() {
-        return (EAttribute)getSectionSubscriptType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getSectionSubscriptType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getSectionSubscriptType_LowerBound() {
-        return (EReference)getSectionSubscriptType().getEStructuralFeatures().get(2);
+        return (EReference) this.getSectionSubscriptType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getSectionSubscriptType_UpperBound() {
-        return (EReference)getSectionSubscriptType().getEStructuralFeatures().get(3);
+        return (EReference) this.getSectionSubscriptType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getSelectCaseStmtType() {
-        if (selectCaseStmtTypeEClass == null) {
-            selectCaseStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(115);
+        if (this.selectCaseStmtTypeEClass == null) {
+            this.selectCaseStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(115);
         }
-        return selectCaseStmtTypeEClass;
+        return this.selectCaseStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getSelectCaseStmtType_Mixed() {
-        return (EAttribute)getSelectCaseStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getSelectCaseStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getSelectCaseStmtType_Group() {
-        return (EAttribute)getSelectCaseStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getSelectCaseStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getSelectCaseStmtType_N() {
-        return (EReference)getSelectCaseStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getSelectCaseStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getSelectCaseStmtType_CaseE() {
-        return (EReference)getSelectCaseStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getSelectCaseStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getShapeSpecLTType() {
-        if (shapeSpecLTTypeEClass == null) {
-            shapeSpecLTTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(116);
+        if (this.shapeSpecLTTypeEClass == null) {
+            this.shapeSpecLTTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(116);
         }
-        return shapeSpecLTTypeEClass;
+        return this.shapeSpecLTTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getShapeSpecLTType_Mixed() {
-        return (EAttribute)getShapeSpecLTType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getShapeSpecLTType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getShapeSpecLTType_ShapeSpec() {
-        return (EReference)getShapeSpecLTType().getEStructuralFeatures().get(1);
+        return (EReference) this.getShapeSpecLTType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getShapeSpecType() {
-        if (shapeSpecTypeEClass == null) {
-            shapeSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(117);
+        if (this.shapeSpecTypeEClass == null) {
+            this.shapeSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(117);
         }
-        return shapeSpecTypeEClass;
+        return this.shapeSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getShapeSpecType_Mixed() {
-        return (EAttribute)getShapeSpecType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getShapeSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getShapeSpecType_Group() {
-        return (EAttribute)getShapeSpecType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getShapeSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getShapeSpecType_LowerBound() {
-        return (EReference)getShapeSpecType().getEStructuralFeatures().get(2);
+        return (EReference) this.getShapeSpecType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getShapeSpecType_UpperBound() {
-        return (EReference)getShapeSpecType().getEStructuralFeatures().get(3);
+        return (EReference) this.getShapeSpecType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getStopStmtType() {
-        if (stopStmtTypeEClass == null) {
-            stopStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(118);
+        if (this.stopStmtTypeEClass == null) {
+            this.stopStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(118);
         }
-        return stopStmtTypeEClass;
+        return this.stopStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getStopStmtType_Mixed() {
-        return (EAttribute)getStopStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getStopStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getStopStmtType_StopCode() {
-        return (EAttribute)getStopStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getStopStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getStringEType() {
-        if (stringETypeEClass == null) {
-            stringETypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(119);
+        if (this.stringETypeEClass == null) {
+            this.stringETypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(119);
         }
-        return stringETypeEClass;
+        return this.stringETypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getStringEType_S() {
-        return (EAttribute)getStringEType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getStringEType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getSubroutineNType() {
-        if (subroutineNTypeEClass == null) {
-            subroutineNTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(120);
+        if (this.subroutineNTypeEClass == null) {
+            this.subroutineNTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(120);
         }
-        return subroutineNTypeEClass;
+        return this.subroutineNTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getSubroutineNType_N() {
-        return (EReference)getSubroutineNType().getEStructuralFeatures().get(0);
+        return (EReference) this.getSubroutineNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getSubroutineStmtType() {
-        if (subroutineStmtTypeEClass == null) {
-            subroutineStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(121);
+        if (this.subroutineStmtTypeEClass == null) {
+            this.subroutineStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(121);
         }
-        return subroutineStmtTypeEClass;
+        return this.subroutineStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getSubroutineStmtType_Mixed() {
-        return (EAttribute)getSubroutineStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getSubroutineStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getSubroutineStmtType_Group() {
-        return (EAttribute)getSubroutineStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getSubroutineStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getSubroutineStmtType_Cnt() {
-        return (EAttribute)getSubroutineStmtType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getSubroutineStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getSubroutineStmtType_DummyArgLT() {
-        return (EReference)getSubroutineStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getSubroutineStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getSubroutineStmtType_Prefix() {
-        return (EAttribute)getSubroutineStmtType().getEStructuralFeatures().get(4);
+        return (EAttribute) this.getSubroutineStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getSubroutineStmtType_SubroutineN() {
-        return (EReference)getSubroutineStmtType().getEStructuralFeatures().get(5);
+        return (EReference) this.getSubroutineStmtType().getEStructuralFeatures().get(5);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getTDeclStmtType() {
-        if (tDeclStmtTypeEClass == null) {
-            tDeclStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(122);
+        if (this.tDeclStmtTypeEClass == null) {
+            this.tDeclStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(122);
         }
-        return tDeclStmtTypeEClass;
+        return this.tDeclStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getTDeclStmtType_Mixed() {
-        return (EAttribute)getTDeclStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getTDeclStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getTDeclStmtType_Group() {
-        return (EAttribute)getTDeclStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getTDeclStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getTDeclStmtType_ENDeclLT() {
-        return (EReference)getTDeclStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getTDeclStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getTDeclStmtType_TSpec() {
-        return (EReference)getTDeclStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getTDeclStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getTDeclStmtType_Attribute() {
-        return (EReference)getTDeclStmtType().getEStructuralFeatures().get(4);
+        return (EReference) this.getTDeclStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getTestEType() {
-        if (testETypeEClass == null) {
-            testETypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(123);
+        if (this.testETypeEClass == null) {
+            this.testETypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(123);
         }
-        return testETypeEClass;
+        return this.testETypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getTestEType_NamedE() {
-        return (EReference)getTestEType().getEStructuralFeatures().get(0);
+        return (EReference) this.getTestEType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getTestEType_OpE() {
-        return (EReference)getTestEType().getEStructuralFeatures().get(1);
+        return (EReference) this.getTestEType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getTNType() {
-        if (tnTypeEClass == null) {
-            tnTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(124);
+        if (this.tnTypeEClass == null) {
+            this.tnTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers()
+                    .get(124);
         }
-        return tnTypeEClass;
+        return this.tnTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getTNType_Mixed() {
-        return (EAttribute)getTNType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getTNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getTNType_N() {
-        return (EReference)getTNType().getEStructuralFeatures().get(1);
+        return (EReference) this.getTNType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getTSpecType() {
-        if (tSpecTypeEClass == null) {
-            tSpecTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(125);
+        if (this.tSpecTypeEClass == null) {
+            this.tSpecTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(125);
         }
-        return tSpecTypeEClass;
+        return this.tSpecTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getTSpecType_DerivedTSpec() {
-        return (EReference)getTSpecType().getEStructuralFeatures().get(0);
+        return (EReference) this.getTSpecType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getTSpecType_IntrinsicTSpec() {
-        return (EReference)getTSpecType().getEStructuralFeatures().get(1);
+        return (EReference) this.getTSpecType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getTStmtType() {
-        if (tStmtTypeEClass == null) {
-            tStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(126);
+        if (this.tStmtTypeEClass == null) {
+            this.tStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(126);
         }
-        return tStmtTypeEClass;
+        return this.tStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getTStmtType_Mixed() {
-        return (EAttribute)getTStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getTStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getTStmtType_Group() {
-        return (EAttribute)getTStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getTStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getTStmtType_TN() {
-        return (EReference)getTStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getTStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getTStmtType_Attribute() {
-        return (EReference)getTStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getTStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getUpperBoundType() {
-        if (upperBoundTypeEClass == null) {
-            upperBoundTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(127);
+        if (this.upperBoundTypeEClass == null) {
+            this.upperBoundTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(127);
         }
-        return upperBoundTypeEClass;
+        return this.upperBoundTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getUpperBoundType_LiteralE() {
-        return (EReference)getUpperBoundType().getEStructuralFeatures().get(0);
+        return (EReference) this.getUpperBoundType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getUpperBoundType_NamedE() {
-        return (EReference)getUpperBoundType().getEStructuralFeatures().get(1);
+        return (EReference) this.getUpperBoundType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getUpperBoundType_OpE() {
-        return (EReference)getUpperBoundType().getEStructuralFeatures().get(2);
+        return (EReference) this.getUpperBoundType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getUseNType() {
-        if (useNTypeEClass == null) {
-            useNTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(128);
+        if (this.useNTypeEClass == null) {
+            this.useNTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(128);
         }
-        return useNTypeEClass;
+        return this.useNTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getUseNType_N() {
-        return (EReference)getUseNType().getEStructuralFeatures().get(0);
+        return (EReference) this.getUseNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getUseStmtType() {
-        if (useStmtTypeEClass == null) {
-            useStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(129);
+        if (this.useStmtTypeEClass == null) {
+            this.useStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(129);
         }
-        return useStmtTypeEClass;
+        return this.useStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getUseStmtType_Mixed() {
-        return (EAttribute)getUseStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getUseStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getUseStmtType_Group() {
-        return (EAttribute)getUseStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getUseStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getUseStmtType_ModuleN() {
-        return (EReference)getUseStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getUseStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getUseStmtType_RenameLT() {
-        return (EReference)getUseStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getUseStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getVNType() {
-        if (vnTypeEClass == null) {
-            vnTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(130);
+        if (this.vnTypeEClass == null) {
+            this.vnTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers()
+                    .get(130);
         }
-        return vnTypeEClass;
+        return this.vnTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getVNType_VN() {
-        return (EReference)getVNType().getEStructuralFeatures().get(0);
+        return (EReference) this.getVNType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getVNType_N() {
-        return (EAttribute)getVNType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getVNType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getVType() {
-        if (vTypeEClass == null) {
-            vTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(131);
+        if (this.vTypeEClass == null) {
+            this.vTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers()
+                    .get(131);
         }
-        return vTypeEClass;
+        return this.vTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getVType_NamedE() {
-        return (EReference)getVType().getEStructuralFeatures().get(0);
+        return (EReference) this.getVType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getWhereConstructStmtType() {
-        if (whereConstructStmtTypeEClass == null) {
-            whereConstructStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(132);
+        if (this.whereConstructStmtTypeEClass == null) {
+            this.whereConstructStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(132);
         }
-        return whereConstructStmtTypeEClass;
+        return this.whereConstructStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getWhereConstructStmtType_Mixed() {
-        return (EAttribute)getWhereConstructStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getWhereConstructStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getWhereConstructStmtType_MaskE() {
-        return (EReference)getWhereConstructStmtType().getEStructuralFeatures().get(1);
+        return (EReference) this.getWhereConstructStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getWhereStmtType() {
-        if (whereStmtTypeEClass == null) {
-            whereStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(133);
+        if (this.whereStmtTypeEClass == null) {
+            this.whereStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(133);
         }
-        return whereStmtTypeEClass;
+        return this.whereStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getWhereStmtType_Mixed() {
-        return (EAttribute)getWhereStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getWhereStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getWhereStmtType_Group() {
-        return (EAttribute)getWhereStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getWhereStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getWhereStmtType_ActionStmt() {
-        return (EReference)getWhereStmtType().getEStructuralFeatures().get(2);
+        return (EReference) this.getWhereStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getWhereStmtType_Cnt() {
-        return (EAttribute)getWhereStmtType().getEStructuralFeatures().get(3);
+        return (EAttribute) this.getWhereStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getWhereStmtType_MaskE() {
-        return (EReference)getWhereStmtType().getEStructuralFeatures().get(4);
+        return (EReference) this.getWhereStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EClass getWriteStmtType() {
-        if (writeStmtTypeEClass == null) {
-            writeStmtTypeEClass = (EClass)EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI).getEClassifiers().get(134);
+        if (this.writeStmtTypeEClass == null) {
+            this.writeStmtTypeEClass = (EClass) EPackage.Registry.INSTANCE.getEPackage(FxtranPackage.eNS_URI)
+                    .getEClassifiers().get(134);
         }
-        return writeStmtTypeEClass;
+        return this.writeStmtTypeEClass;
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getWriteStmtType_Mixed() {
-        return (EAttribute)getWriteStmtType().getEStructuralFeatures().get(0);
+        return (EAttribute) this.getWriteStmtType().getEStructuralFeatures().get(0);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getWriteStmtType_Group() {
-        return (EAttribute)getWriteStmtType().getEStructuralFeatures().get(1);
+        return (EAttribute) this.getWriteStmtType().getEStructuralFeatures().get(1);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EAttribute getWriteStmtType_Cnt() {
-        return (EAttribute)getWriteStmtType().getEStructuralFeatures().get(2);
+        return (EAttribute) this.getWriteStmtType().getEStructuralFeatures().get(2);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getWriteStmtType_IoControlSpec() {
-        return (EReference)getWriteStmtType().getEStructuralFeatures().get(3);
+        return (EReference) this.getWriteStmtType().getEStructuralFeatures().get(3);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public EReference getWriteStmtType_OutputItemLT() {
-        return (EReference)getWriteStmtType().getEStructuralFeatures().get(4);
+        return (EReference) this.getWriteStmtType().getEStructuralFeatures().get(4);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
+    @Override
     public FxtranFactory getFxtranFactory() {
-        return (FxtranFactory)getEFactoryInstance();
+        return (FxtranFactory) this.getEFactoryInstance();
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private boolean isLoaded = false;
 
     /**
-     * Laods the package and any sub-packages from their serialized form.
-     * <!-- begin-user-doc -->
+     * Laods the package and any sub-packages from their serialized form. <!-- begin-user-doc -->
      * <!-- end-user-doc -->
+     *
      * @generated
      */
     public void loadPackage() {
-        if (isLoaded) return;
-        isLoaded = true;
-
-        URL url = getClass().getResource(packageFilename);
-        if (url == null) {
-            throw new RuntimeException("Missing serialized package: " + packageFilename);
+        if (this.isLoaded) {
+            return;
         }
-        URI uri = URI.createURI(url.toString());
-        Resource resource = new EcoreResourceFactoryImpl().createResource(uri);
+        this.isLoaded = true;
+
+        final URL url = this.getClass().getResource(this.packageFilename);
+        if (url == null) {
+            throw new RuntimeException("Missing serialized package: " + this.packageFilename);
+        }
+        final URI uri = URI.createURI(url.toString());
+        final Resource resource = new EcoreResourceFactoryImpl().createResource(uri);
         try {
             resource.load(null);
-        }
-        catch (IOException exception) {
+        } catch (final IOException exception) {
             throw new WrappedException(exception);
         }
-        initializeFromLoadedEPackage(this, (EPackage)resource.getContents().get(0));
-        createResource(eNS_URI);
+        this.initializeFromLoadedEPackage(this, (EPackage) resource.getContents().get(0));
+        this.createResource(eNS_URI);
     }
 
-
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     private boolean isFixed = false;
 
     /**
-     * Fixes up the loaded package, to make it appear as if it had been programmatically built.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * Fixes up the loaded package, to make it appear as if it had been programmatically built. <!--
+     * begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     public void fixPackageContents() {
-        if (isFixed) return;
-        isFixed = true;
-        fixEClassifiers();
+        if (this.isFixed) {
+            return;
+        }
+        this.isFixed = true;
+        this.fixEClassifiers();
     }
 
     /**
-     * Sets the instance class on the given classifier.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * Sets the instance class on the given classifier. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     *
      * @generated
      */
     @Override
-    protected void fixInstanceClass(EClassifier eClassifier) {
+    protected void fixInstanceClass(final EClassifier eClassifier) {
         if (eClassifier.getInstanceClassName() == null) {
             eClassifier.setInstanceClassName("org.oceandsl.tools.sar.fxtran." + eClassifier.getName());
-            setGeneratedClassName(eClassifier);
+            this.setGeneratedClassName(eClassifier);
         }
     }
 
-} //FxtranPackageImpl
+} // FxtranPackageImpl

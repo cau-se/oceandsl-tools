@@ -3,9 +3,7 @@
 package org.oceandsl.tools.sar.fxtran.impl;
 
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
@@ -13,23 +11,22 @@ import org.oceandsl.tools.sar.fxtran.FxtranPackage;
 import org.oceandsl.tools.sar.fxtran.StringEType;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>String EType</b></em>'.
+ * <!-- begin-user-doc --> An implementation of the model object '<em><b>String EType</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.oceandsl.tools.sar.fxtran.impl.StringETypeImpl#getS <em>S</em>}</li>
+ * <li>{@link org.oceandsl.tools.sar.fxtran.impl.StringETypeImpl#getS <em>S</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class StringETypeImpl extends MinimalEObjectImpl.Container implements StringEType {
     /**
-     * The default value of the '{@link #getS() <em>S</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The default value of the '{@link #getS() <em>S</em>}' attribute. <!-- begin-user-doc --> <!--
+     * end-user-doc -->
+     *
      * @see #getS()
      * @generated
      * @ordered
@@ -37,9 +34,9 @@ public class StringETypeImpl extends MinimalEObjectImpl.Container implements Str
     protected static final String S_EDEFAULT = null;
 
     /**
-     * The cached value of the '{@link #getS() <em>S</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * The cached value of the '{@link #getS() <em>S</em>}' attribute. <!-- begin-user-doc --> <!--
+     * end-user-doc -->
+     *
      * @see #getS()
      * @generated
      * @ordered
@@ -47,8 +44,8 @@ public class StringETypeImpl extends MinimalEObjectImpl.Container implements Str
     protected String s = S_EDEFAULT;
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     protected StringETypeImpl() {
@@ -56,8 +53,8 @@ public class StringETypeImpl extends MinimalEObjectImpl.Container implements Str
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
@@ -66,98 +63,103 @@ public class StringETypeImpl extends MinimalEObjectImpl.Container implements Str
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public String getS() {
-        return s;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setS(String newS) {
-        String oldS = s;
-        s = newS;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, FxtranPackage.STRING_ETYPE__S, oldS, s));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public Object eGet(int featureID, boolean resolve, boolean coreType) {
+    public String getS() {
+        return this.s;
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @generated
+     */
+    @Override
+    public void setS(final String newS) {
+        final String oldS = this.s;
+        this.s = newS;
+        if (this.eNotificationRequired()) {
+            this.eNotify(new ENotificationImpl(this, Notification.SET, FxtranPackage.STRING_ETYPE__S, oldS, this.s));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @generated
+     */
+    @Override
+    public Object eGet(final int featureID, final boolean resolve, final boolean coreType) {
         switch (featureID) {
-            case FxtranPackage.STRING_ETYPE__S:
-                return getS();
+        case FxtranPackage.STRING_ETYPE__S:
+            return this.getS();
         }
         return super.eGet(featureID, resolve, coreType);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public void eSet(int featureID, Object newValue) {
+    public void eSet(final int featureID, final Object newValue) {
         switch (featureID) {
-            case FxtranPackage.STRING_ETYPE__S:
-                setS((String)newValue);
-                return;
+        case FxtranPackage.STRING_ETYPE__S:
+            this.setS((String) newValue);
+            return;
         }
         super.eSet(featureID, newValue);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public void eUnset(int featureID) {
+    public void eUnset(final int featureID) {
         switch (featureID) {
-            case FxtranPackage.STRING_ETYPE__S:
-                setS(S_EDEFAULT);
-                return;
+        case FxtranPackage.STRING_ETYPE__S:
+            this.setS(S_EDEFAULT);
+            return;
         }
         super.eUnset(featureID);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
-    public boolean eIsSet(int featureID) {
+    public boolean eIsSet(final int featureID) {
         switch (featureID) {
-            case FxtranPackage.STRING_ETYPE__S:
-                return S_EDEFAULT == null ? s != null : !S_EDEFAULT.equals(s);
+        case FxtranPackage.STRING_ETYPE__S:
+            return S_EDEFAULT == null ? this.s != null : !S_EDEFAULT.equals(this.s);
         }
         return super.eIsSet(featureID);
     }
 
     /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
      * @generated
      */
     @Override
     public String toString() {
-        if (eIsProxy()) return super.toString();
+        if (this.eIsProxy()) {
+            return super.toString();
+        }
 
-        StringBuilder result = new StringBuilder(super.toString());
+        final StringBuilder result = new StringBuilder(super.toString());
         result.append(" (s: ");
-        result.append(s);
+        result.append(this.s);
         result.append(')');
         return result.toString();
     }
 
-} //StringETypeImpl
+} // StringETypeImpl

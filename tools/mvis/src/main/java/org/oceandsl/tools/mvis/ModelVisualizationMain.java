@@ -15,9 +15,9 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Locale;
 
 import com.beust.jcommander.JCommander;
@@ -62,7 +62,7 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }

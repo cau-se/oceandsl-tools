@@ -15,8 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.relabel;
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -75,7 +75,8 @@ public class RelabelSourceMain extends AbstractService<TeetimeConfiguration, Set
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
+        // we do not use a configuration file
         return null;
     }
 

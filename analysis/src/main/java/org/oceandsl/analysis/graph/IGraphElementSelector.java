@@ -19,7 +19,10 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.exception.InternalErrorException;
 import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 
 /**
  * Interface for a node and edge selector for graphs to realize diff and subtract.
@@ -29,11 +32,15 @@ import kieker.model.analysismodel.execution.Invocation;
  */
 public interface IGraphElementSelector {
 
-    void setRepository(ModelRepository repository);
+    void setRepository(ModelRepository repository) throws InternalErrorException;
 
     boolean nodeIsSelected(EObject value);
 
     boolean edgeIsSelected(Invocation value);
+
+    boolean edgeIsSelected(OperationDataflow value);
+
+    boolean edgeIsSelected(StorageDataflow value);
 
     String getFilePrefix();
 

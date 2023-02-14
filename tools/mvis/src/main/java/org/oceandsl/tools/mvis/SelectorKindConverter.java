@@ -43,9 +43,9 @@ public class SelectorKindConverter implements IStringConverter<IGraphElementSele
             return new AllSelector();
         case DIFF:
             return new DiffSelector(parts[1].split(","), parts[2].split(","));
-        case INTERSECT:
-            return new SubtractSelector(parts[1].split(","));
         case SUBTRACT:
+            return new SubtractSelector(parts[1].split(","));
+        case INTERSECT:
             return new IntersectSelector(parts[1].split(","), parts[2].split(","));
         default:
             return new AllSelector();

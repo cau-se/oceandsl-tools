@@ -23,12 +23,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.oceandsl.analysis.utils.MapFileReader;
-import org.oceandsl.analysis.utils.StringValueConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
+
+import org.oceandsl.analysis.utils.MapFileReader;
+import org.oceandsl.analysis.utils.StringValueConverter;
 
 /**
  * @author Reiner Jung

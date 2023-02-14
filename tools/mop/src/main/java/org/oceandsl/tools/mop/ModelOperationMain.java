@@ -15,8 +15,11 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.regex.Pattern;
 
 import com.beust.jcommander.JCommander;
 
@@ -25,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
+import kieker.tools.common.ParameterEvaluationUtils;
 
 /**
  * Architecture analysis main class.
@@ -55,7 +59,7 @@ public class ModelOperationMain extends AbstractService<TeetimeConfiguration, Se
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }
@@ -67,12 +71,36 @@ public class ModelOperationMain extends AbstractService<TeetimeConfiguration, Se
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
+        if (!ParameterEvaluationUtils.isFileReadable(this.settings.getSelectionCriteriaPath().toFile(), "criteria file",
+                commander) || !this.areAllInputFilesReadable(commander)
+                || !ParameterEvaluationUtils.checkDirectory(this.settings.getOutputDirectory().toFile(), "output model",
+                        commander)) {
+            return false;
+        }
+        return this.readPatterns(this.settings.getSelectionCriteriaPath());
+    }
 
-        return true;
+    private boolean areAllInputFilesReadable(final JCommander commander) {
+        return this.settings.getInputModelPaths().stream()
+                .allMatch(path -> ParameterEvaluationUtils.checkDirectory(path.toFile(), "input model", commander));
     }
 
     @Override
     protected void shutdownService() {
         // No special operation necessary.
+    }
+
+    private boolean readPatterns(final Path selectionCriteriaPath) {
+        try (BufferedReader inputStream = Files.newBufferedReader(selectionCriteriaPath)) {
+            String line;
+            while ((line = inputStream.readLine()) != null) {
+                this.settings.getSelectionCriteriaPatterns().add(Pattern.compile(line));
+            }
+            inputStream.close();
+            return true;
+        } catch (final IOException e) {
+            this.logger.error("Cannot read selection criteria from {}", selectionCriteriaPath.toString());
+            return false;
+        }
     }
 }

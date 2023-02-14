@@ -5,15 +5,14 @@ package org.oceandsl.tools.sar.fxtran;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Namelist Group NType</b></em>'.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> A representation of the model object '<em><b>Namelist Group
+ * NType</b></em>'. <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.oceandsl.tools.sar.fxtran.NamelistGroupNType#getN <em>N</em>}</li>
+ * <li>{@link org.oceandsl.tools.sar.fxtran.NamelistGroupNType#getN <em>N</em>}</li>
  * </ul>
  *
  * @see org.oceandsl.tools.sar.fxtran.FxtranPackage#getNamelistGroupNType()
@@ -22,9 +21,9 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface NamelistGroupNType extends EObject {
     /**
-     * Returns the value of the '<em><b>N</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
+     * Returns the value of the '<em><b>N</b></em>' attribute. <!-- begin-user-doc --> <!--
+     * end-user-doc -->
+     *
      * @return the value of the '<em>N</em>' attribute.
      * @see #setN(String)
      * @see org.oceandsl.tools.sar.fxtran.FxtranPackage#getNamelistGroupNType_N()
@@ -35,10 +34,11 @@ public interface NamelistGroupNType extends EObject {
     String getN();
 
     /**
-     * Sets the value of the '{@link org.oceandsl.tools.sar.fxtran.NamelistGroupNType#getN <em>N</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>N</em>' attribute.
+     * Sets the value of the '{@link org.oceandsl.tools.sar.fxtran.NamelistGroupNType#getN
+     * <em>N</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+     *
+     * @param value
+     *            the new value of the '<em>N</em>' attribute.
      * @see #getN()
      * @generated
      */

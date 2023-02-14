@@ -30,8 +30,8 @@ public class ModuleBasedSignatureProcessor extends AbstractSignatureProcessor {
 
     @Override
     public boolean processSignatures(final String path, final String componentSignature,
-            final String operationSignature) {
-        this.operationSignature = this.convertToLowerCase(operationSignature);
+            final String elementSignature) {
+        this.elementSignature = this.convertToLowerCase(elementSignature);
         this.componentSignature = this.convertToLowerCase(componentSignature);
         // path is ignored
         return true;

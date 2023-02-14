@@ -17,6 +17,7 @@ package org.oceandsl.log.rewriter;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -46,7 +47,7 @@ public class LogRewriterMain extends AbstractService<TeetimeConfiguration, Setti
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }

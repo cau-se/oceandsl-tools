@@ -28,8 +28,6 @@ import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyPackage;
-import kieker.model.analysismodel.deployment.DeploymentModel;
-import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
@@ -64,7 +62,6 @@ public class GroupComponentsHierarchicallyStage extends AbstractTransformation<M
     protected void execute(final ModelRepository repository) throws Exception {
         final TypeModel typeModel = repository.getModel(TypePackage.Literals.TYPE_MODEL);
         final AssemblyModel assemblyModel = repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
-        final DeploymentModel deploymentModel = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
         this.componentMap.values().forEach(componentName -> {
             if (!typeModel.getComponentTypes().containsKey(componentName)) {
                 final ComponentType componentType = this.createComponentType(componentName);

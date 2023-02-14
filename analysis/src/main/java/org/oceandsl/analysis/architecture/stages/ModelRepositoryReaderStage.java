@@ -17,10 +17,11 @@ package org.oceandsl.analysis.architecture.stages;
 
 import java.nio.file.Path;
 
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-
 import kieker.analysis.architecture.repository.ModelRepository;
+
 import teetime.stage.basic.AbstractTransformation;
+
+import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
 
 /**
  * Loads model repositories based on the paths it receives. Each loaded model is then passed

@@ -17,6 +17,7 @@ package org.oceandsl.tools.dar;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.beust.jcommander.Parameter;
@@ -35,11 +36,12 @@ import org.oceandsl.analysis.generic.EModuleModeConverter;
 public class Settings { // NOPMD data class
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, converter = PathConverter.class, description = "Input Kieker log directory location")
-    private Path inputFile;
+            "--input" }, required = true, variableArity = true, converter = PathConverter.class, description = "Input Kieker log directory locations")
+    private List<Path> inputPaths;
+    private final List<File> inputFiles = new ArrayList<>();
 
     @Parameter(names = { "-o",
-            "--output" }, required = true, converter = PathConverter.class, description = "Output directory to store the recovered models")
+            "--output" }, required = true, converter = PathConverter.class, description = "Output directory to store the recovered model")
     private Path outputDirectory;
 
     @Parameter(names = { "-M",
@@ -64,7 +66,7 @@ public class Settings { // NOPMD data class
     private String experimentName;
 
     @Parameter(names = { "-s",
-            "--signature-extractor" }, required = true, converter = ESignatureExtractorConverter.class, description = "Type of extractor used for component and operation signatures")
+            "--signature-extractor" }, required = true, converter = ESignatureExtractorConverter.class, description = "Type of extractor used for component and operation signatures: elf, python, java")
     private ESignatureExtractor signatureExtractor;
 
     @Parameter(names = { "-k",
@@ -72,15 +74,19 @@ public class Settings { // NOPMD data class
     private boolean keepMetaDataOnCompletedTraces;
 
     @Parameter(names = { "-m",
-            "--module-modes" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategies: file-mode, map-mode, module-mode")
-    List<EModuleMode> moduleModes;
+            "--module-modes" }, required = true, variableArity = true, converter = EModuleModeConverter.class, description = "Module converter strategies: file-mode, map-mode, module-mode, java-class-mode, java-class-long-mode")
+    private List<EModuleMode> moduleModes;
 
     @Parameter(names = { "-ms",
             "--map-file-separator" }, required = false, description = "Separator character for the mapping file")
     private String mapFileColumnSeparator;
 
-    public Path getInputFile() {
-        return this.inputFile;
+    public List<Path> getInputPaths() {
+        return this.inputPaths;
+    }
+
+    public List<File> getInputFiles() {
+        return this.inputFiles;
     }
 
     public Path getOutputDirectory() {

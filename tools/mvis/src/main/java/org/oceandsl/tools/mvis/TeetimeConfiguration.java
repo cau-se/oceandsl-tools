@@ -25,7 +25,9 @@ import org.mosim.refactorlizar.architecture.evaluation.codemetrics.HyperGraphSiz
 import kieker.analysis.architecture.dependency.DependencyGraphCreatorStage;
 import kieker.analysis.architecture.recovery.signature.NameBuilder;
 import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.generic.graph.IEdge;
 import kieker.analysis.generic.graph.IGraph;
+import kieker.analysis.generic.graph.INode;
 import kieker.analysis.generic.sink.graph.dot.DotFileWriterStage;
 import kieker.analysis.generic.sink.graph.graphml.GraphMLFileWriterStage;
 import kieker.model.analysismodel.deployment.DeployedComponent;
@@ -69,64 +71,31 @@ public class TeetimeConfiguration extends Configuration {
 
         final ModelRepositoryProducerStage readerStage = new ModelRepositoryProducerStage(settings.getInputDirectory());
 
-        final Distributor<ModelRepository> triggerDistributor = new Distributor<>(new CopyByReferenceStrategy());
-
-        final DotFileWriterStage dotFileOperationDependencyWriterStage = new DotFileWriterStage(
-                new DedicatedFileNameMapper(settings.getOutputDirectory(), "operation", "dot"),
-                new ColoredDotExportConfigurationFactory(NameBuilder.forJavaShortOperations())
-                        .createForAssemblyLevelOperationDependencyGraph(false));
-
         final Distributor<ModelRepository> statisticsDistributor = new Distributor<>(new CopyByReferenceStrategy());
 
-        /** Stages for statistics. */
-        final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
-        final OperationCallGraphStage functionCallGraphStage = new OperationCallGraphStage(settings.getSelector(),
-                settings.getGraphGenerationMode());
-        final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
-        final ModuleCallGraphStage moduleCallGraphStage = new ModuleCallGraphStage(settings.getSelector(),
-                settings.getGraphGenerationMode());
-        final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
+        this.connectPorts(readerStage.getOutputPort(), statisticsDistributor.getInputPort());
 
-        /** Sinks for metrics writing to CSV files. */
-        final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputDirectory(), String.format("%s-%s",
-                settings.getSelector().getFilePrefix(), TeetimeConfiguration.OPERATION_CALLS_CSV));
-        final TableCSVSink distinctOperationDegreeSink = new TableCSVSink(settings.getOutputDirectory(), String.format(
-                "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV));
-        final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(settings.getOutputDirectory(), String.format(
-                "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
+        this.createNumberOfCallsStatistics(settings, statisticsDistributor);
+        this.createOperationCouplingStatistics(settings, statisticsDistributor);
+        this.createModuleCouplingStatistics(settings, statisticsDistributor);
+        this.createAllenMetricStatistics(settings, statisticsDistributor);
 
-        final GraphMLFileWriterStage graphMLFileWriterStage = new GraphMLFileWriterStage(settings.getOutputDirectory());
+        final Distributor<ModelRepository> triggerDistributor = new Distributor<>(new CopyByReferenceStrategy());
 
-        /** connecting ports. */
         this.connectPorts(statisticsDistributor.getNewOutputPort(), triggerDistributor.getInputPort());
 
-        final IColorDependencyGraphBuilderConfiguration configuration = new ColorDependencyGraphBuilderConfiguration(
-                settings.getSelector());
+        this.createOperationGraphs(settings, triggerDistributor);
+        this.createComponentGraphs(settings, triggerDistributor);
+    }
 
-        /** operation graph. */
-        if (settings.getOutputGraphs().contains(EOutputGraph.DOT_OP)
-                || settings.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
-            final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
-                    configuration, new ColorAssemblyLevelOperationDependencyGraphBuilderFactory());
-            final Distributor<IGraph> graphsDistributor = new Distributor<>(new CopyByReferenceStrategy());
-
-            this.connectPorts(triggerDistributor.getNewOutputPort(),
-                    operationDependencyGraphCreatorStage.getInputPort());
-            this.connectPorts(operationDependencyGraphCreatorStage.getOutputPort(), graphsDistributor.getInputPort());
-            if (settings.getOutputGraphs().contains(EOutputGraph.DOT_OP)) {
-                this.connectPorts(graphsDistributor.getNewOutputPort(),
-                        dotFileOperationDependencyWriterStage.getInputPort());
-            }
-            if (settings.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
-                this.connectPorts(graphsDistributor.getNewOutputPort(), graphMLFileWriterStage.getInputPort());
-            }
-        }
-
-        /** component graph. */
+    private void createComponentGraphs(final Settings settings, final Distributor<ModelRepository> triggerDistributor) {
         if (settings.getOutputGraphs().contains(EOutputGraph.DOT_COMPONENT)) {
+            final IColorDependencyGraphBuilderConfiguration configuration = new ColorDependencyGraphBuilderConfiguration(
+                    settings.getSelector());
+
             final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> componentDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
                     configuration, new ColorAssemblyLevelComponentDependencyGraphBuilderFactory());
-            final DotFileWriterStage componentDependencyDotFileWriterStage = new DotFileWriterStage(
+            final DotFileWriterStage<INode, IEdge> componentDependencyDotFileWriterStage = new DotFileWriterStage<>(
                     new DedicatedFileNameMapper(settings.getOutputDirectory(), "component", "dot"),
                     new ColoredDotExportConfigurationFactory(NameBuilder.forJavaShortOperations())
                             .createForAssemblyLevelComponentDependencyGraph(false));
@@ -136,33 +105,104 @@ public class TeetimeConfiguration extends Configuration {
             this.connectPorts(componentDependencyGraphCreatorStage.getOutputPort(),
                     componentDependencyDotFileWriterStage.getInputPort());
         }
+    }
 
-        /** setup allen metrics. */
-        final AllenDeployedArchitectureGraphStage allenArchitectureModularGraphStage = new AllenDeployedArchitectureGraphStage(
-                settings.getSelector(), settings.getGraphGenerationMode());
-        final ComputeAllenComplexityMetrics<DeployedComponent> computeAllenComplexityStage = new ComputeAllenComplexityMetrics<>(
-                new KiekerArchitectureModelSystemGraphUtils(), HyperGraphSize.class, Complexity.class, Coupling.class,
-                Cohesion.class);
-        final SaveAllenDataStage saveAllenDataStage = new SaveAllenDataStage(settings.getOutputDirectory());
+    private void createOperationGraphs(final Settings settings, final Distributor<ModelRepository> triggerDistributor) {
+        if (settings.getOutputGraphs().contains(EOutputGraph.DOT_OP)
+                || settings.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
+            final IColorDependencyGraphBuilderConfiguration configuration = new ColorDependencyGraphBuilderConfiguration(
+                    settings.getSelector());
 
-        /** connect stages. */
-        this.connectPorts(readerStage.getOutputPort(), statisticsDistributor.getInputPort());
+            final DependencyGraphCreatorStage<IColorDependencyGraphBuilderConfiguration> operationDependencyGraphCreatorStage = new DependencyGraphCreatorStage<>(
+                    configuration, new ColorAssemblyLevelOperationDependencyGraphBuilderFactory());
 
-        /** Statistics. */
-        this.connectPorts(statisticsDistributor.getNewOutputPort(), allenArchitectureModularGraphStage.getInputPort());
-        this.connectPorts(allenArchitectureModularGraphStage.getOutputPort(),
-                computeAllenComplexityStage.getInputPort());
-        this.connectPorts(computeAllenComplexityStage.getOutputPort(), saveAllenDataStage.getInputPort());
+            final Distributor<IGraph<INode, IEdge>> graphsDistributor = new Distributor<>(
+                    new CopyByReferenceStrategy());
 
-        this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
-        this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());
+            this.connectPorts(triggerDistributor.getNewOutputPort(),
+                    operationDependencyGraphCreatorStage.getInputPort());
+            this.connectPorts(operationDependencyGraphCreatorStage.getOutputPort(), graphsDistributor.getInputPort());
 
-        this.connectPorts(statisticsDistributor.getNewOutputPort(), functionCallGraphStage.getInputPort());
-        this.connectPorts(functionCallGraphStage.getOutputPort(), functionNodeCouplingStage.getInputPort());
-        this.connectPorts(functionNodeCouplingStage.getOutputPort(), distinctOperationDegreeSink.getInputPort());
+            if (settings.getOutputGraphs().contains(EOutputGraph.DOT_OP)) {
+                final DotFileWriterStage<INode, IEdge> dotFileOperationDependencyWriterStage = new DotFileWriterStage<>(
+                        new DedicatedFileNameMapper(settings.getOutputDirectory(), "operation", "dot"),
+                        new ColoredDotExportConfigurationFactory(NameBuilder.forJavaShortOperations())
+                                .createForAssemblyLevelOperationDependencyGraph(false));
 
-        this.connectPorts(statisticsDistributor.getNewOutputPort(), moduleCallGraphStage.getInputPort());
-        this.connectPorts(moduleCallGraphStage.getOutputPort(), moduleNodeCouplingStage.getInputPort());
-        this.connectPorts(moduleNodeCouplingStage.getOutputPort(), distinctModuleDegreeSink.getInputPort());
+                this.connectPorts(graphsDistributor.getNewOutputPort(),
+                        dotFileOperationDependencyWriterStage.getInputPort());
+            }
+
+            if (settings.getOutputGraphs().contains(EOutputGraph.GRAPHML)) {
+                final GraphMLFileWriterStage<INode, IEdge> graphMLFileWriterStage = new GraphMLFileWriterStage<>(
+                        settings.getOutputDirectory());
+
+                this.connectPorts(graphsDistributor.getNewOutputPort(), graphMLFileWriterStage.getInputPort());
+            }
+        }
+
+    }
+
+    private void createNumberOfCallsStatistics(final Settings settings,
+            final Distributor<ModelRepository> statisticsDistributor) {
+        if (settings.getComputeStatistics().contains(EStatistics.NUM_OF_CALLS)) {
+            final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
+            final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputDirectory(), String
+                    .format("%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.OPERATION_CALLS_CSV));
+
+            this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
+            this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());
+        }
+    }
+
+    private void createOperationCouplingStatistics(final Settings settings,
+            final Distributor<ModelRepository> statisticsDistributor) {
+        if (settings.getComputeStatistics().contains(EStatistics.OP_COUPLING)) {
+            final OperationCallGraphStage functionCallGraphStage = new OperationCallGraphStage(settings.getSelector(),
+                    settings.getGraphGenerationMode());
+            final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
+
+            final TableCSVSink distinctOperationDegreeSink = new TableCSVSink(settings.getOutputDirectory(),
+                    String.format("%s-%s", settings.getSelector().getFilePrefix(),
+                            TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV));
+
+            this.connectPorts(statisticsDistributor.getNewOutputPort(), functionCallGraphStage.getInputPort());
+            this.connectPorts(functionCallGraphStage.getOutputPort(), functionNodeCouplingStage.getInputPort());
+            this.connectPorts(functionNodeCouplingStage.getOutputPort(), distinctOperationDegreeSink.getInputPort());
+        }
+    }
+
+    private void createModuleCouplingStatistics(final Settings settings,
+            final Distributor<ModelRepository> statisticsDistributor) {
+        if (settings.getComputeStatistics().contains(EStatistics.MODULE_COUPLING)) {
+            final ModuleCallGraphStage moduleCallGraphStage = new ModuleCallGraphStage(settings.getSelector(),
+                    settings.getGraphGenerationMode());
+            final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
+
+            final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(settings.getOutputDirectory(), String.format(
+                    "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
+
+            this.connectPorts(statisticsDistributor.getNewOutputPort(), moduleCallGraphStage.getInputPort());
+            this.connectPorts(moduleCallGraphStage.getOutputPort(), moduleNodeCouplingStage.getInputPort());
+            this.connectPorts(moduleNodeCouplingStage.getOutputPort(), distinctModuleDegreeSink.getInputPort());
+        }
+    }
+
+    private void createAllenMetricStatistics(final Settings settings,
+            final Distributor<ModelRepository> statisticsDistributor) {
+        if (settings.getComputeStatistics().contains(EStatistics.ALLEN)) {
+            final AllenDeployedArchitectureGraphStage allenArchitectureModularGraphStage = new AllenDeployedArchitectureGraphStage(
+                    settings.getSelector(), settings.getGraphGenerationMode());
+            final ComputeAllenComplexityMetrics<DeployedComponent> computeAllenComplexityStage = new ComputeAllenComplexityMetrics<>(
+                    new KiekerArchitectureModelSystemGraphUtils(), HyperGraphSize.class, Complexity.class,
+                    Coupling.class, Cohesion.class);
+            final SaveAllenDataStage saveAllenDataStage = new SaveAllenDataStage(settings.getOutputDirectory());
+
+            this.connectPorts(statisticsDistributor.getNewOutputPort(),
+                    allenArchitectureModularGraphStage.getInputPort());
+            this.connectPorts(allenArchitectureModularGraphStage.getOutputPort(),
+                    computeAllenComplexityStage.getInputPort());
+            this.connectPorts(computeAllenComplexityStage.getOutputPort(), saveAllenDataStage.getInputPort());
+        }
     }
 }

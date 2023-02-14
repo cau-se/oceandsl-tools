@@ -159,10 +159,6 @@ public class StaticArchitectureRecoveryMain {
             this.logger.error("You need at least operation calls or dataflow as input.");
             return false;
         }
-        if (!Files.isReadable(this.settings.getOperationCallInputFile())) {
-            this.logger.error("Input path {} is not file", this.settings.getOperationCallInputFile());
-            return false;
-        }
 
         if (this.settings.getFunctionNameFiles() != null) {
             for (final Path functionNameFile : this.settings.getFunctionNameFiles()) {
@@ -178,7 +174,21 @@ public class StaticArchitectureRecoveryMain {
             return false;
         }
 
-        return true;
+        return this.isReadable(this.settings.getOperationCallInputFile())
+                || this.isReadable(this.settings.getDataflowInputFile());
+    }
+
+    private boolean isReadable(final Path p) {
+        try {
+            if (!Files.isReadable(p)) {
+                this.logger.error("Input path {} is not file", p);
+                return false;
+            }
+            return true;
+        } catch (final NullPointerException e) {
+            this.logger.info("no config file at {}", p);
+            return false;
+        }
     }
 
     /**

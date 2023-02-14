@@ -22,7 +22,10 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.exception.InternalErrorException;
 import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
+import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.source.SourceModel;
 import kieker.model.analysismodel.source.SourcePackage;
 
@@ -54,8 +57,11 @@ public class DiffSelector implements IGraphElementSelector {
     }
 
     @Override
-    public void setRepository(final ModelRepository repository) {
+    public void setRepository(final ModelRepository repository) throws InternalErrorException {
         this.sourceModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
+        if (this.sourceModel == null) {
+            throw new InternalErrorException("Missing source model.");
+        }
     }
 
     @Override
@@ -66,6 +72,18 @@ public class DiffSelector implements IGraphElementSelector {
 
     @Override
     public boolean edgeIsSelected(final Invocation value) {
+        final EList<String> sources = this.sourceModel.getSources().get(value);
+        return this.isSelected(sources);
+    }
+
+    @Override
+    public boolean edgeIsSelected(final OperationDataflow value) {
+        final EList<String> sources = this.sourceModel.getSources().get(value);
+        return this.isSelected(sources);
+    }
+
+    @Override
+    public boolean edgeIsSelected(final StorageDataflow value) {
         final EList<String> sources = this.sourceModel.getSources().get(value);
         return this.isSelected(sources);
     }

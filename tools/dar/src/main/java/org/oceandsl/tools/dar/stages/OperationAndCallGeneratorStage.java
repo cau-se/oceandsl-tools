@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright 2022 Kieker Project (http://kieker-monitoring.net)
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,13 @@ public class OperationAndCallGeneratorStage extends AbstractConsumerStage<IFlowR
 
     /**
      * Create stage.
+     *
+     * @param createEntryCall
+     *            true, if the caller of the entry calls should be synthesized
+     * @param processors
+     *            process signature strings
+     * @param removeMetaDataOnCompletedTraces
+     *            assume that the meta data of a trace is no longe needed when it is completed
      */
     public OperationAndCallGeneratorStage(final boolean createEntryCall,
             final List<AbstractSignatureProcessor> processors, final boolean removeMetaDataOnCompletedTraces) {
@@ -69,6 +76,11 @@ public class OperationAndCallGeneratorStage extends AbstractConsumerStage<IFlowR
 
     /**
      * Create stage.
+     *
+     * @param createEntryCall
+     *            true, if the caller of the entry calls should be synthesized
+     * @param removeMetaDataOnCompletedTraces
+     *            assume that the meta data of a trace is no longe needed when it is completed
      */
     public OperationAndCallGeneratorStage(final boolean createEntryCall,
             final boolean removeMetaDataOnCompletedTraces) {
@@ -117,16 +129,14 @@ public class OperationAndCallGeneratorStage extends AbstractConsumerStage<IFlowR
                     componentSignature, operationSignature);
             if (!traceData.getOperationStack().empty()) {
                 this.operationOutputPort.send(newEvent);
+            } else if (this.createEntryCall) {
+                final OperationEvent triggerEvent = new OperationEvent("external", "<unknown>", "<unknown>");
+                this.operationOutputPort.send(triggerEvent);
+                this.operationOutputPort.send(newEvent);
+                traceData.getOperationStack().push(triggerEvent);
+                traceData.getStartTimeStack().push(Instant.ofEpochSecond(0, beforeOperationEvent.getTimestamp()));
             } else {
-                if (this.createEntryCall) {
-                    final OperationEvent triggerEvent = new OperationEvent("external", "<unknown>", "<unknown>");
-                    this.operationOutputPort.send(triggerEvent);
-                    this.operationOutputPort.send(newEvent);
-                    traceData.getOperationStack().push(triggerEvent);
-                    traceData.getStartTimeStack().push(Instant.ofEpochSecond(0, beforeOperationEvent.getTimestamp()));
-                } else {
-                    this.operationOutputPort.send(newEvent);
-                }
+                this.operationOutputPort.send(newEvent);
             }
             traceData.getOperationStack().push(newEvent);
             traceData.getStartTimeStack().push(Instant.ofEpochSecond(0, beforeOperationEvent.getTimestamp()));
