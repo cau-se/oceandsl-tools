@@ -152,7 +152,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 		for(String assign : assigns) {
 			dataflowExecPart.add(dataFlowLine+assign);
 		}
-		return null;
+		return dataflowExecPart;
 	}
 
 	
@@ -179,7 +179,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 			List<String> names = XPathParser.getNamesFromStatement(stmt);
 			List<String> blocks = checkNamesWithCommon(names, commonBlocks);
 			for(String block : blocks) {
-				dataflowLineRest.add("Read;/{"+ block + "}"  );
+				dataflowLineRest.add("READ;/{"+ block + "}"  );
 			}
 		}
 		
@@ -252,8 +252,11 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 		}
 	
 	private List<String> convertToString(List<Node> namesRight) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> result = new ArrayList<String>();
+		for(Node node: namesRight) {
+			result.add(node.getNodeValue());
+		}
+		return result;
 	}
 
 	private List<String> analyzePotentialFuncStmt(List<Node> funcs, List<Node> commonBlocks, List<String> bl,
