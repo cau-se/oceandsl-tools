@@ -31,14 +31,17 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 
 	private List<String> dataflow = new ArrayList<String>();
 	private List<String> contentFile = new ArrayList<String>();
+	
+	
 	@Override
 	protected void execute(List<File> files) throws Exception {
 
 	
-		
+		Output out = new Output();
 		
 		for(File file : files) {
 			//Extract xml
+			System.out.println("File:"+ file.getAbsolutePath());
 			String xml = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
 			// Get main structures
 			List<List<Node>> subRoutineBodies = XPathParser.getSubroutineContents(xml);
@@ -54,14 +57,15 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 			dataflow.addAll(dfInFunc);
 			dataflow.addAll(dfInMain);
 			
-			Output out = new Output();
+			
 			out.setDataflow(dataflow);
 			out.setFileContent(contentFile);
-			this.outputPort.send(out);
+			
 			
 			
 			
 		}
+		this.outputPort.send(out);
 		
 	}
 
@@ -164,7 +168,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 			List<String> args = XPathParser.callHasArgs(callStmt);
 			if(!args.isEmpty()) {
 				checkArgsWithCommon(args, commonBlocList, dataflowLineRest);
-				String line = "WRITE;{"+XPathParser.getCallStmtId(callStmt);
+				String line = "WRITE;{"+XPathParser.getCallStmtId(callStmt)+"}";
 				dataflowLineRest.add(line);
 			}
 		}

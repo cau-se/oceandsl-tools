@@ -23,7 +23,9 @@ public class ReadStage extends AbstractProducerStage<List<File>> {
 		for(Path path: rootPath) {
 		File folder = new File(path.toAbsolutePath().toString());
 		List<File> files =Arrays.asList(folder.listFiles());
+		System.out.println("Files sent: "+ files.size());
 		this.outputPort.send(files);
+		
 		}
 	}
 	

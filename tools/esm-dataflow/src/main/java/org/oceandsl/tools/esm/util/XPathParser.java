@@ -103,8 +103,39 @@ public class XPathParser {
 	
 	
 	public static List<Node> getMain(String xml) {
-		// TODO Auto-generated method stub
-		return null;
+		//List<List<Node>> subRs = new ArrayList();
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		List<Node> currentNList = new ArrayList();
+		try {
+			DocumentBuilder dbuilder = dbFactory.newDocumentBuilder();
+			Document doc = dbuilder.parse(new InputSource(new StringReader(xml)));
+			doc.getDocumentElement().normalize();
+			NodeList nList =doc.getElementsByTagName("program-stmt");
+			
+			
+			for(int i = 0; i<nList.getLength();i++) {
+				Node node = nList.item(i);
+				
+				currentNList.add(node);
+				while(node.getNextSibling()!=null && node.getNextSibling().getNodeName().equals("end-program-stmt")) {
+					currentNList.add(node.getNextSibling());
+					node = node.getNextSibling();
+				}
+				//subRs.add(currentNList);
+				
+			}
+			
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return currentNList;
 	}
 	
 	public static List<Node> getCallStmts(List<Node> body){
@@ -197,8 +228,13 @@ public class XPathParser {
 			
 			for(int i = 0; i<args.getLength();i++) {
 				Element arg = (Element)args.item(i);
-				String name=arg.getElementsByTagName("n").item(0).getNodeValue();
-				result.add(name);
+				System.out.println(arg.getElementsByTagName("n").getLength());
+				NodeList ns =arg.getElementsByTagName("n");
+				for(int j = 0;j<ns.getLength();j++) {
+					Element n = (Element)ns.item(j);
+					System.out.println(n.getTextContent());
+					result.add(n.getTextContent());
+				}
 			}
 		}
 		return result;
@@ -287,7 +323,7 @@ public class XPathParser {
 
 	public static String getsubroutineId(List<Node> body) {
 		List<String> result = new ArrayList<String>();
-		Element e = (Element)body;
+		Element e = (Element)body.get(0);
 		NodeList nameElems = e.getElementsByTagName("n");
 		
 		for(int i=0;i<nameElems.getLength();i++) {
@@ -300,7 +336,7 @@ public class XPathParser {
 
 	public static String getFunctionId(List<Node> body) {
 		List<String> result = new ArrayList<String>();
-		Element e = (Element)body;
+		Element e = (Element)body.get(0);
 		NodeList nameElems = e.getElementsByTagName("n");
 		
 		for(int i=0;i<nameElems.getLength();i++) {

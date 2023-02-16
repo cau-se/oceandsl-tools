@@ -1,6 +1,7 @@
 package org.oceandsl.tools.esm.stages;
 
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -21,8 +22,12 @@ public class OutputStage extends AbstractConsumerStage<Output>{
 	protected void execute(Output element) throws Exception {
 		
 		 try {
-	            FileWriter writerdf = new FileWriter(outputPath.toString()+"/"+"dataflow");
-	            FileWriter writerfc = new FileWriter(outputPath.toString()+"/"+"filecontent");
+			 File filedf = new File(outputPath.toString()+"/"+"dataflow.txt");
+			 filedf.createNewFile();
+			 File filefc = new File(outputPath.toString()+"/"+"filecontent.txt");
+			 filefc.createNewFile();
+	         FileWriter writerdf = new FileWriter(filedf);
+	         FileWriter writerfc = new FileWriter(filefc);
 	            for (String line : element.getDataflow()) {
 	                writerdf.write(line + System.lineSeparator());
 	            }
@@ -30,7 +35,7 @@ public class OutputStage extends AbstractConsumerStage<Output>{
 	            for (String line : element.getFileContent()) {
 	                writerfc.write(line + System.lineSeparator());
 	            }
-	            writerdf.close();
+	          //  writerdf.close();
 	            writerfc.close();
 	            System.out.println("Successfully wrote lines to files.");
 	        } catch (IOException e) {

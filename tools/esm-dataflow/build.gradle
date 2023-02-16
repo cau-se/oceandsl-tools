@@ -30,5 +30,5 @@ dependencies {
 }
 
 application {
-	getMainClass().set('org.oceandsl.tools.esm-dataflow.EsmMain')
+	getMainClass().set('org.oceandsl.tools.esm.EsmMain')
 }
