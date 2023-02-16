@@ -228,11 +228,11 @@ public class XPathParser {
 			
 			for(int i = 0; i<args.getLength();i++) {
 				Element arg = (Element)args.item(i);
-				System.out.println(arg.getElementsByTagName("n").getLength());
+			//	System.out.println(arg.getElementsByTagName("n").getLength());
 				NodeList ns =arg.getElementsByTagName("n");
 				for(int j = 0;j<ns.getLength();j++) {
 					Element n = (Element)ns.item(j);
-					System.out.println(n.getTextContent());
+				//	System.out.println(n.getTextContent());
 					result.add(n.getTextContent());
 				}
 			}
@@ -247,7 +247,7 @@ public class XPathParser {
 		NodeList nameElems = e.getElementsByTagName("n");
 		
 		for(int i=0;i<nameElems.getLength();i++) {
-		    result.add(nameElems.item(i).getNodeValue());	
+		    result.add(nameElems.item(i).getTextContent());	
 		}
 		
 		
@@ -322,57 +322,60 @@ public class XPathParser {
 
 
 	public static String getsubroutineId(List<Node> body) {
-		List<String> result = new ArrayList<String>();
+		//List<String> result = new ArrayList<String>();
 		Element e = (Element)body.get(0);
+	//	System.out.println("name" +e.getNodeName().equals("subroutine-stmt"));
 		NodeList nameElems = e.getElementsByTagName("n");
+	//	System.out.println("size: "+ nameElems.getLength());
+		//for(int i=0;i<nameElems.getLength();i++) {
+			
+		  //  result.add(nameElems.item(0).getTextContent());	
+		//}
 		
-		for(int i=0;i<nameElems.getLength();i++) {
-		    result.add(nameElems.item(i).getNodeValue());	
-		}
-		
-		
-		return result.get(0);
+		return nameElems.item(0).getTextContent();
+		//return result.get(0);
 	}
 
 	public static String getFunctionId(List<Node> body) {
-		List<String> result = new ArrayList<String>();
+		//List<String> result = new ArrayList<String>();
 		Element e = (Element)body.get(0);
 		NodeList nameElems = e.getElementsByTagName("n");
 		
-		for(int i=0;i<nameElems.getLength();i++) {
-		    result.add(nameElems.item(i).getNodeValue());	
-		}
+		//for(int i=0;i<nameElems.getLength();i++) {
+		   // result.add(nameElems.item(i).getNodeValue());	
+		//}
 		
-		
-		return result.get(0);
+		return nameElems.item(0).getTextContent();
+		//return result.get(0);
 	}
 
 
 	public static String getCallStmtId(Node callStmt) {
-		List<String> result = new ArrayList<String>();
+		//List<String> result = new ArrayList<String>();
 		Element e = (Element)callStmt;
 		NodeList nameElems = e.getElementsByTagName("n");
 		
-		for(int i=0;i<nameElems.getLength();i++) {
-		    result.add(nameElems.item(i).getNodeValue());	
-		}
+	//	for(int i=0;i<nameElems.getLength();i++) {
+		//**/    result.add(nameElems.item(i).getNodeValue());	
+	//	}
 		
 		
-		return result.get(0);
+		return nameElems.item(0).getTextContent();
 	}
 
 
 	public static String getCommonBlockId(Node commonBlock) {
-		List<String> result = new ArrayList<String>();
+		//List<String> result = new ArrayList<String>();
 		Element e = (Element)commonBlock;
 		NodeList nameElems = e.getElementsByTagName("n");
 		
-		for(int i=0;i<nameElems.getLength();i++) {
-		    result.add(nameElems.item(i).getNodeValue());	
-		}
+	//	for(int i=0;i<nameElems.getLength();i++) {
+	//	    result.add(nameElems.item(i).getNodeValue());	
+	//	}
 		
 		
-		return result.get(0);
+		//return result.get(0);
+		return nameElems.item(0).getTextContent();
 	}
 
 

@@ -31,7 +31,7 @@ public class Settings { // NOPMD data class
 
     @Parameter(names = { "-i",
             "--input" }, required = true, variableArity = true, converter = PathConverter.class, description = "Input architecture model directories")
-    private List<Path> inputModelPaths;
+    private Path inputModelPaths;
 
     @Parameter(names = { "-o",
             "--output" }, required = true, converter = PathConverter.class, description = "Output architecture model directory")
@@ -40,7 +40,7 @@ public class Settings { // NOPMD data class
     @Parameter(names = { "-e", "--experiment" }, required = true, description = "Experiment name")
     private String experimentName;
 
-    public List<Path> getInputModelPaths() {
+    public Path getInputModelPaths() {
         return this.inputModelPaths;
     }
 

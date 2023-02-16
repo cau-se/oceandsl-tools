@@ -25,23 +25,29 @@ import org.xml.sax.InputSource;
 
 import kieker.analysis.generic.graph.mtree.utils.Pair;
 import teetime.framework.AbstractConsumerStage;
+import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractTransformation;
 
-public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>, Output> {
+public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> {
 
 	private List<String> dataflow = new ArrayList<String>();
 	private List<String> contentFile = new ArrayList<String>();
 	
+	protected final OutputPort<Output> outputPort = this.createOutputPort();
 	
+	
+	public OutputPort<Output> getOutputPort(){
+		return this.outputPort;
+	}
 	@Override
 	protected void execute(List<File> files) throws Exception {
 
-	
+		//System.out.println("Files:"+ files.size());
 		Output out = new Output();
 		
 		for(File file : files) {
 			//Extract xml
-			System.out.println("File:"+ file.getAbsolutePath());
+		//	System.out.println("File:"+ file.getAbsolutePath());
 			String xml = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
 			// Get main structures
 			List<List<Node>> subRoutineBodies = XPathParser.getSubroutineContents(xml);
@@ -58,13 +64,15 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 			dataflow.addAll(dfInMain);
 			
 			
-			out.setDataflow(dataflow);
-			out.setFileContent(contentFile);
+			
 			
 			
 			
 			
 		}
+		out.setDataflow(dataflow);
+		out.setFileContent(contentFile);
+		System.out.println("Done");
 		this.outputPort.send(out);
 		
 	}
@@ -79,7 +87,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 			String contentLine = "{"+fileId+"};{"+name+"};SUBROUTINE";
 			this.contentFile.add(contentLine);
 			
-			String dataFlowLine = "{"+fileId+"};"+name+"};";
+			String dataFlowLine = "{"+fileId+"};{"+name+"};";
 			dataflowInSub = analyzeExecutionPart(body,commonBlocks, blackList, dataFlowLine);
 		}
 		return dataflowInSub;
@@ -95,7 +103,7 @@ public class EsmDataFlowAnalysisStage extends AbstractTransformation<List<File>,
 			String contentLine = "{"+fileId+"};{"+name+"};FUNCTION";
 			this.contentFile.add(contentLine);
 
-			String dataFlowLine = "{"+fileId+"};"+name+"};";
+			String dataFlowLine = "{"+fileId+"};{"+name+"};";
 			dataflowInFunc = analyzeExecutionPart(body, commonBlocks, blackList, dataFlowLine);
 		}
 		return dataflowInFunc;

@@ -31,12 +31,13 @@ public class OutputStage extends AbstractConsumerStage<Output>{
 	            for (String line : element.getDataflow()) {
 	                writerdf.write(line + System.lineSeparator());
 	            }
-	            writerdf.close();
+	          //  writerdf.close();
 	            for (String line : element.getFileContent()) {
 	                writerfc.write(line + System.lineSeparator());
 	            }
-	          //  writerdf.close();
+	            writerdf.close();
 	            writerfc.close();
+	            
 	            System.out.println("Successfully wrote lines to files.");
 	        } catch (IOException e) {
 	            System.out.println("An error occurred while writing to the file.");
