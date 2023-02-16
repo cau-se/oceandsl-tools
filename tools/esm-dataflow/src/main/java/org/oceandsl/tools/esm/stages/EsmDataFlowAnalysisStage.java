@@ -228,7 +228,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 			if(potentialFuncs.size()>0) { //potential function analysis
 				List<String> blockIdentifierList = analyzePotentialFuncStmt(potentialFuncs, commonBlocks, bl, dataflowLinesRest);
 				List<String> namesAsString =convertToString(namesRight);
-			    blockIdentifierList.addAll(checkNamesWithCommon(namesAsString,commonBlocks));
+				blockIdentifierList.addAll(checkNamesWithCommon(namesAsString,commonBlocks));
 			    //delete duplicates
 				
 			    if(blockIdentifierAssign.size()==0) {

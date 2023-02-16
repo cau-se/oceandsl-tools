@@ -458,7 +458,7 @@ public class XPathParser {
 	
 	
 	
-	public static List<String> getArraysDecl(List<List<Node>> bodies){
+	/*public static List<String> getArraysDecl(List<List<Node>> bodies){
 	List<String> result = new ArrayList<String>();
 		for(List<Node> body : bodies) {
 			for(Node node : body) {
@@ -477,7 +477,31 @@ public class XPathParser {
 			}
 		}
 		return result;
-	}
+	}*/
+	
+	public static List<String> getArraysDecl(List<List<Node>> bodies){
+		List<String> result = new ArrayList<String>();
+			
+		for(List<Node> body : bodies) { //iterate throgh bodiees
+				for(Node node : body) { //get a body
+					if(node.getNodeName().equals("T-decl-stmt")) {//find decl stmt
+						if(node.getNodeType()==Node.ELEMENT_NODE) {
+							Element elem = (Element) node;
+							NodeList elems =  elem.getElementsByTagName("EN-decl"); //get entity decl
+							for(int i = 0;i<elems.getLength();i++) {//iterate
+								Element endecl =(Element)elems.item(i);
+								NodeList a_specs = endecl.getElementsByTagName("array-spec"); // is array?
+								if(a_specs.getLength()>0) {
+									result.add(endecl.getElementsByTagName("n").item(0).getTextContent()); //blacklist!!
+								}
+							}
+						}
+						
+					}
+				}
+			}
+			return result;
+		}
 	
 	//-----------------------
 		public static Node getAssigningContent(Node stmt) { //right
