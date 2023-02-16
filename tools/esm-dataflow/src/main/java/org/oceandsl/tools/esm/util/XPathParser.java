@@ -266,7 +266,7 @@ public class XPathParser {
 		NodeList nameElems = e.getElementsByTagName("n");
 		
 		for(int i=0;i<nameElems.getLength();i++) {
-		    result.add(nameElems.item(i).getNodeValue());	
+		    result.add(nameElems.item(i).getTextContent());	
 		}
 		
 		
@@ -284,7 +284,7 @@ public class XPathParser {
 		NodeList nameElems = e.getElementsByTagName("n");
 		
 		for(int i=0;i<nameElems.getLength();i++) {
-		    result.add(nameElems.item(i).getNodeValue());	
+		    result.add(nameElems.item(i).getTextContent());	
 		}
 		
 		
@@ -298,7 +298,7 @@ public class XPathParser {
 		NodeList nameElems = e.getElementsByTagName("n");
 		
 		for(int i=0;i<nameElems.getLength();i++) {
-		    result.add(nameElems.item(i).getNodeValue());	
+		    result.add(nameElems.item(i).getTextContent());	
 		}
 		
 		
@@ -312,7 +312,7 @@ public class XPathParser {
 		NodeList nameElems = e.getElementsByTagName("element");
 		
 		for(int i=0;i<nameElems.getLength();i++) {
-		    result.add(nameElems.item(i).getNodeValue());	
+		    result.add(nameElems.item(i).getTextContent());	
 		}
 		
 		
@@ -367,6 +367,7 @@ public class XPathParser {
 	public static String getCommonBlockId(Node commonBlock) {
 		//List<String> result = new ArrayList<String>();
 		Element e = (Element)commonBlock;
+		System.out.println(e.getNodeName().equals("common-stmt"));
 		NodeList nameElems = e.getElementsByTagName("n");
 		
 	//	for(int i=0;i<nameElems.getLength();i++) {
@@ -386,7 +387,7 @@ public class XPathParser {
 		List<Node> result = new ArrayList<Node>();
 		Element e = (Element)assigningContent;
 		//check if named expressions exist
-		NodeList nameExpr = e.getElementsByTagName("name-E");
+		NodeList nameExpr = e.getElementsByTagName("named-E");
 		
 		if(nameExpr.getLength()>0) {
 			for(int i=0;i<nameExpr.getLength();i++) {
@@ -397,7 +398,7 @@ public class XPathParser {
 					  //check if arguments exists
 					  for(int j=0; j<parensElems.getLength();j++) {
 						  parensElems.item(j);
-						  NodeList elemElems =currentNode.getElementsByTagName("elem");
+						  NodeList elemElems =currentNode.getElementsByTagName("element");
 						  if(elemElems.getLength()>0) {
 							  //all checls passed! Add the named expression to the list!
 							  result.add(currentNode);
@@ -415,7 +416,7 @@ public class XPathParser {
 		List<Node> result = new ArrayList<Node>();
 		Element e = (Element)assigningContent;
 		//check if named expressions exist
-		NodeList nameExpr = e.getElementsByTagName("name-E");
+		NodeList nameExpr = e.getElementsByTagName("named-E");
 		
 		if(nameExpr.getLength()>0) {
 			for(int i=0;i<nameExpr.getLength();i++) {
@@ -426,7 +427,7 @@ public class XPathParser {
 					  //check if arguments exists
 					  for(int j=0; j<parensElems.getLength();j++) {
 						  parensElems.item(j);
-						  NodeList elemElems =currentNode.getElementsByTagName("elem");
+						  NodeList elemElems =currentNode.getElementsByTagName("element");
 						  if(elemElems.getLength()==0) {
 							  //parenthesis but no args. Add
 							  //all checls passed! Add the named expression to the list!
@@ -487,7 +488,7 @@ public class XPathParser {
 
 		public static Node getAssignedContent(Node stmt) { //left
 			Element e = (Element)stmt;
-			NodeList elems = e.getElementsByTagName("E-2");
+			NodeList elems = e.getElementsByTagName("E-1");
 			return  elems.item(0);
 		}
 		//------------------------------------

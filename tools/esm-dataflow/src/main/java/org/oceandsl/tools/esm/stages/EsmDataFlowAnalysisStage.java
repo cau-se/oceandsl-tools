@@ -84,6 +84,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 		for(List<Node> body:subRoutineBodies) {
 			String name = XPathParser.getsubroutineId(body);
 			List<Node> commonBlocks = XPathParser.getCommonBlocks(body);
+			System.out.println("size common "+ commonBlocks.size());
 			String contentLine = "{"+fileId+"};{"+name+"};SUBROUTINE";
 			this.contentFile.add(contentLine);
 			
@@ -126,24 +127,28 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 		
 		//Dataflow call stmt
 		List<Node> callStmts = XPathParser.getCallStmts(body);
+		System.out.println("Num of call-stmts: "+callStmts.size());
 		List<String> calls = analyzeCallStatements(callStmts, commonBlocks, blacklist);
 		for(String call: calls) {
 			dataflowExecPart.add(dataFlowLine+call);
 		}
 		//Dataflow ifelse
 		List<Node> ifElseStmts = XPathParser.getIfElseStmts(body);
+		System.out.println("Num of ifelse-stmts: "+ifElseStmts.size());
 		List<String> ifElseReads = analyzeReadsFromStatements(ifElseStmts,commonBlocks, blacklist);
 		for(String read: ifElseReads) {
 			dataflowExecPart.add(dataFlowLine+read);
 		}
 		//Dataflow select case
 		List<Node> selectStmts = XPathParser.getSelectStmts(body);
+		System.out.println("Num of select-stmts: "+selectStmts.size());
 		List<String> selectReads = analyzeReadsFromStatements(selectStmts,commonBlocks, blacklist);
 		for(String read: selectReads) {
 			dataflowExecPart.add(dataFlowLine+read);
 		}
 		//Dataflow do while
 		List<Node> loopCtrlStmts = XPathParser.getLoopCtrlStmts(body);
+		System.out.println("Num of loopctrl-stmts: "+loopCtrlStmts.size());
 		for(Node loopCtrl : loopCtrlStmts) {
 			String loopAssignedVar = XPathParser.getLoopControlVar(loopCtrl);
 			List<String> isInBlock = isVarFromCommonBlock(loopAssignedVar,commonBlocks);
@@ -160,6 +165,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 		
 		//Dataflow assignments
 		List<Node> assignStmts = XPathParser.getAssignmentStmts(body);
+		System.out.println("Num of a-stmts: "+assignStmts.size());
 		List<String>assigns = analyzeAssignmentStatements(assignStmts, commonBlocks,blacklist);
 		for(String assign : assigns) {
 			dataflowExecPart.add(dataFlowLine+assign);
@@ -212,13 +218,17 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 			List<String> blockIdentifierAssign=isVarFromCommonBlock(assignedVar, commonBlocks);//left part is in common Block
 			
 			List<Node> namesRight = XPathParser.getNames(assigningContent); //neither funcs or arrays
+			System.out.println("Num of names in a: "+namesRight.size());
 			List<Node> potentialFuncs = XPathParser.getPotentialFuncs(assigningContent); //something with args
+			System.out.println("Num of potFuncs in a: "+potentialFuncs.size());
 			List<Node> nonArgsFunc =  XPathParser.getNonArgsFunc(assigningContent); //func no args
+			System.out.println("Num of numofNonArgsFunc in a: "+nonArgsFunc.size());
 			
 			
 			if(potentialFuncs.size()>0) { //potential function analysis
 				List<String> blockIdentifierList = analyzePotentialFuncStmt(potentialFuncs, commonBlocks, bl, dataflowLinesRest);
-			    blockIdentifierList.addAll(checkNamesWithCommon(blockIdentifierList, namesRight));
+				List<String> namesAsString =convertToString(namesRight);
+			    blockIdentifierList.addAll(checkNamesWithCommon(namesAsString,commonBlocks));
 			    //delete duplicates
 				
 			    if(blockIdentifierAssign.size()==0) {
@@ -266,7 +276,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 	private List<String> convertToString(List<Node> namesRight) {
 		List<String> result = new ArrayList<String>();
 		for(Node node: namesRight) {
-			result.add(node.getNodeValue());
+			result.add(node.getTextContent());
 		}
 		return result;
 	}
@@ -369,12 +379,14 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 
 	private List<String> checkNamesWithCommon(List<String> names, List<Node> commonBlocks) {
 		List<String> blockIdentifierList = new ArrayList();
-		for(String name: names) {
-			blockIdentifierList.addAll(isVarFromCommonBlock(name, commonBlocks));
+		if (commonBlocks.size() > 0) {
+			for (String name : names) {
+				blockIdentifierList.addAll(isVarFromCommonBlock(name, commonBlocks));
+			}
+			return blockIdentifierList;
 		}
 		return blockIdentifierList;
 	}
-	
 
 
 	
