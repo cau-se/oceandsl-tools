@@ -505,4 +505,16 @@ public class XPathParser {
 		//------------------------------------
 
 
+		public static List<String> getCommonVars(Node commonBlock) {
+			List<String>result = new ArrayList();
+			Element commonBl = (Element) commonBlock;//cast
+			Element commonLt = (Element)commonBl.getElementsByTagName("common-block-obj-LT").item(0);//lt
+			NodeList names =commonLt.getElementsByTagName("n");//now names
+			for(int i = 0;i<names.getLength();i++) {
+				result.add(names.item(i).getTextContent());
+			}
+			return result;
+		}
+
+
 }

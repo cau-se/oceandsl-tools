@@ -239,7 +239,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 			    }else if(blockIdentifierList.size()>0) {
 			    	writeCommonDataflow(blockIdentifierAssign.get(0),blockIdentifierList, dataflowLinesRest);
 			    }else {
-			    	String line = "WRITE;/{" + blockIdentifierList.get(0) + "}/;";
+			    	String line = "WRITE;/{" + blockIdentifierAssign.get(0) + "}/;";
 					dataflowLinesRest.add(line);
 			    }
 			}else if(nonArgsFunc.size()>0) {
@@ -292,7 +292,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 				blockIdentifierList.addAll(functionInCommonBlockList);
 				List<String>args = XPathParser.getArgumentList(funcNode);
 				for(String arg : args) {
-					blockIdentifierList.addAll(isVarFromCommonBlock(arg,commonBlocks));
+					dataflowLinesRest.addAll(isVarFromCommonBlock(arg,commonBlocks));
 				}
 				
 			}else if(!bl.contains(functionIdentifier)) {
@@ -302,10 +302,10 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 						blockIdentifierList.addAll(isVarFromCommonBlock(arg, commonBlocks));
 					}
 					String line = "BOTH;{"+functionIdentifier+"};";
-					blockIdentifierList.add(line);
+					dataflowLinesRest.add(line);
 				}else {
 					String line = "READ;{"+functionIdentifier+"};";
-					blockIdentifierList.add(line);
+					dataflowLinesRest.add(line);
 				}
 			}
 
@@ -341,7 +341,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 		List<String> blockIdentifierList = new ArrayList();
 		for(Node commonBlock:commonBlocks) {
 			String blockIdentifier = XPathParser.getCommonBlockId(commonBlock);//bloc[0]
-			List<String> varList = new ArrayList();//= block[1];
+			List<String> varList = XPathParser.getCommonVars(commonBlock);//= block[1];
 			for(String var:varList) {
 				if(variable.equals(var)) {
 					blockIdentifierList.add(blockIdentifier);
