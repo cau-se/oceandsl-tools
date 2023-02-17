@@ -200,8 +200,15 @@ public class XPathParser {
 
 
 	public static String getLoopControlVar(Node loopStatement) {
-		// TODO Auto-generated method stub
-		return null;
+		String result=null;
+		Element e = (Element) loopStatement;
+		NodeList ctrlVar = e.getElementsByTagName("do-V");
+		if(ctrlVar.getLength()>0) {
+			Element nE= (Element) ctrlVar.item(0);
+			result=nE.getElementsByTagName("n").item(0).getTextContent();
+		}
+
+		return result;
 	}
 
 
@@ -457,27 +464,7 @@ public class XPathParser {
 	
 	
 	
-	
-	/*public static List<String> getArraysDecl(List<List<Node>> bodies){
-	List<String> result = new ArrayList<String>();
-		for(List<Node> body : bodies) {
-			for(Node node : body) {
-				if(node.getNodeName().equals("T-decl")) {
-					if(node.getNodeType()==Node.ELEMENT_NODE) {
-						Element elem = (Element) node;
-						NodeList elems =  elem.getElementsByTagName("array-spec");
-						if(elems.getLength()>0) {
-							NodeList declName =  elem.getElementsByTagName("EN-decl-LT");
-							Node name = declName.item(0);
-							result.add(name.getTextContent());
-						}
-						
-					}
-				}
-			}
-		}
-		return result;
-	}*/
+
 	
 	public static List<String> getArraysDecl(List<List<Node>> bodies){
 		List<String> result = new ArrayList<String>();
