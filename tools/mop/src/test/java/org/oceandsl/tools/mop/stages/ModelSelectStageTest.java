@@ -23,8 +23,6 @@ import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.oceandsl.tools.mop.AbstractModelTestFactory;
-import org.oceandsl.tools.mop.SarModelFactory;
 
 import kieker.analysis.architecture.repository.ModelDescriptor;
 import kieker.analysis.architecture.repository.ModelRepository;
@@ -49,7 +47,11 @@ import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
+
 import teetime.framework.test.StageTester;
+
+import org.oceandsl.tools.mop.AbstractModelTestFactory;
+import org.oceandsl.tools.mop.SarModelFactory;
 
 public class ModelSelectStageTest {
 

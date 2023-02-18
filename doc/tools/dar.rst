@@ -8,7 +8,7 @@ Short Long                  Required Description
 ===== ===================== ======== ======================================================
 -i    --input               yes      Input Kieker log directory location
 -o    --output              yes      Output directory to store the recovered model
--M    --component-map                Component, file and function map files
+-M    --component-maps               Component, file and function map files
 -a    --addrline                     Location of the addrline tool (necessary for Kieker4C)
 -e    --executable                   Location of the executable
 -l    --source-label        yes      Set source label for the read data
@@ -18,14 +18,35 @@ Short Long                  Required Description
                                      signatures (elf, python, java)
 -k    --keep-metadata                Keep the metadata info in memory regardless a trace
                                      is considered complete
+-ms   --map-file-separator           Separator character for the mapping file
+-m    --module-modes        yes      Module converter strategies: file-mode, map-mode,
+                                     module-mode, java-class-mode, java-class-long-mode
 ===== ===================== ======== ======================================================
 
 Examples
 --------
 
 ```
-dar -i kieker-log -o model-directory -l dynamic -E demo-project -s java
+dar -i kieker-log -o model-directory -l dynamic -E demo-project -s java -m module-mode
 ```
+
+Module Modes
+------------
+
+Currently **dar** supports five different modes to modularize the architecture.
+Each module is seen as a component of the architecture.
+- **file-mode** all functions within a file are put in the same component
+- **map-mode**  a separate map file sorts functions into a component
+- **module-mode** Fortran module definitions are used to place a function into a
+  component
+- **java-class-mode** The simple class name is used for component names and to
+  group functions/methods
+- **java-class-long-mode** The full qualified name of classes is used for
+  component names and to group functions/methods
+  
+In principle, it is possible to specify multiple modes. This is helpful when
+for example not all parts of a program use, e.g., Fortran modules, then the
+functions outside of modules can be grouped based on another strategy.
 
 Component map file
 ------------------
