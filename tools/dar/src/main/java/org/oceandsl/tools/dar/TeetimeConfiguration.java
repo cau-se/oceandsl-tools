@@ -145,7 +145,8 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(flowEventMatcher.getOutputPort(), merger.getNewInputPort());
         this.connectPorts(operationExecutionRecordMatcher.getOutputPort(),
                 operationExecutionTraceConverterStage.getInputPort());
-        this.connectPorts(operationExecutionTraceConverterStage.getOutputPort(), counter.getInputPort());
+        this.connectPorts(operationExecutionTraceConverterStage.getOutputPort(), merger.getNewInputPort());
+        this.connectPorts(merger.getOutputPort(), counter.getInputPort());
         this.connectPorts(counter.getOutputPort(), operationAndCallStage.getInputPort());
 
         this.connectPorts(operationAndCallStage.getOperationOutputPort(), typeModelAssemblerStage.getInputPort());
