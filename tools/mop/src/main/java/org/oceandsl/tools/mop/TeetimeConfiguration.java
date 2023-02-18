@@ -17,14 +17,14 @@ package org.oceandsl.tools.mop;
 
 import java.io.IOException;
 
+import teetime.framework.Configuration;
+
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryReaderStage;
 import org.oceandsl.analysis.architecture.stages.ModelSink;
 import org.oceandsl.analysis.architecture.stages.ModelSource;
 import org.oceandsl.tools.mop.stages.AbstractModelOperationStage;
 import org.oceandsl.tools.mop.stages.ModelMergeStage;
 import org.oceandsl.tools.mop.stages.ModelSelectStage;
-
-import teetime.framework.Configuration;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.

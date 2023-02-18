@@ -12,6 +12,7 @@
 
 	<rule ref="category/java/bestpractices.xml">
 		<exclude name="UseVarargs" />
+		<exclude name="JUnitTestsShouldIncludeAssert"/>
 	</rule>
 	
 	<rule ref="category/java/codestyle.xml">
@@ -84,6 +85,7 @@
 		<exclude name="AvoidInstantiatingObjectsInLoops"/>
 		<exclude name="SimplifyStartsWith" />
 		<exclude name="UseStringBufferForStringAppends" />
+		<exclude name="OptimizableToArrayCall"/>
 	</rule>
 
 	<rule ref="category/java/performance.xml/ConsecutiveLiteralAppends">
