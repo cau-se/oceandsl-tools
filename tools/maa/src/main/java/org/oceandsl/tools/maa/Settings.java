@@ -46,7 +46,7 @@ public class Settings {
     @Parameter(names = { "-gs", "--separator" }, required = false, description = "Sparator string for CSV inputs")
     private String separator;
 
-    @Parameter(names = { "-c", "--opetation-calls" }, required = false, description = "Output the list of calls")
+    @Parameter(names = { "-c", "--operation-calls" }, required = false, description = "Output the list of calls")
     private boolean operationCalls;
 
     @Parameter(names = { "-s",
