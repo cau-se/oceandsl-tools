@@ -36,7 +36,7 @@ class CleanupComponentSignatureStageTest {
     private static final String TARGET_SIGNATURE = "void operation ()";
 
     @Test
-    void test() {
+    public void test() {
         final List<AbstractSignatureProcessor> processors = new ArrayList<>();
         processors.add(new AbstractSignatureProcessor(false) {
 

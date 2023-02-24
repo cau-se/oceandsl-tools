@@ -26,6 +26,12 @@ import kieker.model.analysismodel.type.TypeModel;
 
 import org.oceandsl.analysis.code.stages.IStorageEventAssembler;
 
+/**
+ * Model assembler for storage elements.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 public class StorageAssemblyModelAssembler extends AbstractModelAssembler implements IStorageEventAssembler {
 
     private final AssemblyModel assemblyModel;
@@ -49,11 +55,10 @@ public class StorageAssemblyModelAssembler extends AbstractModelAssembler implem
      * identifier in the transfer-object a subroutine is called to set up a new AssemblyComponent
      * instance.
      *
-     * @param dataTransferObject
+     * @param storageEvent
      *            TransferObject containing all dataflow information in one step.
      * @return component, stored for the given identifier string
      */
-    @SuppressWarnings("unused")
     private AssemblyComponent assemblyComponentSetUp(final StorageEvent storageEvent) {
         AssemblyComponent assemblyComponent = this.assemblyModel.getComponents()
                 .get(storageEvent.getComponentSignature());
@@ -67,18 +72,18 @@ public class StorageAssemblyModelAssembler extends AbstractModelAssembler implem
      * This function is used to create a new file AssemblyComponentObject and store it in the given
      * assembly model.
      *
-     * @param dataTransferObject
-     *            TransferObject containing all dataflow information in one step.
+     * @param signature
+     *            assembly component signature
      * @return file component created and stored in the assembly model
      */
-    private AssemblyComponent createAssemblyComponent(final String assemblyComponentSignature) {
-        final AssemblyComponent newAssemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
-        newAssemblyComponent.setComponentType(this.typeModel.getComponentTypes().get(assemblyComponentSignature));
-        newAssemblyComponent.setSignature(assemblyComponentSignature);
+    private AssemblyComponent createAssemblyComponent(final String signature) {
+        final AssemblyComponent assemblyComponent = AssemblyFactory.eINSTANCE.createAssemblyComponent();
+        assemblyComponent.setComponentType(this.typeModel.getComponentTypes().get(signature));
+        assemblyComponent.setSignature(signature);
 
-        this.assemblyModel.getComponents().put(assemblyComponentSignature, newAssemblyComponent);
-        this.updateSourceModel(newAssemblyComponent);
-        return newAssemblyComponent;
+        this.assemblyModel.getComponents().put(signature, assemblyComponent);
+        this.updateSourceModel(assemblyComponent);
+        return assemblyComponent;
     }
 
     /**
@@ -86,8 +91,8 @@ public class StorageAssemblyModelAssembler extends AbstractModelAssembler implem
      *
      * @param assemblyComponent
      *            the storage should be stored in
-     * @param dataTransferObject
-     *            TransferObject containing all dataflow information in one step.
+     * @param event
+     *            the storage event
      * @return the added operation. Useful for DEBUG Reasons
      */
     private AssemblyStorage addStorage(final AssemblyComponent assemblyComponent, final StorageEvent event) {

@@ -34,8 +34,6 @@ import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 
-import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
-
 /**
  *
  * @author Reiner Jung
@@ -45,32 +43,37 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
 
     public static final String DATAFLOW = "dataflow";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CountUniqueDataflowCallsStage.class);
+
     public CountUniqueDataflowCallsStage(final StatisticsModel statisticsModel, final ExecutionModel executionModel) {
         super(statisticsModel, new CountCalculator<>(CountUniqueDataflowCallsStage.DATAFLOW),
                 CountUniqueDataflowCallsStage.createForDataflow(executionModel));
     }
 
     public static final Function<DataflowEvent, EObject> createForDataflow(final ExecutionModel executionModel) {
-        return dataflow -> {
+        return dataflow -> { // NOCS
             final StorageDataflow result = CountUniqueDataflowCallsStage.getStorageDataflow(executionModel,
                     CountUniqueDataflowCallsStage.getStorageKeyTuple(dataflow, executionModel));
-
-            if (result == null) {
-                final OperationDataflow resultOperation = CountUniqueDataflowCallsStage.getOperationDataflow(
-                        executionModel, CountUniqueDataflowCallsStage.getOperationKeyTuple(dataflow, executionModel));
-
-                if (resultOperation == null) {
-                    final Logger logger = LoggerFactory.getLogger(CountUniqueCallsStage.class);
-                    logger.error("Fatal error: call not does not exist {}:{}", dataflow.getSource().toString(),
-                            dataflow.getTarget().toString());
-                    return null;
-                } else {
-                    return resultOperation;
-                }
-            } else {
-                return result;
-            }
+            return CountUniqueDataflowCallsStage.createForOperationDataflow(executionModel, dataflow, result);
         };
+    }
+
+    private static EObject createForOperationDataflow(final ExecutionModel executionModel, final DataflowEvent dataflow,
+            final StorageDataflow result) {
+        if (result == null) {
+            final OperationDataflow resultOperation = CountUniqueDataflowCallsStage.getOperationDataflow(executionModel,
+                    CountUniqueDataflowCallsStage.getOperationKeyTuple(dataflow, executionModel));
+
+            if (resultOperation == null) {
+                CountUniqueDataflowCallsStage.LOGGER.error("Fatal error: call not does not exist {}:{}",
+                        dataflow.getSource().toString(), dataflow.getTarget().toString());
+                return null;
+            } else {
+                return resultOperation;
+            }
+        } else {
+            return result;
+        }
     }
 
     private static Tuple<DeployedOperation, DeployedStorage> getStorageKeyTuple(final DataflowEvent dataflow,

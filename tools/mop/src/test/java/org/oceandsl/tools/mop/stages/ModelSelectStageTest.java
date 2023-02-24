@@ -55,7 +55,7 @@ import org.oceandsl.tools.mop.SarModelFactory;
 
 public class ModelSelectStageTest {
 
-    ModelRepository repository;
+    private ModelRepository repository;
 
     @Before
     public void setUp() {
