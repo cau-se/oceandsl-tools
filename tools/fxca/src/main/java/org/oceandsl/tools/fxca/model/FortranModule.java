@@ -56,15 +56,15 @@ public class FortranModule {
 	@Getter private boolean namedModule;
 	StatementNode documentElement;
 	
-	public FortranModule(Path xmlFilePath) throws ParserConfigurationException, SAXException, IOException { 
+	public FortranModule(final Path xmlFilePath) throws ParserConfigurationException, SAXException, IOException { 
 		this.xmlFilePath = xmlFilePath;
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		Document doc = builder.parse(xmlFilePath.toFile());
+		final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		final Document doc = builder.parse(xmlFilePath.toFile());
 		doc.getDocumentElement().normalize();
 		documentElement = new StatementNode(doc.getDocumentElement());
-		StatementNode moduleStatement = ListTools.getUniqueElementIfNonEmpty(documentElement.allDescendents(StatementNode.isModuleStatement, true), null);
+		final StatementNode moduleStatement = ListTools.getUniqueElementIfNonEmpty(documentElement.allDescendents(StatementNode.isModuleStatement, true), null);
 		this.namedModule = (moduleStatement != null);
-		this.moduleName = namedModule? moduleStatement.getChild(1).getTextContent() : "<no module>";
+		this.moduleName = namedModule ? moduleStatement.getChild(1).getTextContent() : "<no module>";
 		this.usedModules = computeUsedModels();
 		// this.specifiedSubroutines = computeSubroutineDeclarations();
 		// this.specifiedFunctions = computeFunctionDeclarations();
@@ -75,7 +75,7 @@ public class FortranModule {
 		printSummary(System.out);
 	}
 	
-	public void printSummary(PrintStream out) {
+	public void printSummary(final PrintStream out) {
 		out.println("# Summary");
 		out.println(" [xmlFilePath]          " + xmlFilePath);
 		out.println(" [moduleName]           " + moduleName);
@@ -87,7 +87,7 @@ public class FortranModule {
 	}
 	
 	public void printXML() throws ParserConfigurationException, SAXException, IOException {
-		Set<String> nodeTypes = new HashSet<>();
+		final Set<String> nodeTypes = new HashSet<>();
 		StatementNode.printNode(documentElement, 0);
 	
 		nodeTypes.forEach(System.out::println);
@@ -121,12 +121,12 @@ public class FortranModule {
 		return ListTools.ofM(subroutineCalls(), functionCalls(), Pair.getComparatorFirstSecond());
 	}
 	
-	public List<Pair<String, String>> operationCalls(Predicate<Node> callPredicate, Function<Node, String> calledOperation) {
-		Set<Pair<String, String>> result = new HashSet<>(); // Check for double entries
-		Set<StatementNode> callStatements = documentElement.allDescendents(callPredicate, true);
+	public List<Pair<String, String>> operationCalls(final Predicate<Node> callPredicate, final Function<Node, String> calledOperation) {
+		final Set<Pair<String, String>> result = new HashSet<>(); // Check for double entries
+		final Set<StatementNode> callStatements = documentElement.allDescendents(callPredicate, true);
 		for (StatementNode callStatement : callStatements) {
-			String callee = calledOperation.apply(callStatement);
-			String caller = callStatement.getNameOfContainingOperation();
+			final String callee = calledOperation.apply(callStatement);
+			final String caller = callStatement.getNameOfContainingOperation();
 			result.add(new Pair<>(caller, callee));
 		}
 		
@@ -141,8 +141,8 @@ public class FortranModule {
 		return operationCalls(StatementNode.namedExpressionAccess.and(StatementNode.isLocalAccess.negate()), functionCall -> StatementNode.nameOfCalledFunction(functionCall));
 	}
 	
-	public <T extends Comparable<T>> List<T> computeAllNodeAttributes(Function<StatementNode, T> extractAttribute) throws ParserConfigurationException, SAXException, IOException {
-		List<T> resultList = ListTools.ofM(documentElement.getDescendentAttributes(node -> true, extractAttribute));
+	public <T extends Comparable<T>> List<T> computeAllNodeAttributes(final Function<StatementNode, T> extractAttribute) throws ParserConfigurationException, SAXException, IOException {
+		final List<T> resultList = ListTools.ofM(documentElement.getDescendentAttributes(node -> true, extractAttribute));
 		Collections.sort(resultList);
 		return resultList;
 	}
@@ -152,11 +152,11 @@ public class FortranModule {
 	}
 	
 	public Set<String> computeUsedModels() {
-		Set<String> result = new HashSet<>();
-		StatementNode rootNode = documentElement;
-		Set<StatementNode> useStatements = rootNode.allDescendents(StatementNode.isUseStatement, false);
+		final Set<String> result = new HashSet<>();
+		final StatementNode rootNode = documentElement;
+		final Set<StatementNode> useStatements = rootNode.allDescendents(StatementNode.isUseStatement, false);
 		for (StatementNode useStatement : useStatements) {
-			String usedModuleName = useStatement.getChild(1).getTextContent();
+			final String usedModuleName = useStatement.getChild(1).getTextContent();
 			System.out.println("found use statement: " + useStatement.getTextContent() + ", module name: " + usedModuleName);
 			result.add(usedModuleName);
 		}
