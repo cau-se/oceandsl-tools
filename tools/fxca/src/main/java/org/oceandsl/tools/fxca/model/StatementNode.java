@@ -28,7 +28,7 @@ import lombok.experimental.Delegate;
 
 public class StatementNode implements Node {
 
-	@Delegate(types=Node.class)
+	@Delegate(types = Node.class)
 	final private Node node;
 
 	public static Predicate<Node> isSubroutineStatement = hasName("subroutine-stmt");
@@ -76,23 +76,23 @@ public class StatementNode implements Node {
 		return (node == null)? null : node.getNodeName();
 	}
 
-	public static String nameOfCalledFunction(Node functionCallNode) {
+	public static String nameOfCalledFunction(final Node functionCallNode) {
 		return getSuccessorNode(functionCallNode, "0,0").getTextContent();
 	}
 
-	public static String nameOfCalledOperation(Node operationCallNode) {
+	public static String nameOfCalledOperation(final Node operationCallNode) {
 		return getSuccessorNode(operationCallNode, "1").getTextContent();
 	}
 
-	public static Predicate<Node> hasName(String name) {
+	public static Predicate<Node> hasName(final String name) {
 		return node -> name.equals(node.getNodeName());
 	}
 
-	public static Predicate<Node> hasTextContent(String content) {
+	public static Predicate<Node> hasTextContent(final String content) {
 		return node -> content.equals(node.getTextContent());
 	}
 
-	public static Predicate<Node> childSatisfies(String path, Predicate<Node> predicate) {
+	public static Predicate<Node> childSatisfies(final String path, final Predicate<Node> predicate) {
 		return node -> predicate.test(getSuccessorNode(node, path));
 	}
 
@@ -131,7 +131,7 @@ public class StatementNode implements Node {
 		return getChildren(this);
 	}
 
-	private static Iterable<StatementNode> getChildren(Node node) {
+	private static Iterable<StatementNode> getChildren(final Node node) {
 		return new Iterable<StatementNode>() {
 			@Override
 			public Iterator<StatementNode> iterator() {
@@ -139,11 +139,11 @@ public class StatementNode implements Node {
 			}};
 	}
 
-	public StatementNode getChild(int index) {
+	public StatementNode getChild(final int index) {
 		return new StatementNode(getChildNodes().item(index));
 	}
 
-	public static int printNode(Node node, int depth) {
+	public static int printNode(final Node node, final int depth) {
 		String spaces = "";
 		for (int i = 0; i < depth; i++) {
 			spaces = spaces + " ";
@@ -164,28 +164,28 @@ public class StatementNode implements Node {
 
 	// Node Search
 
-	private static boolean testNodeAndFirstChildPredicateChain(Node t, List<Predicate<Node>> predicates) {
-		if (predicates.isEmpty()) { 
-			return true;
-		}
-		if (!predicates.get(0).test(t)) {
-			return false;
-		}
-		if (predicates.size() == 1) {
-			return true;
-		}
-		if (t.getChildNodes().getLength() == 0) {
-			return false;
-		}
-		return testNodeAndFirstChildPredicateChain(t.getFirstChild(), predicates.subList(1, predicates.size()));
-	}
+//	private static boolean testNodeAndFirstChildPredicateChain(Node t, List<Predicate<Node>> predicates) {
+//		if (predicates.isEmpty()) { 
+//			return true;
+//		}
+//		if (!predicates.get(0).test(t)) {
+//			return false;
+//		}
+//		if (predicates.size() == 1) {
+//			return true;
+//		}
+//		if (t.getChildNodes().getLength() == 0) {
+//			return false;
+//		}
+//		return testNodeAndFirstChildPredicateChain(t.getFirstChild(), predicates.subList(1, predicates.size()));
+//	}
 
 
 	/* static private Predicate<Node> nodeAndfirstChildPredicateChain(List<Predicate<Node>> predicates) {
 		return node -> testNodeAndFirstChildPredicateChain(node, predicates);
 	}*/
 
-	public static StatementNode getSuccessorNode(Node node, String path) {
+	public static StatementNode getSuccessorNode(final Node node, final String path) {
 
 		if (path.isEmpty()) {
 			return new StatementNode(node);
@@ -213,7 +213,7 @@ public class StatementNode implements Node {
 	} */
 
 	// NOTE: Only terminates if nextNode eventually returns null or a matching element.
-	private StatementNode findFirst(Function <Node, Node> nextNode, Predicate<Node> condition, boolean includeSelf) {
+	private StatementNode findFirst(final Function <Node, Node> nextNode, final Predicate<Node> condition, final boolean includeSelf) {
 		return findFirst(nextNode, condition, includeSelf, null);
 	}
 
@@ -228,14 +228,14 @@ public class StatementNode implements Node {
 	// "end function declaration" elements appear.
 
 	// NOTE: Only terminates if nextNode eventually returns null or a matching element.
-	private StatementNode findFirst(Function <Node, Node> nextNode, Predicate<Node> condition, boolean includeSelf, List<Pair<Predicate<Node>, Predicate<Node>>> paranthesesTypes) {
+	private StatementNode findFirst(final Function <Node, Node> nextNode, final Predicate<Node> condition, final boolean includeSelf, List<Pair<Predicate<Node>, Predicate<Node>>> paranthesesTypes) {
 
 		List<StatementNode> result = findAll(nextNode, condition, includeSelf, paranthesesTypes, 1);
 
 		return result.isEmpty()? null : result.get(0);
 	}
 
-	List<StatementNode> findAll(Function <Node, Node> nextNode, Predicate<Node> condition, boolean includeSelf, List<Pair<Predicate<Node>, Predicate<Node>>> paranthesesTypes, int maxElementsToFind) {
+	List<StatementNode> findAll(final Function <Node, Node> nextNode, final Predicate<Node> condition, final boolean includeSelf, final List<Pair<Predicate<Node>, Predicate<Node>>> paranthesesTypes, final int maxElementsToFind) {
 
 		List<StatementNode> result = new ArrayList<>();
 
@@ -279,28 +279,28 @@ public class StatementNode implements Node {
 	} 
 
 
-	private boolean hasConnectedWith(Function<Node, Node> nextNode, Predicate<Node> condition, boolean includeSelf) {
+	private boolean hasConnectedWith(final Function<Node, Node> nextNode, final Predicate<Node> condition, final boolean includeSelf) {
 		return findFirst(nextNode, condition, includeSelf) != null;
 	}
 
-	private boolean hasLeftSibling(Predicate<Node> condition, boolean includeSelf) {
+	private boolean hasLeftSibling(final Predicate<Node> condition, final boolean includeSelf) {
 		return hasConnectedWith(node -> node.getPreviousSibling(), condition, includeSelf);
 	}
 
-	private StatementNode firstLeftSibling(Predicate<Node> condition, boolean includeSelf, List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes) {
+	private StatementNode firstLeftSibling(final Predicate<Node> condition, final boolean includeSelf, final List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes) {
 		return findFirst(node -> node.getPreviousSibling(), condition, includeSelf, paranthesisTypes);
 	}
 
-	private StatementNode firstAncestor(Predicate<Node> condition, boolean includeSelf) {
+	private StatementNode firstAncestor(final Predicate<Node> condition, final boolean includeSelf) {
 		return findFirst(node -> node.getParentNode(), condition, includeSelf);
 	}
 
-	public Set<StatementNode> allDescendents(Predicate<Node> condition, boolean includeSelf) {
+	public Set<StatementNode> allDescendents(final Predicate<Node> condition, final boolean includeSelf) {
 		return addAllDescendentsTo(condition, includeSelf, new HashSet<>());
 	}
 
 
-	private <T extends Collection<StatementNode>> T addAllDescendentsTo(Predicate<Node> condition, boolean includeSelf, T addToThese) {
+	private <T extends Collection<StatementNode>> T addAllDescendentsTo(final Predicate<Node> condition, final boolean includeSelf, final T addToThese) {
 
 		if (condition.test(this) && includeSelf) {
 			addToThese.add(this);
@@ -313,7 +313,7 @@ public class StatementNode implements Node {
 		return addToThese;
 	}
 
-	public static String getNameOfOperation(StatementNode operationStatement) {
+	public static String getNameOfOperation(final StatementNode operationStatement) {
 
 		if (isSubroutineStatement.test(operationStatement)) {
 			return getNameOfOperation(operationStatement, isSubroutineName);
@@ -325,21 +325,19 @@ public class StatementNode implements Node {
 		throw new IllegalArgumentException("Node is neither a function nor a subroutine statement.");
 	}
 
-	public static String getNameOfOperation(StatementNode operationStatement, Predicate<Node> namePredicate) {
-		Set<StatementNode> nameNodes = operationStatement.allDescendents(namePredicate, true);
+	public static String getNameOfOperation(final StatementNode operationStatement, final Predicate<Node> namePredicate) {
+		final Set<StatementNode> nameNodes = operationStatement.allDescendents(namePredicate, true);
 		return ListTools.getUniqueElement(nameNodes).getTextContent();
 	}
 
-	public StatementNode findContainingStatement(Predicate<Node> condition) {
+	public StatementNode findContainingStatement(final Predicate<Node> condition) {
 		return findContainingStatement(condition, null);
 	}
 
-	public StatementNode findContainingStatement(Predicate<Node> condition, List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes) {
+	public StatementNode findContainingStatement(final Predicate<Node> condition, final List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes) {
 
-		Predicate<Node> hasSuchANodeAsLeftSibling = node -> new StatementNode(node).hasLeftSibling(condition, false);
-
-		StatementNode siblingOfSuchNode = this.firstAncestor(hasSuchANodeAsLeftSibling,
-				!condition.test(this));
+		final Predicate<Node> hasSuchANodeAsLeftSibling = node -> new StatementNode(node).hasLeftSibling(condition, false);
+		final StatementNode siblingOfSuchNode = this.firstAncestor(hasSuchANodeAsLeftSibling, !condition.test(this));
 
 		if (siblingOfSuchNode == null) {
 			return null;
@@ -352,19 +350,19 @@ public class StatementNode implements Node {
 	public String getNameOfContainingOperation() {
 
 		StatementNode containingOperationStatement = findContainingStatement(isOperationStatement, paranthesisTypes);
-		return (containingOperationStatement == null)? "<root>" : getNameOfOperation(containingOperationStatement);
+		return (containingOperationStatement == null) ? "<root>" : getNameOfOperation(containingOperationStatement);
 	}
 
 	// We make some assumptions about the structure of the Fortran files (and the generated XML representations).
 	// If we hit a node that does not satisfy these assumptions, throw an exception so that we know we need to
 	// handle that case as well.
-	public static boolean satisfiesAssumptions(Node node) {
+	public static boolean satisfiesAssumptions(final Node node) {
 
 		if (node == null) {
 			return true;
 		}
 
-		short type = node.getNodeType();
+		final short type = node.getNodeType();
 
 		if ((type == Node.TEXT_NODE) && node.getChildNodes().getLength() > 0) { 
 			throw new IllegalArgumentException("text node with children");
@@ -380,16 +378,16 @@ public class StatementNode implements Node {
 			final Node firstChild = node.getFirstChild();
 			final Node firstGrandChild = firstChild.getFirstChild();
 			if (!isBigN.test(firstChild)) {
-				throw new IllegalArgumentException("that's not a nice named expression, dude.");
+				throw new IllegalArgumentException("named expression with unexpected type of first child.");
 			}
 
-			if(!isSmallN.test(firstGrandChild)) {
-				throw new IllegalArgumentException("that's not a nice named expression, dude.");
+			if (!isSmallN.test(firstGrandChild)) {
+				throw new IllegalArgumentException("named expression with unexpected type of first grandchild.");
 			}
 
 			if (firstGrandChild.getChildNodes().getLength() > 1) {
 				printNode(firstGrandChild, 0);
-				throw new IllegalArgumentException("that's not a nice named expression, dude.");
+				throw new IllegalArgumentException("named expression with unexpected chlildren length list of first grandchild.");
 			}
 		} 
 
@@ -400,11 +398,11 @@ public class StatementNode implements Node {
 		return satisfiesAssumptions(this);
 	}
 
-	public int getNumberOfDescendants(boolean countSelf) {
+	public int getNumberOfDescendants(final boolean countSelf) {
 		return allDescendents(node -> true, countSelf).size();
 	}
 
-	public <T> Set<T> getDescendentAttributes(Predicate<Node> predicate, Function<StatementNode, T> extractAttribute) throws ParserConfigurationException, SAXException, IOException {
+	public <T> Set<T> getDescendentAttributes(final Predicate<Node> predicate, final Function<StatementNode, T> extractAttribute) throws ParserConfigurationException, SAXException, IOException {
 		return allDescendents(predicate, true)
 				.stream()
 				.map(extractAttribute)
