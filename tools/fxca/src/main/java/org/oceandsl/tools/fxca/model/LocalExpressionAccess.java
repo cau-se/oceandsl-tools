@@ -133,15 +133,42 @@ public class LocalExpressionAccess {
 				&& typeOfReferenceAccess(referenceNode) != accessType.OPERATION_CALL;
 	}
 
+//	public static String nameOfCalledFunctionOrLocalReference(Node referenceNode) {
+//
+//		String suffix = switch(typeOfReferenceAccess(referenceNode)) {
+//		case COMMON_BLOCK -> "-common-access";
+//		case LOCAL_VARIABLE -> "-local-variable";
+//    	case OPERATION_PARAMETER -> "-parameter-access";
+//		case OPERATION_CALL -> "";
+//		};
+//
+//		return StatementNode.nameOfCalledFunction(referenceNode) + suffix;
+//	}
+	
 	public static String nameOfCalledFunctionOrLocalReference(Node referenceNode) {
+		
+		// rewritten the switch statement because checkstyle cannot parse it
+		
+		accessType switchValue = typeOfReferenceAccess(referenceNode);
+		String suffix = null;
+		
+		if (switchValue == accessType.COMMON_BLOCK) {
+			suffix = "-common-access";
+		}
+		
+		if (switchValue == accessType.LOCAL_VARIABLE) {
+			suffix = "-local-variable";
+		}
 
-		String suffix = switch(typeOfReferenceAccess(referenceNode)) {
-		case COMMON_BLOCK -> "-common-access";
-		case LOCAL_VARIABLE -> "-local-variable";
-    	case OPERATION_PARAMETER -> "-parameter-access";
-		case OPERATION_CALL -> "";
-		};
+		if (switchValue == accessType.OPERATION_PARAMETER) {
+			suffix = "-parameter-access";
+		}
+		
+		if (suffix == null) {
+			throw new IllegalStateException();
+		}
 
 		return StatementNode.nameOfCalledFunction(referenceNode) + suffix;
 	}
+
 }

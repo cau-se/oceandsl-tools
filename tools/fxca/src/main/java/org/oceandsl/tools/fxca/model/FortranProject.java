@@ -37,7 +37,7 @@ public class FortranProject implements List<FortranModule> {
 	public void addModule(final Path xmlFile) throws ParserConfigurationException, SAXException, IOException {
 		final FortranModule module = new FortranModule(xmlFile);
 		fortranModules.add(module);
-		moduleNamesToXMLs.put(module.moduleName, module);
+		moduleNamesToXMLs.put(module.getModuleName(), module);
 	}
 
 	public void addModulesFromXMLs(final Path directory) throws IOException, ParserConfigurationException, SAXException {
@@ -68,8 +68,8 @@ public class FortranProject implements List<FortranModule> {
 				final String calleeFunctionName = call.second;
 				final FortranModule calleeXML = resolveCallee(module, calleeFunctionName, globalModules);
 				final String calleeFileName = (calleeXML == null)? "<unknown>" : calleeXML.getXmlFilePath().toAbsolutePath().getFileName().toString();
-				final String calleeModuleName = (calleeXML == null)? "<unknown>"  : calleeXML.moduleName;
-				tableOut.println(callerFileName + ", " + module.moduleName + ", " + callerFunctionName + ", " + calleeFileName + ", " + calleeModuleName + ", " + calleeFunctionName);
+				final String calleeModuleName = (calleeXML == null)? "<unknown>"  : calleeXML.getModuleName();
+				tableOut.println(callerFileName + ", " + module.getModuleName() + ", " + callerFunctionName + ", " + calleeFileName + ", " + calleeModuleName + ", " + calleeFunctionName);
 				if (calleeXML == null) {
 					notFoundOut.println(callerFileName + ":" + callerFunctionName + " --> " +  calleeFunctionName);
 				}
