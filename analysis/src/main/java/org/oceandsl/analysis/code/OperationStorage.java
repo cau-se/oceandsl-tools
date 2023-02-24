@@ -103,4 +103,28 @@ public class OperationStorage implements ICsvRecord {
         return this.direction;
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof OperationStorage) {
+            final OperationStorage other = (OperationStorage) obj;
+            return other.getDirection() == this.getDirection()
+                    && this.stringCompare(other.getSourceModule(), this.sourceModule)
+                    && this.stringCompare(other.getSourcePath(), this.sourcePath)
+                    && this.stringCompare(other.getSourceSignature(), this.sourceSignature)
+                    && this.stringCompare(other.getTargetModule(), this.targetModule)
+                    && this.stringCompare(other.getTargetPath(), this.targetPath)
+                    && this.stringCompare(other.getTargetSignature(), this.targetSignature);
+        } else {
+            return false;
+        }
+    }
+
+    private boolean stringCompare(final String left, final String right) {
+        if (left != null) {
+            return left.equals(right);
+        } else {
+            return right == null;
+        }
+    }
+
 }

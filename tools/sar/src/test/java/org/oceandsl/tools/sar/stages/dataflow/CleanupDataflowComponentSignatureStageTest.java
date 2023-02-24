@@ -15,14 +15,66 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages.dataflow;
 
-import org.junit.jupiter.api.Assertions;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
+
+import kieker.model.analysismodel.execution.EDirection;
+
+import teetime.framework.test.StageTester;
+
+import org.oceandsl.analysis.code.OperationStorage;
+import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 
 class CleanupDataflowComponentSignatureStageTest {
 
+    private static final String SOURCE_PATH = "a/b/file1";
+    private static final String SOURCE_MODULE = "source-module";
+    private static final String SOURCE_SIGNATURE = "Type operation (Type, Type, Type) exceptions E1,E2";
+    private static final String TARGET_PATH = "a/b/file2";
+    private static final String TARGET_MODULE = "target-module";
+    private static final String TARGET_SIGNATURE = "void operation ()";
+
     @Test
     void test() {
-        Assertions.fail("Not yet implemented");
+        final List<AbstractSignatureProcessor> processors = new ArrayList<>();
+        processors.add(new AbstractSignatureProcessor(false) {
+
+            @Override
+            public boolean processSignatures(final String path, final String componentSignature,
+                    final String elementSignature) {
+                this.componentSignature = path + "/" + componentSignature;
+                this.elementSignature = elementSignature;
+                return true;
+            }
+
+            @Override
+            public String getErrorMessage() {
+                return "error";
+            }
+        });
+        final CleanupDataflowComponentSignatureStage stage = new CleanupDataflowComponentSignatureStage(processors);
+        final OperationStorage sourceOperation = new OperationStorage(
+                CleanupDataflowComponentSignatureStageTest.SOURCE_PATH,
+                CleanupDataflowComponentSignatureStageTest.SOURCE_MODULE,
+                CleanupDataflowComponentSignatureStageTest.SOURCE_SIGNATURE,
+                CleanupDataflowComponentSignatureStageTest.TARGET_PATH,
+                CleanupDataflowComponentSignatureStageTest.TARGET_MODULE,
+                CleanupDataflowComponentSignatureStageTest.TARGET_SIGNATURE, EDirection.BOTH);
+        final OperationStorage resultOperation = new OperationStorage(
+                CleanupDataflowComponentSignatureStageTest.SOURCE_PATH,
+                CleanupDataflowComponentSignatureStageTest.SOURCE_PATH + "/"
+                        + CleanupDataflowComponentSignatureStageTest.SOURCE_MODULE,
+                CleanupDataflowComponentSignatureStageTest.SOURCE_SIGNATURE,
+                CleanupDataflowComponentSignatureStageTest.TARGET_PATH,
+                CleanupDataflowComponentSignatureStageTest.TARGET_PATH + "/"
+                        + CleanupDataflowComponentSignatureStageTest.TARGET_MODULE,
+                CleanupDataflowComponentSignatureStageTest.TARGET_SIGNATURE, EDirection.BOTH);
+
+        StageTester.test(stage).and().send(sourceOperation).to(stage.getInputPort()).start();
+        MatcherAssert.assertThat(stage.getOutputPort(), StageTester.produces(resultOperation));
     }
 
 }

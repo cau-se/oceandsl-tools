@@ -43,7 +43,7 @@ import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
  */
 public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<DataflowEvent> {
 
-    private static final String DATAFLOW = "dataflow";
+    public static final String DATAFLOW = "dataflow";
 
     public CountUniqueDataflowCallsStage(final StatisticsModel statisticsModel, final ExecutionModel executionModel) {
         super(statisticsModel, new CountCalculator<>(CountUniqueDataflowCallsStage.DATAFLOW),

@@ -34,6 +34,7 @@ spotless {
 subprojects {
 	apply plugin: 'java'
 	apply plugin: 'com.diffplug.spotless'
+	apply plugin: 'jacoco'
 
 	repositories {
 //		jcenter()
@@ -55,6 +56,8 @@ subprojects {
 		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
 		testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 	}
+
+
 
 	apply plugin: 'pmd'
 	pmd {    // is represented by the groovy class "PmdExtension"
@@ -80,7 +83,7 @@ subprojects {
 	checkstyle {
 		toolVersion = checkstyleVersion
 		ignoreFailures = true
-		showViolations = false
+		showViolations = true
 
 		configFile = rootProject.file("qa-configurations/checkstyle-rules.xml")
 		configDirectory = rootProject.file("qa-configurations")
