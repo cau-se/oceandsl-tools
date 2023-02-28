@@ -19,9 +19,10 @@ import java.io.IOException;
 
 import teetime.framework.Configuration;
 
-import org.oceandsl.analysis.architecture.stages.ModelRepositoryReaderStage;
-import org.oceandsl.analysis.architecture.stages.ModelSink;
-import org.oceandsl.analysis.architecture.stages.ModelSource;
+
+import org.oceandsl.tools.esm.stages.EsmDataFlowAnalysisStage;
+import org.oceandsl.tools.esm.stages.OutputStage;
+import org.oceandsl.tools.esm.stages.ReadStage;
 
 
 /**
@@ -34,12 +35,11 @@ public class TeetimeConfiguration extends Configuration {
 
     public TeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
 
-        final ModelSource modelSource = new ModelSource(parameterConfiguration.getInputModelPaths());
-        final ModelRepositoryReaderStage modelReader = new ModelRepositoryReaderStage();
-        //final ModelProcessor modelProcessor = new ModelProcessor(parameterConfiguration.getExperimentName());
-        final ModelSink modelSink = new ModelSink(parameterConfiguration.getOutputDirectory());
+        final ReadStage readStage = new ReadStage(parameterConfiguration.getInputModelPaths());
+        final EsmDataFlowAnalysisStage dataFlow = new EsmDataFlowAnalysisStage();
+        final OutputStage out = new OutputStage(parameterConfiguration.getOutputDirectory());
 
-     //   this.connectPorts(modelSource.getOutputPort(), modelReader.getInputPort());
-      //// this.connectPorts(modelProcessor.getOutputPort(), modelSink.getInputPort());
+       this.connectPorts(readStage.getOutputPort(), dataFlow.getInputPort());
+       this.connectPorts(dataFlow.getOutputPort(), out.getInputPort());
     }
 }

@@ -15,14 +15,21 @@ public class ReadStage extends AbstractProducerStage<List<File>> {
 	private final Path rootPath;
 
 	
-	public ReadStage(Path path) {
-		this.rootPath = path;
+	public ReadStage(Path list) {
+		this.rootPath = list;
 	}
 	@Override
 	protected void execute() throws Exception {
-		File folder = new File(rootPath.toAbsolutePath().toString());
+		
+		File folder = new File(this.rootPath.toAbsolutePath().toString());
 		List<File> files =Arrays.asList(folder.listFiles());
+	//	System.out.println("Files sent: "+ files.size());
 		this.outputPort.send(files);
+		this.workCompleted();
+		
+		
 	}
+	
+	
 
 }
