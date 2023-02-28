@@ -70,11 +70,9 @@ public class EsmMain extends AbstractService<TeetimeConfiguration, Settings> {
         // No special operation necessary.
     }
 
-
-
-	@Override
-	protected Path getConfigurationPath() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    protected Path getConfigurationPath() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
