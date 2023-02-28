@@ -15,7 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import cau.agse.hs.staticfortran.model.FortranModuleModel;
+import cau.agse.hs.staticfortran.model.FortranModule;
 import cau.agse.hs.utils.lists.misc.ListTools;
 import cau.agse.hs.utils.misc.Pair;
 
@@ -94,7 +94,7 @@ public class CompareWithPythonAnalysis {
 
 
 	public void checkXMLFileHasExpectedListOfFunctionDeclarations(Path xmlFile, List<String> expectedDeclarations) throws ParserConfigurationException, SAXException, IOException {
-		FortranModuleModel xml = new FortranModuleModel(xmlFile);
+		FortranModule xml = new FortranModule(xmlFile);
 		List<String> declarations = new ArrayList<String>(xml.computeSubroutineDeclarations());
 		// Collections.sort(expectedDeclarations);
 		Collections.sort(declarations);
@@ -106,7 +106,7 @@ public class CompareWithPythonAnalysis {
 		if ((expectedCalls.size() % 2) != 0) {
 			throw new IllegalArgumentException("Requires sequence <caller>, <callee>, must be of even length.");
 		}
-		FortranModuleModel xml = new FortranModuleModel(xmlFile);
+		FortranModule xml = new FortranModule(xmlFile);
 		List<Pair<String, String>> expectedCallPairs = ListTools.ofM();
 		Iterator<String> units = expectedCalls.iterator();
 		

@@ -15,8 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.esm;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
@@ -45,8 +45,6 @@ public class EsmMain extends AbstractService<TeetimeConfiguration, Settings> {
         }
     }
 
-
-
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
@@ -57,7 +55,7 @@ public class EsmMain extends AbstractService<TeetimeConfiguration, Settings> {
     }
 
     @Override
-    protected File getConfigurationFile() {
+    protected Path getConfigurationPath() {
         // we do not use a configuration file
         return null;
     }

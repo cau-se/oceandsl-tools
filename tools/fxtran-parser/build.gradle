@@ -84,8 +84,8 @@ shadowJar {
 
 jar {
 	manifest {
-		attributes "Main-Class": 'cau.agse.hs.staticfortran.main.ParseXML'
+		attributes "Main-Class": 'cau.agse.hs.staticfortran.main.FxcaMain'
 	}
 }	
 
-mainClassName = 'cau/agse/hs/staticfortran/main/ParseXML'
+mainClassName = 'cau/agse/hs/staticfortran/main/FxcaMain'

@@ -1,59 +1,46 @@
 package org.oceandsl.tools.esm.stages;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
+import teetime.stage.basic.AbstractTransformation;
+
 import org.oceandsl.tools.esm.util.FileContents;
 import org.oceandsl.tools.esm.util.FileContentsEntry;
 import org.oceandsl.tools.esm.util.FileContentsStageOutput;
 
-import teetime.framework.AbstractConsumerStage;
-import teetime.stage.basic.AbstractTransformation;
-import cau.agse.hs.staticfortran.model.FortranModuleModel;
-import cau.agse.hs.staticfortran.model.FortranProjectModel;
+import cau.agse.hs.staticfortran.model.FortranModule;
+import cau.agse.hs.staticfortran.model.FortranProject;
 
-public class FileContentsExtractor extends AbstractTransformation<List<File>, FileContentsStageOutput>{
+public class FileContentsExtractor extends AbstractTransformation<List<File>, FileContentsStageOutput> {
 
+    @Override
+    protected void execute(final List<File> files) throws Exception {
+        final FortranProject projectModel = new FortranProject();
+        final FileContents fileContents = new FileContents();
+        for (final File file : files) {
+            projectModel.addModule(file.toPath());
+        }
+        for (final FortranModule module : projectModel) {
+            final FileContentsEntry entry = new FileContentsEntry();
+            entry.setFile(module.getModuleName());
+            final Set<String> funcs = module.computeFunctionDeclarations();
 
-		
-	
+            for (final String s : funcs) {
+                entry.setIdentifier(this.getId());
+                entry.setType("FUNCTION");
+            }
+            final Set<String> subRouts = module.computeSubroutineDeclarations();
 
-	@Override
-	protected void execute(List<File> files) throws Exception {
-		FortranProjectModel projectModel = new FortranProjectModel();
-		FileContents fileContents = new FileContents();
-		for(File file : files) {
-			projectModel.addModule(file.toPath());	
-	}
-		for (FortranModuleModel module : projectModel) {
-			FileContentsEntry entry = new FileContentsEntry();
-			entry.setFile(module.getName());
-			Set<String> funcs = module.computeFunctionDeclarations();
-			
-			for(String s:funcs){
-				entry.setIdentifier(getId());
-				entry.setType("FUNCTION");
-			}
-			Set<String> subRouts = module.computeSubroutineDeclarations();
-			
-			for(String s:subRouts){
-				entry.setIdentifier(getId());
-				entry.setType("SUBROUTINE");
-			}
-			fileContents.add(entry);
-		}
-	//forward the contents
-	this.outputPort.send(new FileContentsStageOutput(fileContents, files));
-		
-	
+            for (final String s : subRouts) {
+                entry.setIdentifier(this.getId());
+                entry.setType("SUBROUTINE");
+            }
+            fileContents.add(entry);
+        }
+        // forward the contents
+        this.outputPort.send(new FileContentsStageOutput(fileContents, files));
 
-
-}
+    }
 }

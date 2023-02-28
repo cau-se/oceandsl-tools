@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
+package cau.agse.hs.staticfortran.model;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,10 +32,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import org.oceandsl.tools.fxca.tools.IndexIterator;
-import org.oceandsl.tools.fxca.tools.ListTools;
-import org.oceandsl.tools.fxca.tools.Pair;
-
+import cau.agse.hs.tools.DataStructureTools;
+import cau.agse.hs.utils.lists.iterators.IndexIterator;
+import cau.agse.hs.utils.misc.Pair;
 import lombok.experimental.Delegate;
 
 // No own attributes, only accessor functions for nodes. Implemented as class in order to allow
@@ -52,11 +50,14 @@ public class StatementNode implements Node {
     @Delegate(types = Node.class)
     private final Node node;
 
+    @Override
+    public String getNodeName() {
+        return (this.node == null) ? null : this.node.getNodeName();
+    }
+
     public static Predicate<Node> isSubroutineStatement = StatementNode.hasName("subroutine-stmt");
     public static Predicate<Node> isEndSubroutineStatement = StatementNode.hasName("end-subroutine-stmt");
     public static Predicate<Node> isFunctionStatement = StatementNode.hasName("function-stmt");
-    public static Predicate<Node> isOperationStatement = StatementNode.isSubroutineStatement
-            .or(StatementNode.isFunctionStatement);
     public static Predicate<Node> isEndFunctionStatement = StatementNode.hasName("end-function-stmt");
     public static Predicate<Node> isModuleStatement = StatementNode.hasName("module-stmt");
     public static Predicate<Node> isUseStatement = StatementNode.hasName("use-stmt");
@@ -65,9 +66,6 @@ public class StatementNode implements Node {
     public static Predicate<Node> isFunctionName = StatementNode.hasName("function-N");
     public static Predicate<Node> isNamedExpression = StatementNode.hasName("named-E");
     public static Predicate<Node> isBigN = StatementNode.hasName("N");
-    public static Predicate<Node> isArgN = StatementNode.hasName("arg-N");
-    public static Predicate<Node> isTDeclStmt = StatementNode.hasName("T-decl-stmt");
-    public static Predicate<Node> isEnDcl = StatementNode.hasName("EN-decl");
     public static Predicate<Node> isSmallN = StatementNode.hasName("n");
     public static Predicate<Node> isElementLT = StatementNode.hasName("element-LT");
     public static Predicate<Node> isRLT = StatementNode.hasName("R-LT");
@@ -75,29 +73,14 @@ public class StatementNode implements Node {
     public static Predicate<Node> isParensR = StatementNode.hasName("parens-R");
     public static Predicate<Node> isRegularLeftParanthesis = StatementNode.isParensR
             .and(node -> node.getTextContent().startsWith("("));
-    public static Predicate<Node> isCommonStatement = StatementNode.hasName("common-stmt");
-    public static Predicate<Node> isCommonBlockObjectStatement = StatementNode.hasName("common-block-obj-N");
-    public static Predicate<Node> isLocalAccess = node -> LocalExpressionAccess.isLocalAccess(node);
+    public static Predicate<Node> isOperationStatement = StatementNode.isSubroutineStatement
+            .or(StatementNode.isFunctionStatement);
 
-    public static Predicate<Node> namedExpressionAccess = StatementNode.isNamedExpression
+    public static Predicate<Node> namedExpressionFunctionCall = StatementNode.isNamedExpression
             .and(StatementNode.childSatisfies("0", StatementNode.isBigN))
             .and(StatementNode.childSatisfies("0,0", StatementNode.isSmallN))
             .and(StatementNode.childSatisfies("1", StatementNode.isRLT))
             .and(StatementNode.childSatisfies("1,0", StatementNode.isRegularLeftParanthesis));
-
-    public static Pair<Predicate<Node>, Predicate<Node>> endFunctionToBeginFunction = new Pair<>(
-            StatementNode.isEndFunctionStatement, StatementNode.isFunctionStatement);
-
-    public static Pair<Predicate<Node>, Predicate<Node>> endSubroutineToBeginSubroutine = new Pair<>(
-            StatementNode.isEndSubroutineStatement, StatementNode.isSubroutineStatement);
-
-    public static List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes = List
-            .of(StatementNode.endFunctionToBeginFunction, StatementNode.endSubroutineToBeginSubroutine);
-
-    @Override
-    public String getNodeName() {
-        return (this.node == null) ? null : this.node.getNodeName();
-    }
 
     public static String nameOfCalledFunction(final Node functionCallNode) {
         return StatementNode.getSuccessorNode(functionCallNode, "0,0").getTextContent();
@@ -188,30 +171,28 @@ public class StatementNode implements Node {
 
     // Node Search
 
-    // private static boolean testNodeAndFirstChildPredicateChain(Node t, List<Predicate<Node>>
-    // predicates) {
-    // if (predicates.isEmpty()) {
-    // return true;
-    // }
-    // if (!predicates.get(0).test(t)) {
-    // return false;
-    // }
-    // if (predicates.size() == 1) {
-    // return true;
-    // }
-    // if (t.getChildNodes().getLength() == 0) {
-    // return false;
-    // }
-    // return testNodeAndFirstChildPredicateChain(t.getFirstChild(), predicates.subList(1,
-    // predicates.size()));
-    // }
+    private static boolean testNodeAndFirstChildPredicateChain(final Node t, final List<Predicate<Node>> predicates) {
+        if (predicates.isEmpty()) {
+            return true;
+        }
+        if (!predicates.get(0).test(t)) {
+            return false;
+        }
+        if (predicates.size() == 1) {
+            return true;
+        }
+        if (t.getChildNodes().getLength() == 0) {
+            return false;
+        }
+        return StatementNode.testNodeAndFirstChildPredicateChain(t.getFirstChild(),
+                predicates.subList(1, predicates.size()));
+    }
 
-    /*
-     * static private Predicate<Node> nodeAndfirstChildPredicateChain(List<Predicate<Node>>
-     * predicates) { return node -> testNodeAndFirstChildPredicateChain(node, predicates); }
-     */
+    static private Predicate<Node> nodeAndfirstChildPredicateChain(final List<Predicate<Node>> predicates) {
+        return node -> StatementNode.testNodeAndFirstChildPredicateChain(node, predicates);
+    }
 
-    public static StatementNode getSuccessorNode(final Node node, final String path) {
+    static private StatementNode getSuccessorNode(final Node node, final String path) {
 
         if (path.isEmpty()) {
             return new StatementNode(node);
@@ -227,15 +208,16 @@ public class StatementNode implements Node {
         return StatementNode.getSuccessorNode(node.getChildNodes().item(childIndex), nextPath);
     }
 
-    /*
-     * private static ASTNode getFirstChildChain(Node node, int depth) {
-     *
-     * Node result = node;
-     *
-     * for (int i = 0; i < depth; i++) { result = result.getFirstChild(); }
-     *
-     * return new ASTNode(result); }
-     */
+    static StatementNode getFirstChildChain(final Node node, final int depth) {
+
+        Node result = node;
+
+        for (int i = 0; i < depth; i++) {
+            result = result.getFirstChild();
+        }
+
+        return new StatementNode(result);
+    }
 
     // NOTE: Only terminates if nextNode eventually returns null or a matching element.
     private StatementNode findFirst(final Function<Node, Node> nextNode, final Predicate<Node> condition,
@@ -258,29 +240,16 @@ public class StatementNode implements Node {
     private StatementNode findFirst(final Function<Node, Node> nextNode, final Predicate<Node> condition,
             final boolean includeSelf, final List<Pair<Predicate<Node>, Predicate<Node>>> paranthesesTypes) {
 
-        final List<StatementNode> result = this.findAll(nextNode, condition, includeSelf, paranthesesTypes, 1);
-
-        return result.isEmpty() ? null : result.get(0);
-    }
-
-    List<StatementNode> findAll(final Function<Node, Node> nextNode, final Predicate<Node> condition,
-            final boolean includeSelf, final List<Pair<Predicate<Node>, Predicate<Node>>> paranthesesTypes,
-            final int maxElementsToFind) {
-
-        final List<StatementNode> result = new ArrayList<>();
-
         final int numberparanthesesTypes = (paranthesesTypes == null) ? 0 : paranthesesTypes.size();
         final int[] openParanthesis = new int[numberparanthesesTypes];
 
-        Node current = this;
+        Node current = this; // nextNode.apply(this);
 
         boolean inParanthesisInterval = false;
-        // End if we do not have anywhere to search, or we have reached the limit (where "-1" counts
-        // as "no limit").
-        while ((current != null) && ((result.size() < maxElementsToFind) || (maxElementsToFind == -1))) {
+        while (current != null) {
 
             if (!inParanthesisInterval && condition.test(current) && ((current != this) || includeSelf)) {
-                result.add(new StatementNode(current));
+                return new StatementNode(current);
             }
 
             inParanthesisInterval = false;
@@ -301,12 +270,10 @@ public class StatementNode implements Node {
                 }
             }
 
-            // Check for nextNode-stationaly points
-            final Node nextNodeResult = nextNode.apply(current);
-            current = (current == nextNodeResult) ? null : nextNodeResult;
+            current = nextNode.apply(current);
         }
 
-        return result;
+        return null;
     }
 
     private boolean hasConnectedWith(final Function<Node, Node> nextNode, final Predicate<Node> condition,
@@ -316,6 +283,10 @@ public class StatementNode implements Node {
 
     private boolean hasLeftSibling(final Predicate<Node> condition, final boolean includeSelf) {
         return this.hasConnectedWith(node -> node.getPreviousSibling(), condition, includeSelf);
+    }
+
+    private StatementNode firstLeftSibling(final Predicate<Node> condition, final boolean includeSelf) {
+        return this.firstLeftSibling(condition, includeSelf, null);
     }
 
     private StatementNode firstLeftSibling(final Predicate<Node> condition, final boolean includeSelf,
@@ -359,7 +330,7 @@ public class StatementNode implements Node {
     public static String getNameOfOperation(final StatementNode operationStatement,
             final Predicate<Node> namePredicate) {
         final Set<StatementNode> nameNodes = operationStatement.allDescendents(namePredicate, true);
-        return ListTools.getUniqueElement(nameNodes).getTextContent();
+        return DataStructureTools.getUniqueElement(nameNodes).getTextContent();
     }
 
     public StatementNode findContainingStatement(final Predicate<Node> condition) {
@@ -369,8 +340,9 @@ public class StatementNode implements Node {
     public StatementNode findContainingStatement(final Predicate<Node> condition,
             final List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes) {
 
-        final Predicate<Node> hasSuchANodeAsLeftSibling = node -> new StatementNode(node).hasLeftSibling(condition,
-                false);
+        final Predicate<Node> hasSuchANodeAsLeftSibling = node -> (new StatementNode(node).hasLeftSibling(condition,
+                false));
+
         final StatementNode siblingOfSuchNode = this.firstAncestor(hasSuchANodeAsLeftSibling, !condition.test(this));
 
         if (siblingOfSuchNode == null) {
@@ -382,9 +354,24 @@ public class StatementNode implements Node {
     }
 
     public String getNameOfContainingOperation() {
+        return this.getNameOfContainingOperation(false);
+    }
+
+    public String getNameOfContainingOperation(final boolean verbose) {
+        final Pair<Predicate<Node>, Predicate<Node>> endFunctionToBeginFunction = new Pair<>(
+                StatementNode.isEndFunctionStatement, StatementNode.isFunctionStatement);
+
+        final Pair<Predicate<Node>, Predicate<Node>> endSubroutineToBeginSubroutine = new Pair<>(
+                StatementNode.isEndSubroutineStatement, StatementNode.isSubroutineStatement);
+
+        final var paranthesisTypes = List.of(endFunctionToBeginFunction, endSubroutineToBeginSubroutine);
 
         final StatementNode containingOperationStatement = this
-                .findContainingStatement(StatementNode.isOperationStatement, StatementNode.paranthesisTypes);
+                .findContainingStatement(StatementNode.isOperationStatement, paranthesisTypes);
+        if (verbose) {
+            System.out.println("looking for containing operation of " + this.getTextContent());
+            System.out.println("Containing Operation Statement: " + containingOperationStatement.getTextContent());
+        }
         return (containingOperationStatement == null) ? "<root>"
                 : StatementNode.getNameOfOperation(containingOperationStatement);
     }
@@ -406,7 +393,7 @@ public class StatementNode implements Node {
             throw new IllegalArgumentException("text node with children");
         }
 
-        if (("call-stmt").equals(node.getNodeName()) && (node.getChildNodes().getLength() < 2)) {
+        if ((node.getNodeName().equals("call-stmt")) && (node.getChildNodes().getLength() < 2)) {
             StatementNode.printNode(node, 0);
             throw new IllegalArgumentException("call statement with < 2 children");
         }
@@ -416,17 +403,16 @@ public class StatementNode implements Node {
             final Node firstChild = node.getFirstChild();
             final Node firstGrandChild = firstChild.getFirstChild();
             if (!StatementNode.isBigN.test(firstChild)) {
-                throw new IllegalArgumentException("named expression with unexpected type of first child.");
+                throw new IllegalArgumentException("that's not a nice named expression, dude.");
             }
 
             if (!StatementNode.isSmallN.test(firstGrandChild)) {
-                throw new IllegalArgumentException("named expression with unexpected type of first grandchild.");
+                throw new IllegalArgumentException("that's not a nice named expression, dude.");
             }
 
             if (firstGrandChild.getChildNodes().getLength() > 1) {
                 StatementNode.printNode(firstGrandChild, 0);
-                throw new IllegalArgumentException(
-                        "named expression with unexpected chlildren length list of first grandchild.");
+                throw new IllegalArgumentException("that's not a nice named expression, dude.");
             }
         }
 

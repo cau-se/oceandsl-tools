@@ -24,4 +24,4 @@ include 'tools:allen-upper-limit'
 include 'tools:fxca'
 include 'tools:esm-dataflow'
 // to be removed as this is a duplication of fxca
-//include 'tools:fxtran-parser'
+include 'tools:fxtran-parser'
