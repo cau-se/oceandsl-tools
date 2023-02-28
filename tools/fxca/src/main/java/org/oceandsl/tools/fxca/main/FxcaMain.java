@@ -22,7 +22,9 @@
 package org.oceandsl.tools.fxca.main;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ import com.beust.jcommander.JCommander;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranProject;
@@ -48,7 +51,10 @@ import org.oceandsl.tools.fxca.tools.IOUtils;
  */
 public final class FxcaMain {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(FxcaMain.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FxcaMain.class);
+    private static final String OPERATION_DEFINITIONS = "operation-definitions.csv";
+    private static final String CALL_TABLE = "calltable.csv";
+    private static final String NOT_FOUND = "notfound.csv";
 
     /**
      * As suggested by PMD, make this a utility class that cannot be instantiated.
@@ -56,11 +62,9 @@ public final class FxcaMain {
     private FxcaMain() {
     }
 
-    public static void main(final String[] args) throws IOException, ParserConfigurationException, Exception {
+    public static void main(final String[] args) {
         final Settings settings = new Settings();
         JCommander.newBuilder().addObject(settings).build().parse(args);
-
-        final List<FortranModule> namelessModules = new ArrayList<>();
 
         // final Predicate<Path> notRootPath = path ->
         // !path.toAbsolutePath().equals(rootPath.toAbsolutePath());
@@ -71,7 +75,11 @@ public final class FxcaMain {
             directories.addAll(settings.getInputDirectoryPaths());
         } else {
             for (final Path rootPath : settings.getInputDirectoryPaths()) {
-                directories.addAll(IOUtils.pathsInDirectory(rootPath, useDirectory, useDirectory, true));
+                try {
+                    directories.addAll(IOUtils.pathsInDirectory(rootPath, useDirectory, useDirectory, true));
+                } catch (final IOException e) {
+                    FxcaMain.LOGGER.error("Error scanning directory {}: {} ", rootPath, e.getLocalizedMessage());
+                }
             }
         }
         FxcaMain.LOGGER.info("done scanning directories.");
@@ -80,53 +88,100 @@ public final class FxcaMain {
 
         final FortranProject projectModel = new FortranProject();
         for (final Path directory : directories) {
-            projectModel.addModulesFromXMLs(directory);
-            FxcaMain.LOGGER.info("Added modules from {}.", directory.toAbsolutePath());
+            try {
+                projectModel.addModulesFromXMLs(directory);
+                FxcaMain.processModules(projectModel, directory.toAbsolutePath(), settings.getOutputDirectoryPath());
+            } catch (IOException | ParserConfigurationException | SAXException e) {
+                FxcaMain.LOGGER.error("Cannot add modules from {}: {}", directory.toAbsolutePath(),
+                        e.getLocalizedMessage());
+            }
 
-            final PrintStream operationListOutput = IOUtils.printToFileAnd(System.out,
-                    settings.getOutputDirectoryPath().resolve("operation-definitions.csv"));
+            FxcaMain.LOGGER.info("Done");
+        }
+    }
+
+    private static void processModules(final FortranProject projectModel, final Path inputPath,
+            final Path outputDirectoryPath) {
+        final List<FortranModule> namelessModules = new ArrayList<>();
+
+        FxcaMain.LOGGER.info("Added modules from {}.", inputPath);
+
+        try (final OutputStream outputStream = Files
+                .newOutputStream(outputDirectoryPath.resolve(FxcaMain.OPERATION_DEFINITIONS))) {
+            final PrintStream operationListOutput = new PrintStream(outputStream);
+
             operationListOutput.println("file,operation");
 
             for (final FortranModule fortranModule : projectModel) {
-
                 if (!fortranModule.isNamedModule()) {
                     namelessModules.add(fortranModule);
                 }
 
-                FxcaMain.LOGGER.info("operation declarations:");
-                for (final String operationName : fortranModule.computeOperationDeclarations()) {
-                    operationListOutput.println(fortranModule.getXmlFilePath().toAbsolutePath().getFileName().toString()
-                            + "," + operationName);
+                FxcaMain.LOGGER.debug("operation declarations:");
+
+                try {
+                    for (final String operationName : fortranModule.computeOperationDeclarations()) {
+                        operationListOutput
+                                .println(fortranModule.getXmlFilePath().toAbsolutePath().getFileName().toString() + ","
+                                        + operationName);
+                    }
+                } catch (ParserConfigurationException | SAXException e) {
+                    FxcaMain.LOGGER.error("Cannot process module {}: {}", fortranModule.getModuleName(),
+                            e.getLocalizedMessage());
                 }
 
-                FxcaMain.LOGGER.info("subroutine calls of {}: ", fortranModule.getXmlFilePath());
-                fortranModule.subroutineCalls()
-                        .forEach(pair -> FxcaMain.LOGGER.info("call: {} --> {}", pair.first, pair.second));
+                FxcaMain.LOGGER.debug("subroutine calls of {}: ", fortranModule.getXmlFilePath());
+                try {
+                    fortranModule.subroutineCalls()
+                            .forEach(pair -> FxcaMain.LOGGER.info("call: {} --> {}", pair.first, pair.second));
+                } catch (ParserConfigurationException | SAXException e) {
+                    FxcaMain.LOGGER.error("Cannot process subroutine calls for module {}: {}",
+                            fortranModule.getModuleName(), e.getLocalizedMessage());
+                }
 
-                FxcaMain.LOGGER.info("function calls of {}:", fortranModule.getXmlFilePath());
-                fortranModule.functionCalls()
-                        .forEach(pair -> FxcaMain.LOGGER.info("call: {} --> {}", pair.first, pair.second));
+                FxcaMain.LOGGER.debug("function calls of {}:", fortranModule.getXmlFilePath());
+                try {
+                    fortranModule.functionCalls()
+                            .forEach(pair -> FxcaMain.LOGGER.info("call: {} --> {}", pair.first, pair.second));
+                } catch (ParserConfigurationException | SAXException e) {
+                    FxcaMain.LOGGER.error("Cannot process function calls for module {}: {}",
+                            fortranModule.getModuleName(), e.getLocalizedMessage());
+                }
 
-                FxcaMain.LOGGER.info("node types:");
-                IOUtils.printWithCommas(
-                        fortranModule.computeAllNodeAttributes(node -> StatementNode.nodeType(node.getNodeType())));
+                FxcaMain.LOGGER.debug("node types:");
+                try {
+                    IOUtils.printWithCommas(
+                            fortranModule.computeAllNodeAttributes(node -> StatementNode.nodeType(node.getNodeType())));
+                } catch (ParserConfigurationException | SAXException e) {
+                    FxcaMain.LOGGER.error("Cannot output node attribute for module {}: {}",
+                            fortranModule.getModuleName(), e.getLocalizedMessage());
+                }
 
-                FxcaMain.LOGGER.info("node names:");
-                IOUtils.printWithCommas(fortranModule.computeAllNodeAttributes(node -> node.getNodeName()));
+                FxcaMain.LOGGER.debug("node names:");
+                try {
+                    IOUtils.printWithCommas(fortranModule.computeAllNodeAttributes(node -> node.getNodeName()));
+                } catch (ParserConfigurationException | SAXException e) {
+                    FxcaMain.LOGGER.error("Cannot output node names for module {}: {}", fortranModule.getModuleName(),
+                            e.getLocalizedMessage());
+                }
             }
 
-            final PrintStream tableOutput = IOUtils.printToFileAnd(System.out,
-                    settings.getOutputDirectoryPath().resolve("calltable.csv"));
-            final PrintStream errorOutput = IOUtils.printToFileAnd(System.out,
-                    settings.getOutputDirectoryPath().resolve("notfound.csv"));
+            final PrintStream tableOutput = new PrintStream(
+                    Files.newOutputStream(outputDirectoryPath.resolve(FxcaMain.CALL_TABLE)));
+            final PrintStream errorOutput = new PrintStream(
+                    Files.newOutputStream(outputDirectoryPath.resolve(FxcaMain.NOT_FOUND)));
 
-            projectModel.exportCallTable(tableOutput, errorOutput, namelessModules);
+            try {
+                projectModel.exportCallTable(tableOutput, errorOutput, namelessModules);
+            } catch (ParserConfigurationException | SAXException e) {
+                FxcaMain.LOGGER.error("Call table export failed: {}", e.getLocalizedMessage());
+            }
 
             operationListOutput.close();
             tableOutput.close();
             errorOutput.close();
-
-            FxcaMain.LOGGER.info("Done");
+        } catch (final IOException e) {
+            FxcaMain.LOGGER.error("Cannot write {} file: {}", FxcaMain.OPERATION_DEFINITIONS, e.getLocalizedMessage());
         }
     }
 }
