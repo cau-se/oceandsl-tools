@@ -19,11 +19,9 @@ import java.io.IOException;
 
 import teetime.framework.Configuration;
 
-
 import org.oceandsl.tools.esm.stages.EsmDataFlowAnalysisStage;
 import org.oceandsl.tools.esm.stages.OutputStage;
 import org.oceandsl.tools.esm.stages.ReadStage;
-
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -39,7 +37,7 @@ public class TeetimeConfiguration extends Configuration {
         final EsmDataFlowAnalysisStage dataFlow = new EsmDataFlowAnalysisStage();
         final OutputStage out = new OutputStage(parameterConfiguration.getOutputDirectory());
 
-       this.connectPorts(readStage.getOutputPort(), dataFlow.getInputPort());
-       this.connectPorts(dataFlow.getOutputPort(), out.getInputPort());
+        this.connectPorts(readStage.getOutputPort(), dataFlow.getInputPort());
+        this.connectPorts(dataFlow.getOutputPort(), out.getInputPort());
     }
 }

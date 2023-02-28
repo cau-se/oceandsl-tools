@@ -55,12 +55,6 @@ public class EsmMain extends AbstractService<TeetimeConfiguration, Settings> {
     }
 
     @Override
-    protected Path getConfigurationPath() {
-        // we do not use a configuration file
-        return null;
-    }
-
-    @Override
     protected boolean checkConfiguration(final Configuration configuration, final JCommander commander) {
         return true;
     }
@@ -76,4 +70,9 @@ public class EsmMain extends AbstractService<TeetimeConfiguration, Settings> {
         // No special operation necessary.
     }
 
+    @Override
+    protected Path getConfigurationPath() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
