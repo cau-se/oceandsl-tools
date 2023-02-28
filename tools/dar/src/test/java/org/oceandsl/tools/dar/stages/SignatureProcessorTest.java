@@ -18,6 +18,13 @@ package org.oceandsl.tools.dar.stages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Testing signature processor.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ *
+ */
 class SignatureProcessorTest {
 
     private static final String TYPICAL_SIGNATURE = "public static java.util.List tools.descartes.teastore.registryclient.rest.LoadBalancedCRUDOperations.getEntities(tools.descartes.teastore.registryclient.Service, java.lang.String, java.lang.Class, int, int)";
@@ -25,7 +32,7 @@ class SignatureProcessorTest {
     private static final String OPERATION_SIGNATURE = "public static java.util.List getEntities(tools.descartes.teastore.registryclient.Service, java.lang.String, java.lang.Class, int, int)";
 
     @Test
-    public void test() {
+    void test() {
         final SignatureProcessor processor = new SignatureProcessor();
 
         processor.parse(SignatureProcessorTest.TYPICAL_SIGNATURE);

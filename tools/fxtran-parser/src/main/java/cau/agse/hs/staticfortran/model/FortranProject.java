@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
+package cau.agse.hs.staticfortran.model;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -30,10 +30,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import org.oceandsl.tools.fxca.tools.IOUtils;
-import org.oceandsl.tools.fxca.tools.ListTools;
-import org.oceandsl.tools.fxca.tools.Pair;
-
+import cau.agse.hs.tools.DataStructureTools;
+import cau.agse.hs.utils.files.Directories;
+import cau.agse.hs.utils.lists.misc.ListTools;
+import cau.agse.hs.utils.misc.Pair;
 import lombok.experimental.Delegate;
 
 /**
@@ -66,7 +66,7 @@ public class FortranProject implements List<FortranModule> {
 
     public void addModulesFromXMLs(final Path directory)
             throws IOException, ParserConfigurationException, SAXException {
-        final List<Path> xmlFiles = IOUtils.pathsInDirectory(directory, IOUtils.endsWith(".xml"));
+        final List<Path> xmlFiles = Directories.pathsInDirectory(directory, Directories.endsWith(".xml"));
         Collections.sort(xmlFiles);
         for (final Path xml : xmlFiles) {
             this.addModule(xml);
@@ -112,11 +112,8 @@ public class FortranProject implements List<FortranModule> {
     private FortranModule resolveCallee(final FortranModule xml, final String calleeFunctionName,
             final List<FortranModule> globalModules) {
         FortranProject.LOGGER.debug("resolve Callee: {} from {}", calleeFunctionName, xml.getXmlFilePath());
-        /*
-         * if ("MDS_WRITE_FIELD".equals(calleeFunctionName)) { System.exit(0); }
-         */
-        return ListTools.getUniqueElementIfNonEmpty(
-                this.resolveCalleeModuleCandidates(xml, calleeFunctionName, globalModules), null);
+        return DataStructureTools
+                .getUniqueElementIfNonEmpty(this.resolveCalleeModuleCandidates(xml, calleeFunctionName, globalModules), null);
     }
 
     private List<FortranModule> resolveCalleeModuleCandidates(final FortranModule callerModule,

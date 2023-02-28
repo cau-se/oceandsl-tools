@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
+package cau.agse.hs.staticfortran.model;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -34,9 +34,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import org.oceandsl.tools.fxca.tools.ListTools;
-import org.oceandsl.tools.fxca.tools.Pair;
-
+import cau.agse.hs.tools.DataStructureTools;
+import cau.agse.hs.utils.lists.misc.ListTools;
+import cau.agse.hs.utils.misc.Pair;
 import lombok.Getter;
 
 /**
@@ -51,14 +51,14 @@ public class FortranModule {
     private final Path xmlFilePath;
     @Getter
     private final Set<String> usedModules;
-    // @Getter Set<String> specifiedSubroutines;
-    // @Getter Set<String> specifiedFunctions;
+    @Getter
+    private final Set<String> specifiedSubroutines;
+    @Getter
+    private final Set<String> specifiedFunctions;
     @Getter
     private final Set<String> specifiedOperations;
     @Getter
     private final String moduleName;
-    @Getter
-    private final boolean namedModule;
     StatementNode documentElement;
 
     public FortranModule(final Path xmlFilePath) throws ParserConfigurationException, SAXException, IOException {
@@ -67,16 +67,16 @@ public class FortranModule {
         final Document doc = builder.parse(xmlFilePath.toFile());
         doc.getDocumentElement().normalize();
         this.documentElement = new StatementNode(doc.getDocumentElement());
-        final StatementNode moduleStatement = ListTools.getUniqueElementIfNonEmpty(
+        final StatementNode moduleStatement = DataStructureTools.getUniqueElementIfNonEmpty(
                 this.documentElement.allDescendents(StatementNode.isModuleStatement, true), null);
-        this.namedModule = (moduleStatement != null);
-        this.moduleName = this.namedModule ? moduleStatement.getChild(1).getTextContent() : "<no module>";
+        this.moduleName = (moduleStatement == null) ? "<no module>" : moduleStatement.getChild(1).getTextContent();
+
         this.usedModules = this.computeUsedModels();
-        // this.specifiedSubroutines = computeSubroutineDeclarations();
-        // this.specifiedFunctions = computeFunctionDeclarations();
-        this.specifiedOperations = this.computeOperationDeclarations();
-        // this.specifiedOperations.addAll(specifiedFunctions);
-        // this.specifiedOperations.addAll(specifiedSubroutines);
+        this.specifiedSubroutines = this.computeSubroutineDeclarations();
+        this.specifiedFunctions = this.computeFunctionDeclarations();
+        this.specifiedOperations = new HashSet<>();
+        this.specifiedOperations.addAll(this.specifiedFunctions);
+        this.specifiedOperations.addAll(this.specifiedSubroutines);
 
         this.printSummary();
     }
@@ -88,8 +88,11 @@ public class FortranModule {
         FortranModule.LOGGER.debug(" [used modules]         ");
         this.usedModules.forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
 
-        FortranModule.LOGGER.debug(" [operation definitions] ");
-        this.specifiedOperations.forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
+        FortranModule.LOGGER.debug(" [subroutine definitions] ");
+        this.specifiedSubroutines.forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
+
+        FortranModule.LOGGER.debug(" [function definitions] ");
+        this.specifiedFunctions.forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
     }
 
     public void printXML() throws ParserConfigurationException, SAXException, IOException {
@@ -97,26 +100,17 @@ public class FortranModule {
         StatementNode.printNode(this.documentElement, 0);
 
         nodeTypes.forEach(System.out::println);
-        FortranModule.LOGGER.debug("# nodes: {}", this.documentElement.allDescendents(node -> true, true).size());
+        System.out.println("# nodes: " + this.documentElement.allDescendents(node -> true, true).size());
     }
 
-    /*
-     * @Deprecated private Set<String> computeSubroutineDeclarations() throws
-     * ParserConfigurationException, SAXException, IOException { return
-     * documentElement.getDescendentAttributes(StatementNode.isSubroutineStatement, subroutineNode
-     * -> StatementNode.getNameOfOperation(subroutineNode)); }
-     */
+    public Set<String> computeSubroutineDeclarations() throws ParserConfigurationException, SAXException, IOException {
+        return this.documentElement.getDescendentAttributes(StatementNode.isSubroutineStatement,
+                subroutineNode -> StatementNode.getNameOfOperation(subroutineNode));
+    }
 
-    /*
-     * @Deprecated private Set<String> computeFunctionDeclarations() throws
-     * ParserConfigurationException, SAXException, IOException { return
-     * documentElement.getDescendentAttributes(StatementNode.isFunctionStatement, functionNode ->
-     * StatementNode.getNameOfOperation(functionNode)); }
-     */
-
-    public Set<String> computeOperationDeclarations() throws ParserConfigurationException, SAXException, IOException {
-        return this.documentElement.getDescendentAttributes(StatementNode.isOperationStatement,
-                operationNode -> StatementNode.getNameOfOperation(operationNode));
+    public Set<String> computeFunctionDeclarations() throws ParserConfigurationException, SAXException, IOException {
+        return this.documentElement.getDescendentAttributes(StatementNode.isFunctionStatement,
+                functionNode -> StatementNode.getNameOfOperation(functionNode));
     }
 
     /*
@@ -145,13 +139,37 @@ public class FortranModule {
     }
 
     public List<Pair<String, String>> subroutineCalls() throws ParserConfigurationException, SAXException, IOException {
-        return this.operationCalls(StatementNode.isCallStatement.and(StatementNode.isLocalAccess.negate()),
+        return this.operationCalls(StatementNode.isCallStatement,
                 subroutineCall -> StatementNode.nameOfCalledOperation(subroutineCall));
+        /*
+         * Set<Pair<String, String>> result = new HashSet<>(); // Check for double entries
+         * Set<ASTNode> callStatements = documentElement.allDescendents(ASTNode.isCallStatement,
+         * true); for (ASTNode callStatement : callStatements) { // Issue: Here we do not know which
+         * function is called, if there are several xms files // (Fortran files) containing the same
+         * function. This needs to be resolved on a higher // level (i.e., the calling class that
+         * has access to the set of operation declarations // by all the modules). Therefore, we
+         * here only return a simple list of pairs of strings. String callee =
+         * ASTNode.nameOfCalledOperation(callStatement); String caller =
+         * callStatement.getNameOfContainingOperation(); result.add(new Pair<>(caller, callee)); }
+         *
+         * return ListTools.ofM(result, Pair.getComparatorFirstSecond());
+         */
     }
 
     public List<Pair<String, String>> functionCalls() throws ParserConfigurationException, SAXException, IOException {
-        return this.operationCalls(StatementNode.namedExpressionAccess.and(StatementNode.isLocalAccess.negate()),
+        return this.operationCalls(StatementNode.namedExpressionFunctionCall,
                 functionCall -> StatementNode.nameOfCalledFunction(functionCall));
+
+        /*
+         * Set<Pair<String, String>> result = new HashSet<>(); // Check for double entries
+         * Set<ASTNode> functionCalls =
+         * documentElement.allDescendents(ASTNode.namedExpressionFunctionCall, true); for (ASTNode
+         * functionCall : functionCalls) { String callee =
+         * ASTNode.nameOfCalledFunction(functionCall); String caller =
+         * functionCall.getNameOfContainingOperation(); result.add(new Pair<>(caller, callee)); }
+         *
+         * return ListTools.ofM(result, Pair.getComparatorFirstSecond());
+         */
     }
 
     public <T extends Comparable<T>> List<T> computeAllNodeAttributes(final Function<StatementNode, T> extractAttribute)
