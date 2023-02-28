@@ -13,124 +13,137 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class IOUtils {
 
-	public static PrintStream printStreamPrefixWrapper(final PrintStream printWithPrefix, final PrintStream printWithoutPrefix, final String prefix) {
-		return new PrintStream(printWithoutPrefix, false) {
-			@Override
-			public void println(final String x) {
-				printWithPrefix.println(prefix + x);
-				printWithoutPrefix.println(x);
-			}
-		};
-	}
-	
-	public static PrintStream printToFileAnd(final PrintStream out, final Path filename) throws FileNotFoundException {
-		return printStreamPrefixWrapper(out, new PrintStream(filename.toFile()), "[" + filename.toString() + "] ");
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
 
-	public static PrintStream printToFileAnd(final PrintStream out, final String filename) throws FileNotFoundException {
-		return printStreamPrefixWrapper(out, new PrintStream(filename), "[" + filename + "] ");
-	}
-	
-	public static void createDirectory(Path directoryPath) {
-		directoryPath.toFile().mkdirs();
-	}
-	
-	public final static Predicate<Path> isDirectory = element -> Files.isDirectory(element);
+    public static PrintStream printStreamPrefixWrapper(final PrintStream printWithPrefix,
+            final PrintStream printWithoutPrefix, final String prefix) {
+        return new PrintStream(printWithoutPrefix, false) {
+            @Override
+            public void println(final String x) {
+                printWithPrefix.println(prefix + x);
+                printWithoutPrefix.println(x);
+            }
+        };
+    }
 
-	public static Predicate<Path> isDirectoryWithTheseFiles(Iterable<String> filenames) {
-		Predicate<Path> result = isDirectory;
-		for (String filename : filenames) {
-			result = result.and(directory -> Files.exists(directory.resolve(Paths.get(filename))));
-		}
-		return result;
-	}
+    public static PrintStream printToFileAnd(final PrintStream out, final Path filename) throws FileNotFoundException {
+        return IOUtils.printStreamPrefixWrapper(out, new PrintStream(filename.toFile()),
+                "[" + filename.toString() + "] ");
+    }
 
-	public static Predicate<Path> endsWith(String suffix) {
-		return element -> element.toAbsolutePath().toString().endsWith(suffix);
-	}
+    public static PrintStream printToFileAnd(final PrintStream out, final String filename)
+            throws FileNotFoundException {
+        return IOUtils.printStreamPrefixWrapper(out, new PrintStream(filename), "[" + filename + "] ");
+    }
 
-	public static List<Path> pathsInDirectory(Path directory) throws IOException {
-		return pathsInDirectory(directory, o -> true, o -> true, false);
-	}
+    public static void createDirectory(final Path directoryPath) {
+        directoryPath.toFile().mkdirs();
+    }
 
-	public static List<Path> pathsInDirectory(Path directory, final Predicate<Path> fileFilter) throws IOException {
-		return pathsInDirectory(directory, fileFilter, null);		
-	}
+    public final static Predicate<Path> isDirectory = element -> Files.isDirectory(element);
 
-	private static List<Path> pathsInDirectory(final Path directory, final Predicate<Path> fileFilter, final Collection<Path> collectNotMatchingFiles) throws IOException {
-		return pathsInDirectory(directory, fileFilter, o -> true, false, collectNotMatchingFiles);
-	}
+    public static Predicate<Path> isDirectoryWithTheseFiles(final Iterable<String> filenames) {
+        Predicate<Path> result = IOUtils.isDirectory;
+        for (final String filename : filenames) {
+            result = result.and(directory -> Files.exists(directory.resolve(Paths.get(filename))));
+        }
+        return result;
+    }
 
-	public static List<Path> pathsInDirectory(final Path directory, final Predicate<Path> fileFilter, final Predicate<Path> directoryFilter, boolean addEntriesForDirectories) throws IOException {
-		return pathsInDirectory(directory, fileFilter, directoryFilter, addEntriesForDirectories, null);
-	}
+    public static Predicate<Path> endsWith(final String suffix) {
+        return element -> element.toAbsolutePath().toString().endsWith(suffix);
+    }
 
-	private static List<Path> pathsInDirectory(final Path directory, final Predicate<Path> fileFilter, final Predicate<Path> directoryFilter, boolean addEntriesForDirectories, Collection<Path> collectNotMatchingFiles) throws IOException {
+    public static List<Path> pathsInDirectory(final Path directory) throws IOException {
+        return IOUtils.pathsInDirectory(directory, o -> true, o -> true, false);
+    }
 
-		final List<Path> result = ListTools.ofM();
+    public static List<Path> pathsInDirectory(final Path directory, final Predicate<Path> fileFilter)
+            throws IOException {
+        return IOUtils.pathsInDirectory(directory, fileFilter, null);
+    }
 
-		SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<>() {
+    private static List<Path> pathsInDirectory(final Path directory, final Predicate<Path> fileFilter,
+            final Collection<Path> collectNotMatchingFiles) throws IOException {
+        return IOUtils.pathsInDirectory(directory, fileFilter, o -> true, false, collectNotMatchingFiles);
+    }
 
-			@Override
-			public FileVisitResult visitFile(Path filePath, BasicFileAttributes attrs) {
-				if (!fileFilter.test(filePath)) {
-					if (collectNotMatchingFiles != null) {
-						collectNotMatchingFiles.add(filePath);
-					}
-					return FileVisitResult.CONTINUE;
-				}
-				if (!Files.isDirectory(filePath)) {
-					result.add(filePath);
-					System.out.println(filePath.toString());
-				}
-				return FileVisitResult.CONTINUE;
-			}
+    public static List<Path> pathsInDirectory(final Path directory, final Predicate<Path> fileFilter,
+            final Predicate<Path> directoryFilter, final boolean addEntriesForDirectories) throws IOException {
+        return IOUtils.pathsInDirectory(directory, fileFilter, directoryFilter, addEntriesForDirectories, null);
+    }
 
-			@Override
-			public FileVisitResult visitFileFailed(Path filePath, IOException exc) {
-				System.out.println("could not visit " + filePath.toString() + ": " + exc.getClass());
-				return FileVisitResult.CONTINUE;
-			}
+    private static List<Path> pathsInDirectory(final Path directory, final Predicate<Path> fileFilter,
+            final Predicate<Path> directoryFilter, final boolean addEntriesForDirectories,
+            final Collection<Path> collectNotMatchingFiles) throws IOException {
 
-			@Override
-			public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
-				if (!directoryFilter.test(dir) && !dir.equals(directory)) { // no matter what the filter, we should visit the original directory.
-					return FileVisitResult.SKIP_SUBTREE;
-				}
+        final List<Path> result = ListTools.ofM();
 
-				if (addEntriesForDirectories && fileFilter.test(dir)) {
-					result.add(dir);
-				}
+        final SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<>() {
 
-				try {
-					return super.preVisitDirectory(dir, attrs);
-				}
-				catch (IOException e) {
-					System.out.println("skipping subdir " + dir + " due to I/O exception.");
-					return FileVisitResult.SKIP_SUBTREE;
-				}
-			}
-		};
+            @Override
+            public FileVisitResult visitFile(final Path filePath, final BasicFileAttributes attrs) {
+                if (!fileFilter.test(filePath)) {
+                    if (collectNotMatchingFiles != null) {
+                        collectNotMatchingFiles.add(filePath);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+                if (!Files.isDirectory(filePath)) {
+                    result.add(filePath);
+                    IOUtils.LOGGER.debug(filePath.toString());
+                }
+                return FileVisitResult.CONTINUE;
+            }
 
-		Files.walkFileTree(directory, visitor);
-		return result;
-	}
-	
-public static void printWithCommas(Iterable<String> items) {
-		
-		StringBuilder result = new StringBuilder();
+            @Override
+            public FileVisitResult visitFileFailed(final Path filePath, final IOException exc) {
+                IOUtils.LOGGER.warn("could not visit {}: ", filePath.toString(), exc.getClass());
+                return FileVisitResult.CONTINUE;
+            }
 
-		for (String item : items) {
-			if (!result.isEmpty()) {
-				result.append(", ");
-			}
-			result.append(item);
-		}
-		
-		System.out.println(result.toString());
-	}
+            @Override
+            public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
+                if (!directoryFilter.test(dir) && !dir.equals(directory)) { // no matter what the
+                                                                            // filter, we should
+                                                                            // visit the original
+                                                                            // directory.
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+
+                if (addEntriesForDirectories && fileFilter.test(dir)) {
+                    result.add(dir);
+                }
+
+                try {
+                    return super.preVisitDirectory(dir, attrs);
+                } catch (final IOException e) {
+                    IOUtils.LOGGER.warn("skipping subdir {} due to I/O exception: {}", dir, e.getLocalizedMessage());
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+            }
+        };
+
+        Files.walkFileTree(directory, visitor);
+        return result;
+    }
+
+    public static void printWithCommas(final Iterable<String> items) {
+
+        final StringBuilder result = new StringBuilder();
+
+        for (final String item : items) {
+            if (!result.isEmpty()) {
+                result.append(", ");
+            }
+            result.append(item);
+        }
+
+        IOUtils.LOGGER.debug(result.toString());
+    }
 }
-
-
