@@ -16,11 +16,11 @@ import org.apache.commons.io.FilenameUtils;
 
 public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> {
 
-    private final List<String> dataflow = new ArrayList<String>();
-    private final List<String> contentFile = new ArrayList<String>();
+    private final List<String> dataflow = new ArrayList<>();
+    private final List<String> contentFile = new ArrayList<>();
     private List<String> commonBlocksFile = new ArrayList<String>();
     private HashMap<String, String> proceduresFilemap = new HashMap<String, String>();
-    
+
     protected final OutputPort<Output> outputPort = this.createOutputPort();
 
     public OutputPort<Output> getOutputPort() {
@@ -56,13 +56,15 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 
         out.setDataflow(this.dataflow);
         out.setFileContent(this.contentFile);
+
         out.setCommonBlocks(this.commonBlocksFile);
         System.out.println("Done");
+
         this.outputPort.send(out);
     }
 
     private List<String> analyzeSubRoutines(final List<List<Node>> subRoutineBodies, final String fileId) {
-        List<String> dataflowInSub = new ArrayList<String>();
+        List<String> dataflowInSub = new ArrayList<>();
         final List<String> blackList = XPathParser.getArraysDecl(subRoutineBodies);
         for (final List<Node> body : subRoutineBodies) {
             final String name = XPathParser.getsubroutineId(body);
@@ -81,7 +83,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
     }
 
     private List<String> analyzeFunctions(final List<List<Node>> funcBodies, final String fileId) {
-        List<String> dataflowInFunc = new ArrayList<String>();
+        List<String> dataflowInFunc = new ArrayList<>();
         final List<String> blackList = XPathParser.getArraysDecl(funcBodies);
         for (final List<Node> body : funcBodies) {
             final String name = XPathParser.getFunctionId(body);
@@ -128,7 +130,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
     private List<String> analyzeExecutionPart(final List<Node> body, final List<Node> commonBlocks,
             final List<String> blacklist, final String dataFlowLine, final String caller) {
 
-        final List<String> dataflowExecPart = new ArrayList<String>();
+        final List<String> dataflowExecPart = new ArrayList<>();
 
         // Dataflow call stmt
         final List<Node> callStmts = XPathParser.getCallStmts(body);
@@ -294,7 +296,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
      * convertToString
      */
     private List<String> convertToString(final List<Node> namesRight) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         for (final Node node : namesRight) {
             result.add(node.getTextContent());
         }
@@ -306,7 +308,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
      */
     private List<String> analyzePotentialFuncStmt(final List<Node> funcs, final List<Node> commonBlocks,
             final List<String> bl, final List<String> dataflowLinesRest) {
-        final List<String> blockIdentifierList = new ArrayList<String>();
+        final List<String> blockIdentifierList = new ArrayList<>();
         for (final Node funcNode : funcs) {
             final String functionIdentifier = XPathParser.getPartRefNodeIdentifier(funcNode);
             final List<String>functionInCommonBlockList = isVarFromCommonBlock(functionIdentifier, commonBlocks);
