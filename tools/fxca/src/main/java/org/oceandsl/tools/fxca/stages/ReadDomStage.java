@@ -13,32 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.esm.stages;
+package org.oceandsl.tools.fxca.stages;
 
-import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
 
-import teetime.framework.AbstractProducerStage;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
-public class ReadStage extends AbstractProducerStage<List<File>> {
+import org.w3c.dom.Document;
 
-    private final Path rootPath;
+import teetime.stage.basic.AbstractTransformation;
 
-    public ReadStage(final Path list) {
-        this.rootPath = list;
-    }
+public class ReadDomStage extends AbstractTransformation<Path, Document> {
 
     @Override
-    protected void execute() throws Exception {
+    protected void execute(final Path path) throws Exception {
+        final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        final Document doc = builder.parse(path.toFile());
+        doc.getDocumentElement().normalize();
 
-        final File folder = new File(this.rootPath.toAbsolutePath().toString());
-        final List<File> files = Arrays.asList(folder.listFiles());
-        // System.out.println("Files sent: "+ files.size());
-        this.outputPort.send(files);
-        this.workCompleted();
-
+        this.outputPort.send(doc);
     }
 
 }

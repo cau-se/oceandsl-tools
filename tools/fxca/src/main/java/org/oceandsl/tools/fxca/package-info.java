@@ -17,4 +17,4 @@
  * @author Henning Schnoor
  *
  */
-package org.oceandsl.tools.fxca.main;
+package org.oceandsl.tools.fxca;

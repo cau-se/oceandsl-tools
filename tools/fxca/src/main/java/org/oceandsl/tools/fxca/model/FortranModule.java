@@ -16,7 +16,6 @@
 package org.oceandsl.tools.fxca.model;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -24,8 +23,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
@@ -48,11 +45,7 @@ public class FortranModule {
     private static final Logger LOGGER = LoggerFactory.getLogger(FortranModule.class);
 
     @Getter
-    private final Path xmlFilePath;
-    @Getter
     private final Set<String> usedModules;
-    // @Getter Set<String> specifiedSubroutines;
-    // @Getter Set<String> specifiedFunctions;
     @Getter
     private final Set<String> specifiedOperations;
     @Getter
@@ -61,29 +54,20 @@ public class FortranModule {
     private final boolean namedModule;
     StatementNode documentElement;
 
-    public FortranModule(final Path xmlFilePath) throws ParserConfigurationException, SAXException, IOException {
-        this.xmlFilePath = xmlFilePath;
-        final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        final Document doc = builder.parse(xmlFilePath.toFile());
-        doc.getDocumentElement().normalize();
+    public FortranModule(final Document doc) throws ParserConfigurationException, SAXException, IOException {
         this.documentElement = new StatementNode(doc.getDocumentElement());
         final StatementNode moduleStatement = ListTools.getUniqueElementIfNonEmpty(
                 this.documentElement.allDescendents(StatementNode.isModuleStatement, true), null);
         this.namedModule = (moduleStatement != null);
         this.moduleName = this.namedModule ? moduleStatement.getChild(1).getTextContent() : "<no module>";
         this.usedModules = this.computeUsedModels();
-        // this.specifiedSubroutines = computeSubroutineDeclarations();
-        // this.specifiedFunctions = computeFunctionDeclarations();
         this.specifiedOperations = this.computeOperationDeclarations();
-        // this.specifiedOperations.addAll(specifiedFunctions);
-        // this.specifiedOperations.addAll(specifiedSubroutines);
 
         this.printSummary();
     }
 
     public void printSummary() {
         FortranModule.LOGGER.debug("# Summary");
-        FortranModule.LOGGER.debug(" [xmlFilePath]          {}", this.xmlFilePath);
         FortranModule.LOGGER.debug(" [moduleName]           {}", this.moduleName);
         FortranModule.LOGGER.debug(" [used modules]         ");
         this.usedModules.forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
@@ -92,40 +76,10 @@ public class FortranModule {
         this.specifiedOperations.forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
     }
 
-    public void printXML() throws ParserConfigurationException, SAXException, IOException {
-        final Set<String> nodeTypes = new HashSet<>();
-        StatementNode.printNode(this.documentElement, 0);
-
-        nodeTypes.forEach(System.out::println);
-        FortranModule.LOGGER.debug("# nodes: {}", this.documentElement.allDescendents(node -> true, true).size());
-    }
-
-    /*
-     * @Deprecated private Set<String> computeSubroutineDeclarations() throws
-     * ParserConfigurationException, SAXException, IOException { return
-     * documentElement.getDescendentAttributes(StatementNode.isSubroutineStatement, subroutineNode
-     * -> StatementNode.getNameOfOperation(subroutineNode)); }
-     */
-
-    /*
-     * @Deprecated private Set<String> computeFunctionDeclarations() throws
-     * ParserConfigurationException, SAXException, IOException { return
-     * documentElement.getDescendentAttributes(StatementNode.isFunctionStatement, functionNode ->
-     * StatementNode.getNameOfOperation(functionNode)); }
-     */
-
     public Set<String> computeOperationDeclarations() throws ParserConfigurationException, SAXException, IOException {
         return this.documentElement.getDescendentAttributes(StatementNode.isOperationStatement,
                 operationNode -> StatementNode.getNameOfOperation(operationNode));
     }
-
-    /*
-     * public Set<String> getAllNamesInNamedEChains() throws ParserConfigurationException,
-     * SAXException, IOException { return
-     * documentElement.getDescendentAttributes(ASTNode.namedExpressionFunctionCall,
-     * ASTNode.nameOfCalledFunction); } // node -> ASTNode.getFirstChildChain(node,
-     * 4).getTextContent()
-     */
 
     public List<Pair<String, String>> operationCalls() throws ParserConfigurationException, SAXException, IOException {
         return ListTools.ofM(this.subroutineCalls(), this.functionCalls(), Pair.getComparatorFirstSecond());

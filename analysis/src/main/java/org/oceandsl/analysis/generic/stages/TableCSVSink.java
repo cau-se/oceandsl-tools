@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Function;
 
 import teetime.framework.AbstractConsumerStage;
 
@@ -35,14 +36,23 @@ import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
  */
 public class TableCSVSink extends AbstractConsumerStage<Table> {
 
-    private final Path filePath;
-    private final String filename;
+    private final Function<String, Path> filePathFunction;
     private final boolean header;
 
-    public TableCSVSink(final Path filePath, final String filename, final boolean header) {
-        this.filePath = filePath;
-        this.filename = filename;
+    public TableCSVSink(final Function<String, Path> filePathFunction, final boolean header) {
         this.header = header;
+        this.filePathFunction = filePathFunction;
+    }
+
+    public TableCSVSink(final Path filePath, final String filename, final boolean header) {
+        this.header = header;
+        this.filePathFunction = new Function<>() {
+
+            @Override
+            public Path apply(final String name) {
+                return filePath.resolve(String.format("%s-%s", name, filename));
+            }
+        };
     }
 
     public TableCSVSink(final Path filePath, final String filename) {
@@ -51,8 +61,7 @@ public class TableCSVSink extends AbstractConsumerStage<Table> {
 
     @Override
     protected void execute(final Table table) throws IOException, ValueConversionErrorException {
-        try (BufferedWriter outputStream = Files.newBufferedWriter(
-                this.filePath.resolve(String.format("%s-%s", table.getName(), this.filename)),
+        try (BufferedWriter outputStream = Files.newBufferedWriter(this.filePathFunction.apply(table.getName()),
                 StandardCharsets.UTF_8)) {
             if (this.header) {
                 this.printHeader(outputStream, table);
@@ -66,7 +75,7 @@ public class TableCSVSink extends AbstractConsumerStage<Table> {
         final IValueHandler<?>[] valueHandlers = table.getValueHandlers();
         for (int i = 0; i < valueHandlers.length; i++) {
             outputStream.write(valueHandlers[i].getLabel());
-            if (i < valueHandlers.length - 1) {
+            if (i < (valueHandlers.length - 1)) {
                 outputStream.write(";");
             } else {
                 outputStream.write("\n");
@@ -79,7 +88,7 @@ public class TableCSVSink extends AbstractConsumerStage<Table> {
         for (final Object[] row : table.getRows()) {
             for (int i = 0; i < row.length; i++) {
                 outputStream.write(table.getValueHandler(i).convertToString(row[i]));
-                if (i < row.length - 1) {
+                if (i < (row.length - 1)) {
                     outputStream.write(";");
                 } else {
                     outputStream.write("\n");

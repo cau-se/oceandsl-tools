@@ -19,7 +19,7 @@
  *
  */
 
-package org.oceandsl.tools.fxca.main;
+package org.oceandsl.tools.fxca;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,6 +38,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import kieker.common.configuration.Configuration;
+import kieker.common.exception.ConfigurationException;
+import kieker.tools.common.AbstractService;
+
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.model.StatementNode;
@@ -49,7 +53,7 @@ import org.oceandsl.tools.fxca.tools.IOUtils;
  * @author Henning Schnoor
  * @since 1.3.0
  */
-public final class FxcaMain {
+public final class FxcaMain extends AbstractService<TeetimeConfiguration, Settings> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FxcaMain.class);
     private static final String OPERATION_DEFINITIONS = "operation-definitions.csv";
@@ -183,5 +187,29 @@ public final class FxcaMain {
         } catch (final IOException e) {
             FxcaMain.LOGGER.error("Cannot write {} file: {}", FxcaMain.OPERATION_DEFINITIONS, e.getLocalizedMessage());
         }
+    }
+
+    @Override
+    protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
+        return new TeetimeConfiguration(this.settings);
+    }
+
+    @Override
+    protected Path getConfigurationPath() {
+        return null;
+    }
+
+    @Override
+    protected boolean checkConfiguration(final Configuration configuration, final JCommander commander) {
+        return true;
+    }
+
+    @Override
+    protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
+        return true;
+    }
+
+    @Override
+    protected void shutdownService() {
     }
 }

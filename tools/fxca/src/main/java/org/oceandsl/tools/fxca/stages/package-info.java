@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author Henning Schnoor
  *
  */
-public class FortranProject {
 
-    /**
-     * Actual list to which List-calls are delegated.
-     */
-    private final Map<String, FortranModule> modules;
-
-    /**
-     * Constructs Project Model with empty content.
-     */
-    public FortranProject() {
-        this.modules = new HashMap<>();
-    }
-
-    public Map<String, FortranModule> getModules() {
-        return this.modules;
-    }
-}
+package org.oceandsl.tools.fxca.stages;
