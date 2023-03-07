@@ -21,9 +21,10 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
 
+import org.oceandsl.analysis.generic.validators.ParentPathIsDirectoryValidator;
+import org.oceandsl.analysis.generic.validators.ParentPathIsWriteableValidator;
 import org.oceandsl.analysis.generic.validators.PathIsDirectoryValidator;
 import org.oceandsl.analysis.generic.validators.PathIsReadableValidator;
-import org.oceandsl.analysis.generic.validators.PathIsWriteableValidator;
 
 /**
  * @author Reiner Jung
@@ -38,7 +39,7 @@ public class Settings {
 
     @Parameter(names = { "-o",
             "--output" }, required = true, description = "Path where the output files are placed.", converter = PathConverter.class, validateWith = {
-                    PathIsWriteableValidator.class, PathIsDirectoryValidator.class })
+                    ParentPathIsWriteableValidator.class, ParentPathIsDirectoryValidator.class })
     private Path outputDirectoryPath;
 
     @Parameter(names = { "-f",
