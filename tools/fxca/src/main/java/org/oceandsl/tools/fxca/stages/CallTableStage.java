@@ -48,15 +48,15 @@ public class CallTableStage extends AbstractTransformation<FortranProject, Table
             final List<FortranModule> globalModules) throws ParserConfigurationException, SAXException, IOException {
         tableOut.println("callerfilename,callermodule,callerfunction,calleefilename,calleemodule,calleefunction");
         this.logger.debug("Calls to operations that could not be found:");
-        for (final FortranModule module : this) {
+        for (final FortranModule module : globalModules) {
             for (final Pair<String, String> call : module.operationCalls()) {
                 final String callerFunctionName = call.first;
                 final String callerFileName = module.getXmlFilePath().toAbsolutePath().getFileName().toString();
                 final String calleeFunctionName = call.second;
                 final FortranModule calleeXML = this.resolveCallee(module, calleeFunctionName, globalModules);
-                final String calleeFileName = (calleeXML == null) ? "<unknown>"
+                final String calleeFileName = calleeXML == null ? "<unknown>"
                         : calleeXML.getXmlFilePath().toAbsolutePath().getFileName().toString();
-                final String calleeModuleName = (calleeXML == null) ? "<unknown>" : calleeXML.getModuleName();
+                final String calleeModuleName = calleeXML == null ? "<unknown>" : calleeXML.getModuleName();
                 tableOut.println(callerFileName + ", " + module.getModuleName() + ", " + callerFunctionName + ", "
                         + calleeFileName + ", " + calleeModuleName + ", " + calleeFunctionName);
                 if (calleeXML == null) {
@@ -85,12 +85,12 @@ public class CallTableStage extends AbstractTransformation<FortranProject, Table
                                                                              // ones.
 
         for (final String usedModuleName : callerModule.getUsedModules()) {
-            final FortranModule moduleXML = this.moduleNames.get(usedModuleName);
-            if (moduleXML == null) {
-                this.logger.warn("MODULE NOT FOUND: [{}]", usedModuleName);
-            } else {
-                usedModules.add(moduleXML);
-            }
+            // final FortranModule moduleXML = moduleNames.get(usedModuleName);
+//            if (moduleXML == null) {
+//                this.logger.warn("MODULE NOT FOUND: [{}]", usedModuleName);
+//            } else {
+//                usedModules.add(moduleXML);
+//            }
         }
 
         if (globalModules != null) {

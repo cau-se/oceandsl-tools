@@ -20,7 +20,9 @@ import teetime.framework.Configuration;
 import org.oceandsl.analysis.generic.stages.DirectoryProducer;
 import org.oceandsl.analysis.generic.stages.DirectoryScannerStage;
 import org.oceandsl.analysis.generic.stages.TableCSVSink;
-import org.oceandsl.tools.fxca.stages.ProcessDomStage;
+import org.oceandsl.tools.fxca.stages.ComputeOutputState;
+import org.oceandsl.tools.fxca.stages.ProcessModuleStructureStage;
+import org.oceandsl.tools.fxca.stages.ProcessOperationCallStage;
 import org.oceandsl.tools.fxca.stages.ReadDomStage;
 
 /**
@@ -36,21 +38,26 @@ public class TeetimeConfiguration extends Configuration {
     public TeetimeConfiguration(final Settings settings) {
         final DirectoryProducer producer = new DirectoryProducer(settings.getInputDirectoryPaths());
         final DirectoryScannerStage directoryScannerStage = new DirectoryScannerStage(true, o -> true,
-                o -> o.endsWith(".xml"));
+                o -> o.getFileName().toString().endsWith(".xml"));
 
         /** computing stages. */
         final ReadDomStage readDomStage = new ReadDomStage();
-        final ProcessDomStage processDomStage = new ProcessDomStage();
+        final ProcessModuleStructureStage processModuleStructureStage = new ProcessModuleStructureStage();
+        final ProcessOperationCallStage processOperationCallStage = new ProcessOperationCallStage();
+        final ComputeOutputState computeOutputStage = new ComputeOutputState();
 
         /** output stages */
         final TableCSVSink operationDefinitionsSink = new TableCSVSink(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.OPERATION_DEFINITIONS), true);
         final TableCSVSink callTableSink = new TableCSVSink(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.CALL_TABLE), true);
-        final TableCSVSink notfoundSink = new TableCSVSink(
+        final TableCSVSink notoundSink = new TableCSVSink(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.NOT_FOUND), true);
 
         this.connectPorts(producer.getOutputPort(), directoryScannerStage.getInputPort());
         this.connectPorts(directoryScannerStage.getOutputPort(), readDomStage.getInputPort());
+        this.connectPorts(readDomStage.getOutputPort(), processModuleStructureStage.getInputPort());
+        this.connectPorts(processModuleStructureStage.getOutputPort(), processOperationCallStage.getInputPort());
+        this.connectPorts(processOperationCallStage.getOutputPort(), computeOutputStage.getInputPort());
     }
 }

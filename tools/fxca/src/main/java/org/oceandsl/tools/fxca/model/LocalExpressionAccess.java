@@ -12,126 +12,114 @@ import org.w3c.dom.Node;
 
 public class LocalExpressionAccess {
 
-	// we often need to search for names that are defined at the current node, which are *not* external
-	// calls. Examples are 
-	// - common block definitions
-	// - local variables
-	// - parameters to the function we're currently in.
-	//
-	// This class collects the parameters for looking for these values.
+    // we often need to search for names that are defined at the current node, which are *not*
+    // external
+    // calls. Examples are
+    // - common block definitions
+    // - local variables
+    // - parameters to the function we're currently in.
+    //
+    // This class collects the parameters for looking for these values.
 
-	public record LocalAccessParameters (
-			Predicate<Node> blockNodeTypeCheckPredicate,
-			Predicate<Node> outerDelimiterPredicate,
-			Predicate<Node> innerDelimiterPredicate, 
-			Function<Node, String> extractName) {
-	};
-	
-	public enum accessType { COMMON_BLOCK, LOCAL_VARIABLE, OPERATION_PARAMETER, OPERATION_CALL };
-	
-	static LocalAccessParameters namesInCommonBlocks =
-			new LocalAccessParameters(
-					StatementNode.isCommonStatement,
-					StatementNode.isCommonBlockObjectStatement,
-					StatementNode.isSmallN,
-					smallNNode -> StatementNode.getSuccessorNode(smallNNode, "0").getTextContent()
-					);
+    public record LocalAccessParameters(Predicate<Node> blockNodeTypeCheckPredicate,
+            Predicate<Node> outerDelimiterPredicate, Predicate<Node> innerDelimiterPredicate,
+            Function<Node, String> extractName) {
+    }
 
-	static LocalAccessParameters namesInOperationParameterList =
-			new LocalAccessParameters(
-					StatementNode.isOperationStatement,
-					StatementNode.isArgN,
-					StatementNode.isSmallN,
-					smallNNode -> StatementNode.getSuccessorNode(smallNNode, "0").getTextContent()
-					);
+    public enum accessType {
+        COMMON_BLOCK, LOCAL_VARIABLE, OPERATION_PARAMETER, OPERATION_CALL
+    }
 
-	static LocalAccessParameters namesInLocalVariableList =
-			new LocalAccessParameters(
-					StatementNode.isTDeclStmt,
-					StatementNode.isEnDcl,
-					StatementNode.isSmallN,
-					smallNNode -> StatementNode.getSuccessorNode(smallNNode, "0").getTextContent()
-					);
+    static LocalAccessParameters namesInCommonBlocks = new LocalAccessParameters(StatementNode.isCommonStatement,
+            StatementNode.isCommonBlockObjectStatement, StatementNode.isSmallN,
+            smallNNode -> StatementNode.getSuccessorNode(smallNNode, "0").getTextContent());
 
-	static Set<String> localNamesDefinedInApplyingBlocks(Node node,	LocalAccessParameters parameters, boolean verbose) {
+    static LocalAccessParameters namesInOperationParameterList = new LocalAccessParameters(
+            StatementNode.isOperationStatement, StatementNode.isArgN, StatementNode.isSmallN,
+            smallNNode -> StatementNode.getSuccessorNode(smallNNode, "0").getTextContent());
 
-		List<StatementNode> applyingBlocks = new ArrayList<>();
+    static LocalAccessParameters namesInLocalVariableList = new LocalAccessParameters(StatementNode.isTDeclStmt,
+            StatementNode.isEnDcl, StatementNode.isSmallN,
+            smallNNode -> StatementNode.getSuccessorNode(smallNNode, "0").getTextContent());
 
-		Node current = node;
+    static Set<String> localNamesDefinedInApplyingBlocks(final Node node, final LocalAccessParameters parameters,
+            final boolean verbose) {
 
-		while (current != null) {
-			List<StatementNode> applyingBlocksOnThisLevel =
-					(new StatementNode(current)).findAll(nnode -> nnode.getPreviousSibling(),
-							parameters.blockNodeTypeCheckPredicate,
-							true,
-							StatementNode.paranthesisTypes,
-							-1);
-			applyingBlocks.addAll(applyingBlocksOnThisLevel);
-			current = current.getParentNode();
-		}
+        final List<Node> applyingBlocks = new ArrayList<>();
 
-		return localNamesDefinedInBlocks(applyingBlocks, parameters); // allNamesDefinedInCommonBlocks
-	}
+        Node current = node;
 
-	private static Set<String> localNamesDefinedInBlocks(Collection<StatementNode> applyingBlocks, LocalAccessParameters parameters) {
-		Set <String> result = new HashSet<>();
+        while (current != null) {
+            final List<Node> applyingBlocksOnThisLevel = StatementNode.findAll(current,
+                    nnode -> nnode.getPreviousSibling(), parameters.blockNodeTypeCheckPredicate, true,
+                    StatementNode.paranthesisTypes, -1);
+            applyingBlocks.addAll(applyingBlocksOnThisLevel);
+            current = current.getParentNode();
+        }
 
-		for (StatementNode blockNode : applyingBlocks) {
-			result.addAll(localNamesDefinedInBlock(blockNode, parameters));
-		}
+        return localNamesDefinedInBlocks(applyingBlocks, parameters); // allNamesDefinedInCommonBlocks
+    }
 
-		return result;
-	}
+    private static Set<String> localNamesDefinedInBlocks(final Collection<Node> applyingBlocks,
+            final LocalAccessParameters parameters) {
+        final Set<String> result = new HashSet<>();
 
-	private static Set<String> localNamesDefinedInBlock(StatementNode blockNode, LocalAccessParameters parameters)
-	{
+        for (final Node blockNode : applyingBlocks) {
+            result.addAll(localNamesDefinedInBlock(blockNode, parameters));
+        }
 
-		if (!parameters.blockNodeTypeCheckPredicate.test(blockNode)) {
-			throw new IllegalArgumentException("type checking failure.");
-		}
+        return result;
+    }
 
-		HashSet<String> result = new HashSet<>();
-		for (StatementNode element : blockNode.allDescendents(parameters.outerDelimiterPredicate, true)) {
-			for (StatementNode smallN : element.allDescendents(parameters.innerDelimiterPredicate, true)) {
-				result.add(parameters.extractName.apply(smallN));
-			}
-		}
+    private static Set<String> localNamesDefinedInBlock(final Node blockNode, final LocalAccessParameters parameters) {
 
-		return result;
-	}
+        if (!parameters.blockNodeTypeCheckPredicate.test(blockNode)) {
+            throw new IllegalArgumentException("type checking failure.");
+        }
 
-	public static boolean isNamedExpressionLocalReference(Node node, LocalAccessParameters parameters) {
+        final HashSet<String> result = new HashSet<>();
+        for (final Node element : StatementNode.allDescendents(blockNode, parameters.outerDelimiterPredicate, true)) {
+            for (final Node smallN : StatementNode.allDescendents(element, parameters.innerDelimiterPredicate, true)) {
+                result.add(parameters.extractName.apply(smallN));
+            }
+        }
 
-		if (!StatementNode.namedExpressionAccess.test(node)) {
-			return false;
-		}
+        return result;
+    }
 
-		String nameOfCalledFunction = StatementNode.nameOfCalledFunction(node);
+    public static boolean isNamedExpressionLocalReference(final Node node, final LocalAccessParameters parameters) {
 
-		return LocalExpressionAccess.localNamesDefinedInApplyingBlocks(node, parameters, false).contains(nameOfCalledFunction);
-	}
+        if (!StatementNode.namedExpressionAccess.test(node)) {
+            return false;
+        }
 
-	public static accessType typeOfReferenceAccess(Node referenceNode) {
+        final String nameOfCalledFunction = StatementNode.nameOfCalledFunction(node);
 
-		if (isNamedExpressionLocalReference(referenceNode, namesInCommonBlocks)) {
-			return accessType.COMMON_BLOCK;
-		}
+        return LocalExpressionAccess.localNamesDefinedInApplyingBlocks(node, parameters, false)
+                .contains(nameOfCalledFunction);
+    }
 
-		if (isNamedExpressionLocalReference(referenceNode, namesInOperationParameterList)) {
-			return accessType.OPERATION_PARAMETER;
-		}
+    public static accessType typeOfReferenceAccess(final Node referenceNode) {
 
-		if (isNamedExpressionLocalReference(referenceNode, namesInLocalVariableList)) {
-			return accessType.LOCAL_VARIABLE;
-		}
+        if (isNamedExpressionLocalReference(referenceNode, namesInCommonBlocks)) {
+            return accessType.COMMON_BLOCK;
+        }
 
-		return accessType.OPERATION_CALL;
-	}
-	
-	public static boolean isLocalAccess(Node referenceNode) {
-		return StatementNode.isCallStatement.or(StatementNode.namedExpressionAccess).test(referenceNode)
-				&& typeOfReferenceAccess(referenceNode) != accessType.OPERATION_CALL;
-	}
+        if (isNamedExpressionLocalReference(referenceNode, namesInOperationParameterList)) {
+            return accessType.OPERATION_PARAMETER;
+        }
+
+        if (isNamedExpressionLocalReference(referenceNode, namesInLocalVariableList)) {
+            return accessType.LOCAL_VARIABLE;
+        }
+
+        return accessType.OPERATION_CALL;
+    }
+
+    public static boolean isLocalAccess(final Node referenceNode) {
+        return StatementNode.isCallStatement.or(StatementNode.namedExpressionAccess).test(referenceNode)
+                && typeOfReferenceAccess(referenceNode) != accessType.OPERATION_CALL;
+    }
 
 //	public static String nameOfCalledFunctionOrLocalReference(Node referenceNode) {
 //
@@ -144,31 +132,31 @@ public class LocalExpressionAccess {
 //
 //		return StatementNode.nameOfCalledFunction(referenceNode) + suffix;
 //	}
-	
-	public static String nameOfCalledFunctionOrLocalReference(Node referenceNode) {
-		
-		// rewritten the switch statement because checkstyle cannot parse it
-		
-		accessType switchValue = typeOfReferenceAccess(referenceNode);
-		String suffix = null;
-		
-		if (switchValue == accessType.COMMON_BLOCK) {
-			suffix = "-common-access";
-		}
-		
-		if (switchValue == accessType.LOCAL_VARIABLE) {
-			suffix = "-local-variable";
-		}
 
-		if (switchValue == accessType.OPERATION_PARAMETER) {
-			suffix = "-parameter-access";
-		}
-		
-		if (suffix == null) {
-			throw new IllegalStateException();
-		}
+    public static String nameOfCalledFunctionOrLocalReference(final Node referenceNode) {
 
-		return StatementNode.nameOfCalledFunction(referenceNode) + suffix;
-	}
+        // rewritten the switch statement because checkstyle cannot parse it
+
+        final accessType switchValue = typeOfReferenceAccess(referenceNode);
+        String suffix = null;
+
+        if (switchValue == accessType.COMMON_BLOCK) {
+            suffix = "-common-access";
+        }
+
+        if (switchValue == accessType.LOCAL_VARIABLE) {
+            suffix = "-local-variable";
+        }
+
+        if (switchValue == accessType.OPERATION_PARAMETER) {
+            suffix = "-parameter-access";
+        }
+
+        if (suffix == null) {
+            throw new IllegalStateException();
+        }
+
+        return StatementNode.nameOfCalledFunction(referenceNode) + suffix;
+    }
 
 }
