@@ -4,7 +4,6 @@
 * This is a general purpose Gradle build.
 * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds
 */
-
 plugins {
 	id 'java'
 	id "com.diffplug.spotless" version "5.17.1"
@@ -57,7 +56,17 @@ subprojects {
 		testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 	}
 
+	test {
+		useJUnitPlatform()
+	}
 
+	jacocoTestReport {
+		reports {
+			xml.required = false
+			csv.required = false
+			html.required = true
+		}
+	}
 
 	apply plugin: 'pmd'
 	pmd {    // is represented by the groovy class "PmdExtension"

@@ -19,9 +19,12 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.exception.InternalErrorException;
 import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.OperationDataflow;
 import kieker.model.analysismodel.execution.StorageDataflow;
+import kieker.model.analysismodel.source.SourceModel;
+import kieker.model.analysismodel.source.SourcePackage;
 
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 
@@ -32,8 +35,11 @@ import org.oceandsl.analysis.graph.IGraphElementSelector;
 public class AllSelector implements IGraphElementSelector {
 
     @Override
-    public void setRepository(final ModelRepository repository) {
-        // nothing to do here
+    public void setRepository(final ModelRepository repository) throws InternalErrorException {
+        final SourceModel sourceModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
+        if (sourceModel == null) {
+            throw new InternalErrorException("Missing source model.");
+        }
     }
 
     @Override

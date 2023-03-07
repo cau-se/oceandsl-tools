@@ -21,7 +21,6 @@ java {
 	withSourcesJar()
 }
 
-
 publishing {
 	publications {
 		mavenJava(MavenPublication) {

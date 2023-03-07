@@ -48,15 +48,35 @@ class ArchitectureModelManagementUtilsTest {
         final ModelRepository repository = ArchitectureModelManagementUtils
                 .createModelRepository(ArchitectureModelManagementUtilsTest.EXPERIMENT_NAME);
         Assertions.assertEquals(ArchitectureModelManagementUtilsTest.EXPERIMENT_NAME, repository.getName());
-        Assertions.assertEquals(TypeModel.class, repository.getModel(TypePackage.Literals.TYPE_MODEL).getClass());
-        Assertions.assertEquals(AssemblyModel.class,
-                repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL).getClass());
-        Assertions.assertEquals(DeploymentModel.class,
-                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL).getClass());
-        Assertions.assertEquals(ExecutionModel.class,
-                repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL).getClass());
-        Assertions.assertEquals(StatisticsModel.class,
-                repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL).getClass());
-        Assertions.assertEquals(SourceModel.class, repository.getModel(SourcePackage.Literals.SOURCE_MODEL).getClass());
+        Assertions.assertTrue(repository.getModel(TypePackage.Literals.TYPE_MODEL) instanceof TypeModel,
+                "must be a type model");
+        Assertions.assertTrue(repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL) instanceof AssemblyModel,
+                "must be an assembly model");
+        Assertions.assertTrue(
+                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL) instanceof DeploymentModel,
+                "must be an deployment model");
+        Assertions.assertTrue(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL) instanceof ExecutionModel,
+                "must be an execution model");
+        Assertions.assertTrue(
+                repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL) instanceof StatisticsModel,
+                "must be a statistics model");
+        Assertions.assertTrue(repository.getModel(SourcePackage.Literals.SOURCE_MODEL) instanceof SourceModel,
+                "must be a source model");
+    }
+
+    @Test
+    public void createModelRepositoryFileTest() { // NOPMD
+        final ModelRepository fileBasedModelRepository = ArchitectureModelManagementUtils
+                .createModelRepository(ArchitectureModelManagementUtilsTest.EXPERIMENT_NAME, false);
+
+        Assertions.assertTrue(fileBasedModelRepository.getName().endsWith("file"), "name should end with file");
+    }
+
+    @Test
+    public void createModelRepositoryMapTest() { // NOPMD
+        final ModelRepository fileBasedModelRepository = ArchitectureModelManagementUtils
+                .createModelRepository(ArchitectureModelManagementUtilsTest.EXPERIMENT_NAME, true);
+
+        Assertions.assertTrue(fileBasedModelRepository.getName().endsWith("map"), "name should end with file");
     }
 }

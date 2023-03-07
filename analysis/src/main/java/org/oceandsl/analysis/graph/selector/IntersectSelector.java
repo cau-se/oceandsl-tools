@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.analysis.exception.InternalErrorException;
 import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.OperationDataflow;
 import kieker.model.analysismodel.execution.StorageDataflow;
@@ -56,8 +57,11 @@ public class IntersectSelector implements IGraphElementSelector {
     }
 
     @Override
-    public void setRepository(final ModelRepository repository) {
+    public void setRepository(final ModelRepository repository) throws InternalErrorException {
         this.sourceModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
+        if (this.sourceModel == null) {
+            throw new InternalErrorException("Missing source model.");
+        }
     }
 
     @Override
@@ -85,9 +89,7 @@ public class IntersectSelector implements IGraphElementSelector {
     }
 
     private boolean isSelected(final EList<String> sources) {
-        return this.groupA.stream().allMatch(element -> sources.stream().anyMatch(source -> source.equals(element)))
-                && this.groupB.stream()
-                        .allMatch(element -> sources.stream().anyMatch(source -> source.equals(element)));
+        return this.isGroupSelected(sources, this.groupA) && this.isGroupSelected(sources, this.groupB);
     }
 
     @Override
@@ -116,4 +118,5 @@ public class IntersectSelector implements IGraphElementSelector {
         }
         return false;
     }
+
 }

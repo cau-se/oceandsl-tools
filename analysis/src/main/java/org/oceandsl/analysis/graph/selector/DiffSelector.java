@@ -32,6 +32,9 @@ import kieker.model.analysismodel.source.SourcePackage;
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 
 /**
+ * Selects a node or edge when the given object matches labels from either group. Further it selects
+ * the color group 0, 1, 2 when the object is in both groups, group A or group B, respectively.
+ *
  * @author Reiner Jung
  * @since 1.1
  */
