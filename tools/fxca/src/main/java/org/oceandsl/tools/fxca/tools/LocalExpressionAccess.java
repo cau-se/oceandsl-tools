@@ -1,4 +1,4 @@
-package org.oceandsl.tools.fxca.model;
+package org.oceandsl.tools.fxca.tools;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,17 +30,17 @@ public class LocalExpressionAccess {
         COMMON_BLOCK, LOCAL_VARIABLE, OPERATION_PARAMETER, OPERATION_CALL
     }
 
-    static LocalAccessParameters namesInCommonBlocks = new LocalAccessParameters(StatementNode.isCommonStatement,
-            StatementNode.isCommonBlockObjectStatement, StatementNode.isSmallN,
-            smallNNode -> StatementNode.getSuccessorNode(smallNNode, "0").getTextContent());
+    static LocalAccessParameters namesInCommonBlocks = new LocalAccessParameters(NodeProcessingUtils.isCommonStatement,
+            NodeProcessingUtils.isCommonBlockObjectStatement, NodeProcessingUtils.isSmallN,
+            smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static LocalAccessParameters namesInOperationParameterList = new LocalAccessParameters(
-            StatementNode.isOperationStatement, StatementNode.isArgN, StatementNode.isSmallN,
-            smallNNode -> StatementNode.getSuccessorNode(smallNNode, "0").getTextContent());
+            NodeProcessingUtils.isOperationStatement, NodeProcessingUtils.isArgN, NodeProcessingUtils.isSmallN,
+            smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
-    static LocalAccessParameters namesInLocalVariableList = new LocalAccessParameters(StatementNode.isTDeclStmt,
-            StatementNode.isEnDcl, StatementNode.isSmallN,
-            smallNNode -> StatementNode.getSuccessorNode(smallNNode, "0").getTextContent());
+    static LocalAccessParameters namesInLocalVariableList = new LocalAccessParameters(NodeProcessingUtils.isTDeclStmt,
+            NodeProcessingUtils.isEnDcl, NodeProcessingUtils.isSmallN,
+            smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static Set<String> localNamesDefinedInApplyingBlocks(final Node node, final LocalAccessParameters parameters,
             final boolean verbose) {
@@ -50,9 +50,9 @@ public class LocalExpressionAccess {
         Node current = node;
 
         while (current != null) {
-            final List<Node> applyingBlocksOnThisLevel = StatementNode.findAll(current,
+            final List<Node> applyingBlocksOnThisLevel = NodeProcessingUtils.findAll(current,
                     nnode -> nnode.getPreviousSibling(), parameters.blockNodeTypeCheckPredicate, true,
-                    StatementNode.paranthesisTypes, -1);
+                    NodeProcessingUtils.paranthesisTypes, -1);
             applyingBlocks.addAll(applyingBlocksOnThisLevel);
             current = current.getParentNode();
         }
@@ -78,8 +78,8 @@ public class LocalExpressionAccess {
         }
 
         final HashSet<String> result = new HashSet<>();
-        for (final Node element : StatementNode.allDescendents(blockNode, parameters.outerDelimiterPredicate, true)) {
-            for (final Node smallN : StatementNode.allDescendents(element, parameters.innerDelimiterPredicate, true)) {
+        for (final Node element : NodeProcessingUtils.allDescendents(blockNode, parameters.outerDelimiterPredicate, true)) {
+            for (final Node smallN : NodeProcessingUtils.allDescendents(element, parameters.innerDelimiterPredicate, true)) {
                 result.add(parameters.extractName.apply(smallN));
             }
         }
@@ -89,11 +89,11 @@ public class LocalExpressionAccess {
 
     public static boolean isNamedExpressionLocalReference(final Node node, final LocalAccessParameters parameters) {
 
-        if (!StatementNode.namedExpressionAccess.test(node)) {
+        if (!NodeProcessingUtils.namedExpressionAccess.test(node)) {
             return false;
         }
 
-        final String nameOfCalledFunction = StatementNode.nameOfCalledFunction(node);
+        final String nameOfCalledFunction = NodeProcessingUtils.nameOfCalledFunction(node);
 
         return LocalExpressionAccess.localNamesDefinedInApplyingBlocks(node, parameters, false)
                 .contains(nameOfCalledFunction);
@@ -117,7 +117,7 @@ public class LocalExpressionAccess {
     }
 
     public static boolean isLocalAccess(final Node referenceNode) {
-        return StatementNode.isCallStatement.or(StatementNode.namedExpressionAccess).test(referenceNode)
+        return NodeProcessingUtils.isCallStatement.or(NodeProcessingUtils.namedExpressionAccess).test(referenceNode)
                 && typeOfReferenceAccess(referenceNode) != accessType.OPERATION_CALL;
     }
 
@@ -156,7 +156,7 @@ public class LocalExpressionAccess {
             throw new IllegalStateException();
         }
 
-        return StatementNode.nameOfCalledFunction(referenceNode) + suffix;
+        return NodeProcessingUtils.nameOfCalledFunction(referenceNode) + suffix;
     }
 
 }
