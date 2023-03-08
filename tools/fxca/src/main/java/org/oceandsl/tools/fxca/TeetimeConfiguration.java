@@ -16,11 +16,15 @@
 package org.oceandsl.tools.fxca;
 
 import teetime.framework.Configuration;
+import teetime.stage.basic.distributor.Distributor;
+import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
 import org.oceandsl.analysis.generic.stages.DirectoryProducer;
 import org.oceandsl.analysis.generic.stages.DirectoryScannerStage;
 import org.oceandsl.analysis.generic.stages.TableCSVSink;
-import org.oceandsl.tools.fxca.stages.ComputeOutputState;
+import org.oceandsl.tools.fxca.model.FortranProject;
+import org.oceandsl.tools.fxca.stages.CreateCallTableStage;
+import org.oceandsl.tools.fxca.stages.CreateOperationTableStage;
 import org.oceandsl.tools.fxca.stages.ProcessModuleStructureStage;
 import org.oceandsl.tools.fxca.stages.ProcessOperationCallStage;
 import org.oceandsl.tools.fxca.stages.ReadDomStage;
@@ -44,20 +48,32 @@ public class TeetimeConfiguration extends Configuration {
         final ReadDomStage readDomStage = new ReadDomStage();
         final ProcessModuleStructureStage processModuleStructureStage = new ProcessModuleStructureStage();
         final ProcessOperationCallStage processOperationCallStage = new ProcessOperationCallStage();
-        final ComputeOutputState computeOutputStage = new ComputeOutputState();
+
+        final Distributor<FortranProject> projectDistributor = new Distributor<>(new CopyByReferenceStrategy());
+
+        final CreateCallTableStage callTableStage = new CreateCallTableStage();
+        final CreateOperationTableStage operationTableStage = new CreateOperationTableStage();
 
         /** output stages */
-        final TableCSVSink operationDefinitionsSink = new TableCSVSink(
+        final TableCSVSink operationTableSink = new TableCSVSink(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.OPERATION_DEFINITIONS), true);
         final TableCSVSink callTableSink = new TableCSVSink(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.CALL_TABLE), true);
-        final TableCSVSink notoundSink = new TableCSVSink(
+        final TableCSVSink notFoundSink = new TableCSVSink(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.NOT_FOUND), true);
 
         this.connectPorts(producer.getOutputPort(), directoryScannerStage.getInputPort());
         this.connectPorts(directoryScannerStage.getOutputPort(), readDomStage.getInputPort());
         this.connectPorts(readDomStage.getOutputPort(), processModuleStructureStage.getInputPort());
         this.connectPorts(processModuleStructureStage.getOutputPort(), processOperationCallStage.getInputPort());
-        this.connectPorts(processOperationCallStage.getOutputPort(), computeOutputStage.getInputPort());
+
+        this.connectPorts(processOperationCallStage.getOutputPort(), projectDistributor.getInputPort());
+        this.connectPorts(processOperationCallStage.getNotFoundOutputPort(), notFoundSink.getInputPort());
+
+        this.connectPorts(projectDistributor.getNewOutputPort(), callTableStage.getInputPort());
+        this.connectPorts(callTableStage.getOutputPort(), callTableSink.getInputPort());
+
+        this.connectPorts(projectDistributor.getNewOutputPort(), operationTableStage.getInputPort());
+        this.connectPorts(operationTableStage.getOutputPort(), operationTableSink.getInputPort());
     }
 }

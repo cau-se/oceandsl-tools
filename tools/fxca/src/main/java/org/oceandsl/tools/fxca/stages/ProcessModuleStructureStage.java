@@ -16,6 +16,7 @@
 package org.oceandsl.tools.fxca.stages;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -29,8 +30,8 @@ import teetime.stage.basic.AbstractTransformation;
 
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranProject;
-import org.oceandsl.tools.fxca.model.StatementNode;
 import org.oceandsl.tools.fxca.tools.ListTools;
+import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 
 /**
  *
@@ -50,7 +51,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     protected void execute(final Document document) throws Exception {
         final Element documentElement = document.getDocumentElement();
         final Node moduleStatement = ListTools.getUniqueElementIfNonEmpty(
-                StatementNode.allDescendents(documentElement, StatementNode.isModuleStatement, true), null);
+                NodeProcessingUtils.allDescendents(documentElement, NodeProcessingUtils.isModuleStatement, true), null);
 
         final boolean namedModule = moduleStatement != null;
         final String moduleName = namedModule ? moduleStatement.getChildNodes().item(1).getTextContent()
@@ -71,7 +72,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     }
 
     private void computeUsedModels(final FortranModule module, final Element rootNode) {
-        final Set<Node> useStatements = StatementNode.allDescendents(rootNode, StatementNode.isUseStatement, false);
+        final Set<Node> useStatements = NodeProcessingUtils.allDescendents(rootNode, NodeProcessingUtils.isUseStatement, false);
         for (final Node useStatement : useStatements) {
             final String usedModuleName = useStatement.getChildNodes().item(1).getTextContent();
             this.logger.debug("found use statement: {}, module name: {}", useStatement.getTextContent(),
@@ -82,10 +83,10 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     public void computeOperationDeclarations(final FortranModule module, final Element documentElement)
             throws ParserConfigurationException, SAXException, IOException {
-        StatementNode
-                .getDescendentAttributes(documentElement, StatementNode.isOperationStatement,
-                        operationNode -> StatementNode.getNameOfOperation(operationNode))
-                .forEach(operation -> module.getSpecifiedOperations().add(operation));
+        NodeProcessingUtils
+                .getDescendentAttributes(documentElement, NodeProcessingUtils.isOperationStatement,
+                        operationNode -> NodeProcessingUtils.getNameOfOperation(operationNode))
+                .forEach(operation -> module.getSpecifiedOperations().add(operation.toLowerCase(Locale.getDefault())));
     }
 
 }

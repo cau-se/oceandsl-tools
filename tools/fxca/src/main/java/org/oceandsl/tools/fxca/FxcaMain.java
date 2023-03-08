@@ -47,9 +47,6 @@ import org.oceandsl.tools.fxca.tools.IOUtils;
 public final class FxcaMain extends AbstractService<TeetimeConfiguration, Settings> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FxcaMain.class);
-    private static final String OPERATION_DEFINITIONS = "operation-definitions.csv";
-    private static final String CALL_TABLE = "calltable.csv";
-    private static final String NOT_FOUND = "notfound.csv";
 
     /**
      * As suggested by PMD, make this a utility class that cannot be instantiated.
@@ -67,91 +64,6 @@ public final class FxcaMain extends AbstractService<TeetimeConfiguration, Settin
             System.exit(1);
         }
     }
-
-//    private static void processModules(final FortranProject projectModel, final Path inputPath,
-//            final Path outputDirectoryPath) {
-//        final List<FortranModule> namelessModules = new ArrayList<>();
-//
-//        FxcaMain.LOGGER.info("Added modules from {}.", inputPath);
-//
-//        try (final OutputStream outputStream = Files
-//                .newOutputStream(outputDirectoryPath.resolve(FxcaMain.OPERATION_DEFINITIONS))) {
-//            final PrintStream operationListOutput = new PrintStream(outputStream);
-//
-//            operationListOutput.println("file,operation");
-//
-//            for (final FortranModule fortranModule : projectModel.getModules().values()) {
-//                if (!fortranModule.isNamedModule()) {
-//                    namelessModules.add(fortranModule);
-//                }
-//
-//                FxcaMain.LOGGER.debug("operation declarations:");
-//
-//                try {
-//                    for (final String operationName : fortranModule.computeOperationDeclarations()) {
-//                        operationListOutput
-//                                .println(fortranModule.getXmlFilePath().toAbsolutePath().getFileName().toString() + ","
-//                                        + operationName);
-//                    }
-//                } catch (ParserConfigurationException | SAXException e) {
-//                    FxcaMain.LOGGER.error("Cannot process module {}: {}", fortranModule.getModuleName(),
-//                            e.getLocalizedMessage());
-//                }
-//
-//                FxcaMain.LOGGER.debug("subroutine calls of {}: ", fortranModule.getXmlFilePath());
-//                try {
-//                    fortranModule.subroutineCalls()
-//                            .forEach(pair -> FxcaMain.LOGGER.info("call: {} --> {}", pair.first, pair.second));
-//                } catch (ParserConfigurationException | SAXException e) {
-//                    FxcaMain.LOGGER.error("Cannot process subroutine calls for module {}: {}",
-//                            fortranModule.getModuleName(), e.getLocalizedMessage());
-//                }
-//
-//                FxcaMain.LOGGER.debug("function calls of {}:", fortranModule.getXmlFilePath());
-//                try {
-//                    fortranModule.functionCalls()
-//                            .forEach(pair -> FxcaMain.LOGGER.info("call: {} --> {}", pair.first, pair.second));
-//                } catch (ParserConfigurationException | SAXException e) {
-//                    FxcaMain.LOGGER.error("Cannot process function calls for module {}: {}",
-//                            fortranModule.getModuleName(), e.getLocalizedMessage());
-//                }
-//
-//                FxcaMain.LOGGER.debug("node types:");
-//                try {
-//                    IOUtils.printWithCommas(
-//                            fortranModule.computeAllNodeAttributes(node -> StatementNode.nodeType(node.getNodeType())));
-//                } catch (ParserConfigurationException | SAXException e) {
-//                    FxcaMain.LOGGER.error("Cannot output node attribute for module {}: {}",
-//                            fortranModule.getModuleName(), e.getLocalizedMessage());
-//                }
-//
-//                FxcaMain.LOGGER.debug("node names:");
-//                try {
-//                    IOUtils.printWithCommas(fortranModule.computeAllNodeAttributes(node -> node.getNodeName()));
-//                } catch (ParserConfigurationException | SAXException e) {
-//                    FxcaMain.LOGGER.error("Cannot output node names for module {}: {}", fortranModule.getModuleName(),
-//                            e.getLocalizedMessage());
-//                }
-//            }
-//
-//            final PrintStream tableOutput = new PrintStream(
-//                    Files.newOutputStream(outputDirectoryPath.resolve(FxcaMain.CALL_TABLE)));
-//            final PrintStream errorOutput = new PrintStream(
-//                    Files.newOutputStream(outputDirectoryPath.resolve(FxcaMain.NOT_FOUND)));
-//
-////            try {
-////                projectModel.exportCallTable(tableOutput, errorOutput, namelessModules);
-////            } catch (ParserConfigurationException | SAXException e) {
-////                FxcaMain.LOGGER.error("Call table export failed: {}", e.getLocalizedMessage());
-////            }
-//
-//            operationListOutput.close();
-//            tableOutput.close();
-//            errorOutput.close();
-//        } catch (final IOException e) {
-//            FxcaMain.LOGGER.error("Cannot write {} file: {}", FxcaMain.OPERATION_DEFINITIONS, e.getLocalizedMessage());
-//        }
-//    }
 
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
