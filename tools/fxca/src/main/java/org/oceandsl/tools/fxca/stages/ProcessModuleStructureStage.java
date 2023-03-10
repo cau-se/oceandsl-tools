@@ -18,6 +18,9 @@ package org.oceandsl.tools.fxca.stages;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -31,6 +34,7 @@ import teetime.stage.basic.AbstractTransformation;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.tools.ListTools;
+import org.oceandsl.tools.fxca.tools.NodePredicateUtils;
 import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 
 /**
@@ -51,7 +55,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     protected void execute(final Document document) throws Exception {
         final Element documentElement = document.getDocumentElement();
         final Node moduleStatement = ListTools.getUniqueElementIfNonEmpty(
-                NodeProcessingUtils.allDescendents(documentElement, NodeProcessingUtils.isModuleStatement, true), null);
+                NodeProcessingUtils.allDescendents(documentElement, NodePredicateUtils.isModuleStatement, true), null);
 
         final boolean namedModule = moduleStatement != null;
         final String moduleName = namedModule ? moduleStatement.getChildNodes().item(1).getTextContent()
@@ -72,7 +76,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     }
 
     private void computeUsedModels(final FortranModule module, final Element rootNode) {
-        final Set<Node> useStatements = NodeProcessingUtils.allDescendents(rootNode, NodeProcessingUtils.isUseStatement, false);
+        final Set<Node> useStatements = NodeProcessingUtils.allDescendents(rootNode, NodePredicateUtils.isUseStatement,
+                false);
         for (final Node useStatement : useStatements) {
             final String usedModuleName = useStatement.getChildNodes().item(1).getTextContent();
             this.logger.debug("found use statement: {}, module name: {}", useStatement.getTextContent(),
@@ -81,12 +86,17 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
         }
     }
 
-    public void computeOperationDeclarations(final FortranModule module, final Element documentElement)
+    private void computeOperationDeclarations(final FortranModule module, final Element documentElement)
             throws ParserConfigurationException, SAXException, IOException {
-        NodeProcessingUtils
-                .getDescendentAttributes(documentElement, NodeProcessingUtils.isOperationStatement,
-                        operationNode -> NodeProcessingUtils.getNameOfOperation(operationNode))
+        this.getDescendentAttributes(documentElement, NodePredicateUtils.isOperationStatement,
+                operationNode -> NodeProcessingUtils.getNameOfOperation(operationNode))
                 .forEach(operation -> module.getSpecifiedOperations().add(operation.toLowerCase(Locale.getDefault())));
+    }
+
+    private <T> Set<T> getDescendentAttributes(final Node node, final Predicate<Node> predicate,
+            final Function<Node, T> extractAttribute) throws ParserConfigurationException, SAXException, IOException {
+        return NodeProcessingUtils.allDescendents(node, predicate, true).stream().map(extractAttribute)
+                .collect(Collectors.toSet());
     }
 
 }
