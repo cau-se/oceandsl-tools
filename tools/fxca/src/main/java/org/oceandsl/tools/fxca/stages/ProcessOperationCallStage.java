@@ -54,7 +54,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
         project.getModules().values().forEach(module -> {
             final Element element = module.getDocument().getDocumentElement();
             this.processSubroutines(project, module, element, notFoundTable);
-            this.processFunctions(project, module, element, notFoundTable);
+            // this.processFunctions(project, module, element, notFoundTable);
         });
 
         this.outputPort.send(project);

@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -43,58 +42,6 @@ import org.xml.sax.SAXException;
  */
 public class NodeProcessingUtils {
 
-    public static Predicate<Node> isProgramStatement = NodeProcessingUtils.hasName("program-stmt");
-    public static Predicate<Node> isSubroutineStatement = NodeProcessingUtils.hasName("subroutine-stmt");
-    public static Predicate<Node> isFunctionStatement = NodeProcessingUtils.hasName("function-stmt");
-    public static Predicate<Node> isEntryStatement = NodeProcessingUtils.hasName("entry-stmt");
-    public static Predicate<Node> isOperationStatement = NodeProcessingUtils.isSubroutineStatement
-            .or(NodeProcessingUtils.isFunctionStatement).or(NodeProcessingUtils.isEntryStatement)
-            .or(NodeProcessingUtils.isProgramStatement);
-
-    public static Predicate<Node> isEndSubroutineStatement = NodeProcessingUtils.hasName("end-subroutine-stmt");
-    public static Predicate<Node> isEndFunctionStatement = NodeProcessingUtils.hasName("end-function-stmt");
-
-    public static Predicate<Node> isModuleStatement = NodeProcessingUtils.hasName("module-stmt");
-    public static Predicate<Node> isUseStatement = NodeProcessingUtils.hasName("use-stmt");
-
-    public static Predicate<Node> isCallStatement = NodeProcessingUtils.hasName("call-stmt");
-
-    public static Predicate<Node> isProgramName = NodeProcessingUtils.hasName("program-N");
-    public static Predicate<Node> isSubroutineName = NodeProcessingUtils.hasName("subroutine-N");
-    public static Predicate<Node> isFunctionName = NodeProcessingUtils.hasName("function-N");
-    public static Predicate<Node> isEntryName = NodeProcessingUtils.hasName("entry-N");
-
-    public static Predicate<Node> isNamedExpression = NodeProcessingUtils.hasName("named-E");
-    public static Predicate<Node> isBigN = NodeProcessingUtils.hasName("N");
-    public static Predicate<Node> isArgN = NodeProcessingUtils.hasName("arg-N");
-    public static Predicate<Node> isTDeclStmt = NodeProcessingUtils.hasName("T-decl-stmt");
-    public static Predicate<Node> isEnDcl = NodeProcessingUtils.hasName("EN-decl");
-    public static Predicate<Node> isSmallN = NodeProcessingUtils.hasName("n");
-    public static Predicate<Node> isElementLT = NodeProcessingUtils.hasName("element-LT");
-    public static Predicate<Node> isRLT = NodeProcessingUtils.hasName("R-LT");
-    public static Predicate<Node> isElement = NodeProcessingUtils.hasName("element");
-    public static Predicate<Node> isParensR = NodeProcessingUtils.hasName("parens-R");
-    public static Predicate<Node> isRegularLeftParanthesis = NodeProcessingUtils.isParensR
-            .and(node -> node.getTextContent().startsWith("("));
-    public static Predicate<Node> isCommonStatement = NodeProcessingUtils.hasName("common-stmt");
-    public static Predicate<Node> isCommonBlockObjectStatement = NodeProcessingUtils.hasName("common-block-obj-N");
-    public static Predicate<Node> isLocalAccess = node -> LocalExpressionAccess.isLocalAccess(node);
-
-    public static Predicate<Node> namedExpressionAccess = NodeProcessingUtils.isNamedExpression
-            .and(NodeProcessingUtils.childSatisfies("0", NodeProcessingUtils.isBigN))
-            .and(NodeProcessingUtils.childSatisfies("0,0", NodeProcessingUtils.isSmallN))
-            .and(NodeProcessingUtils.childSatisfies("1", NodeProcessingUtils.isRLT))
-            .and(NodeProcessingUtils.childSatisfies("1,0", NodeProcessingUtils.isRegularLeftParanthesis));
-
-    public static Pair<Predicate<Node>, Predicate<Node>> endFunctionToBeginFunction = new Pair<>(
-            NodeProcessingUtils.isEndFunctionStatement, NodeProcessingUtils.isFunctionStatement);
-
-    public static Pair<Predicate<Node>, Predicate<Node>> endSubroutineToBeginSubroutine = new Pair<>(
-            NodeProcessingUtils.isEndSubroutineStatement, NodeProcessingUtils.isSubroutineStatement);
-
-    public static List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes = List
-            .of(NodeProcessingUtils.endFunctionToBeginFunction, NodeProcessingUtils.endSubroutineToBeginSubroutine);
-
     private static String ROOT_PROGRAM = "main";
 
     /** methods. */
@@ -111,7 +58,9 @@ public class NodeProcessingUtils {
 
     public static Predicate<Node> hasName(final String name) {
         return node -> {
-            System.err.println("---> " + node);
+            if (node == null) { // TODO this should never be null
+                return false;
+            }
             return name.equals(node.getNodeName());
         };
     }
@@ -169,6 +118,7 @@ public class NodeProcessingUtils {
         final int childIndex = Integer.parseInt(firstNumber);
         final NodeList children = node.getChildNodes();
         if (children.getLength() < childIndex) {
+            System.err.println("No children found for node " + node);
             return null;
         }
         if (nextPath.isEmpty()) {
@@ -220,9 +170,9 @@ public class NodeProcessingUtils {
         boolean inParanthesisInterval = false;
         // End if we do not have anywhere to search, or we have reached the limit (where "-1" counts
         // as "no limit").
-        while ((current != null) && ((result.size() < maxElementsToFind) || (maxElementsToFind == -1))) {
+        while (current != null && (result.size() < maxElementsToFind || maxElementsToFind == -1)) {
 
-            if (!inParanthesisInterval && condition.test(current) && ((current != parent) || includeSelf)) {
+            if (!inParanthesisInterval && condition.test(current) && (current != parent || includeSelf)) {
                 result.add(current);
             }
 
@@ -279,7 +229,6 @@ public class NodeProcessingUtils {
 
     private static <T extends Collection<Node>> T addAllDescendentsTo(final Node node, final Predicate<Node> condition,
             final boolean includeSelf, final T addToThese) {
-        System.err.println(">>> " + node);
         if (condition.test(node) && includeSelf) {
             addToThese.add(node);
         }
@@ -293,31 +242,25 @@ public class NodeProcessingUtils {
     }
 
     public static String getNameOfOperation(final Node operationStatement) {
-        if (NodeProcessingUtils.isSubroutineStatement.test(operationStatement)) {
-            return NodeProcessingUtils.getNameOfOperation(operationStatement, NodeProcessingUtils.isSubroutineName);
-        } else if (NodeProcessingUtils.isFunctionStatement.test(operationStatement)) {
-            return NodeProcessingUtils.getNameOfOperation(operationStatement, NodeProcessingUtils.isFunctionName);
-        } else if (NodeProcessingUtils.isEntryStatement.test(operationStatement)) {
-            return NodeProcessingUtils.getNameOfOperation(operationStatement, NodeProcessingUtils.isEntryName);
-        } else if (NodeProcessingUtils.isProgramStatement.test(operationStatement)) {
+        if (NodePredicateUtils.isSubroutineStatement.test(operationStatement)) {
+            return getNameOfOperation(operationStatement, NodePredicateUtils.isSubroutineName);
+        } else if (NodePredicateUtils.isFunctionStatement.test(operationStatement)) {
+            return NodeProcessingUtils.getNameOfOperation(operationStatement, NodePredicateUtils.isFunctionName);
+        } else if (NodePredicateUtils.isEntryStatement.test(operationStatement)) {
+            return NodeProcessingUtils.getNameOfOperation(operationStatement, NodePredicateUtils.isEntryName);
+        } else if (NodePredicateUtils.isProgramStatement.test(operationStatement)) {
             return NodeProcessingUtils.ROOT_PROGRAM;
         }
 
-        throw new IllegalArgumentException("Node is neither a function nor a subroutine statement.");
+        throw new IllegalArgumentException("Node is not a function, subroutine, entry or program statement.");
     }
 
-    public static String getNameOfOperation(final Node operationStatement, final Predicate<Node> namePredicate) {
+    private static String getNameOfOperation(final Node operationStatement, final Predicate<Node> namePredicate) {
         final Set<Node> nameNodes = NodeProcessingUtils.allDescendents(operationStatement, namePredicate, true);
         return ListTools.getUniqueElement(nameNodes).getTextContent().toLowerCase(Locale.getDefault());
     }
 
-    public static <T> Set<T> getDescendentAttributes(final Node node, final Predicate<Node> predicate,
-            final Function<Node, T> extractAttribute) throws ParserConfigurationException, SAXException, IOException {
-        return NodeProcessingUtils.allDescendents(node, predicate, true).stream().map(extractAttribute)
-                .collect(Collectors.toSet());
-    }
-
-    public static List<Pair<String, String>> operationCalls(final Node node, final Predicate<Node> callPredicate,
+    private static List<Pair<String, String>> operationCalls(final Node node, final Predicate<Node> callPredicate,
             final Function<Node, String> calledOperation) {
         final Set<Pair<String, String>> result = new HashSet<>(); // Check for double entries
         final Set<Node> callStatements = NodeProcessingUtils.allDescendents(node, callPredicate, true);
@@ -333,14 +276,14 @@ public class NodeProcessingUtils {
     public static List<Pair<String, String>> subroutineCalls(final Node node)
             throws ParserConfigurationException, SAXException, IOException {
         return NodeProcessingUtils.operationCalls(node,
-                NodeProcessingUtils.isCallStatement.and(NodeProcessingUtils.isLocalAccess.negate()),
+                NodePredicateUtils.isCallStatement.and(NodePredicateUtils.isLocalAccess.negate()),
                 subroutineCall -> NodeProcessingUtils.nameOfCalledOperation(subroutineCall));
     }
 
     public static List<Pair<String, String>> functionCalls(final Node node)
             throws ParserConfigurationException, SAXException, IOException {
         return NodeProcessingUtils.operationCalls(node,
-                NodeProcessingUtils.namedExpressionAccess.and(NodeProcessingUtils.isLocalAccess.negate()),
+                NodePredicateUtils.namedExpressionAccess.and(NodePredicateUtils.isLocalAccess.negate()),
                 functionCall -> NodeProcessingUtils.nameOfCalledFunction(functionCall));
     }
 
@@ -367,7 +310,7 @@ public class NodeProcessingUtils {
 
     private static String getNameOfContainingOperation(final Node node) {
         final Node containingOperationStatement = NodeProcessingUtils.findContainingStatement(node,
-                NodeProcessingUtils.isOperationStatement, NodeProcessingUtils.paranthesisTypes);
+                NodePredicateUtils.isOperationStatement, NodePredicateUtils.paranthesisTypes);
         return containingOperationStatement == null ? NodeProcessingUtils.ROOT_PROGRAM
                 : NodeProcessingUtils.getNameOfOperation(containingOperationStatement);
     }
@@ -385,24 +328,24 @@ public class NodeProcessingUtils {
 
         final short type = node.getNodeType();
 
-        if ((type == Node.TEXT_NODE) && (node.getChildNodes().getLength() > 0)) {
+        if (type == Node.TEXT_NODE && node.getChildNodes().getLength() > 0) {
             throw new IllegalArgumentException("text node with children");
         }
 
-        if ("call-stmt".equals(node.getNodeName()) && (node.getChildNodes().getLength() < 2)) {
+        if ("call-stmt".equals(node.getNodeName()) && node.getChildNodes().getLength() < 2) {
             NodeProcessingUtils.printNode(node, 0);
             throw new IllegalArgumentException("call statement with < 2 children");
         }
 
-        if (NodeProcessingUtils.isNamedExpression.test(node)) {
+        if (NodePredicateUtils.isNamedExpression.test(node)) {
             // NodeList children = node.getChildNodes();
             final Node firstChild = node.getFirstChild();
             final Node firstGrandChild = firstChild.getFirstChild();
-            if (!NodeProcessingUtils.isBigN.test(firstChild)) {
+            if (!NodePredicateUtils.isBigN.test(firstChild)) {
                 throw new IllegalArgumentException("named expression with unexpected type of first child.");
             }
 
-            if (!NodeProcessingUtils.isSmallN.test(firstGrandChild)) {
+            if (!NodePredicateUtils.isSmallN.test(firstGrandChild)) {
                 throw new IllegalArgumentException("named expression with unexpected type of first grandchild.");
             }
 
