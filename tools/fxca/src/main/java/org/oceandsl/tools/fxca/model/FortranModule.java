@@ -47,10 +47,14 @@ public class FortranModule {
     @Getter
     private final Document document;
     @Getter
+    private final String fileName;
+    @Getter
     private final Collection<Pair<Pair<FortranModule, String>, Pair<FortranModule, String>>> calls = new ArrayList<>();
 
-    public FortranModule(final String moduleName, final boolean namedModule, final Document document) {
+    public FortranModule(final String moduleName, final String fileName, final boolean namedModule,
+            final Document document) {
         this.moduleName = moduleName;
+        this.fileName = fileName;
         this.namedModule = namedModule;
         this.document = document;
     }
@@ -64,5 +68,4 @@ public class FortranModule {
         FortranModule.LOGGER.debug(" [operation definitions] ");
         this.specifiedOperations.forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
     }
-
 }

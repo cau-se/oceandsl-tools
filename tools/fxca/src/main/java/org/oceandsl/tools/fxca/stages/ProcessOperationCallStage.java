@@ -54,7 +54,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
         project.getModules().values().forEach(module -> {
             final Element element = module.getDocument().getDocumentElement();
             this.processSubroutines(project, module, element, notFoundTable);
-            // this.processFunctions(project, module, element, notFoundTable);
+            this.processFunctions(project, module, element, notFoundTable);
         });
 
         this.outputPort.send(project);
@@ -96,14 +96,15 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
             }
             if (callee == null) {
                 try {
-                    notFoundTable.addRow(caller.first.getDocument().getBaseURI(), caller.first.getModuleName(),
-                            caller.second, call.second);
+                    notFoundTable.addRow(caller.first.getFileName(), caller.first.getModuleName(), caller.second,
+                            call.second);
                 } catch (final ValueConversionErrorException e) {
                     this.logger.error("Cannot add row to callee not found table: {}", e.getLocalizedMessage());
                 }
                 this.logger.info("Callee not found for {}", call.getSecond());
+            } else {
+                module.getCalls().add(new Pair<>(caller, callee));
             }
-            module.getCalls().add(new Pair<>(caller, callee));
         });
     }
 

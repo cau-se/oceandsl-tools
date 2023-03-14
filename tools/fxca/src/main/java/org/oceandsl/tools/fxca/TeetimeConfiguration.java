@@ -28,6 +28,7 @@ import org.oceandsl.tools.fxca.stages.CreateOperationTableStage;
 import org.oceandsl.tools.fxca.stages.ProcessModuleStructureStage;
 import org.oceandsl.tools.fxca.stages.ProcessOperationCallStage;
 import org.oceandsl.tools.fxca.stages.ReadDomStage;
+import org.oceandsl.tools.fxca.tools.PatternUriProcessor;
 
 /**
  * @author Reiner Jung
@@ -38,15 +39,20 @@ public class TeetimeConfiguration extends Configuration {
     private static final String OPERATION_DEFINITIONS = "operation-definitions.csv";
     private static final String CALL_TABLE = "calltable.csv";
     private static final String NOT_FOUND = "notfound.csv";
+    private static final String SEARCH_PATTERN = "^file:\\/.*\\/([^.]*\\.[Ff][0-9]*)\\.xml$";
+    private static final String REPLACEMENT_PATTERN = "$1";
 
     public TeetimeConfiguration(final Settings settings) {
+        final PatternUriProcessor uriProcessor = new PatternUriProcessor(TeetimeConfiguration.SEARCH_PATTERN,
+                TeetimeConfiguration.REPLACEMENT_PATTERN);
+
         final DirectoryProducer producer = new DirectoryProducer(settings.getInputDirectoryPaths());
         final DirectoryScannerStage directoryScannerStage = new DirectoryScannerStage(true, o -> true,
                 o -> o.getFileName().toString().endsWith(".xml"));
 
         /** computing stages. */
         final ReadDomStage readDomStage = new ReadDomStage();
-        final ProcessModuleStructureStage processModuleStructureStage = new ProcessModuleStructureStage();
+        final ProcessModuleStructureStage processModuleStructureStage = new ProcessModuleStructureStage(uriProcessor);
         final ProcessOperationCallStage processOperationCallStage = new ProcessOperationCallStage();
 
         final Distributor<FortranProject> projectDistributor = new Distributor<>(new CopyByReferenceStrategy());
