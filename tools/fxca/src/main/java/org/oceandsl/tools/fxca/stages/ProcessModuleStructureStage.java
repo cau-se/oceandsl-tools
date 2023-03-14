@@ -33,6 +33,7 @@ import teetime.stage.basic.AbstractTransformation;
 
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranProject;
+import org.oceandsl.tools.fxca.tools.IUriProcessor;
 import org.oceandsl.tools.fxca.tools.ListTools;
 import org.oceandsl.tools.fxca.tools.NodePredicateUtils;
 import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
@@ -46,9 +47,11 @@ import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 public class ProcessModuleStructureStage extends AbstractTransformation<Document, FortranProject> {
 
     private final FortranProject project;
+    private final IUriProcessor uriProcessor;
 
-    public ProcessModuleStructureStage() {
+    public ProcessModuleStructureStage(final IUriProcessor uriProcessor) {
         this.project = new FortranProject();
+        this.uriProcessor = uriProcessor;
     }
 
     @Override
@@ -58,10 +61,10 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                 NodeProcessingUtils.allDescendents(documentElement, NodePredicateUtils.isModuleStatement, true), null);
 
         final boolean namedModule = moduleStatement != null;
-        final String moduleName = namedModule ? moduleStatement.getChildNodes().item(1).getTextContent()
-                : document.getBaseURI();
+        final String fileName = this.uriProcessor.process(document.getBaseURI());
+        final String moduleName = namedModule ? moduleStatement.getChildNodes().item(1).getTextContent() : fileName;
 
-        final FortranModule module = new FortranModule(moduleName, namedModule, document);
+        final FortranModule module = new FortranModule(moduleName, fileName, namedModule, document);
 
         this.computeUsedModels(module, documentElement);
         this.computeOperationDeclarations(module, documentElement);

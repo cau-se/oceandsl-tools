@@ -170,9 +170,9 @@ public class NodeProcessingUtils {
         boolean inParanthesisInterval = false;
         // End if we do not have anywhere to search, or we have reached the limit (where "-1" counts
         // as "no limit").
-        while (current != null && (result.size() < maxElementsToFind || maxElementsToFind == -1)) {
+        while ((current != null) && ((result.size() < maxElementsToFind) || (maxElementsToFind == -1))) {
 
-            if (!inParanthesisInterval && condition.test(current) && (current != parent || includeSelf)) {
+            if (!inParanthesisInterval && condition.test(current) && ((current != parent) || includeSelf)) {
                 result.add(current);
             }
 
@@ -222,42 +222,49 @@ public class NodeProcessingUtils {
         return NodeProcessingUtils.findFirst(parent, node -> node.getParentNode(), condition, includeSelf);
     }
 
-    public static Set<Node> allDescendents(final Node node, final Predicate<Node> condition,
+    public static Set<Node> allDescendents(final Node node, final Predicate<Node> predicate,
             final boolean includeSelf) {
-        return NodeProcessingUtils.addAllDescendentsTo(node, condition, includeSelf, new HashSet<>());
+        return NodeProcessingUtils.addAllDescendentsTo(node, predicate, includeSelf, new HashSet<>());
     }
 
-    private static <T extends Collection<Node>> T addAllDescendentsTo(final Node node, final Predicate<Node> condition,
-            final boolean includeSelf, final T addToThese) {
-        if (condition.test(node) && includeSelf) {
-            addToThese.add(node);
+    private static <T extends Collection<Node>> T addAllDescendentsTo(final Node node, final Predicate<Node> predicate,
+            final boolean includeSelf, final T selectedNodes) {
+        if (predicate.test(node) && includeSelf) {
+            selectedNodes.add(node);
         }
 
         for (int i = 0; i < node.getChildNodes().getLength(); i++) {
             final Node child = node.getChildNodes().item(i);
-            NodeProcessingUtils.addAllDescendentsTo(child, condition, true, addToThese);
+            NodeProcessingUtils.addAllDescendentsTo(child, predicate, true, selectedNodes);
         }
 
-        return addToThese;
+        return selectedNodes;
     }
 
-    public static String getNameOfOperation(final Node operationStatement) {
-        if (NodePredicateUtils.isSubroutineStatement.test(operationStatement)) {
-            return getNameOfOperation(operationStatement, NodePredicateUtils.isSubroutineName);
-        } else if (NodePredicateUtils.isFunctionStatement.test(operationStatement)) {
-            return NodeProcessingUtils.getNameOfOperation(operationStatement, NodePredicateUtils.isFunctionName);
-        } else if (NodePredicateUtils.isEntryStatement.test(operationStatement)) {
-            return NodeProcessingUtils.getNameOfOperation(operationStatement, NodePredicateUtils.isEntryName);
-        } else if (NodePredicateUtils.isProgramStatement.test(operationStatement)) {
+    public static String getNameOfOperation(final Node operationStatementNode) {
+        if (NodePredicateUtils.isSubroutineStatement.test(operationStatementNode)) {
+            return NodeProcessingUtils.getNameOfOperation(operationStatementNode, NodePredicateUtils.isSubroutineName);
+        } else if (NodePredicateUtils.isFunctionStatement.test(operationStatementNode)) {
+            return NodeProcessingUtils.getNameOfOperation(operationStatementNode, NodePredicateUtils.isFunctionName);
+        } else if (NodePredicateUtils.isEntryStatement.test(operationStatementNode)) {
+            return NodeProcessingUtils.getNameOfOperation(operationStatementNode, NodePredicateUtils.isEntryName);
+        } else if (NodePredicateUtils.isProgramStatement.test(operationStatementNode)) {
             return NodeProcessingUtils.ROOT_PROGRAM;
         }
 
         throw new IllegalArgumentException("Node is not a function, subroutine, entry or program statement.");
     }
 
-    private static String getNameOfOperation(final Node operationStatement, final Predicate<Node> namePredicate) {
-        final Set<Node> nameNodes = NodeProcessingUtils.allDescendents(operationStatement, namePredicate, true);
-        return ListTools.getUniqueElement(nameNodes).getTextContent().toLowerCase(Locale.getDefault());
+    private static String getNameOfOperation(final Node operationStatementNode, final Predicate<Node> namePredicate) {
+        final Set<Node> nameNodes = NodeProcessingUtils.allDescendents(operationStatementNode, namePredicate, true);
+        return NodeProcessingUtils.getName(nameNodes.iterator().next());
+    }
+
+    private static String getName(final Node node) {
+        final Node bigNNode = node.getChildNodes().item(0);
+        final Node littleNNode = bigNNode.getChildNodes().item(0);
+
+        return littleNNode.getTextContent().toLowerCase(Locale.getDefault());
     }
 
     private static List<Pair<String, String>> operationCalls(final Node node, final Predicate<Node> callPredicate,
@@ -328,11 +335,11 @@ public class NodeProcessingUtils {
 
         final short type = node.getNodeType();
 
-        if (type == Node.TEXT_NODE && node.getChildNodes().getLength() > 0) {
+        if ((type == Node.TEXT_NODE) && (node.getChildNodes().getLength() > 0)) {
             throw new IllegalArgumentException("text node with children");
         }
 
-        if ("call-stmt".equals(node.getNodeName()) && node.getChildNodes().getLength() < 2) {
+        if ("call-stmt".equals(node.getNodeName()) && (node.getChildNodes().getLength() < 2)) {
             NodeProcessingUtils.printNode(node, 0);
             throw new IllegalArgumentException("call statement with < 2 children");
         }

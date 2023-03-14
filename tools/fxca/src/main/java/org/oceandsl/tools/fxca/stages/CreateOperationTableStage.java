@@ -35,7 +35,7 @@ public class CreateOperationTableStage extends AbstractTransformation<FortranPro
         final Table callsTable = new Table("operation", new StringValueHandler("file"),
                 new StringValueHandler("operation"));
         project.getModules().values().forEach(module -> {
-            final String path = module.getDocument().getBaseURI();
+            final String path = module.getFileName();
             module.getSpecifiedOperations().forEach(operation -> {
                 try {
                     callsTable.addRow(path, operation);
