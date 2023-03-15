@@ -21,13 +21,14 @@ import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.tools.aul.stages.NullNetworkCreator;
 import org.slf4j.LoggerFactory;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
+
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.tools.aul.stages.NullNetworkCreator;
 
 /**
  * Architecture analysis main class.
@@ -81,7 +82,7 @@ public class AllenUpperLimitMain extends AbstractService<TeetimeConfiguration, S
             return false;
         }
         if (this.settings.getInputDirectory() != null) {
-            if (!Files.isDirectory(this.settings.getInputDirectory())) {
+            if (!Files.isDirectory(this.settings.getInputDirectory())) { // NOPMD
                 this.logger.error("Input path {} is not directory", this.settings.getInputDirectory());
                 return false;
             }

@@ -17,11 +17,11 @@ package org.oceandsl.tools.sar.stages.calls;
 
 import java.util.List;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
-import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
-
 import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractFilter;
+
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 
 /**
  * @author Reiner Jung
@@ -74,8 +74,8 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee>
     }
 
     private class FullyQualifiedOperation {
-        public String component;
-        public String operation;
+        private String component;
+        private String operation;
     }
 
 }

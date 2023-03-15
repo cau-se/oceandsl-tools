@@ -17,7 +17,7 @@ package org.oceandsl.tools.dar.stages;
 
 /**
  * @author Reiner Jung
- *
+ * @since 1.3.0
  */
 public class SignatureProcessor {
 
@@ -31,7 +31,7 @@ public class SignatureProcessor {
         final int separatorPosition = fqnOperationName.lastIndexOf('.');
         this.classSignature = fqnOperationName.substring(0, separatorPosition);
         this.operationSignature = "";
-        for (int i = 0; i < leftSideParts.length - 1; i++) {
+        for (int i = 0; i < (leftSideParts.length - 1); i++) {
             this.operationSignature += leftSideParts[i] + " ";
         }
         this.operationSignature += fqnOperationName.substring(separatorPosition + 1) + "(" + parts[1];

@@ -19,11 +19,13 @@ import java.time.Duration;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
 
 import kieker.analysis.architecture.recovery.events.CallEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
+
 import teetime.framework.test.StageTester;
+
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
 
 /**
  * Testing operation and call data stage..

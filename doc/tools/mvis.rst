@@ -15,6 +15,7 @@ Short Long                  Required Description
                                      odt-op, graphml, dot-component
 -m    --mode                         Mode deciding whether an edge is added when its nodes
                                      are not selected add-nodes, only
+-c    --compute-statistics           Generate the listed statistics
 ===== ===================== ======== ======================================================
 
 Selectors

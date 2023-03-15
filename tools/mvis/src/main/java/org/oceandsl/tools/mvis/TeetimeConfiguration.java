@@ -145,6 +145,9 @@ public class TeetimeConfiguration extends Configuration {
 
     private void createNumberOfCallsStatistics(final Settings settings,
             final Distributor<ModelRepository> statisticsDistributor) {
+        if (settings.getComputeStatistics() == null) {
+            return;
+        }
         if (settings.getComputeStatistics().contains(EStatistics.NUM_OF_CALLS)) {
             final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
             final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputDirectory(), String
@@ -157,6 +160,9 @@ public class TeetimeConfiguration extends Configuration {
 
     private void createOperationCouplingStatistics(final Settings settings,
             final Distributor<ModelRepository> statisticsDistributor) {
+        if (settings.getComputeStatistics() == null) {
+            return;
+        }
         if (settings.getComputeStatistics().contains(EStatistics.OP_COUPLING)) {
             final OperationCallGraphStage functionCallGraphStage = new OperationCallGraphStage(settings.getSelector(),
                     settings.getGraphGenerationMode());
@@ -174,6 +180,9 @@ public class TeetimeConfiguration extends Configuration {
 
     private void createModuleCouplingStatistics(final Settings settings,
             final Distributor<ModelRepository> statisticsDistributor) {
+        if (settings.getComputeStatistics() == null) {
+            return;
+        }
         if (settings.getComputeStatistics().contains(EStatistics.MODULE_COUPLING)) {
             final ModuleCallGraphStage moduleCallGraphStage = new ModuleCallGraphStage(settings.getSelector(),
                     settings.getGraphGenerationMode());
@@ -190,6 +199,9 @@ public class TeetimeConfiguration extends Configuration {
 
     private void createAllenMetricStatistics(final Settings settings,
             final Distributor<ModelRepository> statisticsDistributor) {
+        if (settings.getComputeStatistics() == null) {
+            return;
+        }
         if (settings.getComputeStatistics().contains(EStatistics.ALLEN)) {
             final AllenDeployedArchitectureGraphStage allenArchitectureModularGraphStage = new AllenDeployedArchitectureGraphStage(
                     settings.getSelector(), settings.getGraphGenerationMode());

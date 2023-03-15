@@ -16,6 +16,7 @@
 package org.oceandsl.tools.mop.stages;
 
 import kieker.analysis.architecture.repository.ModelRepository;
+
 import teetime.stage.basic.AbstractTransformation;
 
 /**
@@ -25,6 +26,6 @@ import teetime.stage.basic.AbstractTransformation;
  * @since 1.3
  *
  */
-public abstract class AbstractModelOperationStage extends AbstractTransformation<ModelRepository, ModelRepository> {
+public abstract class AbstractModelOperationStage extends AbstractTransformation<ModelRepository, ModelRepository> { // NOPMD
 
 }

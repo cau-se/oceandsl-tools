@@ -67,7 +67,8 @@ public class MapFileReader<T, R> {
                 }
                 this.map.put(this.keyConverter.getColumnValue(values), this.valueConverter.getColumnValue(values));
             } else {
-                MapFileReader.LOGGER.error("Entry incomplete '{}'", line.trim());
+                MapFileReader.LOGGER.error("Entry incomplete '{}'", line.trim()); // NOPMD no guard
+                                                                                  // necessary
             }
         }
         this.reader.close();

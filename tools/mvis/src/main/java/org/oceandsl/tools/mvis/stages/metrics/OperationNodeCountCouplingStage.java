@@ -19,9 +19,6 @@ import kieker.analysis.generic.graph.IEdge;
 import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
 import kieker.common.exception.ConfigurationException;
-import kieker.model.analysismodel.assembly.AssemblyOperation;
-import kieker.model.analysismodel.deployment.DeployedOperation;
-import kieker.model.analysismodel.type.OperationType;
 
 import teetime.stage.basic.AbstractTransformation;
 
@@ -63,18 +60,6 @@ public class OperationNodeCountCouplingStage extends AbstractTransformation<IGra
         final String stringId = (String) id;
         final String[] filepath = stringId.split("\\.");
         return filepath[filepath.length - 1];
-    }
-
-    private OperationType getOperationType(final Object id) throws ConfigurationException {
-        if (id instanceof DeployedOperation) {
-            return this.getOperationType(((DeployedOperation) id).getAssemblyOperation());
-        } else if (id instanceof AssemblyOperation) {
-            return this.getOperationType(((AssemblyOperation) id).getOperationType());
-        } else if (id instanceof OperationType) {
-            return (OperationType) id;
-        } else {
-            throw new ConfigurationException("Vertex does not relate to a operation.");
-        }
     }
 
 }

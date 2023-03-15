@@ -1,42 +1,42 @@
 package org.oceandsl.tools.esm.util;
 
-public class FileContentsEntry{
+public class FileContentsEntry {
 
-	private  String File ;
-	private  String Identifier;
-	private  String Type;
-	
-	public FileContentsEntry() {
-		
-	}
-	
-	public FileContentsEntry(String file, String id, String type) {
-		this.setFile(file);
-		this.setIdentifier(id);
-		this.setType(type);
-	}
+    private String File;
+    private String Identifier;
+    private String Type;
 
-	public String getFile() {
-		return File;
-	}
+    public FileContentsEntry() {
 
-	public void setFile(String file) {
-		File = file;
-	}
+    }
 
-	public String getIdentifier() {
-		return Identifier;
-	}
+    public FileContentsEntry(final String file, final String id, final String type) {
+        this.setFile(file);
+        this.setIdentifier(id);
+        this.setType(type);
+    }
 
-	public void setIdentifier(String identifier) {
-		Identifier = identifier;
-	}
+    public String getFile() {
+        return this.File;
+    }
 
-	public String getType() {
-		return Type;
-	}
+    public void setFile(final String file) {
+        this.File = file;
+    }
 
-	public void setType(String type) {
-		Type = type;
-	}
+    public String getIdentifier() {
+        return this.Identifier;
+    }
+
+    public void setIdentifier(final String identifier) {
+        this.Identifier = identifier;
+    }
+
+    public String getType() {
+        return this.Type;
+    }
+
+    public void setType(final String type) {
+        this.Type = type;
+    }
 }

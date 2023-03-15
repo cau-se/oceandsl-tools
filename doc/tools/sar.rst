@@ -17,17 +17,19 @@ Short Long                       Required Description
 -ns   --names-separation-char             Separation character for function name lists CSV 
                                           files, default is comma (,)
 -f    --function-names                    Function file map CSV file
--m    --missing-functions                 Output file for the list of function without an associated file
 -o    --output                   yes      Output directory to store graphics and statistics
--M    --component-map                     Component, file and function map file
+-M    --component-maps                    Component, file and function map file
 -l    --source-label             yes      Set source label for the read data
 -c    --case-insensitive                  Handle function names in CSV case insensitive
 -H    --hostname                          Hostname to be used in CSV reconstruction
 -E    --experiment-name          yes      Name of the experiment
--n    --missing-mappings                  Output file for files without a mapping in the 
-                                          mapping file.
+-n    --missing-mappings-file             Output file for the list of files with a missing
+                                          mapping in the mapping file
+-a    --missing-functions                 Output file for the list of functions without an
+                                          associated file
+-m    --module-modes             yes      Module converter strategies (at lease one of):
+                                          module-mode, file-mode, map-mode
 ===== ========================== ======== ======================================================
-
 
 The tool reads a list of operation calls, e.g., in Fortran, one subroutine
 calling another one, and a data access list from CSV files.
@@ -43,10 +45,14 @@ the option allow to set a different character for operation calls -cs, dataflows
 Call Input File
 ---------------
 
-- source-path or component identifyer
+- source-path or component identifier
+- source-module
 - caller operation
-- target-path or component identifyer
+- target-path or component identifier
+- target-module
 - callee operation (the called operation)
+
+**Note** Dataflow is currently under revision and may not work as intended
 
 Dataflow Input File
 -------------------

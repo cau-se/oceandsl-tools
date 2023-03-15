@@ -15,7 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.esm;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -46,8 +45,6 @@ public class EsmMain extends AbstractService<TeetimeConfiguration, Settings> {
         }
     }
 
-
-
     @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
@@ -56,7 +53,6 @@ public class EsmMain extends AbstractService<TeetimeConfiguration, Settings> {
             throw new ConfigurationException(e);
         }
     }
-
 
     @Override
     protected boolean checkConfiguration(final Configuration configuration, final JCommander commander) {
@@ -74,11 +70,9 @@ public class EsmMain extends AbstractService<TeetimeConfiguration, Settings> {
         // No special operation necessary.
     }
 
-
-
-	@Override
-	protected Path getConfigurationPath() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    protected Path getConfigurationPath() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

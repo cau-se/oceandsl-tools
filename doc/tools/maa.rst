@@ -17,6 +17,11 @@ Short Long                   Required Description
 -g    --hierarchy-grouping            Generate a component hierarchy based on a map file
 -c    --operation-calls               Output the list of calls
 -s    --component-statistics          Output numerous component statistics
+-gs   --separator                     Sparator string for CSV inputs
 ===== ====================== ======== ======================================================
+
+For the option **hierarchy-grouping** you need to specify at least one map file
+containing the function module mapping.
+
 
 

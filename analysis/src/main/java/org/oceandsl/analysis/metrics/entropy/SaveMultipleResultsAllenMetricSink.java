@@ -62,7 +62,7 @@ public class SaveMultipleResultsAllenMetricSink
         this.newline = newline;
         this.valueSeparator = valueSeparator;
         this.writer = Files.newBufferedWriter(outputPath);
-        this.metricClasses = metrics;
+        this.metricClasses = metrics; // NOPMD its ok to save an array
         for (int i = 0; i < metrics.length; i++) {
             if (i > 0) {
                 this.writer.write(valueSeparator);

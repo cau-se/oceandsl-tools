@@ -71,13 +71,26 @@ public class ModelOperationMain extends AbstractService<TeetimeConfiguration, Se
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (!ParameterEvaluationUtils.isFileReadable(this.settings.getSelectionCriteriaPath().toFile(), "criteria file",
-                commander) || !this.areAllInputFilesReadable(commander)
-                || !ParameterEvaluationUtils.checkDirectory(this.settings.getOutputDirectory().toFile(), "output model",
-                        commander)) {
+        if (!this.areAllInputFilesReadable(commander)) {
             return false;
         }
-        return this.readPatterns(this.settings.getSelectionCriteriaPath());
+        if (!ParameterEvaluationUtils.checkDirectory(this.settings.getOutputDirectory().toFile(), "output model",
+                commander)) {
+            return false;
+        }
+        switch (this.settings.getOperation()) {
+        case MERGE:
+            break;
+        case SELECT:
+            if (!ParameterEvaluationUtils.isFileReadable(this.settings.getSelectionCriteriaPath().toFile(),
+                    "criteria file", commander)) {
+                return false;
+            }
+            return this.readPatterns(this.settings.getSelectionCriteriaPath());
+        default:
+            return false;
+        }
+        return true;
     }
 
     private boolean areAllInputFilesReadable(final JCommander commander) {

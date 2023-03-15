@@ -15,10 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.stages;
 
+import kieker.analysis.architecture.repository.ModelRepository;
+
 import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
 import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
-
-import kieker.analysis.architecture.repository.ModelRepository;
 
 /**
  * @author Reiner Jung
