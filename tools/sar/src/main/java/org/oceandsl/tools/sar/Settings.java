@@ -23,6 +23,9 @@ import com.beust.jcommander.converters.PathConverter;
 
 import org.oceandsl.analysis.generic.EModuleMode;
 import org.oceandsl.analysis.generic.EModuleModeConverter;
+import org.oceandsl.analysis.generic.validators.ParentPathIsWriteableValidator;
+import org.oceandsl.analysis.generic.validators.PathIsReadableValidator;
+import org.oceandsl.analysis.generic.validators.PathIsWriteableValidator;
 
 /**
  * All settings including command line parameters for the analysis.
@@ -33,11 +36,11 @@ import org.oceandsl.analysis.generic.EModuleModeConverter;
 public class Settings { // NOPMD dataclass - required to contain settings
 
     @Parameter(names = { "-i",
-            "--call-input" }, required = false, converter = PathConverter.class, description = "Function call CSV file")
+            "--call-input" }, required = false, converter = PathConverter.class, validateWith = PathIsReadableValidator.class, description = "Function call CSV file")
     private Path operationCallInputFile;
 
     @Parameter(names = { "-j",
-            "--dataflow-input" }, required = false, converter = PathConverter.class, description = "Dataflow CSV file")
+            "--dataflow-input" }, required = false, converter = PathConverter.class, validateWith = PathIsReadableValidator.class, description = "Dataflow CSV file")
     private Path dataflowInputFile;
 
     @Parameter(names = { "-cs",
@@ -53,15 +56,15 @@ public class Settings { // NOPMD dataclass - required to contain settings
     private String namesSplitSymbol;
 
     @Parameter(names = { "-f",
-            "--function-names" }, required = false, variableArity = true, converter = PathConverter.class, description = "Function file map CSV file")
+            "--function-names" }, required = false, variableArity = true, converter = PathConverter.class, validateWith = PathIsReadableValidator.class, description = "Function file map CSV file")
     private List<Path> functionNameFiles;
 
     @Parameter(names = { "-a",
-            "--missing-functions" }, required = false, converter = PathConverter.class, description = "Output file for the list of functions without an associated file")
+            "--missing-functions" }, required = false, converter = PathConverter.class, validateWith = ParentPathIsWriteableValidator.class, description = "Output file for the list of functions without an associated file")
     private Path missingFunctionsFile;
 
     @Parameter(names = { "-o",
-            "--output" }, required = true, converter = PathConverter.class, description = "Output directory to store graphics and statistics")
+            "--output" }, required = true, converter = PathConverter.class, validateWith = PathIsWriteableValidator.class, description = "Output directory to store graphics and statistics")
     private Path outputDirectory;
 
     @Parameter(names = { "-m",
@@ -87,7 +90,7 @@ public class Settings { // NOPMD dataclass - required to contain settings
     private String experimentName;
 
     @Parameter(names = { "-n",
-            "--missing-mappings-file" }, required = false, converter = PathConverter.class, description = "Output file for the list of files with a missing mapping in the mapping file.")
+            "--missing-mappings-file" }, required = false, converter = PathConverter.class, validateWith = ParentPathIsWriteableValidator.class, description = "Output file for the list of files with a missing mapping in the mapping file.")
     private Path missingMappingsFile;
 
     public Path getOperationCallInputFile() {

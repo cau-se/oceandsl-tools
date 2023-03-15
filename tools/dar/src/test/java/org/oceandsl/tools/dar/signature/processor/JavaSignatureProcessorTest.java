@@ -18,6 +18,13 @@ package org.oceandsl.tools.dar.signature.processor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Testing Java signature processor.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ *
+ */
 class JavaSignatureProcessorTest {
 
     private static final String COMPONENT_SIGNATURE = "tools.descartes.teastore.registryclient.rest.LoadBalancedCRUDOperations";
@@ -26,7 +33,7 @@ class JavaSignatureProcessorTest {
     private static final String REDUCED_SIGNATURE = "public static List getEntities(Service, String, Class, int, int)";
 
     @Test
-    public void test() {
+    void test() {
         final JavaSignatureProcessor processor = new JavaSignatureProcessor(false);
 
         processor.processSignatures(JavaSignatureProcessorTest.COMPONENT_SIGNATURE,
