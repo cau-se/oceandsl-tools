@@ -155,7 +155,7 @@ public class StaticArchitectureRecoveryMain {
     }
 
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (this.settings.getOperationCallInputFile() == null && this.settings.getDataflowInputFile() == null) {
+        if ((this.settings.getOperationCallInputFile() == null) && (this.settings.getDataflowInputFile() == null)) {
             this.logger.error("You need at least operation calls or dataflow as input.");
             return false;
         }
@@ -174,21 +174,7 @@ public class StaticArchitectureRecoveryMain {
             return false;
         }
 
-        return this.isReadable(this.settings.getOperationCallInputFile())
-                || this.isReadable(this.settings.getDataflowInputFile());
-    }
-
-    private boolean isReadable(final Path p) {
-        try {
-            if (!Files.isReadable(p)) {
-                this.logger.error("Input path {} is not file", p);
-                return false;
-            }
-            return true;
-        } catch (final NullPointerException e) {
-            this.logger.info("no config file at {}", p);
-            return false;
-        }
+        return true;
     }
 
     /**

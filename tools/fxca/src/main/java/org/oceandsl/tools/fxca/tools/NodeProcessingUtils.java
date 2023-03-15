@@ -32,12 +32,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-// No own attributes, only accessor functions for nodes. Implemented as class in order to allow
-// chaining.
-
 /**
+ * No own attributes, only accessor functions for nodes. Implemented as class in order to allow
+ * chaining.
  *
  * @author Henning Schnoor
+ *
  * @since 1.3.0
  */
 public class NodeProcessingUtils {
@@ -134,17 +134,28 @@ public class NodeProcessingUtils {
         return NodeProcessingUtils.findFirst(parent, nextNode, condition, includeSelf, null);
     }
 
-    // paranthesistypes: contains pairs of "opening paranthesis" and "closed paranthesis"
-    // conditions,
-    // where stuff between the paranthesis is ignored.
-    //
-    // Be careful with the search direction here, if you are searching "backwards", then ")" might
-    // be your opening, and "(" your closing paranthesis.
-    //
-    // use case: when finding the containing operation statement, we need to skip functions that
-    // are defined "along the way," i.e., where both the "function declaration" and the
-    // "end function declaration" elements appear.
-
+    /**
+     * Find first node.
+     *
+     * Be careful with the search direction here, if you are searching "backwards", then ")" might
+     * be your opening, and "(" your closing paranthesis.
+     *
+     * use case: when finding the containing operation statement, we need to skip functions that are
+     * defined "along the way," i.e., where both the "function declaration" and the "end function
+     * declaration" elements appear.
+     *
+     * @param parent
+     *            parent node from which the search begins
+     * @param nextNode
+     *            function providing the next node
+     * @param condition
+     *            selection criteria
+     * @param includeSelf
+     *            whether the parent node should be part of the result
+     * @param paranthesistypes
+     *            contains pairs of "opening paranthesis" and "closed paranthesis" conditions, where
+     *            stuff between the paranthesis is ignored.
+     */
     // NOTE: Only terminates if nextNode eventually returns null or a matching element.
     private static Node findFirst(final Node parent, final Function<Node, Node> nextNode,
             final Predicate<Node> condition, final boolean includeSelf,

@@ -25,6 +25,8 @@ import org.w3c.dom.Node;
  *
  * @author Henning Schnoor
  * @author Reiner Jung -- refactoring
+ *
+ * @since 1.3.0
  */
 public class NodePredicateUtils {
 
@@ -32,8 +34,9 @@ public class NodePredicateUtils {
     public static Predicate<Node> isSubroutineStatement = NodeProcessingUtils.hasName("subroutine-stmt");
     public static Predicate<Node> isFunctionStatement = NodeProcessingUtils.hasName("function-stmt");
     public static Predicate<Node> isEntryStatement = NodeProcessingUtils.hasName("entry-stmt");
-    public static Predicate<Node> isOperationStatement = isSubroutineStatement.or(isFunctionStatement)
-            .or(isEntryStatement).or(isProgramStatement);
+    public static Predicate<Node> isOperationStatement = NodePredicateUtils.isSubroutineStatement
+            .or(NodePredicateUtils.isFunctionStatement).or(NodePredicateUtils.isEntryStatement)
+            .or(NodePredicateUtils.isProgramStatement);
 
     public static Predicate<Node> isEndSubroutineStatement = NodeProcessingUtils.hasName("end-subroutine-stmt");
     public static Predicate<Node> isEndFunctionStatement = NodeProcessingUtils.hasName("end-function-stmt");
@@ -58,25 +61,25 @@ public class NodePredicateUtils {
     public static Predicate<Node> isRLT = NodeProcessingUtils.hasName("R-LT");
     public static Predicate<Node> isElement = NodeProcessingUtils.hasName("element");
     public static Predicate<Node> isParensR = NodeProcessingUtils.hasName("parens-R");
-    public static Predicate<Node> isRegularLeftParanthesis = isParensR
+    public static Predicate<Node> isRegularLeftParanthesis = NodePredicateUtils.isParensR
             .and(node -> node.getTextContent().startsWith("("));
     public static Predicate<Node> isCommonStatement = NodeProcessingUtils.hasName("common-stmt");
     public static Predicate<Node> isCommonBlockObjectStatement = NodeProcessingUtils.hasName("common-block-obj-N");
     public static Predicate<Node> isLocalAccess = node -> LocalExpressionAccess.isLocalAccess(node);
 
-    public static Predicate<Node> namedExpressionAccess = isNamedExpression
-            .and(NodeProcessingUtils.childSatisfies("0", isBigN))
-            .and(NodeProcessingUtils.childSatisfies("0,0", isSmallN))
-            .and(NodeProcessingUtils.childSatisfies("1", isRLT))
-            .and(NodeProcessingUtils.childSatisfies("1,0", isRegularLeftParanthesis));
+    public static Predicate<Node> namedExpressionAccess = NodePredicateUtils.isNamedExpression
+            .and(NodeProcessingUtils.childSatisfies("0", NodePredicateUtils.isBigN))
+            .and(NodeProcessingUtils.childSatisfies("0,0", NodePredicateUtils.isSmallN))
+            .and(NodeProcessingUtils.childSatisfies("1", NodePredicateUtils.isRLT))
+            .and(NodeProcessingUtils.childSatisfies("1,0", NodePredicateUtils.isRegularLeftParanthesis));
 
-    public static Pair<Predicate<Node>, Predicate<Node>> endFunctionToBeginFunction = new Pair<>(isEndFunctionStatement,
-            isFunctionStatement);
+    public static Pair<Predicate<Node>, Predicate<Node>> endFunctionToBeginFunction = new Pair<>(
+            NodePredicateUtils.isEndFunctionStatement, NodePredicateUtils.isFunctionStatement);
 
     public static Pair<Predicate<Node>, Predicate<Node>> endSubroutineToBeginSubroutine = new Pair<>(
-            isEndSubroutineStatement, isSubroutineStatement);
+            NodePredicateUtils.isEndSubroutineStatement, NodePredicateUtils.isSubroutineStatement);
 
-    public static List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes = List.of(endFunctionToBeginFunction,
-            endSubroutineToBeginSubroutine);
+    public static List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes = List
+            .of(NodePredicateUtils.endFunctionToBeginFunction, NodePredicateUtils.endSubroutineToBeginSubroutine);
 
 }

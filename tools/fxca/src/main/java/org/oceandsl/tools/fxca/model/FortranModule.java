@@ -30,7 +30,7 @@ import lombok.Getter;
 
 /**
  * @author Henning Schnoor
- *
+ * @since 1.3.0
  */
 public class FortranModule {
 
@@ -59,6 +59,7 @@ public class FortranModule {
         this.document = document;
     }
 
+    @Deprecated
     public void printSummary() {
         FortranModule.LOGGER.debug("# Summary");
         FortranModule.LOGGER.debug(" [moduleName]           {}", this.moduleName);

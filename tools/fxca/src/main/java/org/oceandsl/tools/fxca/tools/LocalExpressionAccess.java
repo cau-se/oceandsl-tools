@@ -1,3 +1,18 @@
+/***************************************************************************
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package org.oceandsl.tools.fxca.tools;
 
 import java.util.ArrayList;
@@ -10,6 +25,12 @@ import java.util.function.Predicate;
 
 import org.w3c.dom.Node;
 
+/**
+ *
+ * @author Henning Schnoor
+ *
+ * @since 1.3.0
+ */
 public class LocalExpressionAccess {
 
     // we often need to search for names that are defined at the current node, which are *not*
@@ -57,7 +78,7 @@ public class LocalExpressionAccess {
             current = current.getParentNode();
         }
 
-        return localNamesDefinedInBlocks(applyingBlocks, parameters); // allNamesDefinedInCommonBlocks
+        return LocalExpressionAccess.localNamesDefinedInBlocks(applyingBlocks, parameters); // allNamesDefinedInCommonBlocks
     }
 
     private static Set<String> localNamesDefinedInBlocks(final Collection<Node> applyingBlocks,
@@ -65,7 +86,7 @@ public class LocalExpressionAccess {
         final Set<String> result = new HashSet<>();
 
         for (final Node blockNode : applyingBlocks) {
-            result.addAll(localNamesDefinedInBlock(blockNode, parameters));
+            result.addAll(LocalExpressionAccess.localNamesDefinedInBlock(blockNode, parameters));
         }
 
         return result;
@@ -103,15 +124,18 @@ public class LocalExpressionAccess {
 
     public static accessType typeOfReferenceAccess(final Node referenceNode) {
 
-        if (isNamedExpressionLocalReference(referenceNode, namesInCommonBlocks)) {
+        if (LocalExpressionAccess.isNamedExpressionLocalReference(referenceNode,
+                LocalExpressionAccess.namesInCommonBlocks)) {
             return accessType.COMMON_BLOCK;
         }
 
-        if (isNamedExpressionLocalReference(referenceNode, namesInOperationParameterList)) {
+        if (LocalExpressionAccess.isNamedExpressionLocalReference(referenceNode,
+                LocalExpressionAccess.namesInOperationParameterList)) {
             return accessType.OPERATION_PARAMETER;
         }
 
-        if (isNamedExpressionLocalReference(referenceNode, namesInLocalVariableList)) {
+        if (LocalExpressionAccess.isNamedExpressionLocalReference(referenceNode,
+                LocalExpressionAccess.namesInLocalVariableList)) {
             return accessType.LOCAL_VARIABLE;
         }
 
@@ -120,26 +144,26 @@ public class LocalExpressionAccess {
 
     public static boolean isLocalAccess(final Node referenceNode) {
         return NodePredicateUtils.isCallStatement.or(NodePredicateUtils.namedExpressionAccess).test(referenceNode)
-                && typeOfReferenceAccess(referenceNode) != accessType.OPERATION_CALL;
+                && (LocalExpressionAccess.typeOfReferenceAccess(referenceNode) != accessType.OPERATION_CALL);
     }
 
-//	public static String nameOfCalledFunctionOrLocalReference(Node referenceNode) {
-//
-//		String suffix = switch(typeOfReferenceAccess(referenceNode)) {
-//		case COMMON_BLOCK -> "-common-access";
-//		case LOCAL_VARIABLE -> "-local-variable";
-//    	case OPERATION_PARAMETER -> "-parameter-access";
-//		case OPERATION_CALL -> "";
-//		};
-//
-//		return StatementNode.nameOfCalledFunction(referenceNode) + suffix;
-//	}
+    // public static String nameOfCalledFunctionOrLocalReference(Node referenceNode) {
+    //
+    // String suffix = switch(typeOfReferenceAccess(referenceNode)) {
+    // case COMMON_BLOCK -> "-common-access";
+    // case LOCAL_VARIABLE -> "-local-variable";
+    // case OPERATION_PARAMETER -> "-parameter-access";
+    // case OPERATION_CALL -> "";
+    // };
+    //
+    // return StatementNode.nameOfCalledFunction(referenceNode) + suffix;
+    // }
 
     public static String nameOfCalledFunctionOrLocalReference(final Node referenceNode) {
 
         // rewritten the switch statement because checkstyle cannot parse it
 
-        final accessType switchValue = typeOfReferenceAccess(referenceNode);
+        final accessType switchValue = LocalExpressionAccess.typeOfReferenceAccess(referenceNode);
         String suffix = null;
 
         if (switchValue == accessType.COMMON_BLOCK) {

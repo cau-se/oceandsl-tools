@@ -43,6 +43,7 @@ import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
  * @author Henning Schnoor -- initial contribution
  * @author Reiner Jung
  *
+ * @since 1.3.0
  */
 public class ProcessModuleStructureStage extends AbstractTransformation<Document, FortranProject> {
 

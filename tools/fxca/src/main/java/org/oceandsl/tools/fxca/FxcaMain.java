@@ -18,7 +18,6 @@
  * @author Henning Schnoor
  *
  */
-
 package org.oceandsl.tools.fxca;
 
 import java.io.IOException;
