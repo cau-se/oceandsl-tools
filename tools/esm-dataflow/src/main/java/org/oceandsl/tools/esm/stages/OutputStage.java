@@ -26,8 +26,11 @@ public class OutputStage extends AbstractConsumerStage<Output>{
 			 filedf.createNewFile();
 			 File filefc = new File(outputPath.toString()+"/"+"filecontent.txt");
 			 filefc.createNewFile();
+			 File filecb = new File(outputPath.toString()+"/"+"commonblocks.txt");
+			 filecb.createNewFile();
 	         FileWriter writerdf = new FileWriter(filedf);
 	         FileWriter writerfc = new FileWriter(filefc);
+	         FileWriter writercb = new FileWriter(filecb);
 	            for (String line : element.getDataflow()) {
 	                writerdf.write(line + System.lineSeparator());
 	            }
@@ -35,8 +38,13 @@ public class OutputStage extends AbstractConsumerStage<Output>{
 	            for (String line : element.getFileContent()) {
 	                writerfc.write(line + System.lineSeparator());
 	            }
+	            
+	            for (String line : element.getCommonBlocks()) {
+	                writercb.write(line + System.lineSeparator());
+	            }
 	            writerdf.close();
 	            writerfc.close();
+	            writercb.close();
 	            
 	            System.out.println("Successfully wrote lines to files.");
 	        } catch (IOException e) {
