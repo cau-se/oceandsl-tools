@@ -159,7 +159,7 @@ public class IOUtils {
         final StringBuilder result = new StringBuilder();
 
         for (final String item : items) {
-            if (!result.isEmpty()) {
+            if (result.length() != 0) {
                 result.append(", ");
             }
             result.append(item);

@@ -39,14 +39,6 @@ public class CreateCallTableStage extends AbstractTransformation<FortranProject,
     private static final String TARGET_MODULE = "calleemodule";
     private static final String TARGET_OPERATION = "calleefunction";
 
-    private record Operation(String path, String moduleName, String operation) {
-        Operation(final String path, final String moduleName, final String operation) {
-            this.path = path;
-            this.moduleName = moduleName;
-            this.operation = operation;
-        }
-    }
-
     @Override
     protected void execute(final FortranProject project) throws Exception {
         final Table callsTable = new Table("calls", new StringValueHandler(CreateCallTableStage.SOURCE_PATH),
@@ -100,7 +92,18 @@ public class CreateCallTableStage extends AbstractTransformation<FortranProject,
         } else {
             return new Operation(module.getFileName(), "<no-module>", callerOperation);
         }
+    }
 
+    private class Operation {
+        private final String path;
+        private final String moduleName;
+        private final String operation;
+
+        Operation(final String path, final String moduleName, final String operation) {
+            this.path = path;
+            this.moduleName = moduleName;
+            this.operation = operation;
+        }
     }
 
 }
