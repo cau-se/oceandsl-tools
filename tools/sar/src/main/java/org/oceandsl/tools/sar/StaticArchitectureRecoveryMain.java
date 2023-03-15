@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.exception.ConfigurationException;
+import kieker.tools.common.ParameterEvaluationUtils;
 
 import teetime.framework.Configuration;
 import teetime.framework.Execution;
@@ -169,8 +170,9 @@ public class StaticArchitectureRecoveryMain {
             }
         }
 
-        if (!Files.isDirectory(this.settings.getOutputDirectory().toAbsolutePath().getParent())) {
-            this.logger.error("Output path {} is not directory", this.settings.getOutputDirectory());
+        if (!ParameterEvaluationUtils.checkDirectory(
+                this.settings.getOutputDirectory().toAbsolutePath().getParent().toFile(), "output directory",
+                commander)) {
             return false;
         }
 

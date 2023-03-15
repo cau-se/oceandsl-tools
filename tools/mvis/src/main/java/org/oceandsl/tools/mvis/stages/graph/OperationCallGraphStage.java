@@ -15,6 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.mvis.stages.graph;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import kieker.analysis.architecture.repository.ModelRepository;
@@ -61,7 +62,15 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
 
         final IGraph<INode, IEdge> graph = GraphFactory.createGraph(repository.getName());
 
-        for (final Invocation invocation : executionModel.getInvocations().values()) {
+        this.processInvocations(graph, executionModel.getInvocations().values());
+        this.processOperationDataflow(graph, executionModel.getOperationDataflows().values());
+        this.processStorageDataflow(graph, executionModel.getStorageDataflows().values());
+
+        this.outputPort.send(graph);
+    }
+
+    private void processInvocations(final IGraph<INode, IEdge> graph, final Collection<Invocation> invocations) {
+        for (final Invocation invocation : invocations) {
             final boolean sourceSelected = this.selector.nodeIsSelected(invocation.getCallee().getComponent());
             final boolean targetSelected = this.selector.nodeIsSelected(invocation.getCallee());
             if (sourceSelected) {
@@ -91,8 +100,11 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
                 throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
             }
         }
+    }
 
-        for (final OperationDataflow operationDataflow : executionModel.getOperationDataflows().values()) {
+    private void processOperationDataflow(final IGraph<INode, IEdge> graph,
+            final Collection<OperationDataflow> dataflows) {
+        for (final OperationDataflow operationDataflow : dataflows) {
             final boolean sourceSelected = this.selector.nodeIsSelected(operationDataflow.getCallee().getComponent());
             final boolean targetSelected = this.selector.nodeIsSelected(operationDataflow.getCallee());
             if (sourceSelected) {
@@ -125,7 +137,10 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
             }
 
         }
-        for (final StorageDataflow storageDataflow : executionModel.getStorageDataflows().values()) {
+    }
+
+    private void processStorageDataflow(final IGraph<INode, IEdge> graph, final Collection<StorageDataflow> dataflows) {
+        for (final StorageDataflow storageDataflow : dataflows) {
             final boolean sourceSelected = this.selector.nodeIsSelected(storageDataflow.getStorage().getComponent());
             final boolean targetSelected = this.selector.nodeIsSelected(storageDataflow.getStorage());
             if (sourceSelected) {
@@ -157,8 +172,6 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
                 throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
             }
         }
-
-        this.outputPort.send(graph);
     }
 
     private void addOperationEdge(final IGraph<INode, IEdge> graph, final DeployedOperation source,
@@ -204,13 +217,6 @@ public class OperationCallGraphStage extends AbstractTransformation<ModelReposit
     private Optional<INode> findOperationNode(final IGraph<INode, IEdge> graph, final DeployedOperation operation) {
         final String fullyQualifiedName = FullyQualifiedNamesFactory.createFullyQualifiedName(operation);
         return graph.findNode(fullyQualifiedName);
-    }
-
-    private void addEdge(final IGraph<INode, IEdge> graph, final DeployedOperation source,
-            final DeployedOperation target) {
-        final Optional<INode> sourceNode = this.findOperationNode(graph, source);
-        final Optional<INode> targetNode = this.findOperationNode(graph, target);
-        graph.getGraph().addEdge(sourceNode.get(), targetNode.get(), GraphFactory.createEdge(null));
     }
 
     private Optional<INode> findStorageNode(final IGraph<INode, IEdge> graph, final DeployedStorage storage) {

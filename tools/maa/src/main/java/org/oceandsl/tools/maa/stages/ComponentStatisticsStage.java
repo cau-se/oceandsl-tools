@@ -1,3 +1,18 @@
+/***************************************************************************
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package org.oceandsl.tools.maa.stages;
 
 import java.util.Collection;
@@ -57,7 +72,7 @@ public class ComponentStatisticsStage extends AbstractTransformation<ModelReposi
             final Collection<Invocation> invocations) {
         return invocations.stream()
                 .anyMatch(invocation -> invocation.getCallee().getAssemblyOperation().equals(operation)
-                        && invocation.getCaller().getComponent().getAssemblyComponent() != component);
+                        && (invocation.getCaller().getComponent().getAssemblyComponent() != component));
     }
 
     private Long countAllRequiredOperations(final AssemblyComponent component,
@@ -69,7 +84,7 @@ public class ComponentStatisticsStage extends AbstractTransformation<ModelReposi
             final Collection<Invocation> invocations) {
         return invocations.stream()
                 .anyMatch(invocation -> invocation.getCaller().getAssemblyOperation().equals(operation)
-                        && invocation.getCallee().getComponent().getAssemblyComponent() != component);
+                        && (invocation.getCallee().getComponent().getAssemblyComponent() != component));
     }
 
 }

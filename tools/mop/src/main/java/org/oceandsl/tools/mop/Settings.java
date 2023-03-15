@@ -49,7 +49,7 @@ public class Settings { // NOPMD data class
             "--selection-criteria" }, required = false, converter = PathConverter.class, description = "Element selection criteria file")
     private Path selectionCriteriaPath;
 
-    final private List<Pattern> selectionCriteriaPatterns = new ArrayList<>();
+    private final List<Pattern> selectionCriteriaPatterns = new ArrayList<>();
 
     public List<Path> getInputModelPaths() {
         return this.inputModelPaths;

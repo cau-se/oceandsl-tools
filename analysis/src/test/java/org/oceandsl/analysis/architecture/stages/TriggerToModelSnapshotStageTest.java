@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 class TriggerToModelSnapshotStageTest {
 
     @Test
-    void test() {
+    public void test() {
         Assertions.fail("Not yet implemented");
     }
 

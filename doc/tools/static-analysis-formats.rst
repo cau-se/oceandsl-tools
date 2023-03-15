@@ -6,11 +6,14 @@ flow traces. All CSV files use commas for value separation. In detail they
 are:
 
 
+**Note** These information might be partially outdated
+
 Function call file
 ------------------
 
 Containing functions calls.
 
+**Note** old format specification
 There are two supported formats with 3 and 4 column CSV files.
  - 3 columns: file, caller, callee: In this format the callee lacks the
    information where the operation is located. Thus, it must be inferred
@@ -18,9 +21,13 @@ There are two supported formats with 3 and 4 column CSV files.
 
  - 4 columns: caller-file, caller, callee-file, callee
 
+**Note** new format specification
+ - 6 columns: path, module, caller, path, module, callee
+
 Function call file hs comments
 ------------------------------
 
+**Note** fparser is obsolete, we use now fxtran
 The fparser-based tools already perform the lookup for the callee in the later
 versions (this information is added in a post-processing step by a bash
 script). The result is stored in a file typically called coupling-joined.csv, with

@@ -49,7 +49,7 @@ public class StorageAssemblyModelAssembler extends AbstractModelAssembler implem
      * identifier in the transfer-object a subroutine is called to set up a new AssemblyComponent
      * instance.
      *
-     * @param dataTransferObject
+     * @param storageEvent
      *            TransferObject containing all dataflow information in one step.
      * @return component, stored for the given identifier string
      */
@@ -67,8 +67,8 @@ public class StorageAssemblyModelAssembler extends AbstractModelAssembler implem
      * This function is used to create a new file AssemblyComponentObject and store it in the given
      * assembly model.
      *
-     * @param dataTransferObject
-     *            TransferObject containing all dataflow information in one step.
+     * @param assemblyComponentSignature
+     *            signature of the assembly component
      * @return file component created and stored in the assembly model
      */
     private AssemblyComponent createAssemblyComponent(final String assemblyComponentSignature) {
@@ -86,8 +86,8 @@ public class StorageAssemblyModelAssembler extends AbstractModelAssembler implem
      *
      * @param assemblyComponent
      *            the storage should be stored in
-     * @param dataTransferObject
-     *            TransferObject containing all dataflow information in one step.
+     * @param event
+     *            storage event
      * @return the added operation. Useful for DEBUG Reasons
      */
     private AssemblyStorage addStorage(final AssemblyComponent assemblyComponent, final StorageEvent event) {
