@@ -64,7 +64,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
     private void processSubroutines(final FortranProject project, final FortranModule module, final Element element,
             final Table notFoundTable) {
         try {
-            final List<Pair<String, String>> calls = NodeProcessingUtils.subroutineCalls(element);
+            final List<Pair<String, String>> calls = NodeProcessingUtils.findSubroutineCalls(element);
             this.processCalls(project, module, calls, notFoundTable);
         } catch (ParserConfigurationException | SAXException | IOException e) {
             this.logger.error("Processing subroutine calls in file {} failed: {}", element.getBaseURI(),
@@ -75,7 +75,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
     private void processFunctions(final FortranProject project, final FortranModule module, final Element element,
             final Table notFoundTable) {
         try {
-            final List<Pair<String, String>> calls = NodeProcessingUtils.functionCalls(element);
+            final List<Pair<String, String>> calls = NodeProcessingUtils.findFunctionCalls(element);
             this.processCalls(project, module, calls, notFoundTable);
         } catch (ParserConfigurationException | SAXException | IOException e) {
             this.logger.error("Processing subroutine calls in file {} failed: {}", element.getBaseURI(),
