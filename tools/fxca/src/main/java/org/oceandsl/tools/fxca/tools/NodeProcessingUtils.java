@@ -74,21 +74,34 @@ public class NodeProcessingUtils {
     }
 
     public static String nodeType(final short nodeType) {
-        return switch (nodeType) {
-        case Node.ELEMENT_NODE -> "Element Node";
-        case Node.ATTRIBUTE_NODE -> "Attribute Node";
-        case Node.TEXT_NODE -> "Text Node";
-        case Node.CDATA_SECTION_NODE -> "CDATA Section Node";
-        case Node.ENTITY_REFERENCE_NODE -> "Entity Reference Node";
-        case Node.ENTITY_NODE -> "Entity Node";
-        case Node.PROCESSING_INSTRUCTION_NODE -> "Processing Instruction Node";
-        case Node.COMMENT_NODE -> "Comment Node";
-        case Node.DOCUMENT_NODE -> "Document Node";
-        case Node.DOCUMENT_TYPE_NODE -> "Document Type Node";
-        case Node.DOCUMENT_FRAGMENT_NODE -> "Document Fragment Node";
-        case Node.NOTATION_NODE -> "Notation Node";
-        default -> "Unknown Node Type";
-        };
+        switch (nodeType) {
+        case Node.ELEMENT_NODE:
+            return "Element Node";
+        case Node.ATTRIBUTE_NODE:
+            return "Attribute Node";
+        case Node.TEXT_NODE:
+            return "Text Node";
+        case Node.CDATA_SECTION_NODE:
+            return "CDATA Section Node";
+        case Node.ENTITY_REFERENCE_NODE:
+            return "Entity Reference Node";
+        case Node.ENTITY_NODE:
+            return "Entity Node";
+        case Node.PROCESSING_INSTRUCTION_NODE:
+            return "Processing Instruction Node";
+        case Node.COMMENT_NODE:
+            return "Comment Node";
+        case Node.DOCUMENT_NODE:
+            return "Document Node";
+        case Node.DOCUMENT_TYPE_NODE:
+            return "Document Type Node";
+        case Node.DOCUMENT_FRAGMENT_NODE:
+            return "Document Fragment Node";
+        case Node.NOTATION_NODE:
+            return "Notation Node";
+        default:
+            return "Unknown Node Type";
+        }
     }
 
     // Convenience functions

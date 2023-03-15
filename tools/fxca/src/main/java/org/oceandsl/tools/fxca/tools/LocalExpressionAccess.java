@@ -42,11 +42,6 @@ public class LocalExpressionAccess {
     //
     // This class collects the parameters for looking for these values.
 
-    public record LocalAccessParameters(Predicate<Node> blockNodeTypeCheckPredicate,
-            Predicate<Node> outerDelimiterPredicate, Predicate<Node> innerDelimiterPredicate,
-            Function<Node, String> extractName) {
-    }
-
     public enum accessType {
         COMMON_BLOCK, LOCAL_VARIABLE, OPERATION_PARAMETER, OPERATION_CALL
     }
@@ -183,6 +178,22 @@ public class LocalExpressionAccess {
         }
 
         return NodeProcessingUtils.nameOfCalledFunction(referenceNode) + suffix;
+    }
+
+    public static class LocalAccessParameters {
+        private final Predicate<Node> blockNodeTypeCheckPredicate;
+        private final Predicate<Node> outerDelimiterPredicate;
+        private final Predicate<Node> innerDelimiterPredicate;
+        private final Function<Node, String> extractName;
+
+        LocalAccessParameters(final Predicate<Node> blockNodeTypeCheckPredicate,
+                final Predicate<Node> outerDelimiterPredicate, final Predicate<Node> innerDelimiterPredicate,
+                final Function<Node, String> extractName) {
+            this.blockNodeTypeCheckPredicate = blockNodeTypeCheckPredicate;
+            this.outerDelimiterPredicate = outerDelimiterPredicate;
+            this.innerDelimiterPredicate = innerDelimiterPredicate;
+            this.extractName = extractName;
+        }
     }
 
 }
