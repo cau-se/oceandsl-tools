@@ -21,21 +21,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
-import org.oceandsl.analysis.code.stages.CallerCalleeFixPathStage;
-import org.oceandsl.analysis.code.stages.CallerCalleeMakeLowerCaseStage;
-import org.oceandsl.analysis.code.stages.CsvReaderStage;
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
-import org.oceandsl.analysis.code.stages.data.CallerCalleeFactory;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.generic.EModuleMode;
-import org.oceandsl.analysis.generic.stages.StringFileWriterSink;
-import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
-import org.oceandsl.tools.sar.signature.processor.ModuleBasedSignatureProcessor;
-import org.oceandsl.tools.sar.stages.calls.CleanupComponentSignatureStage;
-import org.oceandsl.tools.sar.stages.calls.OperationAndCall4StaticDataStage;
 import org.slf4j.Logger;
 
 import kieker.analysis.architecture.recovery.AssemblyModelAssembler;
@@ -56,8 +41,25 @@ import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypePackage;
+
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
+
+import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
+import org.oceandsl.analysis.code.stages.CallerCalleeFixPathStage;
+import org.oceandsl.analysis.code.stages.CallerCalleeMakeLowerCaseStage;
+import org.oceandsl.analysis.code.stages.CsvReaderStage;
+import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeFactory;
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.analysis.generic.stages.StringFileWriterSink;
+import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.ModuleBasedSignatureProcessor;
+import org.oceandsl.tools.sar.stages.calls.CleanupComponentSignatureStage;
+import org.oceandsl.tools.sar.stages.calls.OperationAndCall4StaticDataStage;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.

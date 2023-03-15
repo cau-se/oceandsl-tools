@@ -29,9 +29,10 @@ import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
  */
 public class CleanupDataflowComponentSignatureStage extends AbstractFilter<OperationStorage> {
 
+    private static final String UNKNOWN = "<unknown>";
+
     private final OutputPort<String> errorMessageOutputPort = this.createOutputPort(String.class);
 
-    private static final String UNKNOWN = "<unknown>";
     private final List<AbstractSignatureProcessor> processors;
 
     public CleanupDataflowComponentSignatureStage(final List<AbstractSignatureProcessor> processors) {

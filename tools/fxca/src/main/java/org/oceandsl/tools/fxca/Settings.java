@@ -28,7 +28,7 @@ import org.oceandsl.analysis.generic.validators.PathIsReadableValidator;
 
 /**
  * @author Reiner Jung
- *
+ * @since 1.3.0
  */
 public class Settings {
 

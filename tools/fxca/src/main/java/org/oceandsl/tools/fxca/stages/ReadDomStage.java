@@ -24,6 +24,13 @@ import org.w3c.dom.Document;
 
 import teetime.stage.basic.AbstractTransformation;
 
+/**
+ *
+ * @author Henning Schnoor -- initial contribution
+ * @author Reiner Jung
+ *
+ * @since 1.3.0
+ */
 public class ReadDomStage extends AbstractTransformation<Path, Document> {
 
     @Override

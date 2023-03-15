@@ -18,10 +18,12 @@ package org.oceandsl.tools.fxca.tools;
 import java.util.regex.Pattern;
 
 /**
+ * Process path uris.
+ *
  *
  * @author Reiner Jung
- * @since 1.4.0
  *
+ * @since 1.3.0
  */
 public class PatternUriProcessor implements IUriProcessor {
 
