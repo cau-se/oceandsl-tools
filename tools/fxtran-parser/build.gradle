@@ -36,8 +36,6 @@ project.ext.localRemote = { aProjectName ->
 }
 
 
-sourceCompatibility = '1.17'
-
 
 repositories {
 	mavenCentral()
