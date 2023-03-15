@@ -74,8 +74,8 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee>
     }
 
     private class FullyQualifiedOperation {
-        public String component;
-        public String operation;
+        private String component;
+        private String operation;
     }
 
 }

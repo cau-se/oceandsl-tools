@@ -97,8 +97,8 @@ public class StorageDeploymentModelAssembler extends AbstractModelAssembler impl
      *
      * @param deploymentContext
      *            context the deploymentComponents are stored in
-     * @param dataTransferObject
-     *            TransferObject containing all dataflow information in one step.
+     * @param event
+     *            storage event
      * @return file component created and stored in the deployment model
      */
     private DeployedComponent createDeployedComponent(final DeploymentContext deploymentContext,

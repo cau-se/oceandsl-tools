@@ -73,8 +73,8 @@ public class CleanupDataflowComponentSignatureStage extends AbstractFilter<Opera
     }
 
     private class Entry {
-        public String component;
-        public String element;
+        private String component;
+        private String element;
     }
 
 }

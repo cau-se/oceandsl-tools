@@ -113,19 +113,19 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
                 this.logger.error("Model file {} is not executable", this.settings.getModelExecutable());
                 return false;
             }
-        } else {
-            this.settings.getInputPaths().forEach(path -> {
-                if (!Files.isDirectory(path)) {
-                    this.logger.error("Input path {} is not a directory", path.toString());
-                } else {
-                    this.settings.getInputFiles().add(path.toFile());
-                }
-            });
-            if (this.settings.getInputFiles().isEmpty()) {
-                this.logger.error("No valid input directories found.");
-                return false;
-            }
         }
+        this.settings.getInputPaths().forEach(path -> {
+            if (!Files.isDirectory(path)) {
+                this.logger.error("Input path {} is not a directory", path.toString());
+            } else {
+                this.settings.getInputFiles().add(path.toFile());
+            }
+        });
+        if (this.settings.getInputFiles().isEmpty()) {
+            this.logger.error("No valid input directories found.");
+            return false;
+        }
+
         if (this.settings.getOutputDirectory() != null) {
             if (this.settings.getOutputDirectory().getParent() == null) {
                 if (!Files.isDirectory(this.settings.getOutputDirectory())) {
