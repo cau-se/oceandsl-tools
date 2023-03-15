@@ -58,7 +58,7 @@ public class NodeProcessingUtils {
 
     public static Predicate<Node> hasName(final String name) {
         return node -> {
-            if (node == null) { // TODO this should never be null
+            if (node == null) { // this happens occasionally, but should not happen
                 return false;
             }
             return name.equals(node.getNodeName());
@@ -241,22 +241,22 @@ public class NodeProcessingUtils {
         return selectedNodes;
     }
 
-    public static String getNameOfOperation(final Node operationStatementNode) {
-        if (NodePredicateUtils.isSubroutineStatement.test(operationStatementNode)) {
-            return NodeProcessingUtils.getNameOfOperation(operationStatementNode, NodePredicateUtils.isSubroutineName);
-        } else if (NodePredicateUtils.isFunctionStatement.test(operationStatementNode)) {
-            return NodeProcessingUtils.getNameOfOperation(operationStatementNode, NodePredicateUtils.isFunctionName);
-        } else if (NodePredicateUtils.isEntryStatement.test(operationStatementNode)) {
-            return NodeProcessingUtils.getNameOfOperation(operationStatementNode, NodePredicateUtils.isEntryName);
-        } else if (NodePredicateUtils.isProgramStatement.test(operationStatementNode)) {
+    public static String getNameOfOperation(final Node node) {
+        if (NodePredicateUtils.isSubroutineStatement.test(node)) {
+            return NodeProcessingUtils.getNameOfOperation(node, NodePredicateUtils.isSubroutineName);
+        } else if (NodePredicateUtils.isFunctionStatement.test(node)) {
+            return NodeProcessingUtils.getNameOfOperation(node, NodePredicateUtils.isFunctionName);
+        } else if (NodePredicateUtils.isEntryStatement.test(node)) {
+            return NodeProcessingUtils.getNameOfOperation(node, NodePredicateUtils.isEntryName);
+        } else if (NodePredicateUtils.isProgramStatement.test(node)) {
             return NodeProcessingUtils.ROOT_PROGRAM;
         }
 
         throw new IllegalArgumentException("Node is not a function, subroutine, entry or program statement.");
     }
 
-    private static String getNameOfOperation(final Node operationStatementNode, final Predicate<Node> namePredicate) {
-        final Set<Node> nameNodes = NodeProcessingUtils.allDescendents(operationStatementNode, namePredicate, true);
+    private static String getNameOfOperation(final Node node, final Predicate<Node> predicate) {
+        final Set<Node> nameNodes = NodeProcessingUtils.allDescendents(node, predicate, true);
         return NodeProcessingUtils.getName(nameNodes.iterator().next());
     }
 
@@ -267,7 +267,21 @@ public class NodeProcessingUtils {
         return littleNNode.getTextContent().toLowerCase(Locale.getDefault());
     }
 
-    private static List<Pair<String, String>> operationCalls(final Node node, final Predicate<Node> callPredicate,
+    public static List<Pair<String, String>> findSubroutineCalls(final Node node)
+            throws ParserConfigurationException, SAXException, IOException {
+        return NodeProcessingUtils.findOperationCalls(node,
+                NodePredicateUtils.isCallStatement.and(NodePredicateUtils.isLocalAccess.negate()),
+                subroutineCall -> NodeProcessingUtils.nameOfCalledOperation(subroutineCall));
+    }
+
+    public static List<Pair<String, String>> findFunctionCalls(final Node node)
+            throws ParserConfigurationException, SAXException, IOException {
+        return NodeProcessingUtils.findOperationCalls(node,
+                NodePredicateUtils.namedExpressionAccess.and(NodePredicateUtils.isLocalAccess.negate()),
+                functionCall -> NodeProcessingUtils.nameOfCalledFunction(functionCall));
+    }
+
+    private static List<Pair<String, String>> findOperationCalls(final Node node, final Predicate<Node> callPredicate,
             final Function<Node, String> calledOperation) {
         final Set<Pair<String, String>> result = new HashSet<>(); // Check for double entries
         final Set<Node> callStatements = NodeProcessingUtils.allDescendents(node, callPredicate, true);
@@ -280,27 +294,7 @@ public class NodeProcessingUtils {
         return ListTools.ofM(result, Pair.getComparatorFirstSecond());
     }
 
-    public static List<Pair<String, String>> subroutineCalls(final Node node)
-            throws ParserConfigurationException, SAXException, IOException {
-        return NodeProcessingUtils.operationCalls(node,
-                NodePredicateUtils.isCallStatement.and(NodePredicateUtils.isLocalAccess.negate()),
-                subroutineCall -> NodeProcessingUtils.nameOfCalledOperation(subroutineCall));
-    }
-
-    public static List<Pair<String, String>> functionCalls(final Node node)
-            throws ParserConfigurationException, SAXException, IOException {
-        return NodeProcessingUtils.operationCalls(node,
-                NodePredicateUtils.namedExpressionAccess.and(NodePredicateUtils.isLocalAccess.negate()),
-                functionCall -> NodeProcessingUtils.nameOfCalledFunction(functionCall));
-    }
-
-    /** ---------------------------------- */
-
-    public static Node findContainingStatement(final Node parent, final Predicate<Node> condition) {
-        return NodeProcessingUtils.findContainingStatement(parent, condition, null);
-    }
-
-    public static Node findContainingStatement(final Node parent, final Predicate<Node> condition,
+    private static Node findContainingStatement(final Node parent, final Predicate<Node> condition,
             final List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes) {
 
         final Predicate<Node> hasSuchANodeAsLeftSibling = node -> NodeProcessingUtils.hasLeftSibling(node, condition,
@@ -308,11 +302,11 @@ public class NodeProcessingUtils {
         final Node siblingOfSuchNode = NodeProcessingUtils.firstAncestor(parent, hasSuchANodeAsLeftSibling,
                 !condition.test(parent));
 
-        if (siblingOfSuchNode == null) {
+        if (siblingOfSuchNode != null) {
+            return NodeProcessingUtils.firstLeftSibling(siblingOfSuchNode, condition, true, paranthesisTypes);
+        } else {
             return null;
         }
-
-        return NodeProcessingUtils.firstLeftSibling(siblingOfSuchNode, condition, true, paranthesisTypes);
     }
 
     private static String getNameOfContainingOperation(final Node node) {
@@ -349,11 +343,14 @@ public class NodeProcessingUtils {
             final Node firstChild = node.getFirstChild();
             final Node firstGrandChild = firstChild.getFirstChild();
             if (!NodePredicateUtils.isBigN.test(firstChild)) {
-                throw new IllegalArgumentException("named expression with unexpected type of first child.");
+                throw new IllegalArgumentException(String.format(
+                        "Expected <N> in named expression, but found %s as first child.", firstChild.getNodeName()));
             }
 
             if (!NodePredicateUtils.isSmallN.test(firstGrandChild)) {
-                throw new IllegalArgumentException("named expression with unexpected type of first grandchild.");
+                throw new IllegalArgumentException(
+                        String.format("Expected <n> in named expression, but found %s as first gand child.",
+                                firstGrandChild.getNodeName()));
             }
 
             if (firstGrandChild.getChildNodes().getLength() > 1) {
