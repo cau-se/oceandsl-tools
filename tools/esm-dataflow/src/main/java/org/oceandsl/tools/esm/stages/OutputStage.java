@@ -22,11 +22,11 @@ public class OutputStage extends AbstractConsumerStage<Output>{
 	protected void execute(Output element) throws Exception {
 		
 		 try {
-			 File filedf = new File(outputPath.toString()+"/"+"dataflow.txt");
+			 File filedf = new File(outputPath.toString()+"/"+"dataflow.csv");
 			 filedf.createNewFile();
-			 File filefc = new File(outputPath.toString()+"/"+"filecontent.txt");
+			 File filefc = new File(outputPath.toString()+"/"+"filecontent.csv");
 			 filefc.createNewFile();
-			 File filecb = new File(outputPath.toString()+"/"+"commonblocks.txt");
+			 File filecb = new File(outputPath.toString()+"/"+"commonblocks.csv");
 			 filecb.createNewFile();
 	         FileWriter writerdf = new FileWriter(filedf);
 	         FileWriter writerfc = new FileWriter(filefc);
