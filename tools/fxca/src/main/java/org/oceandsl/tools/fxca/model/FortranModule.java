@@ -17,7 +17,9 @@ package org.oceandsl.tools.fxca.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -50,6 +52,10 @@ public class FortranModule {
     private final String fileName;
     @Getter
     private final Collection<Pair<Pair<FortranModule, String>, Pair<FortranModule, String>>> calls = new ArrayList<>();
+    @Getter
+    private final Map<String, CommonBlock> commonBlocks = new HashMap<>();
+    @Getter
+    private final Set<String> variables = new HashSet<>();
 
     public FortranModule(final String moduleName, final String fileName, final boolean namedModule,
             final Document document) {

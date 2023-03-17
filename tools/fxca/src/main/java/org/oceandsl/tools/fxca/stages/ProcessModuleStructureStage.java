@@ -31,6 +31,7 @@ import org.xml.sax.SAXException;
 
 import teetime.stage.basic.AbstractTransformation;
 
+import org.oceandsl.tools.fxca.model.CommonBlock;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.tools.IUriProcessor;
@@ -69,8 +70,69 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
         this.computeUsedModels(module, documentElement);
         this.computeOperationDeclarations(module, documentElement);
+        this.computeCommonBlocks(module, documentElement);
+        this.computeInternalVariables(module, documentElement);
+        this.computeInternalDimensionVariables(module, documentElement);
 
         this.project.getModules().put(module.getModuleName(), module);
+    }
+
+    private void computeInternalVariables(final FortranModule module, final Element documentElement)
+            throws ParserConfigurationException, SAXException, IOException {
+        final Set<Node> declarationStatements = this.getDescendentAttributes(documentElement,
+                NodePredicateUtils.isTDeclStmt, operationNode -> operationNode);
+        declarationStatements.forEach(statement -> {
+            final Node declarationElements = statement.getChildNodes().item(2);
+            for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
+                final Node declarationObject = declarationElements.getChildNodes().item(i);
+                if ("EN-decl".equals(declarationObject.getNodeName())) {
+                    final String objectName = declarationObject.getFirstChild().getFirstChild().getFirstChild()
+                            .getTextContent();
+                    module.getVariables().add(objectName.toLowerCase(Locale.getDefault()));
+                }
+            }
+        });
+    }
+
+    private void computeInternalDimensionVariables(final FortranModule module, final Element documentElement)
+            throws ParserConfigurationException, SAXException, IOException {
+        final Set<Node> declarationStatements = this.getDescendentAttributes(documentElement,
+                NodePredicateUtils.isDimStmt, operationNode -> operationNode);
+        declarationStatements.forEach(statement -> {
+            final Node declarationElements = statement.getChildNodes().item(1);
+            for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
+                final Node declarationObject = declarationElements.getChildNodes().item(i);
+                if ("EN-decl".equals(declarationObject.getNodeName())) {
+                    final String objectName = declarationObject.getFirstChild().getFirstChild().getFirstChild()
+                            .getTextContent();
+                    module.getVariables().add(objectName.toLowerCase(Locale.getDefault()));
+                }
+            }
+        });
+    }
+
+    private void computeCommonBlocks(final FortranModule module, final Element documentElement)
+            throws ParserConfigurationException, SAXException, IOException {
+        final Set<Node> commonStatements = this.getDescendentAttributes(documentElement,
+                NodePredicateUtils.isCommonStatement, operationNode -> operationNode);
+        commonStatements.forEach(statement -> {
+            final Node commonBlockName = statement.getChildNodes().item(1);
+            final String blockName = commonBlockName.getFirstChild().getTextContent().toLowerCase(Locale.getDefault());
+            CommonBlock commonBlock = module.getCommonBlocks().get(blockName);
+            if (commonBlock == null) {
+                commonBlock = new CommonBlock(blockName);
+            }
+            final Node commonBlockElements = statement.getChildNodes().item(3);
+            for (int i = 0; i < commonBlockElements.getChildNodes().getLength(); i++) {
+                final Node commonBlockObject = commonBlockElements.getChildNodes().item(i);
+                if ("common-block-obj".equals(commonBlockObject.getNodeName())) {
+                    final String objectName = commonBlockObject.getFirstChild().getFirstChild().getFirstChild()
+                            .getTextContent();
+                    commonBlock.getElements().add(objectName.toLowerCase(Locale.getDefault()));
+                }
+            }
+            module.getCommonBlocks().put(blockName, commonBlock);
+        });
     }
 
     @Override

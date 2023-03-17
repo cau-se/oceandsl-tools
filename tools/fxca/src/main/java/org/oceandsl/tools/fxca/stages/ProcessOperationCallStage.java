@@ -18,6 +18,7 @@ package org.oceandsl.tools.fxca.stages;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -96,17 +97,29 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
                 this.logger.info("Caller not found for {}", call.getFirst());
             }
             if (callee == null) {
-                try {
-                    notFoundTable.addRow(caller.first.getFileName(), caller.first.getModuleName(), caller.second,
-                            call.second);
-                } catch (final ValueConversionErrorException e) {
-                    this.logger.error("Cannot add row to callee not found table: {}", e.getLocalizedMessage());
+                if (!this.isCommonBlockVariable(module, call.getSecond())
+                        && !this.isVariableReference(module, call.getSecond())) {
+                    try {
+                        notFoundTable.addRow(caller.first.getFileName(), caller.first.getModuleName(), caller.second,
+                                call.second);
+                    } catch (final ValueConversionErrorException e) {
+                        this.logger.error("Cannot add row to callee not found table: {}", e.getLocalizedMessage());
+                    }
+                    this.logger.info("Callee not found for {}", call.getSecond());
                 }
-                this.logger.info("Callee not found for {}", call.getSecond());
             } else {
                 module.getCalls().add(new Pair<>(caller, callee));
             }
         });
+    }
+
+    private boolean isVariableReference(final FortranModule module, final String variableName) {
+        return module.getVariables().contains(variableName.toLowerCase(Locale.getDefault()));
+    }
+
+    private boolean isCommonBlockVariable(final FortranModule module, final String variableName) {
+        return module.getCommonBlocks().values().stream()
+                .anyMatch(block -> block.getElements().contains(variableName.toLowerCase(Locale.getDefault())));
     }
 
     public OutputPort<Table> getNotFoundOutputPort() {
