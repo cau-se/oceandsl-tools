@@ -18,6 +18,7 @@ package org.oceandsl.tools.fxca.stages;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,6 +46,15 @@ import org.oceandsl.tools.fxca.tools.Pair;
 public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
 
     private final OutputPort<Table> notFoundOutputPort = this.createOutputPort(Table.class);
+    private FortranModule defaultModule;
+
+    public ProcessOperationCallStage(final String defaultModuleName) {
+        if (defaultModuleName != null) {
+            this.defaultModule = new FortranModule(defaultModuleName, defaultModuleName, true, null);
+        } else {
+            this.defaultModule = null;
+        }
+    }
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
@@ -57,6 +67,10 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
             this.processSubroutines(project, module, element, notFoundTable);
             this.processFunctions(project, module, element, notFoundTable);
         });
+
+        if (this.defaultModule != null) {
+            project.getModules().put(this.defaultModule.getModuleName(), this.defaultModule);
+        }
 
         this.outputPort.send(project);
         this.notFoundOutputPort.send(notFoundTable);
@@ -96,17 +110,35 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
                 this.logger.info("Caller not found for {}", call.getFirst());
             }
             if (callee == null) {
-                try {
-                    notFoundTable.addRow(caller.first.getFileName(), caller.first.getModuleName(), caller.second,
-                            call.second);
-                } catch (final ValueConversionErrorException e) {
-                    this.logger.error("Cannot add row to callee not found table: {}", e.getLocalizedMessage());
+                if (!this.isCommonBlockVariable(module, call.getSecond())
+                        && !this.isVariableReference(module, call.getSecond())) {
+                    if (this.defaultModule != null) {
+                        this.defaultModule.getSpecifiedOperations().add(call.getSecond());
+                        final Pair<FortranModule, String> defaultCallee = new Pair<>(this.defaultModule,
+                                call.getSecond());
+                        module.getCalls().add(new Pair<>(caller, defaultCallee));
+                    }
+                    try {
+                        notFoundTable.addRow(caller.first.getFileName(), caller.first.getModuleName(), caller.second,
+                                call.second);
+                    } catch (final ValueConversionErrorException e) {
+                        this.logger.error("Cannot add row to callee not found table: {}", e.getLocalizedMessage());
+                    }
+                    this.logger.info("Callee not found for {}", call.getSecond());
                 }
-                this.logger.info("Callee not found for {}", call.getSecond());
             } else {
                 module.getCalls().add(new Pair<>(caller, callee));
             }
         });
+    }
+
+    private boolean isVariableReference(final FortranModule module, final String variableName) {
+        return module.getVariables().contains(variableName.toLowerCase(Locale.getDefault()));
+    }
+
+    private boolean isCommonBlockVariable(final FortranModule module, final String variableName) {
+        return module.getCommonBlocks().values().stream()
+                .anyMatch(block -> block.getElements().contains(variableName.toLowerCase(Locale.getDefault())));
     }
 
     public OutputPort<Table> getNotFoundOutputPort() {

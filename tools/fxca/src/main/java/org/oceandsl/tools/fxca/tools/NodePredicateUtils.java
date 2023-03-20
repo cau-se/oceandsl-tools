@@ -55,6 +55,7 @@ public class NodePredicateUtils {
     public static Predicate<Node> isBigN = NodeProcessingUtils.hasName("N");
     public static Predicate<Node> isArgN = NodeProcessingUtils.hasName("arg-N");
     public static Predicate<Node> isTDeclStmt = NodeProcessingUtils.hasName("T-decl-stmt");
+    public static Predicate<Node> isDimStmt = NodeProcessingUtils.hasName("DIM-stmt");
     public static Predicate<Node> isEnDcl = NodeProcessingUtils.hasName("EN-decl");
     public static Predicate<Node> isSmallN = NodeProcessingUtils.hasName("n");
     public static Predicate<Node> isElementLT = NodeProcessingUtils.hasName("element-LT");
