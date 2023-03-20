@@ -42,6 +42,10 @@ public class Settings {
                     ParentPathIsWriteableValidator.class, ParentPathIsDirectoryValidator.class })
     private Path outputDirectoryPath;
 
+    @Parameter(names = { "-d",
+            "--default-component" }, required = false, description = "In case callees are identified that do not have an implementation in the code, assign the callee to this operation.")
+    private String defaultComponent;
+
     @Parameter(names = { "-f",
             "--flat" }, required = false, description = "Scan source directories flat, i.e. not in recusrive mode.")
     private boolean flat;
@@ -56,5 +60,9 @@ public class Settings {
 
     public boolean isFlat() {
         return this.flat;
+    }
+
+    public String getDefaultComponent() {
+        return this.defaultComponent;
     }
 }

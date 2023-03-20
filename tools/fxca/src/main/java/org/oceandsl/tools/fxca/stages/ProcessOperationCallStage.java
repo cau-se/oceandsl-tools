@@ -46,6 +46,15 @@ import org.oceandsl.tools.fxca.tools.Pair;
 public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
 
     private final OutputPort<Table> notFoundOutputPort = this.createOutputPort(Table.class);
+    private FortranModule defaultModule;
+
+    public ProcessOperationCallStage(final String defaultModuleName) {
+        if (defaultModuleName != null) {
+            this.defaultModule = new FortranModule(defaultModuleName, defaultModuleName, true, null);
+        } else {
+            this.defaultModule = null;
+        }
+    }
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
@@ -58,6 +67,10 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
             this.processSubroutines(project, module, element, notFoundTable);
             this.processFunctions(project, module, element, notFoundTable);
         });
+
+        if (this.defaultModule != null) {
+            project.getModules().put(this.defaultModule.getModuleName(), this.defaultModule);
+        }
 
         this.outputPort.send(project);
         this.notFoundOutputPort.send(notFoundTable);
@@ -99,6 +112,12 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
             if (callee == null) {
                 if (!this.isCommonBlockVariable(module, call.getSecond())
                         && !this.isVariableReference(module, call.getSecond())) {
+                    if (this.defaultModule != null) {
+                        this.defaultModule.getSpecifiedOperations().add(call.getSecond());
+                        final Pair<FortranModule, String> defaultCallee = new Pair<>(this.defaultModule,
+                                call.getSecond());
+                        module.getCalls().add(new Pair<>(caller, defaultCallee));
+                    }
                     try {
                         notFoundTable.addRow(caller.first.getFileName(), caller.first.getModuleName(), caller.second,
                                 call.second);
