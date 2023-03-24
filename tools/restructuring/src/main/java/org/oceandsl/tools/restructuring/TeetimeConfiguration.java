@@ -8,7 +8,7 @@ import org.oceandsl.analysis.architecture.stages.ModelRepositoryReaderStage;
 import org.oceandsl.analysis.architecture.stages.ModelSource;
 import org.oceandsl.tools.restructuring.stages.Restructurer;
 import org.oceandsl.tools.restructuring.stages.SinkStage;
-import org.oceandsl.tools.restructuring.stages.exec.TraceRestorator;
+import org.oceandsl.tools.restructuring.stages.TraceRestorator;
 
 
 /**

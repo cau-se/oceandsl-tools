@@ -1,4 +1,4 @@
-package org.oceandsl.tools.restructuring.stages.exec;
+package org.oceandsl.tools.restructuring.stages;
 
 import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractMapper;
 import org.oceandsl.tools.restructuring.stages.exec.mapper.ComponentsMapper;
