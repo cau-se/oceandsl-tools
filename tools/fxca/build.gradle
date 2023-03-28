@@ -16,7 +16,7 @@ archiveClassifier.set('')
 archiveVersion.set('')
 }
 
-mainClassName = 'cau.agse.hs.staticfortran.main.ParseXML'
+mainClassName = 'org.oceandsl.tools.fxca.FxcaMain'
 
 jar {
 	manifest {
