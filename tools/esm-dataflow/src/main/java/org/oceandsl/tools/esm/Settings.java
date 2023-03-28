@@ -16,7 +16,6 @@
 package org.oceandsl.tools.esm;
 
 import java.nio.file.Path;
-import java.util.List;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;

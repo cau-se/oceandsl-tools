@@ -194,9 +194,9 @@ public class NodeProcessingUtils {
         boolean inParanthesisInterval = false;
         // End if we do not have anywhere to search, or we have reached the limit (where "-1" counts
         // as "no limit").
-        while ((current != null) && ((result.size() < maxElementsToFind) || (maxElementsToFind == -1))) {
+        while (current != null && (result.size() < maxElementsToFind || maxElementsToFind == -1)) {
 
-            if (!inParanthesisInterval && condition.test(current) && ((current != parent) || includeSelf)) {
+            if (!inParanthesisInterval && condition.test(current) && (current != parent || includeSelf)) {
                 result.add(current);
             }
 
@@ -353,11 +353,11 @@ public class NodeProcessingUtils {
 
         final short type = node.getNodeType();
 
-        if ((type == Node.TEXT_NODE) && (node.getChildNodes().getLength() > 0)) {
+        if (type == Node.TEXT_NODE && node.getChildNodes().getLength() > 0) {
             throw new IllegalArgumentException("text node with children");
         }
 
-        if ("call-stmt".equals(node.getNodeName()) && (node.getChildNodes().getLength() < 2)) {
+        if ("call-stmt".equals(node.getNodeName()) && node.getChildNodes().getLength() < 2) {
             NodeProcessingUtils.printNode(node, 0);
             throw new IllegalArgumentException("call statement with < 2 children");
         }

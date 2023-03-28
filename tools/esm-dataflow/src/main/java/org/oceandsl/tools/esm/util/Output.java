@@ -7,7 +7,7 @@ public class Output {
     private List<String>dataflow;
     private List<String>fileContent;
     private List<String>commonBlocks;
-    
+
     public List<String> getDataflow() {
         return dataflow;
     }

@@ -11,7 +11,6 @@ import org.oceandsl.tools.esm.util.Output;
 
 public class OutputStage extends AbstractConsumerStage<Output> {
 
-
     private final Path outputPath;
 
     public OutputStage(final Path output) {

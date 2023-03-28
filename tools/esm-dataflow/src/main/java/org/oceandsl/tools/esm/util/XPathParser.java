@@ -299,7 +299,6 @@ public class XPathParser {
     }
 
     public static List<Node> getPotentialFuncs(final Node assigningContent) {
-
         final List<Node> result = new ArrayList<>();
         final Element e = (Element) assigningContent;
         // check if named expressions exist

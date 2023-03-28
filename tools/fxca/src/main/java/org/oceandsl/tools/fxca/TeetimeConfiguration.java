@@ -53,7 +53,8 @@ public class TeetimeConfiguration extends Configuration {
         /** computing stages. */
         final ReadDomStage readDomStage = new ReadDomStage();
         final ProcessModuleStructureStage processModuleStructureStage = new ProcessModuleStructureStage(uriProcessor);
-        final ProcessOperationCallStage processOperationCallStage = new ProcessOperationCallStage();
+        final ProcessOperationCallStage processOperationCallStage = new ProcessOperationCallStage(
+                settings.getDefaultComponent());
 
         final Distributor<FortranProject> projectDistributor = new Distributor<>(new CopyByReferenceStrategy());
 

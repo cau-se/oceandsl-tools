@@ -86,6 +86,12 @@ public class CsvReaderStage<T extends ICsvRecord> extends AbstractProducerStage<
             final String[] values = line.split(this.splitSymbol);
             for (int i = 0; i < values.length; i++) {
                 values[i] = values[i].trim();
+                if (values[i].startsWith("\"")) {
+                    values[i] = values[i].substring(1);
+                }
+                if (values[i].endsWith("\"")) {
+                    values[i] = values[i].substring(0, values[i].length() - 1);
+                }
             }
             if (values.length == headerLabels.length) {
                 this.outputPort.send(this.recordFactory.createRecord(headerLabels, values));
