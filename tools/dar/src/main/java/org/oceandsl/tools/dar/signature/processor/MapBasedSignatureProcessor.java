@@ -48,8 +48,8 @@ public class MapBasedSignatureProcessor extends AbstractSignatureProcessor {
             this.logger.info("Reading map file {}", componentMapFile.toString());
 
             final MapFileReader<String, String> mapFileReader = new MapFileReader<>(componentMapFile, separator,
-                    this.componentMap, new StringValueConverter(caseInsensitive, 0),
-                    new StringValueConverter(caseInsensitive, 1));
+                    this.componentMap, new StringValueConverter(caseInsensitive, 1),
+                    new StringValueConverter(caseInsensitive, 0));
             mapFileReader.read();
         }
     }
