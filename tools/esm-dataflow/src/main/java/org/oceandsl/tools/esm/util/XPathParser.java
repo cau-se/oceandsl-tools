@@ -1,61 +1,39 @@
 package org.oceandsl.tools.esm.util;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class XPathParser {
 
     /**
      * Return list of bodies of subroutines
      *
-     * @param xml
+     * @param document
      * @return return list of subroutine bodies
      */
-    public static List<List<Node>> getSubroutineContents(final String xml) {
-        final List<List<Node>> subRs = new ArrayList<List<Node>>();
-        final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        try {
-            final DocumentBuilder dbuilder = dbFactory.newDocumentBuilder();
-            final Document doc = dbuilder.parse(new InputSource(new StringReader(xml)));
-            doc.getDocumentElement().normalize();
-            final NodeList nList = doc.getElementsByTagName("subroutine-stmt");
+    public static List<List<Node>> getSubroutineContents(final Document document) {
+        final List<List<Node>> subRs = new ArrayList<>();
 
-            for (int i = 0; i < nList.getLength(); i++) {
-                Node node = nList.item(i);
-                final List<Node> currentNList = new ArrayList<Node>();
-                currentNList.add(node);
-                while (node.getNextSibling() != null
-                        && !node.getNextSibling().getNodeName().equals("end-subroutine-stmt")) {
-                    currentNList.add(node.getNextSibling());
-                    node = node.getNextSibling();
-                }
-                subRs.add(currentNList);
+        final NodeList nList = document.getElementsByTagName("subroutine-stmt");
 
+        for (int i = 0; i < nList.getLength(); i++) {
+            Node node = nList.item(i);
+            final List<Node> currentNList = new ArrayList<>();
+            currentNList.add(node);
+            while ((node.getNextSibling() != null)
+                    && !node.getNextSibling().getNodeName().equals("end-subroutine-stmt")) {
+                currentNList.add(node.getNextSibling());
+                node = node.getNextSibling();
             }
+            subRs.add(currentNList);
 
-        } catch (final ParserConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (final SAXException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
+
         return subRs;
 
     }
@@ -66,80 +44,45 @@ public class XPathParser {
      * @param xml
      * @return return list of functions bodies
      */
-    public static List<List<Node>> getFuncContents(final String xml) {
-        final List<List<Node>> subRs = new ArrayList();
-        final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        try {
-            final DocumentBuilder dbuilder = dbFactory.newDocumentBuilder();
-            final Document doc = dbuilder.parse(new InputSource(new StringReader(xml)));
-            doc.getDocumentElement().normalize();
-            final NodeList nList = doc.getElementsByTagName("function-stmt");
+    public static List<List<Node>> getFuncContents(final Document document) {
+        final List<List<Node>> subRs = new ArrayList<>();
+        final NodeList nList = document.getElementsByTagName("function-stmt");
 
-            for (int i = 0; i < nList.getLength(); i++) {
-                Node node = nList.item(i);
-                final List<Node> currentNList = new ArrayList();
-                currentNList.add(node);
-                while (node.getNextSibling() != null
-                        && node.getNextSibling().getNodeName().equals("end-function-stmt")) {
-                    currentNList.add(node.getNextSibling());
-                    node = node.getNextSibling();
-                }
-                subRs.add(currentNList);
-
+        for (int i = 0; i < nList.getLength(); i++) {
+            Node node = nList.item(i);
+            final List<Node> currentNList = new ArrayList<>();
+            currentNList.add(node);
+            while ((node.getNextSibling() != null) && node.getNextSibling().getNodeName().equals("end-function-stmt")) {
+                currentNList.add(node.getNextSibling());
+                node = node.getNextSibling();
             }
+            subRs.add(currentNList);
 
-        } catch (final ParserConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (final SAXException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
+
         return subRs;
     }
 
-    public static List<Node> getMain(final String xml) {
-        // List<List<Node>> subRs = new ArrayList();
-        final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        final List<Node> currentNList = new ArrayList();
-        try {
-            final DocumentBuilder dbuilder = dbFactory.newDocumentBuilder();
-            final Document doc = dbuilder.parse(new InputSource(new StringReader(xml)));
-            doc.getDocumentElement().normalize();
-            final NodeList nList = doc.getElementsByTagName("program-stmt");
+    public static List<Node> getMain(final Document document) {
+        final List<Node> currentNList = new ArrayList<>();
+        final NodeList nList = document.getElementsByTagName("program-stmt");
 
-            for (int i = 0; i < nList.getLength(); i++) {
-                Node node = nList.item(i);
+        for (int i = 0; i < nList.getLength(); i++) {
+            Node node = nList.item(i);
 
-                currentNList.add(node);
-                while (node.getNextSibling() != null
-                        && node.getNextSibling().getNodeName().equals("end-program-stmt")) {
-                    currentNList.add(node.getNextSibling());
-                    node = node.getNextSibling();
-                }
-                // subRs.add(currentNList);
-
+            currentNList.add(node);
+            while ((node.getNextSibling() != null) && node.getNextSibling().getNodeName().equals("end-program-stmt")) {
+                currentNList.add(node.getNextSibling());
+                node = node.getNextSibling();
             }
-
-        } catch (final ParserConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (final SAXException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
+
         return currentNList;
     }
 
     public static List<Node> getCallStmts(final List<Node> body) {
 
-        final List<Node> result = new ArrayList<Node>();
+        final List<Node> result = new ArrayList<>();
         for (final Node node : body) {
             if (node.getNodeName().equals("call-stmt")) {
                 result.add(node);
@@ -150,7 +93,7 @@ public class XPathParser {
     }
 
     public static List<Node> getCommonBlocks(final List<Node> body) {
-        final List<Node> result = new ArrayList<Node>();
+        final List<Node> result = new ArrayList<>();
         for (final Node node : body) {
             if (node.getNodeName().equals("common-stmt")) {
                 result.add(node);
@@ -161,7 +104,7 @@ public class XPathParser {
     }
 
     public static List<Node> getIfElseStmts(final List<Node> body) {
-        final List<Node> result = new ArrayList<Node>();
+        final List<Node> result = new ArrayList<>();
         for (final Node node : body) {
             if (node.getNodeName().equals("if-then-stmt")) {
                 result.add(node);
@@ -171,7 +114,7 @@ public class XPathParser {
     }
 
     public static List<Node> getSelectStmts(final List<Node> body) {
-        final List<Node> result = new ArrayList<Node>();
+        final List<Node> result = new ArrayList<>();
         for (final Node node : body) {
             if (node.getNodeName().equals("select-case-stmt")) {
                 result.add(node);
@@ -182,7 +125,7 @@ public class XPathParser {
     }
 
     public static List<Node> getLoopCtrlStmts(final List<Node> body) {
-        final List<Node> result = new ArrayList<Node>();
+        final List<Node> result = new ArrayList<>();
         for (final Node node : body) {
             if (node.getNodeName().equals("do-stmt")) {
                 result.add(node);
@@ -205,7 +148,7 @@ public class XPathParser {
     }
 
     public static List<Node> getAssignmentStmts(final List<Node> body) {
-        final List<Node> result = new ArrayList<Node>();
+        final List<Node> result = new ArrayList<>();
         for (final Node node : body) {
             if (node.getNodeName().equals("a-stmt")) {
                 result.add(node);
@@ -216,7 +159,7 @@ public class XPathParser {
     }
 
     public static List<String> callHasArgs(final Node callStmt) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         if (callStmt instanceof Element) {
             final Element e = (Element) callStmt;
             final NodeList args = e.getElementsByTagName("arg");
@@ -236,7 +179,7 @@ public class XPathParser {
     }
 
     public static List<String> getNamesFromStatement(final Node stmt) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         final Element e = (Element) stmt;
         final NodeList nameElems = e.getElementsByTagName("n");
 
@@ -254,7 +197,7 @@ public class XPathParser {
      * @return
      */
     public static String getAssignTargetIdentifier(final Node left) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         final Element e = (Element) left;
         final NodeList nameElems = e.getElementsByTagName("n");
 
@@ -266,7 +209,7 @@ public class XPathParser {
     }
 
     public static String getStructureConstructorIdentifier(final Node cons) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         final Element e = (Element) cons;
         final NodeList nameElems = e.getElementsByTagName("n");
 
@@ -278,7 +221,7 @@ public class XPathParser {
     }
 
     public static String getPartRefNodeIdentifier(final Node partRef) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         final Element e = (Element) partRef;
         final NodeList nameElems = e.getElementsByTagName("n");
 
@@ -290,7 +233,7 @@ public class XPathParser {
     }
 
     public static List<String> getArgumentList(final Node procedure) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         final Element e = (Element) procedure;
         final NodeList nameElems = e.getElementsByTagName("element");
 
@@ -357,7 +300,7 @@ public class XPathParser {
 
     public static List<Node> getPotentialFuncs(final Node assigningContent) {
 
-        final List<Node> result = new ArrayList<Node>();
+        final List<Node> result = new ArrayList<>();
         final Element e = (Element) assigningContent;
         // check if named expressions exist
         final NodeList nameExpr = e.getElementsByTagName("named-E");
@@ -385,7 +328,7 @@ public class XPathParser {
     }
 
     public static List<Node> getNonArgsFunc(final Node assigningContent) {
-        final List<Node> result = new ArrayList<Node>();
+        final List<Node> result = new ArrayList<>();
         final Element e = (Element) assigningContent;
         // check if named expressions exist
         final NodeList nameExpr = e.getElementsByTagName("named-E");
@@ -414,7 +357,7 @@ public class XPathParser {
     }
 
     public static List<Node> getNames(final Node assigningContent) {
-        final List<Node> result = new ArrayList<Node>();
+        final List<Node> result = new ArrayList<>();
         final Element e = (Element) assigningContent;
         final NodeList nameElems = e.getElementsByTagName("n");
 
@@ -426,7 +369,7 @@ public class XPathParser {
     }
 
     public static List<String> getArraysDecl(final List<List<Node>> bodies) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
 
         for (final List<Node> body : bodies) { // iterate throgh bodiees
             for (final Node node : body) { // get a body
@@ -466,7 +409,7 @@ public class XPathParser {
     // ------------------------------------
 
     public static List<String> getCommonVars(final Node commonBlock) {
-        final List<String> result = new ArrayList();
+        final List<String> result = new ArrayList<>();
         final Element commonBl = (Element) commonBlock;// cast
         final Element commonLt = (Element) commonBl.getElementsByTagName("common-block-obj-LT").item(0);// lt
         final NodeList names = commonLt.getElementsByTagName("n");// now names

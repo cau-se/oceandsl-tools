@@ -36,10 +36,10 @@ public class ReadDomStage extends AbstractTransformation<Path, Document> {
     @Override
     protected void execute(final Path path) throws Exception {
         final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        final Document doc = builder.parse(path.toFile());
-        doc.getDocumentElement().normalize();
+        final Document document = builder.parse(path.toFile());
+        document.getDocumentElement().normalize();
 
-        this.outputPort.send(doc);
+        this.outputPort.send(document);
     }
 
 }

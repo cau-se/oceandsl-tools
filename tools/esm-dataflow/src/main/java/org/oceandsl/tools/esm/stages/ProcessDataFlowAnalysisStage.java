@@ -1,76 +1,88 @@
+/***************************************************************************
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package org.oceandsl.tools.esm.stages;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.apache.commons.io.FilenameUtils;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import teetime.stage.basic.AbstractFilter;
+
 import org.oceandsl.tools.esm.util.Output;
 import org.oceandsl.tools.esm.util.XPathParser;
-import org.w3c.dom.Node;
-import teetime.framework.AbstractConsumerStage;
-import teetime.framework.OutputPort;
-import org.apache.commons.io.FilenameUtils;
+import org.oceandsl.tools.fxca.model.FortranProject;
+import org.oceandsl.tools.fxca.tools.IUriProcessor;
 
-public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> {
+public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject> {
 
     private final List<String> dataflow = new ArrayList<>();
     private final List<String> contentFile = new ArrayList<>();
-    private List<String> commonBlocksFile = new ArrayList<String>();
-    private HashMap<String, String> proceduresFilemap = new HashMap<String, String>();
+    private final List<String> commonBlocksFile = new ArrayList<>();
+    private final HashMap<String, String> proceduresFilemap = new HashMap<>();
+    private final Output out = new Output();
 
-    protected final OutputPort<Output> outputPort = this.createOutputPort();
+    private final IUriProcessor uriProcessor;
 
-    public OutputPort<Output> getOutputPort() {
-        return this.outputPort;
+    public ProcessDataFlowAnalysisStage(final IUriProcessor uriProcessor) {
+        this.uriProcessor = uriProcessor;
     }
 
     @Override
-    protected void execute(final List<File> files) throws Exception {
+    protected void execute(final FortranProject project) throws Exception {
+        project.getModules().values().forEach(module -> {
+            final Document document = module.getDocument();
 
-        // System.out.println("Files:"+ files.size());
-        final Output out = new Output();
-
-        for (final File file : files) {
-            // Extract xml
-            // System.out.println("File:"+ file.getAbsolutePath());
-            final String xml = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
             // Get main structures
-            final List<List<Node>> subRoutineBodies = XPathParser.getSubroutineContents(xml);
-            final List<List<Node>> functionBodies = XPathParser.getFuncContents(xml);
-            final List<Node> main = XPathParser.getMain(xml);
+            final List<List<Node>> subRoutineBodies = XPathParser.getSubroutineContents(document);
+            final List<List<Node>> functionBodies = XPathParser.getFuncContents(document);
+            final List<Node> main = XPathParser.getMain(document);
 
             // analyze
-            final String fileName = FilenameUtils.removeExtension(file.getName());
-            //String fileName = FilenameUtils.removeExtension(file.getName());
-            final List<String> dfInSub = this.analyzeSubRoutines(subRoutineBodies,fileName);
+            final String fileName = this.uriProcessor.process(document.getBaseURI());
+            final List<String> dfInSub = this.analyzeSubRoutines(subRoutineBodies, fileName);
             final List<String> dfInFunc = this.analyzeFunctions(functionBodies, fileName);
             final List<String> dfInMain = this.analyzeMain(main, fileName);
+
             // aggregate
             this.dataflow.addAll(dfInSub);
             this.dataflow.addAll(dfInFunc);
             this.dataflow.addAll(dfInMain);
-        }
+        });
+    }
 
-        out.setDataflow(this.dataflow);
-        out.setFileContent(this.contentFile);
+    @Override
+    protected void onTerminating() {
+        this.out.setDataflow(this.dataflow);
+        this.out.setFileContent(this.contentFile);
+        this.out.setCommonBlocks(this.commonBlocksFile);
 
-        out.setCommonBlocks(this.commonBlocksFile);
-        System.out.println("Done");
-
-        this.outputPort.send(out);
+        super.onTerminating();
     }
 
     private List<String> analyzeSubRoutines(final List<List<Node>> subRoutineBodies, final String fileId) {
+
         List<String> dataflowInSub = new ArrayList<>();
         final List<String> blackList = XPathParser.getArraysDecl(subRoutineBodies);
         for (final List<Node> body : subRoutineBodies) {
             final String name = XPathParser.getsubroutineId(body);
             final List<Node> commonBlocks = XPathParser.getCommonBlocks(body);
-
-            writeCommonBlocksName(commonBlocks, fileId);
+            this.writeCommonBlocksName(commonBlocks, fileId);
             System.out.println("size common " + commonBlocks.size());
             final String contentLine = "{" + fileId + "};{" + name + "};SUBROUTINE";
             this.contentFile.add(contentLine);
@@ -83,50 +95,35 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
     }
 
     private List<String> analyzeFunctions(final List<List<Node>> funcBodies, final String fileId) {
+
         List<String> dataflowInFunc = new ArrayList<>();
         final List<String> blackList = XPathParser.getArraysDecl(funcBodies);
         for (final List<Node> body : funcBodies) {
             final String name = XPathParser.getFunctionId(body);
             final List<Node> commonBlocks = XPathParser.getCommonBlocks(body);
-            writeCommonBlocksName(commonBlocks, fileId);
+            this.writeCommonBlocksName(commonBlocks, fileId);
             final String contentLine = "{" + fileId + "};{" + name + "};FUNCTION";
             this.contentFile.add(contentLine);
             this.proceduresFilemap.put(name, fileId);
 
             final String dataFlowLine = "{" + fileId + "};" + "{" + fileId + "};" + "{" + name + "};";
-            dataflowInFunc = analyzeExecutionPart(body, commonBlocks, blackList, dataFlowLine, fileId);
+            dataflowInFunc = this.analyzeExecutionPart(body, commonBlocks, blackList, dataFlowLine, fileId);
         }
         return dataflowInFunc;
     }
 
-    /**
-     *
-     */
     private List<String> analyzeMain(final List<Node> mainBody, final String fileId) {
-        List<String>dataflowInMain = new ArrayList<String>();
+        List<String> dataflowInMain = new ArrayList<>();
 
         final List<Node> commonBlocks = XPathParser.getCommonBlocks(mainBody);
-
         this.writeCommonBlocksName(commonBlocks, fileId);
 
-        for (final File file : files) {
-            // Extract xml
-            // System.out.println("File:"+ file.getAbsolutePath());
-            final String xml = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())));
-            // Get main structures
-            final List<List<Node>> subRoutineBodies = XPathParser.getSubroutineContents(xml);
-            final List<List<Node>> functionBodies = XPathParser.getFuncContents(xml);
-            final List<Node> main = XPathParser.getMain(xml);
-
-        //String dataFlowLine = "{"+fileId+"}"+";main";
-        String dataFlowLine = "{"+fileId+"};"+"{"+fileId+"};"+"main";
-        dataflowInMain = analyzeExecutionPart(mainBody, commonBlocks, null, dataFlowLine, fileId);
+        // String dataFlowLine = "{"+fileId+"}"+";main";
+        final String dataFlowLine = "{" + fileId + "};" + "{" + fileId + "};" + "main";
+        dataflowInMain = this.analyzeExecutionPart(mainBody, commonBlocks, null, dataFlowLine, fileId);
         return dataflowInMain;
     }
 
-    /**
-     *
-     */
     private List<String> analyzeExecutionPart(final List<Node> body, final List<Node> commonBlocks,
             final List<String> blacklist, final String dataFlowLine, final String caller) {
 
@@ -180,12 +177,9 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
         return dataflowExecPart;
     }
 
-    /**
-     *
-     */
     private List<String> analyzeCallStatements(final List<Node> callStatements, final List<Node> commonBlocList,
             final List<String> blacklist, final String caller) {
-        final List<String> dataflowLineRest = new ArrayList<String>();
+        final List<String> dataflowLineRest = new ArrayList<>();
 
         for (final Node callStmt : callStatements) {
             final List<String> args = XPathParser.callHasArgs(callStmt);
@@ -194,24 +188,22 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
                 final String fileId = this.proceduresFilemap.get(XPathParser.getCallStmtId(callStmt));
                 final String callee = XPathParser.getCallStmtId(callStmt);
                 final String line = fileId + ";" + fileId + ";" + callee + ";" + "WRITE";
+                // String line = "WRITE;{"+fileId+";"+callee+"}";
                 dataflowLineRest.add(line);
             }
         }
         return dataflowLineRest;
     }
 
-    /**
-     * bb
-     */
     private List<String> analyzeReadsFromStatements(final List<Node> stmts, final List<Node> commonBlocks,
             final List<String> blacklist, final String caller) {
-        final List<String> dataflowLineRest = new ArrayList<String>();
+        final List<String> dataflowLineRest = new ArrayList<>();
         for (final Node stmt : stmts) {
             final List<String> names = XPathParser.getNamesFromStatement(stmt);
             final List<String> blocks = this.checkNamesWithCommon(names, commonBlocks);
-
             for (final String block : blocks) {
-                String line = caller + ";" + caller + ";" + "/{" + block + "}/;" + "READ";
+                // String line = "READ;/{"+ block + "}";
+                final String line = caller + ";" + caller + ";" + "/{" + block + "}/;" + "READ";
                 dataflowLineRest.add(line);
             }
         }
@@ -219,52 +211,59 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
         return dataflowLineRest;
     }
 
-    /**
-     * aa
-     */
     private List<String> analyzeAssignmentStatements(final List<Node> stmts, final List<Node> commonBlocks,
             final List<String> bl, final String caller) {
         final List<String> dataflowLinesRest = new ArrayList<>();
 
-        for (final Node stmt : stmts) { //
-
+        for (final Node stmt : stmts) {
             final Node assignedContent = XPathParser.getAssignedContent(stmt); // left part
             final Node assigningContent = XPathParser.getAssigningContent(stmt); // right part
 
-            final String assignedVar = XPathParser.getAssignTargetIdentifier(stmt); // getName as String
-            final List<String> blockIdentifierAssign = this.isVarFromCommonBlock(assignedVar, commonBlocks); // left part is in common Block
+            // getName as a String
+            final String assignedVar = XPathParser.getAssignTargetIdentifier(stmt);
+            // left part is in common Block
+            final List<String> blockIdentifierAssign = this.isVarFromCommonBlock(assignedVar, commonBlocks);
 
-            final List<Node> namesRight = XPathParser.getNames(assigningContent); // neither funcs or arrays
+            // neither funcs or arrays
+            final List<Node> namesRight = XPathParser.getNames(assigningContent);
             System.out.println("Num of names in a: " + namesRight.size());
-            final List<Node> potentialFuncs = XPathParser.getPotentialFuncs(assigningContent); // something with args
+            // something with args
+            final List<Node> potentialFuncs = XPathParser.getPotentialFuncs(assigningContent);
             System.out.println("Num of potFuncs in a: " + potentialFuncs.size());
-            final List<Node> nonArgsFunc = XPathParser.getNonArgsFunc(assigningContent); // func no args
+            // func no args
+            final List<Node> nonArgsFunc = XPathParser.getNonArgsFunc(assigningContent);
             System.out.println("Num of numofNonArgsFunc in a: " + nonArgsFunc.size());
 
             if (potentialFuncs.size() > 0) { // potential function analysis
-                final List<String> blockIdentifierList = this.analyzePotentialFuncStmt(potentialFuncs, commonBlocks, bl, dataflowLinesRest);
+                final List<String> blockIdentifierList = this.analyzePotentialFuncStmt(potentialFuncs, commonBlocks, bl,
+                        dataflowLinesRest);
                 final List<String> namesAsString = this.convertToString(namesRight);
                 blockIdentifierList.addAll(this.checkNamesWithCommon(namesAsString, commonBlocks));
                 // delete duplicates
 
                 if (blockIdentifierAssign.size() == 0) {
                     for (final String blockId : blockIdentifierList) {
+
                         final String line = caller + ";" + caller + ";" + "/{" + blockId + "}/;" + "READ";
+                        // String line = "READ;/{" + blockId + "}/;";
                         dataflowLinesRest.add(line);
                     }
                 } else if (blockIdentifierList.size() > 0) {
-                    this.writeCommonDataflow(blockIdentifierAssign.get(0), blockIdentifierList, dataflowLinesRest, caller);
+                    this.writeCommonDataflow(blockIdentifierAssign.get(0), blockIdentifierList, dataflowLinesRest,
+                            caller);
                 } else {
                     final String blockId = blockIdentifierAssign.get(0);
-                    String line = caller+";"+caller+";"+"/{"+ blockId +"}/;" + "WRITE";
+                    // String line = "WRITE;/{" + blockIdentifierAssign.get(0) + "}/;";
+                    final String line = caller + ";" + caller + ";" + "/{" + blockId + "}/;" + "WRITE";
                     dataflowLinesRest.add(line);
                 }
             } else if (nonArgsFunc.size() > 0) {
-                for (final Node cons: nonArgsFunc) {
+                for (final Node cons : nonArgsFunc) {
                     this.checkAssignWithCommon(assignedVar, commonBlocks, dataflowLinesRest, caller);
                     final String functionId = XPathParser.getStructureConstructorIdentifier(cons);
                     final String fileId = this.proceduresFilemap.get(functionId);
-                    final String line = fileId+";"+fileId+";"+"{"+ functionId +"};" + "READ";
+                    final String line = fileId + ";" + fileId + ";" + "{" + functionId + "};" + "READ";
+                    // String line = "READ;"+ "{"+functionId+"};";
                     dataflowLinesRest.add(line);
                 }
             } else {
@@ -275,14 +274,17 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 
                     if (blockIdentifierList.size() == 0) {
                         final String blockId = blockIdentifierAssign.get(0);
-                        final String line = caller+";"+caller+";"+"/{"+ blockId +"}/;" + "WRITE";
+                        // String line = "WRITE;/{"+blockIdentifierAssign.get(0)+"}/;";
+                        final String line = caller + ";" + caller + ";" + "/{" + blockId + "}/;" + "WRITE";
                         dataflowLinesRest.add(line);
                     } else {
-                        this.writeCommonDataflow(blockIdentifierAssign.get(0), blockIdentifierList, dataflowLinesRest, caller);
+                        this.writeCommonDataflow(blockIdentifierAssign.get(0), blockIdentifierList, dataflowLinesRest,
+                                caller);
                     }
                 } else {
-                    for (final String blockId: blockIdentifierList) {
-                        String line = caller+";"+caller+";"+"/{"+ blockId +"}/;" + "READ";
+                    for (final String blockId : blockIdentifierList) {
+                        // String line = "READ;/{"+blockId+"}/;";
+                        final String line = caller + ";" + caller + ";" + "/{" + blockId + "}/;" + "READ";
                         dataflowLinesRest.add(line);
                     }
                 }
@@ -292,9 +294,6 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
         return dataflowLinesRest;
     }
 
-    /**
-     * convertToString
-     */
     private List<String> convertToString(final List<Node> namesRight) {
         final List<String> result = new ArrayList<>();
         for (final Node node : namesRight) {
@@ -303,76 +302,61 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
         return result;
     }
 
-    /**
-     * analyzePotentialFuncStmt
-     */
     private List<String> analyzePotentialFuncStmt(final List<Node> funcs, final List<Node> commonBlocks,
             final List<String> bl, final List<String> dataflowLinesRest) {
         final List<String> blockIdentifierList = new ArrayList<>();
         for (final Node funcNode : funcs) {
             final String functionIdentifier = XPathParser.getPartRefNodeIdentifier(funcNode);
-            final List<String>functionInCommonBlockList = isVarFromCommonBlock(functionIdentifier, commonBlocks);
-            
+            final List<String> functionInCommonBlockList = this.isVarFromCommonBlock(functionIdentifier, commonBlocks);
+
             if (functionInCommonBlockList.size() > 0) {
                 blockIdentifierList.addAll(functionInCommonBlockList);
                 final List<String> args = XPathParser.getArgumentList(funcNode);
-                for(final String arg : args) {
-                    dataflowLinesRest.addAll(isVarFromCommonBlock(arg,commonBlocks));
+                for (final String arg : args) {
+                    dataflowLinesRest.addAll(this.isVarFromCommonBlock(arg, commonBlocks));
                 }
 
-            } else if(!bl.contains(functionIdentifier)) {
+            } else if (!bl.contains(functionIdentifier)) {
                 final List<String> args = XPathParser.getArgumentList(funcNode);
                 if (args.size() > 0) {
                     for (final String arg : args) {
-                        blockIdentifierList.addAll(isVarFromCommonBlock(arg, commonBlocks));
+                        blockIdentifierList.addAll(this.isVarFromCommonBlock(arg, commonBlocks));
                     }
 
                     final String fileId = this.proceduresFilemap.get(functionIdentifier);
-                    final String line = fileId+";"+fileId+";"+"/{"+ functionIdentifier +"}/;" + "BOTH";
-                    //String line = "BOTH;{"+functionIdentifier+"};";
-                    
+                    final String line = fileId + ";" + fileId + ";" + "/{" + functionIdentifier + "}/;" + "BOTH";
+                    // String line = "BOTH;{"+functionIdentifier+"};";
+
                     dataflowLinesRest.add(line);
                 } else {
                     final String fileId = this.proceduresFilemap.get(functionIdentifier);
-                    final String line = fileId+";"+fileId+";"+"/{"+ functionIdentifier +"}/;" + "READ";
-                    //String line = "READ;{"+functionIdentifier+"};";
+                    final String line = fileId + ";" + fileId + ";" + "/{" + functionIdentifier + "}/;" + "READ";
+                    // String line = "READ;{"+functionIdentifier+"};";
                     dataflowLinesRest.add(line);
                 }
             }
 
-        final List<String> dataflowInFunc = new ArrayList<String>();
-        final List<String> blackList = XPathParser.getArraysDecl(funcBodies);
-        for (final List<Node> body : funcBodies) {
-            final String name = XPathParser.getFunctionId(body);
-            final List<Node> commonBlocks = XPathParser.getCommonBlocks(body);
-            final String contentLine = "{" + fileId + "};{" + name + "};FUNCTION";
-            this.contentFile.add(contentLine);
-
-            final String dataFlowLine = "{" + fileId + "};{" + name + "};";
-            dataflowInFunc = this.analyzeExecutionPart(body, commonBlocks, blackList, dataFlowLine);
         }
-        return dataflowInFunc;
+
+        return blockIdentifierList;
     }
 
-    /**
-     * writeCommonDataflow
-     */
     private void writeCommonDataflow(final String blockIdentifierAssign, final List<String> blockIdentifierList,
             final List<String> dataflowLinesRest, final String caller) {
-        
-        for (final String blockIdentifier: blockIdentifierList) {
+
+        for (final String blockIdentifier : blockIdentifierList) {
             if (blockIdentifierAssign.equals(blockIdentifier)) {
 
-                String line = caller+";"+caller+";"+"/{"+ blockIdentifier +"}/;" + "BOTH";
-                //String line =  "BOTH;/{"+blockIdentifier+"}/;";
+                final String line = caller + ";" + caller + ";" + "/{" + blockIdentifier + "}/;" + "BOTH";
+                // String line = "BOTH;/{"+blockIdentifier+"}/;";
                 dataflowLinesRest.add(line);
-            }else {
-                String line1 = caller+";"+caller+";"+"/{"+ blockIdentifier +"}/;" + "READ";
-                //String line =  "READ;/{"+blockIdentifier+"}/;";
-                dataflowLinesRest.add(line1);                
-                
-                String line2 = caller+";"+caller+";"+"/{"+ blockIdentifier +"}/;" + "WRITE";
-            //    line =  "WRITE;/{"+blockIdentifierAssign+"}/;";
+            } else {
+                final String line1 = caller + ";" + caller + ";" + "/{" + blockIdentifier + "}/;" + "READ";
+                // String line = "READ;/{"+blockIdentifier+"}/;";
+                dataflowLinesRest.add(line1);
+
+                final String line2 = caller + ";" + caller + ";" + "/{" + blockIdentifier + "}/;" + "WRITE";
+                // line = "WRITE;/{"+blockIdentifierAssign+"}/;";
                 dataflowLinesRest.add(line2);
             }
         }
@@ -381,7 +365,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
 
     private List<String> isVarFromCommonBlock(final String variable, final List<Node> commonBlocks) {
         final List<String> blockIdentifierList = new ArrayList<>();
-        for (finalNode commonBlock : commonBlocks) {
+        for (final Node commonBlock : commonBlocks) {
             final String blockIdentifier = XPathParser.getCommonBlockId(commonBlock);// bloc[0]
             final List<String> varList = XPathParser.getCommonVars(commonBlock);// = block[1];
             for (final String var : varList) {
@@ -399,22 +383,23 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
         final List<String> blockIdentifierList = this.isVarFromCommonBlock(assignedVar, commonBlocks);
         if (blockIdentifierList.size() > 0) {
             for (final String blockId : blockIdentifierList) {
-                 String line = caller+";"+caller+";"+"/{"+ blockId +"}/;" + "WRITE";
+                final String line = caller + ";" + caller + ";" + "/{" + blockId + "}/;" + "WRITE";
+                // String line = "WRITE;/{"+ blockId+"}/;";
                 dataflowLinesRest.add(line);
             }
         }
 
     }
 
-    private void checkArgsWithCommon(final List<String> args, final List<Node> commonBlocList, 
-            final List<String> dataflowLineRest, String caller) {
+    private void checkArgsWithCommon(final List<String> args, final List<Node> commonBlocList,
+            final List<String> dataflowLineRest, final String caller) {
 
         for (final String arg : args) {
-            final List<String> blockIdentifierList = this.isVarFromCommonBlock(arg,commonBlocList);
+            final List<String> blockIdentifierList = this.isVarFromCommonBlock(arg, commonBlocList);
             if (blockIdentifierList.size() > 0) {
-                for (final String bId: blockIdentifierList) {
-                    String line = caller+";"+caller+";"+"/{"+ bId +"}/;" + "WRITE";
-                    //    String line = "WRITE;/{"+bId+"}/;";
+                for (final String bId : blockIdentifierList) {
+                    final String line = caller + ";" + caller + ";" + "/{" + bId + "}/;" + "WRITE";
+                    // String line = "WRITE;/{"+bId+"}/;";
                     dataflowLineRest.add(line);
                 }
             }
@@ -423,7 +408,7 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
     }
 
     private List<String> checkNamesWithCommon(final List<String> names, final List<Node> commonBlocks) {
-        final List<String> blockIdentifierList = new ArrayList();
+        final List<String> blockIdentifierList = new ArrayList<>();
         if (commonBlocks.size() > 0) {
             for (final String name : names) {
                 blockIdentifierList.addAll(this.isVarFromCommonBlock(name, commonBlocks));
@@ -432,17 +417,16 @@ public class EsmDataFlowAnalysisStage extends AbstractConsumerStage<List<File>> 
         }
         return blockIdentifierList;
     }
-    
-    private void writeCommonBlocksName(List<Node> commonBlocks, String filename) {
-        
-        for(Node cb : commonBlocks) {
-            StringBuilder sb = new StringBuilder(filename+";");
-            String blockIdentifier = XPathParser.getCommonBlockId(cb);//block[0]
-            List<String> varList = XPathParser.getCommonVars(cb);//= block[1];
+
+    private void writeCommonBlocksName(final List<Node> commonBlocks, final String filename) {
+
+        for (final Node cb : commonBlocks) {
+            final StringBuilder sb = new StringBuilder(filename + ";");
+            final String blockIdentifier = XPathParser.getCommonBlockId(cb);// block[0]
+            final List<String> varList = XPathParser.getCommonVars(cb);// = block[1];
             sb.append(blockIdentifier);
             this.commonBlocksFile.add(sb.toString());
-        
-            
+
         }
     }
 

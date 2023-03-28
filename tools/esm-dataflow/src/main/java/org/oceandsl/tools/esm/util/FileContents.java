@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FileContents {
-    List<FileContentsEntry> fileContents = new ArrayList();
+    List<FileContentsEntry> fileContents = new ArrayList<>();
 
     public FileContents() {
 

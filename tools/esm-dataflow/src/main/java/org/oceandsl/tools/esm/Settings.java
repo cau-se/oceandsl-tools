@@ -16,9 +16,15 @@
 package org.oceandsl.tools.esm;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
+
+import org.oceandsl.analysis.generic.validators.ParentPathIsDirectoryValidator;
+import org.oceandsl.analysis.generic.validators.ParentPathIsWriteableValidator;
+import org.oceandsl.analysis.generic.validators.PathIsDirectoryValidator;
+import org.oceandsl.analysis.generic.validators.PathIsReadableValidator;
 
 /**
  * All settings including command line parameters for the analysis.
@@ -29,22 +35,24 @@ import com.beust.jcommander.converters.PathConverter;
 public class Settings { // NOPMD data class
 
     @Parameter(names = { "-i",
-            "--input" }, required = true, variableArity = true, converter = PathConverter.class, description = "Input architecture model directories")
-    private Path inputModelPaths;
+            "--input" }, required = true, variableArity = true, description = "One or more paths to fxtran-generated XML files.", converter = PathConverter.class, validateWith = {
+                    PathIsReadableValidator.class, PathIsDirectoryValidator.class })
+    private List<Path> inputDirectoryPaths;
 
     @Parameter(names = { "-o",
-            "--output" }, required = true, converter = PathConverter.class, description = "Output architecture model directory")
-    private Path outputDirectory;
+            "--output" }, required = true, description = "Path where the output files are placed.", converter = PathConverter.class, validateWith = {
+                    ParentPathIsWriteableValidator.class, ParentPathIsDirectoryValidator.class })
+    private Path outputDirectoryPath;
 
     @Parameter(names = { "-e", "--experiment" }, required = true, description = "Experiment name")
     private String experimentName;
 
-    public Path getInputModelPaths() {
-        return this.inputModelPaths;
+    public List<Path> getInputDirectoryPaths() {
+        return this.inputDirectoryPaths;
     }
 
-    public Path getOutputDirectory() {
-        return this.outputDirectory;
+    public Path getOutputDirectoryPath() {
+        return this.outputDirectoryPath;
     }
 
     public String getExperimentName() {

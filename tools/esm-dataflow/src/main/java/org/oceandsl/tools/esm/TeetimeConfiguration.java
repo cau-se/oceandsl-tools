@@ -18,10 +18,20 @@ package org.oceandsl.tools.esm;
 import java.io.IOException;
 
 import teetime.framework.Configuration;
+import teetime.stage.basic.distributor.Distributor;
+import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
-import org.oceandsl.tools.esm.stages.EsmDataFlowAnalysisStage;
-import org.oceandsl.tools.esm.stages.OutputStage;
-import org.oceandsl.tools.esm.stages.ReadStage;
+import org.oceandsl.analysis.generic.stages.DirectoryProducer;
+import org.oceandsl.analysis.generic.stages.DirectoryScannerStage;
+import org.oceandsl.analysis.generic.stages.TableCSVSink;
+import org.oceandsl.tools.esm.stages.CreateCommonBlocksTableStage;
+import org.oceandsl.tools.esm.stages.CreateDataflowTableStage;
+import org.oceandsl.tools.esm.stages.CreateFileContentsTableStage;
+import org.oceandsl.tools.esm.stages.ProcessDataFlowAnalysisStage;
+import org.oceandsl.tools.fxca.model.FortranProject;
+import org.oceandsl.tools.fxca.stages.ProcessModuleStructureStage;
+import org.oceandsl.tools.fxca.stages.ReadDomStage;
+import org.oceandsl.tools.fxca.tools.PatternUriProcessor;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -31,13 +41,58 @@ import org.oceandsl.tools.esm.stages.ReadStage;
  */
 public class TeetimeConfiguration extends Configuration {
 
-    public TeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
+    private static final String SEARCH_PATTERN = "^file:\\/.*\\/([^.]*\\.[Ff][0-9]*)\\.xml$";
+    private static final String REPLACEMENT_PATTERN = "$1";
 
-        final ReadStage readStage = new ReadStage(parameterConfiguration.getInputModelPaths());
-        final EsmDataFlowAnalysisStage dataFlow = new EsmDataFlowAnalysisStage();
-        final OutputStage out = new OutputStage(parameterConfiguration.getOutputDirectory());
+    private static final String DATAFLOW = "dataflow.csv";
+    private static final String FILE_CONENT = "file-content.csv";
+    private static final String COMMON_BLOCKS = "common-blocks.csv";
 
-        this.connectPorts(readStage.getOutputPort(), dataFlow.getInputPort());
-        this.connectPorts(dataFlow.getOutputPort(), out.getInputPort());
+    public TeetimeConfiguration(final Settings settings) throws IOException {
+        final PatternUriProcessor uriProcessor = new PatternUriProcessor(TeetimeConfiguration.SEARCH_PATTERN,
+                TeetimeConfiguration.REPLACEMENT_PATTERN);
+
+        final DirectoryProducer producer = new DirectoryProducer(settings.getInputDirectoryPaths());
+        final DirectoryScannerStage directoryScannerStage = new DirectoryScannerStage(true, o -> true,
+                o -> o.getFileName().toString().endsWith(".xml"));
+
+        final ReadDomStage readDomStage = new ReadDomStage();
+
+        final ProcessModuleStructureStage processModuleStructureStage = new ProcessModuleStructureStage(uriProcessor);
+
+        final ProcessDataFlowAnalysisStage dataFlowAnalysisStage = new ProcessDataFlowAnalysisStage(uriProcessor);
+
+        final Distributor<FortranProject> projectDistributor = new Distributor<>(new CopyByReferenceStrategy());
+
+        /** tables */
+        final CreateDataflowTableStage dataflowTableStage = new CreateDataflowTableStage();
+        final CreateFileContentsTableStage fileContentTableStage = new CreateFileContentsTableStage();
+        final CreateCommonBlocksTableStage commonBlockTableStage = new CreateCommonBlocksTableStage();
+
+        /** output stages */
+        final TableCSVSink dataflowTableSink = new TableCSVSink(
+                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.DATAFLOW), true);
+        final TableCSVSink fileContentTableSink = new TableCSVSink(
+                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.FILE_CONENT), true);
+        final TableCSVSink commonBlocksTableSink = new TableCSVSink(
+                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.COMMON_BLOCKS), true);
+
+        /** connections */
+        this.connectPorts(producer.getOutputPort(), directoryScannerStage.getInputPort());
+        this.connectPorts(directoryScannerStage.getOutputPort(), readDomStage.getInputPort());
+        this.connectPorts(readDomStage.getOutputPort(), processModuleStructureStage.getInputPort());
+
+        this.connectPorts(processModuleStructureStage.getOutputPort(), dataFlowAnalysisStage.getInputPort());
+
+        this.connectPorts(dataFlowAnalysisStage.getOutputPort(), projectDistributor.getInputPort());
+
+        this.connectPorts(projectDistributor.getNewOutputPort(), dataflowTableStage.getInputPort());
+        this.connectPorts(dataflowTableStage.getOutputPort(), dataflowTableSink.getInputPort());
+
+        this.connectPorts(projectDistributor.getNewOutputPort(), fileContentTableStage.getInputPort());
+        this.connectPorts(fileContentTableStage.getOutputPort(), fileContentTableSink.getInputPort());
+
+        this.connectPorts(projectDistributor.getNewOutputPort(), commonBlockTableStage.getInputPort());
+        this.connectPorts(commonBlockTableStage.getOutputPort(), commonBlocksTableSink.getInputPort());
     }
 }
