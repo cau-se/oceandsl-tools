@@ -16,137 +16,115 @@
 package org.oceandsl.tools.esm.stages;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import teetime.stage.basic.AbstractFilter;
+import teetime.stage.basic.AbstractTransformation;
 
+import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.esm.util.Output;
 import org.oceandsl.tools.esm.util.XPathParser;
+import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranProject;
-import org.oceandsl.tools.fxca.tools.IUriProcessor;
+import org.oceandsl.tools.fxca.tools.Pair;
 
-public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject> {
+public class ProcessDataFlowAnalysisStage extends AbstractTransformation<FortranProject, Output> {
 
-    private final List<String> dataflow = new ArrayList<>();
-    private final List<String> contentFile = new ArrayList<>();
-    private final List<String> commonBlocksFile = new ArrayList<>();
+    private static final String READ = "READ";
+    private static final String WRITE = "WRITE";
+    private static final String BOTH = "BOTH";
+
     private final HashMap<String, String> proceduresFilemap = new HashMap<>();
     private final Output out = new Output();
 
-    private final IUriProcessor uriProcessor;
+    private final String defaultModuleName;
 
-    public ProcessDataFlowAnalysisStage(final IUriProcessor uriProcessor) {
-        this.uriProcessor = uriProcessor;
+    public ProcessDataFlowAnalysisStage(final String defaultModuleName) {
+        this.defaultModuleName = defaultModuleName != null ? defaultModuleName : "<unknown>";
     }
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        project.getModules().values().forEach(module -> {
-            final Document document = module.getDocument();
+        project.getModules().values().stream().filter(module -> !module.getModuleName().equals(this.defaultModuleName))
+                .forEach(module -> {
+                    this.analyzeSubRoutines(module, project);
+                    this.analyzeFunctions(module, project);
+                    this.analyzeMain(module, project);
+                });
 
-            // Get main structures
-            final List<List<Node>> subRoutineBodies = XPathParser.getSubroutineContents(document);
-            final List<List<Node>> functionBodies = XPathParser.getFuncContents(document);
-            final List<Node> main = XPathParser.getMain(document);
-
-            // analyze
-            final String fileName = this.uriProcessor.process(document.getBaseURI());
-            final List<String> dfInSub = this.analyzeSubRoutines(subRoutineBodies, fileName);
-            final List<String> dfInFunc = this.analyzeFunctions(functionBodies, fileName);
-            final List<String> dfInMain = this.analyzeMain(main, fileName);
-
-            // aggregate
-            this.dataflow.addAll(dfInSub);
-            this.dataflow.addAll(dfInFunc);
-            this.dataflow.addAll(dfInMain);
-        });
+        this.outputPort.send(this.out);
     }
 
-    @Override
-    protected void onTerminating() {
-        this.out.setDataflow(this.dataflow);
-        this.out.setFileContent(this.contentFile);
-        this.out.setCommonBlocks(this.commonBlocksFile);
+    private void analyzeSubRoutines(final FortranModule module, final FortranProject project) {
+        final List<List<Node>> subRoutineBodies = XPathParser.getSubroutineContents(module.getDocument());
 
-        super.onTerminating();
-    }
-
-    private List<String> analyzeSubRoutines(final List<List<Node>> subRoutineBodies, final String fileId) {
-        List<String> dataflowInSub = new ArrayList<>();
         final List<String> blackList = XPathParser.getArraysDecl(subRoutineBodies);
         for (final List<Node> body : subRoutineBodies) {
-            final String name = XPathParser.getSubroutineId(body);
+            final String operationName = XPathParser.getSubroutineId(body);
             final List<Node> commonBlocks = XPathParser.getCommonBlocks(body);
-            this.writeCommonBlocksName(commonBlocks, fileId);
-            final String contentLine = "{" + fileId + "};{" + name + "};SUBROUTINE";
-            this.contentFile.add(contentLine);
-            this.proceduresFilemap.put(name, fileId);
+            this.writeCommonBlocksName(commonBlocks, module.getFileName());
+            try {
+                this.out.getFileContent().addRow(module.getFileName(), module.getModuleName(), operationName,
+                        "SUBROUTINE");
+            } catch (final ValueConversionErrorException e) {
+                this.logger.error("File content table error: {}", e.getLocalizedMessage());
+            }
+            this.proceduresFilemap.put(operationName, module.getFileName());
 
-            final String dataFlowLine = "{" + fileId + "};" + "{" + fileId + "};" + "{" + name + "};";
-            dataflowInSub = this.analyzeExecutionPart(body, commonBlocks, blackList, dataFlowLine, fileId);
+            this.analyzeExecutionPart(body, commonBlocks, blackList, module, project, operationName);
         }
-        return dataflowInSub;
     }
 
-    private List<String> analyzeFunctions(final List<List<Node>> funcBodies, final String fileId) {
-        List<String> dataflowInFunc = new ArrayList<>();
-        final List<String> blackList = XPathParser.getArraysDecl(funcBodies);
-        for (final List<Node> body : funcBodies) {
-            final String name = XPathParser.getFunctionId(body);
+    private void analyzeFunctions(final FortranModule module, final FortranProject project) {
+        final List<List<Node>> functionBodies = XPathParser.getFuncContents(module.getDocument());
+        final List<String> blackList = XPathParser.getArraysDecl(functionBodies);
+        for (final List<Node> body : functionBodies) {
+            final String operationName = XPathParser.getFunctionId(body);
             final List<Node> commonBlocks = XPathParser.getCommonBlocks(body);
-            this.writeCommonBlocksName(commonBlocks, fileId);
-            final String contentLine = "{" + fileId + "};{" + name + "};FUNCTION";
-            this.contentFile.add(contentLine);
-            this.proceduresFilemap.put(name, fileId);
+            this.writeCommonBlocksName(commonBlocks, module.getFileName());
+            try {
+                this.out.getFileContent().addRow(module.getFileName(), module.getModuleName(), operationName,
+                        "FUNCTION");
+            } catch (final ValueConversionErrorException e) {
+                this.logger.error("File content table error: {}", e.getLocalizedMessage());
+            }
+            this.proceduresFilemap.put(operationName, module.getFileName());
 
-            final String dataFlowLine = "{" + fileId + "};" + "{" + fileId + "};" + "{" + name + "};";
-            dataflowInFunc = this.analyzeExecutionPart(body, commonBlocks, blackList, dataFlowLine, fileId);
+            this.analyzeExecutionPart(body, commonBlocks, blackList, module, project, operationName);
         }
-        return dataflowInFunc;
     }
 
-    private List<String> analyzeMain(final List<Node> mainBody, final String fileId) {
-        List<String> dataflowInMain = new ArrayList<>();
+    private void analyzeMain(final FortranModule module, final FortranProject project) {
+        final List<Node> mainBody = XPathParser.getMain(module.getDocument());
 
         final List<Node> commonBlocks = XPathParser.getCommonBlocks(mainBody);
-        this.writeCommonBlocksName(commonBlocks, fileId);
+        this.writeCommonBlocksName(commonBlocks, module.getFileName());
 
-        // String dataFlowLine = "{"+fileId+"}"+";main";
-        final String dataFlowLine = "{" + fileId + "};" + "{" + fileId + "};" + "main";
-        dataflowInMain = this.analyzeExecutionPart(mainBody, commonBlocks, null, dataFlowLine, fileId);
-        return dataflowInMain;
+        this.analyzeExecutionPart(mainBody, commonBlocks, null, module, project, "main");
     }
 
-    private List<String> analyzeExecutionPart(final List<Node> body, final List<Node> commonBlocks,
-            final List<String> blacklist, final String dataFlowLine, final String caller) {
-
-        final List<String> dataflowExecPart = new ArrayList<>();
-
+    private void analyzeExecutionPart(final List<Node> body, final List<Node> commonBlocks,
+            final List<String> blacklist, final FortranModule module, final FortranProject project,
+            final String caller) {
         // Dataflow call stmt
         final List<Node> callStmts = XPathParser.getCallStmts(body);
         System.out.println("Num of call-stmts: " + callStmts.size());
-        final List<String> calls = this.analyzeCallStatements(callStmts, commonBlocks, blacklist, caller);
-        for (final String call : calls) {
-            dataflowExecPart.add(dataFlowLine + call);
-        }
+        this.analyzeCallStatements(callStmts, commonBlocks, blacklist, caller, module, project);
+
         // Dataflow ifelse
         final List<Node> ifElseStmts = XPathParser.getIfElseStmts(body);
         System.out.println("Num of ifelse-stmts: " + ifElseStmts.size());
-        final List<String> ifElseReads = this.analyzeReadsFromStatements(ifElseStmts, commonBlocks, blacklist, caller);
-        for (final String read : ifElseReads) {
-            dataflowExecPart.add(dataFlowLine + read);
-        }
+        this.analyzeReadsFromStatements(ifElseStmts, commonBlocks, blacklist, caller, module, project);
+
         // Dataflow select case
         final List<Node> selectStmts = XPathParser.getSelectStmts(body);
         System.out.println("Num of select-stmts: " + selectStmts.size());
-        final List<String> selectReads = this.analyzeReadsFromStatements(selectStmts, commonBlocks, blacklist, caller);
-        for (final String read : selectReads) {
-            dataflowExecPart.add(dataFlowLine + read);
-        }
+        this.analyzeReadsFromStatements(selectStmts, commonBlocks, blacklist, caller, module, project);
+
         // Dataflow do while
         final List<Node> loopCtrlStmts = XPathParser.getLoopCtrlStmts(body);
         System.out.println("Num of loopctrl-stmts: " + loopCtrlStmts.size());
@@ -154,63 +132,77 @@ public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject>
             final String loopAssignedVar = XPathParser.getLoopControlVar(loopCtrl);
             final List<String> isInBlock = this.isVarFromCommonBlock(loopAssignedVar, commonBlocks);
             if (!isInBlock.isEmpty()) {
-                final String line = "WRITE/{" + isInBlock.get(0) + "}/;";
-                dataflowExecPart.add(dataFlowLine + line);
+                try {
+                    this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X", "X",
+                            isInBlock.get(0), ProcessDataFlowAnalysisStage.WRITE);
+                } catch (final ValueConversionErrorException e) {
+                    this.logger.error("Cannot add row to dataflow table {}", e.getLocalizedMessage());
+                }
             }
         }
         // Analyze Reads
-        final List<String> loopReads = this.analyzeReadsFromStatements(loopCtrlStmts, commonBlocks, blacklist, caller);
-        for (final String read : loopReads) {
-            dataflowExecPart.add(dataFlowLine + read);
-        }
+        this.analyzeReadsFromStatements(loopCtrlStmts, commonBlocks, blacklist, caller, module, project);
 
         // Dataflow assignments
         final List<Node> assignStmts = XPathParser.getAssignmentStmts(body);
         System.out.println("Num of a-stmts: " + assignStmts.size());
-        final List<String> assigns = this.analyzeAssignmentStatements(assignStmts, commonBlocks, blacklist, caller);
-        for (final String assign : assigns) {
-            dataflowExecPart.add(dataFlowLine + assign);
-        }
-        return dataflowExecPart;
+        this.analyzeAssignmentStatements(assignStmts, commonBlocks, blacklist, caller, module, project);
     }
 
-    private List<String> analyzeCallStatements(final List<Node> callStatements, final List<Node> commonBlocList,
-            final List<String> blacklist, final String caller) {
-        final List<String> dataflowLineRest = new ArrayList<>();
+    private void analyzeCallStatements(final List<Node> callStatements, final List<Node> commonBlocList,
+            final List<String> blacklist, final String caller, final FortranModule module,
+            final FortranProject project) {
 
         for (final Node callStmt : callStatements) {
             final List<String> args = XPathParser.callHasArgs(callStmt);
             if (!args.isEmpty()) {
-                this.checkArgsWithCommon(args, commonBlocList, dataflowLineRest, caller);
-                final String fileId = this.proceduresFilemap.get(XPathParser.getCallStmtId(callStmt));
-                final String callee = XPathParser.getCallStmtId(callStmt);
-                final String line = fileId + ";" + fileId + ";" + callee + ";" + "WRITE";
-                // String line = "WRITE;{"+fileId+";"+callee+"}";
-                dataflowLineRest.add(line);
+                // this.checkArgsWithCommon(args, commonBlocList, dataflowLineRest, caller);
+                final String calleeName = XPathParser.getCallStmtId(callStmt);
+
+                final Pair<FortranModule, String> callee = this.findOperation(project.getModules().values(),
+                        calleeName);
+
+                if (callee == null) {
+                    try {
+                        this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller,
+                                this.defaultModuleName, this.defaultModuleName, calleeName,
+                                ProcessDataFlowAnalysisStage.WRITE);
+                    } catch (final ValueConversionErrorException e) {
+                        this.logger.error("Dataflow cannot be added {}", e.getLocalizedMessage());
+                    }
+                } else {
+                    try {
+                        this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller,
+                                callee.first.getFileName(), callee.first.getModuleName(), calleeName,
+                                ProcessDataFlowAnalysisStage.WRITE);
+                    } catch (final ValueConversionErrorException e) {
+                        this.logger.error("Dataflow cannot be added {}", e.getLocalizedMessage());
+                    }
+                }
             }
         }
-        return dataflowLineRest;
     }
 
-    private List<String> analyzeReadsFromStatements(final List<Node> stmts, final List<Node> commonBlocks,
-            final List<String> blacklist, final String caller) {
-        final List<String> dataflowLineRest = new ArrayList<>();
+    private void analyzeReadsFromStatements(final List<Node> stmts, final List<Node> commonBlocks,
+            final List<String> blacklist, final String caller, final FortranModule module,
+            final FortranProject project) {
         for (final Node stmt : stmts) {
             final List<String> names = XPathParser.getNamesFromStatement(stmt);
             final List<String> blocks = this.checkNamesWithCommon(names, commonBlocks);
             for (final String block : blocks) {
-                // String line = "READ;/{"+ block + "}";
-                final String line = caller + ";" + caller + ";" + "/{" + block + "}/;" + "READ";
-                dataflowLineRest.add(line);
+                try {
+                    this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "BLOCK",
+                            "/" + block + "/", "VARIABLES", ProcessDataFlowAnalysisStage.READ);
+                } catch (final ValueConversionErrorException e) {
+                    this.logger.error("Dataflow for reading from common block failed {}", e.getLocalizedMessage());
+                }
             }
         }
 
-        return dataflowLineRest;
     }
 
-    private List<String> analyzeAssignmentStatements(final List<Node> stmts, final List<Node> commonBlocks,
-            final List<String> bl, final String caller) {
-        final List<String> dataflowLinesRest = new ArrayList<>();
+    private void analyzeAssignmentStatements(final List<Node> stmts, final List<Node> commonBlocks,
+            final List<String> bl, final String caller, final FortranModule module, final FortranProject project) {
 
         for (final Node stmt : stmts) {
             final Node assignedContent = XPathParser.getAssignedContent(stmt); // left part
@@ -233,35 +225,43 @@ public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject>
 
             if (potentialFuncs.size() > 0) { // potential function analysis
                 final List<String> blockIdentifierList = this.analyzePotentialFuncStmt(potentialFuncs, commonBlocks, bl,
-                        dataflowLinesRest);
+                        module, caller);
                 final List<String> namesAsString = this.convertToString(namesRight);
                 blockIdentifierList.addAll(this.checkNamesWithCommon(namesAsString, commonBlocks));
                 // delete duplicates
 
                 if (blockIdentifierAssign.size() == 0) {
                     for (final String blockId : blockIdentifierList) {
-
-                        final String line = caller + ";" + caller + ";" + "/{" + blockId + "}/;" + "READ";
-                        // String line = "READ;/{" + blockId + "}/;";
-                        dataflowLinesRest.add(line);
+                        try {
+                            this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "FILE",
+                                    "/" + blockId + "/", "VARIABLES", ProcessDataFlowAnalysisStage.READ);
+                        } catch (final ValueConversionErrorException e) {
+                            this.logger.error("Cannot add read dataflow call->cb {}", e.getLocalizedMessage());
+                        }
                     }
                 } else if (blockIdentifierList.size() > 0) {
-                    this.writeCommonDataflow(blockIdentifierAssign.get(0), blockIdentifierList, dataflowLinesRest,
-                            caller);
+                    this.writeCommonDataflow(blockIdentifierAssign.get(0), blockIdentifierList, caller, module,
+                            project);
                 } else {
                     final String blockId = blockIdentifierAssign.get(0);
-                    // String line = "WRITE;/{" + blockIdentifierAssign.get(0) + "}/;";
-                    final String line = caller + ";" + caller + ";" + "/{" + blockId + "}/;" + "WRITE";
-                    dataflowLinesRest.add(line);
+                    try {
+                        this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "FILE",
+                                "/" + blockId + "/", "VARIABLES", ProcessDataFlowAnalysisStage.WRITE);
+                    } catch (final ValueConversionErrorException e) {
+                        this.logger.error("Cannot add write dataflow call->cb {}", e.getLocalizedMessage());
+                    }
                 }
             } else if (nonArgsFunc.size() > 0) {
                 for (final Node cons : nonArgsFunc) {
-                    this.checkAssignWithCommon(assignedVar, commonBlocks, dataflowLinesRest, caller);
+                    this.checkAssignWithCommon(assignedVar, commonBlocks, caller, module, project);
                     final String functionId = XPathParser.getStructureConstructorIdentifier(cons);
                     final String fileId = this.proceduresFilemap.get(functionId);
-                    final String line = fileId + ";" + fileId + ";" + "{" + functionId + "};" + "READ";
-                    // String line = "READ;"+ "{"+functionId+"};";
-                    dataflowLinesRest.add(line);
+                    try {
+                        this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, fileId, "X",
+                                functionId, ProcessDataFlowAnalysisStage.READ);
+                    } catch (final ValueConversionErrorException e) {
+                        this.logger.error("Cannot add read dataflow call->cb {}", e.getLocalizedMessage());
+                    }
                 }
             } else {
                 final List<String> namesAsString = this.convertToString(namesRight);
@@ -271,24 +271,28 @@ public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject>
 
                     if (blockIdentifierList.size() == 0) {
                         final String blockId = blockIdentifierAssign.get(0);
-                        // String line = "WRITE;/{"+blockIdentifierAssign.get(0)+"}/;";
-                        final String line = caller + ";" + caller + ";" + "/{" + blockId + "}/;" + "WRITE";
-                        dataflowLinesRest.add(line);
+                        try {
+                            this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X",
+                                    "X", blockId, ProcessDataFlowAnalysisStage.WRITE);
+                        } catch (final ValueConversionErrorException e) {
+                            this.logger.error("Cannot add write dataflow call->cb {}", e.getLocalizedMessage());
+                        }
                     } else {
-                        this.writeCommonDataflow(blockIdentifierAssign.get(0), blockIdentifierList, dataflowLinesRest,
-                                caller);
+                        this.writeCommonDataflow(blockIdentifierAssign.get(0), blockIdentifierList, caller, module,
+                                project);
                     }
                 } else {
                     for (final String blockId : blockIdentifierList) {
-                        // String line = "READ;/{"+blockId+"}/;";
-                        final String line = caller + ";" + caller + ";" + "/{" + blockId + "}/;" + "READ";
-                        dataflowLinesRest.add(line);
+                        try {
+                            this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X",
+                                    "X", blockId, ProcessDataFlowAnalysisStage.READ);
+                        } catch (final ValueConversionErrorException e) {
+                            this.logger.error("Cannot add read dataflow call->cb {}", e.getLocalizedMessage());
+                        }
                     }
                 }
             }
         }
-
-        return dataflowLinesRest;
     }
 
     private List<String> convertToString(final List<Node> namesRight) {
@@ -300,7 +304,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject>
     }
 
     private List<String> analyzePotentialFuncStmt(final List<Node> funcs, final List<Node> commonBlocks,
-            final List<String> bl, final List<String> dataflowLinesRest) {
+            final List<String> bl, final FortranModule module, final String caller) {
         final List<String> blockIdentifierList = new ArrayList<>();
         for (final Node funcNode : funcs) {
             final String functionIdentifier = XPathParser.getPartRefNodeIdentifier(funcNode);
@@ -310,7 +314,8 @@ public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject>
                 blockIdentifierList.addAll(functionInCommonBlockList);
                 final List<String> args = XPathParser.getArgumentList(funcNode);
                 for (final String arg : args) {
-                    dataflowLinesRest.addAll(this.isVarFromCommonBlock(arg, commonBlocks));
+                    this.isVarFromCommonBlock(arg, commonBlocks);
+                    // dataflowLinesRest.addAll(this.isVarFromCommonBlock(arg, commonBlocks));
                 }
 
             } else if (!bl.contains(functionIdentifier)) {
@@ -320,16 +325,27 @@ public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject>
                         blockIdentifierList.addAll(this.isVarFromCommonBlock(arg, commonBlocks));
                     }
 
-                    final String fileId = this.proceduresFilemap.get(functionIdentifier);
-                    final String line = fileId + ";" + fileId + ";" + "/{" + functionIdentifier + "}/;" + "BOTH";
-                    // String line = "BOTH;{"+functionIdentifier+"};";
+                    String fileId = this.proceduresFilemap.get(functionIdentifier);
 
-                    dataflowLinesRest.add(line);
+                    if (fileId == null) {
+                        fileId = this.defaultModuleName;
+                    }
+
+                    try {
+                        this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, fileId, "X",
+                                functionIdentifier, ProcessDataFlowAnalysisStage.BOTH);
+                    } catch (final ValueConversionErrorException e) {
+                        this.logger.error("Cannot add both dataflow call->f {}", e.getLocalizedMessage());
+                    }
                 } else {
                     final String fileId = this.proceduresFilemap.get(functionIdentifier);
-                    final String line = fileId + ";" + fileId + ";" + "/{" + functionIdentifier + "}/;" + "READ";
-                    // String line = "READ;{"+functionIdentifier+"};";
-                    dataflowLinesRest.add(line);
+
+                    try {
+                        this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, fileId, "X",
+                                functionIdentifier, ProcessDataFlowAnalysisStage.BOTH);
+                    } catch (final ValueConversionErrorException e) {
+                        this.logger.error("Cannot add both dataflow call->f {}", e.getLocalizedMessage());
+                    }
                 }
             }
 
@@ -339,22 +355,30 @@ public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject>
     }
 
     private void writeCommonDataflow(final String blockIdentifierAssign, final List<String> blockIdentifierList,
-            final List<String> dataflowLinesRest, final String caller) {
+            final String caller, final FortranModule module, final FortranProject project) {
 
         for (final String blockIdentifier : blockIdentifierList) {
             if (blockIdentifierAssign.equals(blockIdentifier)) {
-
-                final String line = caller + ";" + caller + ";" + "/{" + blockIdentifier + "}/;" + "BOTH";
-                // String line = "BOTH;/{"+blockIdentifier+"}/;";
-                dataflowLinesRest.add(line);
+                try {
+                    this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X", "X",
+                            blockIdentifier, ProcessDataFlowAnalysisStage.BOTH);
+                } catch (final ValueConversionErrorException e) {
+                    this.logger.error("Cannot add bidirection dataflow {}", e.getLocalizedMessage());
+                }
             } else {
-                final String line1 = caller + ";" + caller + ";" + "/{" + blockIdentifier + "}/;" + "READ";
-                // String line = "READ;/{"+blockIdentifier+"}/;";
-                dataflowLinesRest.add(line1);
+                try {
+                    this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X", "X",
+                            blockIdentifier, ProcessDataFlowAnalysisStage.READ);
+                } catch (final ValueConversionErrorException e) {
+                    this.logger.error("Cannot add read dataflow {}", e.getLocalizedMessage());
+                }
 
-                final String line2 = caller + ";" + caller + ";" + "/{" + blockIdentifier + "}/;" + "WRITE";
-                // line = "WRITE;/{"+blockIdentifierAssign+"}/;";
-                dataflowLinesRest.add(line2);
+                try {
+                    this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X", "X",
+                            blockIdentifier, "WRTE");
+                } catch (final ValueConversionErrorException e) {
+                    this.logger.error("Cannot add write dataflow {}", e.getLocalizedMessage());
+                }
             }
         }
 
@@ -374,30 +398,17 @@ public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject>
         return blockIdentifierList;
     }
 
-    private void checkAssignWithCommon(final String assignedVar, final List<Node> commonBlocks,
-            final List<String> dataflowLinesRest, final String caller) {
+    private void checkAssignWithCommon(final String assignedVar, final List<Node> commonBlocks, final String caller,
+            final FortranModule module, final FortranProject project) {
 
         final List<String> blockIdentifierList = this.isVarFromCommonBlock(assignedVar, commonBlocks);
         if (blockIdentifierList.size() > 0) {
             for (final String blockId : blockIdentifierList) {
-                final String line = caller + ";" + caller + ";" + "/{" + blockId + "}/;" + "WRITE";
-                // String line = "WRITE;/{"+ blockId+"}/;";
-                dataflowLinesRest.add(line);
-            }
-        }
-
-    }
-
-    private void checkArgsWithCommon(final List<String> args, final List<Node> commonBlocList,
-            final List<String> dataflowLineRest, final String caller) {
-
-        for (final String arg : args) {
-            final List<String> blockIdentifierList = this.isVarFromCommonBlock(arg, commonBlocList);
-            if (blockIdentifierList.size() > 0) {
-                for (final String bId : blockIdentifierList) {
-                    final String line = caller + ";" + caller + ";" + "/{" + bId + "}/;" + "WRITE";
-                    // String line = "WRITE;/{"+bId+"}/;";
-                    dataflowLineRest.add(line);
+                try {
+                    this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X", "X",
+                            blockId, ProcessDataFlowAnalysisStage.WRITE);
+                } catch (final ValueConversionErrorException e) {
+                    this.logger.error("Cannot add write dataflow {}", e.getLocalizedMessage());
                 }
             }
         }
@@ -416,14 +427,26 @@ public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject>
     }
 
     private void writeCommonBlocksName(final List<Node> commonBlocks, final String filename) {
-
         for (final Node cb : commonBlocks) {
-            final StringBuilder sb = new StringBuilder(filename + ";");
             final String blockIdentifier = XPathParser.getCommonBlockId(cb);// block[0]
             final List<String> varList = XPathParser.getCommonVars(cb);// = block[1];
-            sb.append(blockIdentifier);
-            this.commonBlocksFile.add(sb.toString());
 
+            try {
+                this.out.getCommonBlocks().addRow(filename, "<no-module>", "<no-operation>", blockIdentifier, varList);
+            } catch (final ValueConversionErrorException e) {
+                this.logger.error("Common blocks file error {}", e.getLocalizedMessage());
+            }
+        }
+    }
+
+    // TODO duplicate form ProcessOperationCallStage
+    private Pair<FortranModule, String> findOperation(final Collection<FortranModule> modules, final String signature) {
+        final Optional<FortranModule> moduleOptional = modules.stream().filter(module -> module.getSpecifiedOperations()
+                .stream().anyMatch(operation -> operation.getName().equals(signature))).findFirst();
+        if (moduleOptional.isPresent()) {
+            return new Pair<>(moduleOptional.get(), signature);
+        } else {
+            return null;
         }
     }
 

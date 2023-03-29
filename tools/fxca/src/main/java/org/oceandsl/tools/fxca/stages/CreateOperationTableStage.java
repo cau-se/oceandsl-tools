@@ -40,7 +40,7 @@ public class CreateOperationTableStage extends AbstractTransformation<FortranPro
             final String path = module.getFileName();
             module.getSpecifiedOperations().forEach(operation -> {
                 try {
-                    callsTable.addRow(path, operation);
+                    callsTable.addRow(path, operation.getName());
                 } catch (final ValueConversionErrorException e) {
                     this.logger.error("Error writing values to operation table: {}", e.getLocalizedMessage());
                 }

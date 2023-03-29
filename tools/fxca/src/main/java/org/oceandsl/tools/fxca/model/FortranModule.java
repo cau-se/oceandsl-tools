@@ -41,7 +41,7 @@ public class FortranModule {
     @Getter
     private final Set<String> usedModules = new HashSet<>();
     @Getter
-    private final Set<String> specifiedOperations = new HashSet<>();
+    private final Set<FortranOperation> specifiedOperations = new HashSet<>();
     @Getter
     private final String moduleName;
     @Getter
@@ -52,6 +52,8 @@ public class FortranModule {
     private final String fileName;
     @Getter
     private final Collection<Pair<Pair<FortranModule, String>, Pair<FortranModule, String>>> calls = new ArrayList<>();
+    @Getter
+    private final Collection<Pair<Pair<FortranModule, String>, Pair<FortranModule, String>>> dataflows = new ArrayList<>();
     @Getter
     private final Map<String, CommonBlock> commonBlocks = new HashMap<>();
     @Getter

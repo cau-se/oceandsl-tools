@@ -33,6 +33,7 @@ import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.fxca.model.FortranModule;
+import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 import org.oceandsl.tools.fxca.tools.Pair;
@@ -47,13 +48,10 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
 
     private final OutputPort<Table> notFoundOutputPort = this.createOutputPort(Table.class);
     private FortranModule defaultModule;
+    private final String defaultModuleName;
 
     public ProcessOperationCallStage(final String defaultModuleName) {
-        if (defaultModuleName != null) {
-            this.defaultModule = new FortranModule(defaultModuleName, defaultModuleName, true, null);
-        } else {
-            this.defaultModule = null;
-        }
+        this.defaultModuleName = defaultModuleName;
     }
 
     @Override
@@ -62,15 +60,17 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
                 new StringValueHandler("caller-module"), new StringValueHandler("caller-operation"),
                 new StringValueHandler("callee-operation"));
 
-        project.getModules().values().forEach(module -> {
-            final Element element = module.getDocument().getDocumentElement();
-            this.processSubroutines(project, module, element, notFoundTable);
-            this.processFunctions(project, module, element, notFoundTable);
-        });
-
-        if (this.defaultModule != null) {
-            project.getModules().put(this.defaultModule.getModuleName(), this.defaultModule);
+        if (this.defaultModuleName != null) {
+            this.defaultModule = new FortranModule(this.defaultModuleName, this.defaultModuleName, true, null);
+            project.getModules().put(this.defaultModuleName, this.defaultModule);
         }
+
+        project.getModules().values().stream().filter(module -> !module.getModuleName().equals(this.defaultModuleName))
+                .forEach(module -> {
+                    final Element element = module.getDocument().getDocumentElement();
+                    this.processSubroutines(project, module, element, notFoundTable);
+                    this.processFunctions(project, module, element, notFoundTable);
+                });
 
         this.outputPort.send(project);
         this.notFoundOutputPort.send(notFoundTable);
@@ -113,7 +113,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
                 if (!this.isCommonBlockVariable(module, call.getSecond())
                         && !this.isVariableReference(module, call.getSecond())) {
                     if (this.defaultModule != null) {
-                        this.defaultModule.getSpecifiedOperations().add(call.getSecond());
+                        this.defaultModule.getSpecifiedOperations().add(new FortranOperation(call.getSecond()));
                         final Pair<FortranModule, String> defaultCallee = new Pair<>(this.defaultModule,
                                 call.getSecond());
                         module.getCalls().add(new Pair<>(caller, defaultCallee));
@@ -146,8 +146,8 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
     }
 
     private Pair<FortranModule, String> findOperation(final Collection<FortranModule> modules, final String signature) {
-        final Optional<FortranModule> moduleOptional = modules.stream()
-                .filter(module -> module.getSpecifiedOperations().contains(signature)).findFirst();
+        final Optional<FortranModule> moduleOptional = modules.stream().filter(module -> module.getSpecifiedOperations()
+                .stream().anyMatch(operation -> operation.getName().equals(signature))).findFirst();
         if (moduleOptional.isPresent()) {
             return new Pair<>(moduleOptional.get(), signature);
         } else {

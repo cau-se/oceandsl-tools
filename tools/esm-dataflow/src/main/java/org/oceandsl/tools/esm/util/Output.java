@@ -1,29 +1,33 @@
 package org.oceandsl.tools.esm.util;
 
-import java.util.List;
+import org.oceandsl.analysis.code.stages.data.StringValueHandler;
+import org.oceandsl.analysis.code.stages.data.Table;
 
 public class Output {
 
-    private List<String>dataflow;
-    private List<String>fileContent;
-    private List<String>commonBlocks;
+    private static final String DATAFLOW = "dataflow";
+    private static final String FILE_CONTENT = "file-content";
+    private static final String COMMON_BLOCKS = "common-blocks";
 
-    public List<String> getDataflow() {
-        return dataflow;
+    private final Table dataflow = new Table(Output.DATAFLOW, new StringValueHandler("source-file"),
+            new StringValueHandler("source-module"), new StringValueHandler("source-operation"),
+            new StringValueHandler("target-file"), new StringValueHandler("target-module"),
+            new StringValueHandler("target-operation"), new StringValueHandler("direction"));
+    private final Table fileContent = new Table(Output.FILE_CONTENT, new StringValueHandler("file"),
+            new StringValueHandler("module"), new StringValueHandler("operation"), new StringValueHandler("kind"));
+    private final Table commonBlocks = new Table(Output.COMMON_BLOCKS, new StringValueHandler("file"),
+            new StringValueHandler("module"), new StringValueHandler("operation"), new StringValueHandler("block-name"),
+            new StringValueHandler("variables"));
+
+    public Table getDataflow() {
+        return this.dataflow;
     }
-    public void setDataflow(List<String> dataflow) {
-        this.dataflow = dataflow;
+
+    public Table getFileContent() {
+        return this.fileContent;
     }
-    public List<String> getFileContent() {
-        return fileContent;
-    }
-    public void setFileContent(List<String> fileContent) {
-        this.fileContent = fileContent;
-    }
-    public List<String> getCommonBlocks() {
-        return commonBlocks;
-    }
-    public void setCommonBlocks(List<String> commonBlocks) {
-        this.commonBlocks = commonBlocks;
+
+    public Table getCommonBlocks() {
+        return this.commonBlocks;
     }
 }

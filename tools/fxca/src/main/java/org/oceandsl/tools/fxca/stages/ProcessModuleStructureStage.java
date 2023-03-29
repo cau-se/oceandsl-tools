@@ -33,6 +33,7 @@ import teetime.stage.basic.AbstractTransformation;
 
 import org.oceandsl.tools.fxca.model.CommonBlock;
 import org.oceandsl.tools.fxca.model.FortranModule;
+import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.tools.IUriProcessor;
 import org.oceandsl.tools.fxca.tools.ListTools;
@@ -122,17 +123,22 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             if (commonBlock == null) {
                 commonBlock = new CommonBlock(blockName);
             }
-            final Node commonBlockElements = statement.getChildNodes().item(3);
-            for (int i = 0; i < commonBlockElements.getChildNodes().getLength(); i++) {
-                final Node commonBlockObject = commonBlockElements.getChildNodes().item(i);
-                if ("common-block-obj".equals(commonBlockObject.getNodeName())) {
-                    final String objectName = commonBlockObject.getFirstChild().getFirstChild().getFirstChild()
-                            .getTextContent();
-                    commonBlock.getElements().add(objectName.toLowerCase(Locale.getDefault()));
-                }
-            }
-            module.getCommonBlocks().put(blockName, commonBlock);
+            module.getCommonBlocks().put(blockName, this.createCommonBlock(commonBlock, statement, blockName));
         });
+    }
+
+    private CommonBlock createCommonBlock(final CommonBlock commonBlock, final Node statement, final String name) {
+        final Node commonBlockElements = statement.getChildNodes().item(3);
+        for (int i = 0; i < commonBlockElements.getChildNodes().getLength(); i++) {
+            final Node commonBlockObject = commonBlockElements.getChildNodes().item(i);
+            if ("common-block-obj".equals(commonBlockObject.getNodeName())) {
+                final String objectName = commonBlockObject.getFirstChild().getFirstChild().getFirstChild()
+                        .getTextContent();
+                commonBlock.getElements().add(objectName.toLowerCase(Locale.getDefault()));
+            }
+        }
+
+        return commonBlock;
     }
 
     @Override
@@ -154,9 +160,34 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void computeOperationDeclarations(final FortranModule module, final Element documentElement)
             throws ParserConfigurationException, SAXException, IOException {
-        this.getDescendentAttributes(documentElement, NodePredicateUtils.isOperationStatement,
-                operationNode -> NodeProcessingUtils.getNameOfOperation(operationNode))
-                .forEach(operation -> module.getSpecifiedOperations().add(operation.toLowerCase(Locale.getDefault())));
+        this.getDescendentAttributes(documentElement, NodePredicateUtils.isOperationStatement, operationNode -> {
+            try {
+                return module.getSpecifiedOperations().add(this.createFortranOperation(operationNode));
+            } catch (ParserConfigurationException | SAXException | IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        });
+    }
+
+    private FortranOperation createFortranOperation(final Node node)
+            throws ParserConfigurationException, SAXException, IOException {
+        final String name = NodeProcessingUtils.getNameOfOperation(node);
+
+        final FortranOperation operation = new FortranOperation(name);
+
+        final Set<Node> commonStatements = this.getDescendentAttributes(node, NodePredicateUtils.isCommonStatement,
+                operationNode -> operationNode);
+        commonStatements.forEach(statement -> {
+            final Node commonBlockName = statement.getChildNodes().item(1);
+            final String blockName = commonBlockName.getFirstChild().getTextContent().toLowerCase(Locale.getDefault());
+            CommonBlock commonBlock = operation.getCommonBlocks().get(blockName);
+            if (commonBlock == null) {
+                commonBlock = new CommonBlock(blockName);
+            }
+        });
+
+        return operation;
     }
 
     private <T> Set<T> getDescendentAttributes(final Node node, final Predicate<Node> predicate,

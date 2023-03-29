@@ -47,6 +47,14 @@ public class Settings { // NOPMD data class
     @Parameter(names = { "-e", "--experiment" }, required = true, description = "Experiment name")
     private String experimentName;
 
+    @Parameter(names = { "-d",
+            "--default-component" }, required = false, description = "In case callees are identified that do not have an implementation in the code, assign the callee to this operation.")
+    private String defaultComponent;
+
+    @Parameter(names = { "-f",
+            "--flat" }, required = false, description = "Scan source directories flat, i.e. not in recusrive mode.")
+    private boolean flat;
+
     public List<Path> getInputDirectoryPaths() {
         return this.inputDirectoryPaths;
     }
@@ -57,6 +65,14 @@ public class Settings { // NOPMD data class
 
     public String getExperimentName() {
         return this.experimentName;
+    }
+
+    public String getDefaultComponent() {
+        return this.defaultComponent;
+    }
+
+    public boolean isFlat() {
+        return this.flat;
     }
 
 }

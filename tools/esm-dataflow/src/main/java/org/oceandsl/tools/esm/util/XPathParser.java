@@ -25,7 +25,7 @@ public class XPathParser {
             Node node = nList.item(i);
             final List<Node> currentNList = new ArrayList<>();
             currentNList.add(node);
-            while (node.getNextSibling() != null
+            while ((node.getNextSibling() != null)
                     && !node.getNextSibling().getNodeName().equals("end-subroutine-stmt")) {
                 currentNList.add(node.getNextSibling());
                 node = node.getNextSibling();
@@ -52,7 +52,7 @@ public class XPathParser {
             Node node = nList.item(i);
             final List<Node> currentNList = new ArrayList<>();
             currentNList.add(node);
-            while (node.getNextSibling() != null && node.getNextSibling().getNodeName().equals("end-function-stmt")) {
+            while ((node.getNextSibling() != null) && node.getNextSibling().getNodeName().equals("end-function-stmt")) {
                 currentNList.add(node.getNextSibling());
                 node = node.getNextSibling();
             }
@@ -71,7 +71,7 @@ public class XPathParser {
             Node node = nList.item(i);
 
             currentNList.add(node);
-            while (node.getNextSibling() != null && node.getNextSibling().getNodeName().equals("end-program-stmt")) {
+            while ((node.getNextSibling() != null) && node.getNextSibling().getNodeName().equals("end-program-stmt")) {
                 currentNList.add(node.getNextSibling());
                 node = node.getNextSibling();
             }
@@ -362,7 +362,7 @@ public class XPathParser {
     public static List<String> getArraysDecl(final List<List<Node>> bodies) {
         final List<String> result = new ArrayList<>();
 
-        for (final List<Node> body : bodies) { // iterate throgh bodiees
+        for (final List<Node> body : bodies) { // iterate through bodies
             for (final Node node : body) { // get a body
                 if (node.getNodeName().equals("T-decl-stmt")) {// find decl stmt
                     if (node.getNodeType() == Node.ELEMENT_NODE) {

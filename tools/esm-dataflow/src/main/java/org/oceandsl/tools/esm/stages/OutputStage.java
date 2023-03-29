@@ -1,55 +1,53 @@
+/***************************************************************************
+ * Copyright 2023 Kieker Project (http://kieker-monitoring.net)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package org.oceandsl.tools.esm.stages;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-
 import teetime.framework.AbstractConsumerStage;
+import teetime.framework.OutputPort;
 
+import org.oceandsl.analysis.code.stages.data.Table;
 import org.oceandsl.tools.esm.util.Output;
 
+/**
+ * @author reiner
+ *
+ */
 public class OutputStage extends AbstractConsumerStage<Output> {
 
-    private final Path outputPath;
-
-    public OutputStage(final Path output) {
-        this.outputPath = output;
-    }
+    private final OutputPort<Table> dataflowPort = this.createOutputPort(Table.class);
+    private final OutputPort<Table> commonBlocksPort = this.createOutputPort(Table.class);
+    private final OutputPort<Table> fileContentPort = this.createOutputPort(Table.class);
 
     @Override
     protected void execute(final Output element) throws Exception {
-
-        try {
-            final File filedf = new File(outputPath.toString() + "/" + "dataflow.csv");
-            filedf.createNewFile();
-            final File filefc = new File(outputPath.toString() + "/" + "filecontent.csv");
-            filefc.createNewFile();
-            final File filecb = new File(outputPath.toString() + "/" + "commonblocks.csv");
-            filecb.createNewFile();
-            final FileWriter writerdf = new FileWriter(filedf);
-            final FileWriter writerfc = new FileWriter(filefc);
-            final FileWriter writercb = new FileWriter(filecb);
-            for (final String line : element.getDataflow()) {
-                writerdf.write(line + System.lineSeparator());
-            }
-            // writerdf.close();
-            for (final String line : element.getFileContent()) {
-                writerfc.write(line + System.lineSeparator());
-            }
-
-            for (final String line : element.getCommonBlocks()) {
-                writercb.write(line + System.lineSeparator());
-            }
-            writerdf.close();
-            writerfc.close();
-            writercb.close();
-
-            System.out.println("Successfully wrote lines to files.");
-        } catch (final IOException e) {
-            System.out.println("An error occurred while writing to the file.");
-            e.printStackTrace();
-        }
-
+        this.dataflowPort.send(element.getDataflow());
+        this.commonBlocksPort.send(element.getCommonBlocks());
+        this.fileContentPort.send(element.getFileContent());
     }
+
+    public OutputPort<Table> getDataflowPort() {
+        return this.dataflowPort;
+    }
+
+    public OutputPort<Table> getFileContentPort() {
+        return this.fileContentPort;
+    }
+
+    public OutputPort<Table> getCommonBlocksPort() {
+        return this.commonBlocksPort;
+    }
+
 }

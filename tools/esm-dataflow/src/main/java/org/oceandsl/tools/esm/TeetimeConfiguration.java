@@ -27,6 +27,7 @@ import org.oceandsl.analysis.generic.stages.TableCSVSink;
 import org.oceandsl.tools.esm.stages.CreateCommonBlocksTableStage;
 import org.oceandsl.tools.esm.stages.CreateDataflowTableStage;
 import org.oceandsl.tools.esm.stages.CreateFileContentsTableStage;
+import org.oceandsl.tools.esm.stages.OutputStage;
 import org.oceandsl.tools.esm.stages.ProcessDataFlowAnalysisStage;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.stages.ProcessModuleStructureStage;
@@ -60,7 +61,8 @@ public class TeetimeConfiguration extends Configuration {
 
         final ProcessModuleStructureStage processModuleStructureStage = new ProcessModuleStructureStage(uriProcessor);
 
-        final ProcessDataFlowAnalysisStage dataFlowAnalysisStage = new ProcessDataFlowAnalysisStage(uriProcessor);
+        final ProcessDataFlowAnalysisStage dataFlowAnalysisStage = new ProcessDataFlowAnalysisStage(
+                settings.getDefaultComponent());
 
         final Distributor<FortranProject> projectDistributor = new Distributor<>(new CopyByReferenceStrategy());
 
@@ -68,6 +70,8 @@ public class TeetimeConfiguration extends Configuration {
         final CreateDataflowTableStage dataflowTableStage = new CreateDataflowTableStage();
         final CreateFileContentsTableStage fileContentTableStage = new CreateFileContentsTableStage();
         final CreateCommonBlocksTableStage commonBlockTableStage = new CreateCommonBlocksTableStage();
+
+        final OutputStage outputStage = new OutputStage();
 
         /** output stages */
         final TableCSVSink dataflowTableSink = new TableCSVSink(
@@ -84,15 +88,25 @@ public class TeetimeConfiguration extends Configuration {
 
         this.connectPorts(processModuleStructureStage.getOutputPort(), dataFlowAnalysisStage.getInputPort());
 
-        this.connectPorts(dataFlowAnalysisStage.getOutputPort(), projectDistributor.getInputPort());
+        this.connectPorts(dataFlowAnalysisStage.getOutputPort(), outputStage.getInputPort());
 
-        this.connectPorts(projectDistributor.getNewOutputPort(), dataflowTableStage.getInputPort());
-        this.connectPorts(dataflowTableStage.getOutputPort(), dataflowTableSink.getInputPort());
+        // projectDistributor.getInputPort());
 
-        this.connectPorts(projectDistributor.getNewOutputPort(), fileContentTableStage.getInputPort());
-        this.connectPorts(fileContentTableStage.getOutputPort(), fileContentTableSink.getInputPort());
-
-        this.connectPorts(projectDistributor.getNewOutputPort(), commonBlockTableStage.getInputPort());
-        this.connectPorts(commonBlockTableStage.getOutputPort(), commonBlocksTableSink.getInputPort());
+        // this.connectPorts(projectDistributor.getNewOutputPort(),
+        // dataflowTableStage.getInputPort());
+        // this.connectPorts(dataflowTableStage.getOutputPort(), dataflowTableSink.getInputPort());
+        this.connectPorts(outputStage.getDataflowPort(), dataflowTableSink.getInputPort());
+        this.connectPorts(outputStage.getFileContentPort(), fileContentTableSink.getInputPort());
+        this.connectPorts(outputStage.getCommonBlocksPort(), commonBlocksTableSink.getInputPort());
+        //
+        // this.connectPorts(projectDistributor.getNewOutputPort(),
+        // fileContentTableStage.getInputPort());
+        // this.connectPorts(fileContentTableStage.getOutputPort(),
+        // fileContentTableSink.getInputPort());
+        //
+        // this.connectPorts(projectDistributor.getNewOutputPort(),
+        // commonBlockTableStage.getInputPort());
+        // this.connectPorts(commonBlockTableStage.getOutputPort(),
+        // commonBlocksTableSink.getInputPort());
     }
 }
