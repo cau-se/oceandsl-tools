@@ -25,7 +25,7 @@ public class XPathParser {
             Node node = nList.item(i);
             final List<Node> currentNList = new ArrayList<>();
             currentNList.add(node);
-            while ((node.getNextSibling() != null)
+            while (node.getNextSibling() != null
                     && !node.getNextSibling().getNodeName().equals("end-subroutine-stmt")) {
                 currentNList.add(node.getNextSibling());
                 node = node.getNextSibling();
@@ -52,7 +52,7 @@ public class XPathParser {
             Node node = nList.item(i);
             final List<Node> currentNList = new ArrayList<>();
             currentNList.add(node);
-            while ((node.getNextSibling() != null) && node.getNextSibling().getNodeName().equals("end-function-stmt")) {
+            while (node.getNextSibling() != null && node.getNextSibling().getNodeName().equals("end-function-stmt")) {
                 currentNList.add(node.getNextSibling());
                 node = node.getNextSibling();
             }
@@ -71,7 +71,7 @@ public class XPathParser {
             Node node = nList.item(i);
 
             currentNList.add(node);
-            while ((node.getNextSibling() != null) && node.getNextSibling().getNodeName().equals("end-program-stmt")) {
+            while (node.getNextSibling() != null && node.getNextSibling().getNodeName().equals("end-program-stmt")) {
                 currentNList.add(node.getNextSibling());
                 node = node.getNextSibling();
             }
@@ -244,19 +244,11 @@ public class XPathParser {
         return result;
     }
 
-    public static String getsubroutineId(final List<Node> body) {
-        // List<String> result = new ArrayList<String>();
+    public static String getSubroutineId(final List<Node> body) {
         final Element e = (Element) body.get(0);
-        // System.out.println("name" +e.getNodeName().equals("subroutine-stmt"));
         final NodeList nameElems = e.getElementsByTagName("n");
-        // System.out.println("size: "+ nameElems.getLength());
-        // for(int i=0;i<nameElems.getLength();i++) {
-
-        // result.add(nameElems.item(0).getTextContent());
-        // }
 
         return nameElems.item(0).getTextContent();
-        // return result.get(0);
     }
 
     public static String getFunctionId(final List<Node> body) {

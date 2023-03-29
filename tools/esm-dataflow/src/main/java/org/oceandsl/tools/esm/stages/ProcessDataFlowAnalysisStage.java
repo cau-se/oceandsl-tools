@@ -76,14 +76,12 @@ public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject>
     }
 
     private List<String> analyzeSubRoutines(final List<List<Node>> subRoutineBodies, final String fileId) {
-
         List<String> dataflowInSub = new ArrayList<>();
         final List<String> blackList = XPathParser.getArraysDecl(subRoutineBodies);
         for (final List<Node> body : subRoutineBodies) {
-            final String name = XPathParser.getsubroutineId(body);
+            final String name = XPathParser.getSubroutineId(body);
             final List<Node> commonBlocks = XPathParser.getCommonBlocks(body);
             this.writeCommonBlocksName(commonBlocks, fileId);
-            System.out.println("size common " + commonBlocks.size());
             final String contentLine = "{" + fileId + "};{" + name + "};SUBROUTINE";
             this.contentFile.add(contentLine);
             this.proceduresFilemap.put(name, fileId);
@@ -95,7 +93,6 @@ public class ProcessDataFlowAnalysisStage extends AbstractFilter<FortranProject>
     }
 
     private List<String> analyzeFunctions(final List<List<Node>> funcBodies, final String fileId) {
-
         List<String> dataflowInFunc = new ArrayList<>();
         final List<String> blackList = XPathParser.getArraysDecl(funcBodies);
         for (final List<Node> body : funcBodies) {
