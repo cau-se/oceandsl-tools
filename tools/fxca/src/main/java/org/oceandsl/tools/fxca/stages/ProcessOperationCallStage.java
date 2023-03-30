@@ -113,7 +113,8 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
                 if (!this.isCommonBlockVariable(module, call.getSecond())
                         && !this.isVariableReference(module, call.getSecond())) {
                     if (this.defaultModule != null) {
-                        this.defaultModule.getSpecifiedOperations().add(new FortranOperation(call.getSecond()));
+                        this.defaultModule.getOperations().put(call.getSecond(),
+                                new FortranOperation(call.getSecond(), null));
                         final Pair<FortranModule, String> defaultCallee = new Pair<>(this.defaultModule,
                                 call.getSecond());
                         module.getCalls().add(new Pair<>(caller, defaultCallee));
@@ -146,7 +147,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
     }
 
     private Pair<FortranModule, String> findOperation(final Collection<FortranModule> modules, final String signature) {
-        final Optional<FortranModule> moduleOptional = modules.stream().filter(module -> module.getSpecifiedOperations()
+        final Optional<FortranModule> moduleOptional = modules.stream().filter(module -> module.getOperations().values()
                 .stream().anyMatch(operation -> operation.getName().equals(signature))).findFirst();
         if (moduleOptional.isPresent()) {
             return new Pair<>(moduleOptional.get(), signature);

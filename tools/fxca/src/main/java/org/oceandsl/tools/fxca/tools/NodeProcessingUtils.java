@@ -141,8 +141,28 @@ public class NodeProcessingUtils {
         }
     }
 
+    public static Node findFirstChild(final Node parent, final Predicate<Node> condition) {
+        for (Node node = parent.getFirstChild(); node != null; node = node.getNextSibling()) {
+            if (condition.test(node)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    public static Set<Node> findAllSiblings(final Node firstNode, final Predicate<Node> select,
+            final Predicate<Node> terminate) {
+        final Set<Node> nodes = new HashSet<>();
+        for (Node node = firstNode; (node != null) && !terminate.test(node); node = node.getNextSibling()) {
+            if (select.test(node)) {
+                nodes.add(node);
+            }
+        }
+        return nodes;
+    }
+
     // NOTE: Only terminates if nextNode eventually returns null or a matching element.
-    private static Node findFirst(final Node parent, final Function<Node, Node> nextNode,
+    public static Node findFirst(final Node parent, final Function<Node, Node> nextNode,
             final Predicate<Node> condition, final boolean includeSelf) {
         return NodeProcessingUtils.findFirst(parent, nextNode, condition, includeSelf, null);
     }
@@ -194,9 +214,9 @@ public class NodeProcessingUtils {
         boolean inParanthesisInterval = false;
         // End if we do not have anywhere to search, or we have reached the limit (where "-1" counts
         // as "no limit").
-        while (current != null && (result.size() < maxElementsToFind || maxElementsToFind == -1)) {
+        while ((current != null) && ((result.size() < maxElementsToFind) || (maxElementsToFind == -1))) {
 
-            if (!inParanthesisInterval && condition.test(current) && (current != parent || includeSelf)) {
+            if (!inParanthesisInterval && condition.test(current) && ((current != parent) || includeSelf)) {
                 result.add(current);
             }
 
@@ -284,7 +304,7 @@ public class NodeProcessingUtils {
         return NodeProcessingUtils.getName(nameNodes.iterator().next());
     }
 
-    private static String getName(final Node node) {
+    public static String getName(final Node node) {
         final Node bigNNode = node.getChildNodes().item(0);
         final Node littleNNode = bigNNode.getChildNodes().item(0);
 
@@ -353,11 +373,11 @@ public class NodeProcessingUtils {
 
         final short type = node.getNodeType();
 
-        if (type == Node.TEXT_NODE && node.getChildNodes().getLength() > 0) {
+        if ((type == Node.TEXT_NODE) && (node.getChildNodes().getLength() > 0)) {
             throw new IllegalArgumentException("text node with children");
         }
 
-        if ("call-stmt".equals(node.getNodeName()) && node.getChildNodes().getLength() < 2) {
+        if ("call-stmt".equals(node.getNodeName()) && (node.getChildNodes().getLength() < 2)) {
             NodeProcessingUtils.printNode(node, 0);
             throw new IllegalArgumentException("call statement with < 2 children");
         }

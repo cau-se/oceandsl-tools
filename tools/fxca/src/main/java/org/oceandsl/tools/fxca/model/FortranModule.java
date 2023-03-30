@@ -41,7 +41,7 @@ public class FortranModule {
     @Getter
     private final Set<String> usedModules = new HashSet<>();
     @Getter
-    private final Set<FortranOperation> specifiedOperations = new HashSet<>();
+    private final Map<String, FortranOperation> operations = new HashMap<>();
     @Getter
     private final String moduleName;
     @Getter
@@ -75,6 +75,6 @@ public class FortranModule {
         this.usedModules.forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
 
         FortranModule.LOGGER.debug(" [operation definitions] ");
-        this.specifiedOperations.forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
+        this.operations.values().forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
     }
 }

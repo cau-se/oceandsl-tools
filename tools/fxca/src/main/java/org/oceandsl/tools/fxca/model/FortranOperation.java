@@ -16,7 +16,11 @@
 package org.oceandsl.tools.fxca.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import org.w3c.dom.Node;
 
 import lombok.Getter;
 
@@ -33,7 +37,17 @@ public class FortranOperation {
     @Getter
     private final Map<String, CommonBlock> commonBlocks = new HashMap<>();
 
-    public FortranOperation(final String name) {
+    @Getter
+    private final Set<String> variables = new HashSet<>();
+
+    @Getter
+    private final Set<String> parameters = new HashSet<>();
+
+    @Getter
+    private final Node node;
+
+    public FortranOperation(final String name, final Node node) {
         this.name = name;
+        this.node = node;
     }
 }

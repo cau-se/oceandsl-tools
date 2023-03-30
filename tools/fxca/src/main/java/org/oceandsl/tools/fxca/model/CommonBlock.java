@@ -18,6 +18,8 @@ package org.oceandsl.tools.fxca.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.w3c.dom.Node;
+
 import lombok.Getter;
 
 /**
@@ -32,8 +34,12 @@ public class CommonBlock {
     @Getter
     private final Set<String> elements = new HashSet<>();
 
-    public CommonBlock(final String name) {
+    @Getter
+    private final Node node;
+
+    public CommonBlock(final String name, final Node node) {
         this.name = name;
+        this.node = node;
     }
 
 }

@@ -51,7 +51,7 @@ public class LocalExpressionAccess {
             smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static LocalAccessParameters namesInOperationParameterList = new LocalAccessParameters(
-            NodePredicateUtils.isOperationStatement, NodePredicateUtils.isArgN, NodePredicateUtils.isSmallN,
+            NodePredicateUtils.isOperationStatement, NodePredicateUtils.isArgumentName, NodePredicateUtils.isSmallN,
             smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static LocalAccessParameters namesInLocalVariableList = new LocalAccessParameters(NodePredicateUtils.isTDeclStmt,
@@ -141,18 +141,6 @@ public class LocalExpressionAccess {
         return NodePredicateUtils.isCallStatement.or(NodePredicateUtils.namedExpressionAccess).test(referenceNode)
                 && (LocalExpressionAccess.typeOfReferenceAccess(referenceNode) != accessType.OPERATION_CALL);
     }
-
-    // public static String nameOfCalledFunctionOrLocalReference(Node referenceNode) {
-    //
-    // String suffix = switch(typeOfReferenceAccess(referenceNode)) {
-    // case COMMON_BLOCK -> "-common-access";
-    // case LOCAL_VARIABLE -> "-local-variable";
-    // case OPERATION_PARAMETER -> "-parameter-access";
-    // case OPERATION_CALL -> "";
-    // };
-    //
-    // return StatementNode.nameOfCalledFunction(referenceNode) + suffix;
-    // }
 
     public static String nameOfCalledFunctionOrLocalReference(final Node referenceNode) {
 

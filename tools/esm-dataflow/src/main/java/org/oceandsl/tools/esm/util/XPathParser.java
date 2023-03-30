@@ -2,11 +2,15 @@ package org.oceandsl.tools.esm.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.oceandsl.tools.fxca.tools.NodePredicateUtils;
+import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 
 public class XPathParser {
 
@@ -63,76 +67,33 @@ public class XPathParser {
         return subRs;
     }
 
-    public static List<Node> getMain(final Document document) {
-        final List<Node> currentNList = new ArrayList<>();
-        final NodeList nList = document.getElementsByTagName("program-stmt");
-
-        for (int i = 0; i < nList.getLength(); i++) {
-            Node node = nList.item(i);
-
-            currentNList.add(node);
-            while ((node.getNextSibling() != null) && node.getNextSibling().getNodeName().equals("end-program-stmt")) {
-                currentNList.add(node.getNextSibling());
-                node = node.getNextSibling();
-            }
-        }
-
-        return currentNList;
+    public static Set<Node> getMain(final Document document) {
+        return NodeProcessingUtils.findAllSiblings(document.getFirstChild(), NodePredicateUtils.isProgramStatement,
+                NodePredicateUtils.isEndProgramStatement);
     }
 
-    public static List<Node> getCallStmts(final List<Node> body) {
-
-        final List<Node> result = new ArrayList<>();
-        for (final Node node : body) {
-            if (node.getNodeName().equals("call-stmt")) {
-                result.add(node);
-            }
-        }
-        return result;
-
+    public static Set<Node> getCallStmts(final Node body) {
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isCallStatement,
+                NodePredicateUtils.isEndSubroutineStatement);
     }
 
-    public static List<Node> getCommonBlocks(final List<Node> body) {
-        final List<Node> result = new ArrayList<>();
-        for (final Node node : body) {
-            if (node.getNodeName().equals("common-stmt")) {
-                result.add(node);
-            }
-        }
-        return result;
-
+    public static Set<Node> getCommonBlocks(final Node body) {
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isCommonStatement,
+                o -> false);
     }
 
-    public static List<Node> getIfElseStmts(final List<Node> body) {
-        final List<Node> result = new ArrayList<>();
-        for (final Node node : body) {
-            if (node.getNodeName().equals("if-then-stmt")) {
-                result.add(node);
-            }
-        }
-        return result;
+    public static Set<Node> getIfElseStmts(final Node body) {
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isIfThenStatement,
+                NodePredicateUtils.isEndIfStatement);
     }
 
-    public static List<Node> getSelectStmts(final List<Node> body) {
-        final List<Node> result = new ArrayList<>();
-        for (final Node node : body) {
-            if (node.getNodeName().equals("select-case-stmt")) {
-                result.add(node);
-            }
-        }
-        return result;
-
+    public static Set<Node> getSelectStmts(final Node body) {
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isSelectCaseStatement,
+                o -> false);
     }
 
-    public static List<Node> getLoopCtrlStmts(final List<Node> body) {
-        final List<Node> result = new ArrayList<>();
-        for (final Node node : body) {
-            if (node.getNodeName().equals("do-stmt")) {
-                result.add(node);
-            }
-        }
-        return result;
-
+    public static Set<Node> getLoopCtrlStmts(final Node body) {
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isDoStatement, o -> false);
     }
 
     public static String getLoopControlVar(final Node loopStatement) {
@@ -147,15 +108,9 @@ public class XPathParser {
         return result;
     }
 
-    public static List<Node> getAssignmentStmts(final List<Node> body) {
-        final List<Node> result = new ArrayList<>();
-        for (final Node node : body) {
-            if (node.getNodeName().equals("a-stmt")) {
-                result.add(node);
-            }
-        }
-        return result;
-
+    public static Set<Node> getAssignmentStmts(final Node body) {
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isAssignmentStatement,
+                o -> false);
     }
 
     public static List<String> callHasArgs(final Node callStmt) {
@@ -252,41 +207,21 @@ public class XPathParser {
     }
 
     public static String getFunctionId(final List<Node> body) {
-        // List<String> result = new ArrayList<String>();
         final Element e = (Element) body.get(0);
         final NodeList nameElems = e.getElementsByTagName("n");
-
-        // for(int i=0;i<nameElems.getLength();i++) {
-        // result.add(nameElems.item(i).getNodeValue());
-        // }
-
         return nameElems.item(0).getTextContent();
-        // return result.get(0);
     }
 
     public static String getCallStmtId(final Node callStmt) {
-        // List<String> result = new ArrayList<String>();
         final Element e = (Element) callStmt;
         final NodeList nameElems = e.getElementsByTagName("n");
-
-        // for(int i=0;i<nameElems.getLength();i++) {
-        // **/ result.add(nameElems.item(i).getNodeValue());
-        // }
-
         return nameElems.item(0).getTextContent();
     }
 
     public static String getCommonBlockId(final Node commonBlock) {
-        // List<String> result = new ArrayList<String>();
         final Element e = (Element) commonBlock;
-        System.out.println(e.getNodeName().equals("common-stmt"));
         final NodeList nameElems = e.getElementsByTagName("n");
 
-        // for(int i=0;i<nameElems.getLength();i++) {
-        // result.add(nameElems.item(i).getNodeValue());
-        // }
-
-        // return result.get(0);
         return nameElems.item(0).getTextContent();
     }
 

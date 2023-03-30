@@ -38,7 +38,7 @@ public class CreateOperationTableStage extends AbstractTransformation<FortranPro
                 new StringValueHandler("operation"));
         project.getModules().values().forEach(module -> {
             final String path = module.getFileName();
-            module.getSpecifiedOperations().forEach(operation -> {
+            module.getOperations().values().forEach(operation -> {
                 try {
                     callsTable.addRow(path, operation.getName());
                 } catch (final ValueConversionErrorException e) {
