@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.oceandsl.tools.restructuring.stages.ComponentsMapper;
+import org.oceandsl.tools.restructuring.stages.exec.mapper.Matcher;
 
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
@@ -116,7 +116,7 @@ class SimpleMapperTest {
 	}
 	@Test
 	void test() {
-		ComponentsMapper mapper = new ComponentsMapper(this.orig, this.goal);
+		Matcher mapper = new Matcher(this.orig, this.goal);
 		HashMap<String, String> oToCG=mapper.getOperationToComponentG();
 		HashMap<String, String> oToCO=mapper.getOperationToComponentO();
 		assertTrue(oToCG.equals(this.opToCG));

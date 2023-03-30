@@ -3,7 +3,8 @@ package org.oceandsl.tools.restructuring.stages;
 
 import org.oceandsl.tools.restructuring.stages.exec.RestructureStepFinder;
 import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractMapper;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.matching.Matcher;
+import org.oceandsl.tools.restructuring.stages.exec.mapper.Matcher;
+
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import teetime.framework.AbstractProducerStage;
 
@@ -21,6 +22,7 @@ public class LightTraceRestorator{
 	public int getNumSteps(){
 
 				AbstractMapper	 mapper = new Matcher(original,goal);
+			
 				RestructureStepFinder stepfinder = new RestructureStepFinder(mapper);
 				stepfinder.findTransformation();
 				return stepfinder.getNumStep();

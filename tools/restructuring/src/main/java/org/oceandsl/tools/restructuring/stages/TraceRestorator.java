@@ -3,8 +3,8 @@ package org.oceandsl.tools.restructuring.stages;
 import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractMapper;
 import org.oceandsl.tools.restructuring.stages.exec.mapper.ComponentsMapper;
 import org.oceandsl.tools.restructuring.stages.exec.mapper.EmptyMapper;
+import org.oceandsl.tools.restructuring.stages.exec.mapper.Matcher;
 import org.oceandsl.tools.restructuring.stages.exec.mapper.RandomMapper;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.matching.Matcher;
 import org.oceandsl.tools.restructuring.util.TransformationFactory;
 
 import kieker.analysis.architecture.repository.ModelRepository;

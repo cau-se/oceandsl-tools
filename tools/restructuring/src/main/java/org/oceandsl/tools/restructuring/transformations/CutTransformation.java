@@ -41,6 +41,7 @@ public class CutTransformation extends AtomicTransformation {
 	
 	@Override
 	public void applyTransformation(AssemblyModel model) {
+		 System.out.println("cutting" +this.componentName);
 		 model.getComponents().get(this.componentName).getOperations().removeKey(this.operationName);
 		 this.model = model;
 		

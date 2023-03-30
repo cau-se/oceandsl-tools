@@ -76,7 +76,8 @@ public class RestructureStepFinder {
 	}
 	public void findTransformation() {
 		// goalComponents.
-
+		//System.out.println("Num of gto in step finder:"+this.compMapper.getGoalToOriginal().size());
+		//System.out.println("Num of tgo in stepfinder:"+this.compMapper.getOriginallToGoal().size());
 		EMap<String, AssemblyComponent> originalComponents = (EcoreEMap<String, AssemblyComponent>) this.orig
 				.getComponents();
 		while(!TransformationFactory.areSameModels(goal, orig)) {
@@ -88,7 +89,7 @@ public class RestructureStepFinder {
 
 			// We could find a mapping, yeah!
 			if (nameOfGoalC != null) {
-
+				//System.out.println("Get nameOfGoalC "+ nameOfGoalC);
 				AssemblyComponent goalAssemblyComponentObject = this.goal.getComponents().get(nameOfGoalC);
 				EMap<String, AssemblyOperation> operationInGoalcomponent = goalAssemblyComponentObject.getOperations();
 
@@ -126,8 +127,10 @@ public class RestructureStepFinder {
 			String goalComponent = this.compMapper.getOperationToComponentG().get(operationName);
 
 			// Where does it lie currently?
-			String originalComponent = operation.getValue().getComponent().getSignature();
-
+//			String originalComponent = operation.getValue().getComponent().getSignature();
+			
+			//MP 2023
+			String originalComponent = this.compMapper.getOperationToComponentO().get(operation.getKey());
 			// check if the goal location of the current operation is mapped to some
 			// component in original?
 			//

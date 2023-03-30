@@ -1,4 +1,4 @@
-package org.oceandsl.tools.restructuring.stages.exec.mapper.matching;
+package org.oceandsl.tools.restructuring.stages.exec.mapper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -7,9 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
-
-import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractMapper;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.ComponentsMapper;
 
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
@@ -22,12 +19,13 @@ import org.jgrapht.alg.matching.MaximumWeightBipartiteMatching;
 import org.jgrapht.graph.*;
 public class Matcher extends AbstractMapper{
 	private ComponentsMapper compMapper;
+	private final static String GOAL = "20_";
 	private AssemblyModel orig;
 	private AssemblyModel goal;
 	
 	private SimpleWeightedGraph <String, DefaultEdge> graph;
-	private Set <String>s = new HashSet<String>();;
-	private Set<String> t = new HashSet<String>();;
+	private Set <String>s = new HashSet<String>();
+	private Set<String> t = new HashSet<String>();
 	private Matching <String, DefaultEdge>matching;
 	
 	private  HashMap <String, String> operationToComponentO = new HashMap<String, String>();
@@ -45,27 +43,34 @@ public class Matcher extends AbstractMapper{
 		this.graph = new SimpleWeightedGraph<String, DefaultEdge>(DefaultEdge.class);
 		populateOperationTocomponentG();
 		populateOperationToComponentO();
+		//System.out.println("Same comps:" + operationToComponentO.values().equals(operationToComponentG.values()));
 		//init mappings
 
 		
 		//create graphp
 		
-		for(Entry<String, AssemblyComponent> c: this.orig.getComponents().entrySet()) {
-			
-		}
+
 		
 		//initial graph
 		for(Entry<String, AssemblyComponent> c: this.orig.getComponents().entrySet()) { //each component is a vertex
 			
 			String origVertex = c.getKey();
+			
 			this.graph.addVertex(origVertex); //create vertex from original component
 			for(Entry<String, AssemblyOperation> ops: c.getValue().getOperations().entrySet()) { // iterate through  operations in original components
 				
-				String goalVertex = this.operationToComponentG.get(ops.getKey()); //get the goal component containing the current operation
-				
+			//	System.out.println("Current vertex from orig" + origVertex);
+				String goalVertex = this.operationToComponentG.get(ops.getKey());
+				//if(goalVertex.equals(origVertex)) {
+				//	System.out.println("same goal and original!");
+					//goalVertex = goalVertex;
+				//}
+			//	this.t.add(goalVertex);//get the goal component containing the current operation
+			//	System.out.println("Current vertex from goal" + goalVertex);
 				if(!this.graph.containsVertex(goalVertex)) { // vertex was not added yet , thus simply create and edge
 					this.graph.addVertex(goalVertex); // component on goal as vertex
-					DefaultEdge edge = this.graph.addEdge(origVertex, goalVertex); //add edge
+					DefaultEdge edge = this.graph.addEdge(origVertex, goalVertex);//add edge
+				//	System.out.println(this.graph.containsEdge(edge));
 					this.graph.setEdgeWeight(edge, 1); //weight is 1 first encounter
 				}else { //component already in the graph
 						//check if there is already a connection  between current orig and goal components
@@ -76,6 +81,8 @@ public class Matcher extends AbstractMapper{
 					    this.graph.setEdgeWeight(edge,currentWeight+1);
 					}else {
 						// no edges. Create a simple edge
+						if(origVertex.equals(goalVertex))
+							System.out.println(origVertex+" "+goalVertex);
 						edge = this.graph.addEdge(origVertex, goalVertex); //add edge
 						this.graph.setEdgeWeight(edge, 1); //weight is 1 first encounter
 					}
@@ -88,7 +95,7 @@ public class Matcher extends AbstractMapper{
 		}
 		assert this.graph.vertexSet().size() == this.orig.getComponents().size()+this.goal.getComponents().size();	
 		// add dummies to equlize partitions
-		if(this.orig.getComponents().size()<this.goal.getComponents().size()) { //stock ip orig vertices with dummies
+	/*	if(this.orig.getComponents().size()<this.goal.getComponents().size()) { //stock ip orig vertices with dummies
 			int diff = this.goal.getComponents().size()-this.orig.getComponents().size();
 			for(int i=0;i<diff;i++) {
 				String dummy = "dummy"+i;
@@ -124,19 +131,20 @@ public class Matcher extends AbstractMapper{
 				}
 			}
 		}
-		
+		*/
 	//	System.out.println(this.s.size());
 	//	System.out.println(this.t.size());
 		
-		assert this.s.size()==this.t.size();
+	//	assert this.s.size()==this.t.size();
 	//	System.out.println(this.s.size()*this.t.size());
-		System.out.println(this.graph.edgeSet().size());
-		assert this.s.size()*this.t.size()==this.graph.edgeSet().size();
+		//System.out.println(this.graph.edgeSet().size());
+		//assert this.s.size()*this.t.size()==this.graph.edgeSet().size();
 		MaximumWeightBipartiteMatching<String, DefaultEdge> matcher = new MaximumWeightBipartiteMatching<String,DefaultEdge>(graph, s, t);
 		this.matching = matcher.getMatching();
 		computeOriginalComponentNames();
-		System.out.println(this.goalToOriginal.size());
-		System.out.println(this.matching.getEdges().size());
+		//System.out.println("Size of gto "+this.goalToOriginal.size());
+		//System.out.println("Size of otg " + this.originallToGoal.size());
+		//System.out.println("Num of matching"+this.matching.getEdges().size());
 		
 		
 	}
@@ -220,8 +228,9 @@ public class Matcher extends AbstractMapper{
 			if(graph.getEdgeWeight(e)>0) {
 				String source = graph.getEdgeSource(e);
 				String target = graph.getEdgeTarget(e);
-			    this.goalToOriginal.put(source, target);
-		    	this.originallToGoal.put(target, source);
+				//String trueTarget = target.substring(0, target.length()-3);
+			    this.goalToOriginal.put(target, source);
+		    	this.originallToGoal.put(source, target);
 
 			}
 		}
@@ -268,8 +277,13 @@ public class Matcher extends AbstractMapper{
 	private void populateOperationToComponentO() {
 		for(Entry<String, AssemblyComponent> e:this.orig.getComponents().entrySet()) {
 			Set<String>ops = e.getValue().getOperations().keySet();
-			for(String s : ops) {
+			
+			if(ops==null) {
+				throw new Error("Component in orig " + e.getKey()+ " has null  operations" );
+			}
+			for(String s : ops) {	
 				this.operationToComponentO.put(s, e.getKey());
+			
 			}
 		}
 	}
@@ -277,11 +291,15 @@ public class Matcher extends AbstractMapper{
 	private void populateOperationTocomponentG() {
 		for(Entry<String, AssemblyComponent> e:this.goal.getComponents().entrySet()) {
 			Set<String>ops = e.getValue().getOperations().keySet();
+			if(ops==null) {
+				throw new Error("Component in goal " + e.getKey()+ " has null  operations" );
+			}
 			for(String s : ops) {
 				this.operationToComponentG.put(s, e.getKey());
 			}
+			}
 		}
-	}
+	
 	
 	/*private void populateOperationToComponentO() {
 		Graph<String, DefaultEdge> graph = this.matching.getGraph();

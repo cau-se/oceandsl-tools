@@ -145,7 +145,7 @@ class SplitMapperTest {
 	
 	@Test
 	void test() {
-		ComponentsMapper mapper = new ComponentsMapper(this.orig, this.goal);
+		org.oceandsl.tools.restructuring.stages.exec.mapper.ComponentsMapper mapper = new ComponentsMapper(this.orig, this.goal);
 		RestructureStepFinder stepFinder = new RestructureStepFinder(this.orig, this.goal,mapper);
 		stepFinder.findTransformation();
 		System.out.println("orig");
