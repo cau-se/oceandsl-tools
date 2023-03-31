@@ -17,147 +17,134 @@ import org.jgrapht.alg.interfaces.MatchingAlgorithm.Matching;
 import org.jgrapht.alg.matching.KuhnMunkresMinimalWeightBipartitePerfectMatching;
 import org.jgrapht.alg.matching.MaximumWeightBipartiteMatching;
 import org.jgrapht.graph.*;
-public class Matcher extends AbstractMapper{
+import org.oceandsl.tools.restructuring.util.RestructurerTools;
+
+public class Matcher extends AbstractMapper {
 	private ComponentsMapper compMapper;
 	private final static String GOAL = "20_";
 	private AssemblyModel orig;
 	private AssemblyModel goal;
-	
-	private SimpleWeightedGraph <String, DefaultEdge> graph;
-	private Set <String>s = new HashSet<String>();
+
+	private SimpleWeightedGraph<String, DefaultEdge> graph;
+	private Set<String> s = new HashSet<String>();
 	private Set<String> t = new HashSet<String>();
-	private Matching <String, DefaultEdge>matching;
-	
-	private  HashMap <String, String> operationToComponentO = new HashMap<String, String>();
-	private  HashMap<String, String> operationToComponentG = new HashMap<String, String>();
-	
-	private  HashMap<String,HashMap<String, Integer>> traceModell = new HashMap<String, HashMap<String,Integer>>();
-	private  HashMap<String,String> goalToOriginal = new HashMap<String,String>();
-	private  HashMap<String,String> originallToGoal = new HashMap<String,String>();
-	
+	private Matching<String, DefaultEdge> matching;
+
+	private HashMap<String, String> operationToComponentO = new HashMap<String, String>();
+	private HashMap<String, String> operationToComponentG = new HashMap<String, String>();
+
+	private HashMap<String, HashMap<String, Integer>> traceModell = new HashMap<String, HashMap<String, Integer>>();
+	private HashMap<String, String> goalToOriginal = new HashMap<String, String>();
+	private HashMap<String, String> originallToGoal = new HashMap<String, String>();
+
 	public Matcher(AssemblyModel orig, AssemblyModel goal) {
-		this.orig = orig;
+		this.orig = RestructurerTools.cloneModel(orig);
 		this.goal = goal;
 		this.s.addAll(this.orig.getComponents().keySet());
 		this.t.addAll(this.goal.getComponents().keySet());
 		this.graph = new SimpleWeightedGraph<String, DefaultEdge>(DefaultEdge.class);
 		populateOperationTocomponentG();
 		populateOperationToComponentO();
-		//System.out.println("Same comps:" + operationToComponentO.values().equals(operationToComponentG.values()));
-		//init mappings
+		
+		if(this.operationToComponentO.size()!=this.operationToComponentG.size()) {
+			throw new Error("Some operations are lost?");
+		}
+		// System.out.println("Same comps:" +
+		// operationToComponentO.values().equals(operationToComponentG.values()));
+		// init mappings
 
-		
-		//create graphp
-		
+		// create graphp
 
-		
-		//initial graph
-		for(Entry<String, AssemblyComponent> c: this.orig.getComponents().entrySet()) { //each component is a vertex
-			
+		// initial graph
+		for (Entry<String, AssemblyComponent> c : this.orig.getComponents().entrySet()) { // each component is a vertex
+
 			String origVertex = c.getKey();
-			
-			this.graph.addVertex(origVertex); //create vertex from original component
-			for(Entry<String, AssemblyOperation> ops: c.getValue().getOperations().entrySet()) { // iterate through  operations in original components
+
+			this.graph.addVertex(origVertex); // create vertex from original component
+			for (Entry<String, AssemblyOperation> ops : c.getValue().getOperations().entrySet()) { // iterate through
+																									// operations in
+																									// original
+																									// componen
 				
-			//	System.out.println("Current vertex from orig" + origVertex);
 				String goalVertex = this.operationToComponentG.get(ops.getKey());
-				//if(goalVertex.equals(origVertex)) {
-				//	System.out.println("same goal and original!");
-					//goalVertex = goalVertex;
-				//}
-			//	this.t.add(goalVertex);//get the goal component containing the current operation
-			//	System.out.println("Current vertex from goal" + goalVertex);
-				if(!this.graph.containsVertex(goalVertex)) { // vertex was not added yet , thus simply create and edge
+				if (!this.graph.containsVertex(goalVertex)) { // vertex was not added yet , thus simply create and edge
 					this.graph.addVertex(goalVertex); // component on goal as vertex
-					DefaultEdge edge = this.graph.addEdge(origVertex, goalVertex);//add edge
-				//	System.out.println(this.graph.containsEdge(edge));
-					this.graph.setEdgeWeight(edge, 1); //weight is 1 first encounter
-				}else { //component already in the graph
-						//check if there is already a connection  between current orig and goal components
+					DefaultEdge edge = this.graph.addEdge(origVertex, goalVertex);// add edge
+					this.graph.setEdgeWeight(edge, 1); // weight is 1 first encounter
+				} else { // component already in the graph
+							// check if there is already a connection between current orig and goal
+							// components
 					DefaultEdge edge = this.graph.getEdge(origVertex, goalVertex);
-					
-					if(edge!=null) { //edge exists. Simply adjust the weights
-					    double currentWeight = this.graph.getEdgeWeight(edge);
-					    this.graph.setEdgeWeight(edge,currentWeight+1);
-					}else {
+
+					if (edge != null) { // edge exists. Simply adjust the weights
+						double currentWeight = this.graph.getEdgeWeight(edge);
+						this.graph.setEdgeWeight(edge, currentWeight + 1);
+					} else {
 						// no edges. Create a simple edge
-						if(origVertex.equals(goalVertex))
-							System.out.println(origVertex+" "+goalVertex);
-						edge = this.graph.addEdge(origVertex, goalVertex); //add edge
-						this.graph.setEdgeWeight(edge, 1); //weight is 1 first encounter
+						if (origVertex.equals(goalVertex))
+							System.out.println(origVertex + " " + goalVertex);
+						edge = this.graph.addEdge(origVertex, goalVertex); // add edge
+						this.graph.setEdgeWeight(edge, 1); // weight is 1 first encounter
 					}
 				}
-				
+
 			}
-			//e.getValue().getOperations();
+			// e.getValue().getOperations();
 			//
-		
+
 		}
-		assert this.graph.vertexSet().size() == this.orig.getComponents().size()+this.goal.getComponents().size();	
+		assert this.graph.vertexSet().size() == this.orig.getComponents().size() + this.goal.getComponents().size();
 		// add dummies to equlize partitions
-	/*	if(this.orig.getComponents().size()<this.goal.getComponents().size()) { //stock ip orig vertices with dummies
-			int diff = this.goal.getComponents().size()-this.orig.getComponents().size();
-			for(int i=0;i<diff;i++) {
-				String dummy = "dummy"+i;
-				this.graph.addVertex(dummy);
-				this.s.add(dummy);
-				for(Entry <String, AssemblyComponent>e:this.goal.getComponents().entrySet()) {
-					DefaultEdge edge=this.graph.addEdge(dummy, e.getKey());
-					this.graph.setEdgeWeight(edge, 0);
-				}
-			}
-			
-		}else if(this.orig.getComponents().size()>this.goal.getComponents().size()) { //stock up goal vertices with dummies
-			int diff = this.orig.getComponents().size()-this.goal.getComponents().size();
-			for(int i=0;i<diff;i++) {
-				String dummy = "dummy"+i;
-				this.graph.addVertex(dummy);
-				this.t.add(dummy);
-				for(Entry <String, AssemblyComponent>e:this.orig.getComponents().entrySet()) {
-					DefaultEdge edge=this.graph.addEdge(e.getKey(), dummy);
-					
-					this.graph.setEdgeWeight(edge, 0);
-				}
-		}
-		}
-		
-		//add 0 edges if not exist yet
-		
-		for(String o:this.s) {
-			for(String g : this.t) {
-				if(!this.graph.containsEdge(o,g)) {
-					DefaultEdge edge=this.graph.addEdge(o, g);
-					this.graph.setEdgeWeight(edge, 0);
-				}
-			}
-		}
-		*/
-	//	System.out.println(this.s.size());
-	//	System.out.println(this.t.size());
-		
-	//	assert this.s.size()==this.t.size();
-	//	System.out.println(this.s.size()*this.t.size());
-		//System.out.println(this.graph.edgeSet().size());
-		//assert this.s.size()*this.t.size()==this.graph.edgeSet().size();
-		MaximumWeightBipartiteMatching<String, DefaultEdge> matcher = new MaximumWeightBipartiteMatching<String,DefaultEdge>(graph, s, t);
+		/*
+		 * if(this.orig.getComponents().size()<this.goal.getComponents().size()) {
+		 * //stock ip orig vertices with dummies int diff =
+		 * this.goal.getComponents().size()-this.orig.getComponents().size(); for(int
+		 * i=0;i<diff;i++) { String dummy = "dummy"+i; this.graph.addVertex(dummy);
+		 * this.s.add(dummy); for(Entry <String,
+		 * AssemblyComponent>e:this.goal.getComponents().entrySet()) { DefaultEdge
+		 * edge=this.graph.addEdge(dummy, e.getKey()); this.graph.setEdgeWeight(edge,
+		 * 0); } }
+		 * 
+		 * }else if(this.orig.getComponents().size()>this.goal.getComponents().size()) {
+		 * //stock up goal vertices with dummies int diff =
+		 * this.orig.getComponents().size()-this.goal.getComponents().size(); for(int
+		 * i=0;i<diff;i++) { String dummy = "dummy"+i; this.graph.addVertex(dummy);
+		 * this.t.add(dummy); for(Entry <String,
+		 * AssemblyComponent>e:this.orig.getComponents().entrySet()) { DefaultEdge
+		 * edge=this.graph.addEdge(e.getKey(), dummy);
+		 * 
+		 * this.graph.setEdgeWeight(edge, 0); } } }
+		 * 
+		 * //add 0 edges if not exist yet
+		 * 
+		 * for(String o:this.s) { for(String g : this.t) {
+		 * if(!this.graph.containsEdge(o,g)) { DefaultEdge edge=this.graph.addEdge(o,
+		 * g); this.graph.setEdgeWeight(edge, 0); } } }
+		 */
+		// System.out.println(this.s.size());
+		// System.out.println(this.t.size());
+
+		// assert this.s.size()==this.t.size();
+		// System.out.println(this.s.size()*this.t.size());
+		// System.out.println(this.graph.edgeSet().size());
+		// assert this.s.size()*this.t.size()==this.graph.edgeSet().size();
+		MaximumWeightBipartiteMatching<String, DefaultEdge> matcher = new MaximumWeightBipartiteMatching<String, DefaultEdge>(
+				graph, s, t);
 		this.matching = matcher.getMatching();
 		computeOriginalComponentNames();
-		//System.out.println("Size of gto "+this.goalToOriginal.size());
-		//System.out.println("Size of otg " + this.originallToGoal.size());
-		//System.out.println("Num of matching"+this.matching.getEdges().size());
-		
-		
+		// System.out.println("Size of gto "+this.goalToOriginal.size());
+		// System.out.println("Size of otg " + this.originallToGoal.size());
+		// System.out.println("Num of matching"+this.matching.getEdges().size());
+
 	}
-	
-	
-	public HashMap <String, String> getOperationToComponentO() {
+
+	public HashMap<String, String> getOperationToComponentO() {
 		return operationToComponentO;
 	}
 
-	public void setOperationToComponentO(HashMap <String, String> operationToComponentO) {
+	public void setOperationToComponentO(HashMap<String, String> operationToComponentO) {
 		this.operationToComponentO = operationToComponentO;
 	}
-	
 
 	public HashMap<String, String> getOperationToComponentG() {
 		return operationToComponentG;
@@ -167,123 +154,60 @@ public class Matcher extends AbstractMapper{
 		this.operationToComponentG = operationToComponentG;
 	}
 
-	public HashMap<String,HashMap<String, Integer>> getTraceModell() {
+	public HashMap<String, HashMap<String, Integer>> getTraceModell() {
 		return traceModell;
 	}
 
-	public void setTraceModell(HashMap<String,HashMap<String, Integer>> traceModell) {
+	public void setTraceModell(HashMap<String, HashMap<String, Integer>> traceModell) {
 		this.traceModell = traceModell;
 	}
 
-	public HashMap<String,String> getGoalToOriginal() {
+	public HashMap<String, String> getGoalToOriginal() {
 		return goalToOriginal;
 	}
 
-	public void setGoalToOriginal(HashMap<String,String> goalToOriginal) {
+	public void setGoalToOriginal(HashMap<String, String> goalToOriginal) {
 		this.goalToOriginal = goalToOriginal;
 	}
 
-	public HashMap<String,String> getOriginallToGoal() {
+	public HashMap<String, String> getOriginallToGoal() {
 		return originallToGoal;
 	}
 
-	public void setOriginallToGoal(HashMap<String,String> originallToGoal) {
+	public void setOriginallToGoal(HashMap<String, String> originallToGoal) {
 		this.originallToGoal = originallToGoal;
 	}
-    
+
 	public AssemblyModel getOrig() {
 		return this.orig;
-		
+
 	}
 
 	public AssemblyModel getGoal() {
 		return this.goal;
-		
+
 	}
-	/*private void  computeOriginalComponentNames() {
-		Set<String> assignedComponentsG = new HashSet<String>();
-		Set<String> assignedComponentsO = new HashSet<String>();
-		for(Entry<String, HashMap<String,Integer>> goalComponent : this.traceModell.entrySet()) {
-			ArrayList<Entry<String, Integer>> componentTraces = new ArrayList<>(goalComponent.getValue().entrySet());
-			componentTraces.sort(Comparator.comparing(Entry::getValue));
-			
-			for(Entry<String, Integer> e : componentTraces) {
-			     if(assignedComponentsO.contains(e.getKey())) {
-			    	 continue;
-			     }
-			     assignedComponentsO.add(e.getKey());
-			     assignedComponentsG.add(goalComponent.getKey());
-			     this.goalToOriginal.put(goalComponent.getKey(), e.getKey());
-			     this.originallToGoal.put(e.getKey(), goalComponent.getKey());
-			     break;
-			}
-		}
-		
-	}*/
-	
-	
+
 	private void computeOriginalComponentNames() {
 		Graph<String, DefaultEdge> graph = this.matching.getGraph();
-		for(DefaultEdge e: this.matching.getEdges()) {
-			if(graph.getEdgeWeight(e)>0) {
+		for (DefaultEdge e : this.matching.getEdges()) {
+			if (graph.getEdgeWeight(e) > 0) {
 				String source = graph.getEdgeSource(e);
 				String target = graph.getEdgeTarget(e);
-				//String trueTarget = target.substring(0, target.length()-3);
-			    this.goalToOriginal.put(target, source);
-		    	this.originallToGoal.put(source, target);
+				// String trueTarget = target.substring(0, target.length()-3);
+				this.goalToOriginal.put(target, source);
+				this.originallToGoal.put(source, target);
 
 			}
 		}
-			//graph.getEdgeWeight(e)
-		}
-
-	
-	private void populateTraceModel() {
-		// For each component in the goal model...
-				for(Entry<String, AssemblyComponent> entry : this.goal.getComponents().entrySet()) {
-					
-					AssemblyComponent comp = entry.getValue();
-					String name = entry.getKey();
-					
-					// get operations of the current component
-					final Set<String> ops = comp.getOperations().keySet();
-					//here we store the components where operations actually originate from and count how many operations of each 
-					// original component are in the "goal component"
-					final HashMap<String, Integer> referencedComponents = new HashMap<String, Integer>();	
-					
-					// For each operation of current component..
-					for(String op : ops) {
-						
-						
-						//String opName = op.getKey();
-						//look up the name of the "original component" for that operation
-						String originalComponent = this.operationToComponentO.get(op);
-						
-						//Already found or not?
-						if(referencedComponents.containsKey(originalComponent)) {
-							referencedComponents.put(originalComponent, referencedComponents.get(originalComponent)+1);
-						    
-						}else {
-							//first occurence
-							referencedComponents.put(originalComponent,1);
-						}
-						
-					}
-					this.traceModell.put(name, referencedComponents);
-					
-				}
+		// graph.getEdgeWeight(e)
 	}
-	
+
 	private void populateOperationToComponentO() {
 		for(Entry<String, AssemblyComponent> e:this.orig.getComponents().entrySet()) {
 			Set<String>ops = e.getValue().getOperations().keySet();
-			
-			if(ops==null) {
-				throw new Error("Component in orig " + e.getKey()+ " has null  operations" );
-			}
-			for(String s : ops) {	
+			for(String s : ops) {
 				this.operationToComponentO.put(s, e.getKey());
-			
 			}
 		}
 	}
@@ -291,46 +215,10 @@ public class Matcher extends AbstractMapper{
 	private void populateOperationTocomponentG() {
 		for(Entry<String, AssemblyComponent> e:this.goal.getComponents().entrySet()) {
 			Set<String>ops = e.getValue().getOperations().keySet();
-			if(ops==null) {
-				throw new Error("Component in goal " + e.getKey()+ " has null  operations" );
-			}
 			for(String s : ops) {
 				this.operationToComponentG.put(s, e.getKey());
 			}
-			}
 		}
-	
-	
-	/*private void populateOperationToComponentO() {
-		Graph<String, DefaultEdge> graph = this.matching.getGraph();
-		for(DefaultEdge e: this.matching.getEdges()) {
-			if(graph.getEdgeWeight(e)>0) {
-				String source = graph.getEdgeSource(e);
-				String target = graph.getEdgeTarget(e);
-			this.operationToComponentG.put(source, target);
-			this.operationToComponentO.put(target, source);
-
-			}
-			//graph.getEdgeWeight(e)
-		}
-		
-		
 	}
-	
-	private void populateOperationTocomponentG() {
-		Graph<String, DefaultEdge> graph = this.matching.getGraph();
-		for(DefaultEdge e: this.matching.getEdges()) {
-			if(graph.getEdgeWeight(e)>0) {
-				String source = graph.getEdgeSource(e);
-				String target = graph.getEdgeTarget(e);
-			this.operationToComponentG.put(source, target);
-			this.operationToComponentO.put(target, source);
-
-			}
-			//graph.getEdgeWeight(e)
-		}
-		
-	}*/
-	
 	
 }
