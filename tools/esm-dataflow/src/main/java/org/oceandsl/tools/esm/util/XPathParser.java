@@ -261,13 +261,13 @@ public class XPathParser {
     }
 
     // -----------------------
-    public static Node getAssigningContent(final Node stmt) { // right
+    public static Node getAssignmentExpression(final Node stmt) { // right
         final Element e = (Element) stmt;
         final NodeList elems = e.getElementsByTagName("E-2");
         return elems.item(0);
     }
 
-    public static Node getAssignedContent(final Node stmt) { // left
+    public static Node getAssigmentVariable(final Node stmt) { // left
         final Element e = (Element) stmt;
         final NodeList elems = e.getElementsByTagName("E-1");
         return elems.item(0);

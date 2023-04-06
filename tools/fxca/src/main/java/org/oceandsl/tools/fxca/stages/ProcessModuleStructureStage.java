@@ -35,6 +35,7 @@ import teetime.stage.basic.AbstractTransformation;
 import org.oceandsl.tools.fxca.model.CommonBlock;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
+import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.tools.IUriProcessor;
 import org.oceandsl.tools.fxca.tools.ListTools;
@@ -178,8 +179,6 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             throws ParserConfigurationException, SAXException, IOException {
         final FortranOperation operation = new FortranOperation(NodeProcessingUtils.getNameOfOperation(node), node);
 
-        System.err.println("operation " + operation.getName());
-
         this.createFortranOperationParameters(operation, node);
 
         this.createFortranOperationCommonBlock(operation, node);
@@ -197,7 +196,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                     .getNextSibling()) {
                 if (NodePredicateUtils.isArgumentName.test(argument)) {
                     final String parameterName = NodeProcessingUtils.getName(argument);
-                    operation.getParameters().add(parameterName);
+                    operation.getParameters().put(parameterName, new FortranParameter(parameterName));
                 }
             }
         }
@@ -219,6 +218,14 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void createFortranOperationVariables(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
+        final List<Node> files = NodeProcessingUtils.findAllSiblings(node, NodePredicateUtils.isFile,
+                NodePredicateUtils.isEndSubroutineStatement);
+
+        this.createFortranOperationPartVariables(operation, node);
+        files.forEach(file -> this.createFortranOperationPartVariables(operation, file.getFirstChild()));
+    }
+
+    private void createFortranOperationPartVariables(final FortranOperation operation, final Node node) {
         final List<Node> declarationStatements = NodeProcessingUtils.findAllSiblings(node,
                 NodePredicateUtils.isTDeclStmt, NodePredicateUtils.isEndSubroutineStatement);
         declarationStatements.forEach(statement -> {
@@ -231,8 +238,10 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                     final String objectName = declarationObject.getFirstChild().getFirstChild().getFirstChild()
                             .getTextContent();
                     final String caseInsensitiveObjectName = objectName.toLowerCase(Locale.getDefault());
-                    if (!operation.getParameters().contains(caseInsensitiveObjectName)) {
+                    if (operation.getParameters().get(caseInsensitiveObjectName) == null) {
                         operation.getVariables().add(caseInsensitiveObjectName);
+                    } else {
+                        // here you could set the parameter type
                     }
                 }
             }
@@ -240,6 +249,21 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     }
 
     private void createFortranOperationDimensionalVariables(final FortranOperation operation, final Node node)
+            throws ParserConfigurationException, SAXException, IOException {
+        final List<Node> files = NodeProcessingUtils.findAllSiblings(node, NodePredicateUtils.isFile,
+                NodePredicateUtils.isEndSubroutineStatement);
+
+        this.createFortranOperationPartDimensionalVariables(operation, node);
+        files.forEach(file -> {
+            try {
+                this.createFortranOperationPartDimensionalVariables(operation, file.getFirstChild());
+            } catch (ParserConfigurationException | SAXException | IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void createFortranOperationPartDimensionalVariables(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
         final Set<Node> declarationStatements = this.getDescendentAttributes(node, NodePredicateUtils.isDimStmt,
                 operationNode -> operationNode);

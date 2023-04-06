@@ -24,6 +24,7 @@ import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 import org.oceandsl.analysis.generic.stages.DirectoryProducer;
 import org.oceandsl.analysis.generic.stages.DirectoryScannerStage;
 import org.oceandsl.analysis.generic.stages.TableCSVSink;
+import org.oceandsl.tools.esm.stages.ComputeDirectionalityOfParametersStage;
 import org.oceandsl.tools.esm.stages.CreateCommonBlocksTableStage;
 import org.oceandsl.tools.esm.stages.CreateDataflowTableStage;
 import org.oceandsl.tools.esm.stages.CreateFileContentsTableStage;
@@ -61,6 +62,8 @@ public class TeetimeConfiguration extends Configuration {
 
         final ProcessModuleStructureStage processModuleStructureStage = new ProcessModuleStructureStage(uriProcessor);
 
+        final ComputeDirectionalityOfParametersStage computeDirectionalityOfParametersStage = new ComputeDirectionalityOfParametersStage();
+
         final ProcessDataFlowAnalysisStage dataFlowAnalysisStage = new ProcessDataFlowAnalysisStage(
                 settings.getDefaultComponent());
 
@@ -86,7 +89,9 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(directoryScannerStage.getOutputPort(), readDomStage.getInputPort());
         this.connectPorts(readDomStage.getOutputPort(), processModuleStructureStage.getInputPort());
 
-        this.connectPorts(processModuleStructureStage.getOutputPort(), dataFlowAnalysisStage.getInputPort());
+        this.connectPorts(processModuleStructureStage.getOutputPort(),
+                computeDirectionalityOfParametersStage.getInputPort());
+        this.connectPorts(computeDirectionalityOfParametersStage.getOutputPort(), dataFlowAnalysisStage.getInputPort());
 
         this.connectPorts(dataFlowAnalysisStage.getOutputPort(), outputStage.getInputPort());
 

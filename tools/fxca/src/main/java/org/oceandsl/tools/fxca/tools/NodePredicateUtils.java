@@ -95,4 +95,14 @@ public class NodePredicateUtils {
     public static Predicate<Node> isAssignmentStatement = NodeProcessingUtils.hasName("a-stmt");
     public static Predicate<Node> isENdeclLT = NodeProcessingUtils.hasName("EN-decl-LT");
 
+    public static Predicate<Node> isOpE = NodeProcessingUtils.hasName("op-E");
+    public static Predicate<Node> isLiteralE = NodeProcessingUtils.hasName("literal-E");
+    public static Predicate<Node> isOp = NodeProcessingUtils.hasName("op");
+    public static Predicate<Node> isM = NodeProcessingUtils.hasName("m");
+    public static Predicate<Node> isCnt = NodeProcessingUtils.hasName("cnt");
+    public static Predicate<Node> isText = node -> !node.getTextContent().isEmpty();
+
+    public static Predicate<Node> isAssignmentE1 = NodeProcessingUtils.hasName("E-1");
+    public static Predicate<Node> isAssignmentE2 = NodeProcessingUtils.hasName("E-2");
+    public static Predicate<Node> isFile = NodeProcessingUtils.hasName("file");
 }

@@ -15,39 +15,11 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.w3c.dom.Node;
-
-import lombok.Getter;
-
 /**
  *
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class FortranOperation implements IDataflowEndpoint {
-
-    @Getter
-    String name;
-
-    @Getter
-    private final Map<String, CommonBlock> commonBlocks = new HashMap<>();
-
-    @Getter
-    private final Set<String> variables = new HashSet<>();
-
-    @Getter
-    private final Map<String, FortranParameter> parameters = new HashMap<>();
-
-    @Getter
-    private final Node node;
-
-    public FortranOperation(final String name, final Node node) {
-        this.name = name;
-        this.node = node;
-    }
+public enum EDirection {
+    READ, WRITE, BOTH, NONE;
 }

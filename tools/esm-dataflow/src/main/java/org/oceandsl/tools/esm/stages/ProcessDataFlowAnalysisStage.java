@@ -86,7 +86,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
     private void analyzeBodyPart(final FortranProject project, final FortranModule module,
             final FortranOperation operation) {
         System.err.println("caller " + operation.getName());
-        operation.getParameters().forEach(p -> System.err.println("\tP " + p));
+        operation.getParameters().keySet().forEach(p -> System.err.println("\tP " + p));
         operation.getVariables().forEach(p -> System.err.println("\tV " + p));
         NodeProcessingUtils
                 .findAllSiblings(operation.getNode(), o -> true,
@@ -131,19 +131,46 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
             this.analyzeFunctionCall(project, module, operation, content);
         } else if (NodePredicateUtils.isNamedExpression.test(content)) {
             final String argumentName = NodeProcessingUtils.getName(content);
-            if (this.isOperationValue(operation, argumentName)) {
+            if (this.isOperationParameterOrVariable(operation, argumentName)) {
+                System.err.println("  operation parameter or variable " + argumentName);
                 project.getDataflows().add(this.createDataFlow(module, operation, callee.first, callee.second));
             } else if (this.isModuleCommonBlock(module, argumentName)) {
+                System.err.println("  module common block " + argumentName);
                 project.getDataflows().add(this.createDataFlow(module, argumentName, callee.first, callee.second));
             } else if (this.isOperationCommonBlock(operation, argumentName)) {
+                System.err.println("  operation common block " + argumentName);
                 project.getDataflows()
                         .add(this.createDataFlow(module, operation, argumentName, callee.first, callee.second));
             } else {
                 System.err.println("argument name " + argumentName);
             }
+        } else if (NodePredicateUtils.isOpE.test(content)) {
+            this.analyzeExpression(project, module, operation, callee, content);
+        } else if (NodePredicateUtils.isLiteralE.test(content)) {
+            System.err.println("Literal can be ignored " + content.getFirstChild().getTextContent());
         } else {
-            System.err.println("<> unknown content " + content);
+            System.err.println("<> unknown content " + content + " in " + module.getFileName());
         }
+    }
+
+    private void analyzeExpression(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Pair<FortranModule, FortranOperation> callee, final Node content) {
+        final List<Node> nodes = NodeProcessingUtils.findAllSiblings(content.getFirstChild(),
+                NodePredicateUtils.isNamedExpression, o -> false);
+        nodes.forEach(node -> {
+            if (NodePredicateUtils.isNamedExpression.test(node)) {
+                final String nodeName = NodeProcessingUtils.getName(node);
+                if (operation.getVariables().contains(nodeName)) {
+                    System.err.println(
+                            "got variable " + nodeName + " in callee parameter " + callee.getSecond().getName());
+                } else if (operation.getParameters().get(nodeName) != null) {
+                    System.err.println(
+                            "got parameter " + nodeName + " in callee parameter " + callee.getSecond().getName());
+                } else {
+                    System.err.println("not a variable or parameter " + nodeName);
+                }
+            }
+        });
     }
 
     private void analyzeFunctionCall(final FortranProject project, final FortranModule module,
@@ -209,8 +236,8 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
         return new Pair<>(new Pair<>(module, operation), new Pair<>(targetModel, targetOperation));
     }
 
-    private boolean isOperationValue(final FortranOperation operation, final String argumentName) {
-        if (operation.getParameters().contains(argumentName)) {
+    private boolean isOperationParameterOrVariable(final FortranOperation operation, final String argumentName) {
+        if (operation.getParameters().get(argumentName) != null) {
             return true;
         }
         return operation.getVariables().contains(argumentName);
@@ -261,26 +288,22 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
 
     private void analyzeAssignmentStatement(final Node node, final FortranProject project, final FortranModule module,
             final FortranOperation operation) {
-        // TODO Auto-generated method stub
-
+        System.err.println("Missing assignment");
     }
 
     private void analyzeIfThenStatement(final Node node, final FortranProject project, final FortranModule module,
             final FortranOperation operation) {
-        // TODO Auto-generated method stub
-
+        System.err.println("Missing if then");
     }
 
     private void analyzeSelectCaseStatement(final Node node, final FortranProject project, final FortranModule module,
             final FortranOperation operation) {
-        // TODO Auto-generated method stub
-
+        System.err.println("Missing select case");
     }
 
     private void analyzeDoStatement(final Node node, final FortranProject project, final FortranModule module,
             final FortranOperation operation) {
-        // TODO Auto-generated method stub
-
+        System.err.println("Missing do loop");
     }
 
     private void analyzeExecutionPart(final Node parent, final FortranModule module, final FortranProject project,
@@ -346,8 +369,8 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
             final FortranModule module, final FortranProject project) {
 
         for (final Node stmt : stmts) {
-            final Node assignedContent = XPathParser.getAssignedContent(stmt); // left part
-            final Node assigningContent = XPathParser.getAssigningContent(stmt); // right part
+            final Node assignedContent = XPathParser.getAssigmentVariable(stmt); // left part
+            final Node assigningContent = XPathParser.getAssignmentExpression(stmt); // right part
 
             // getName as a String
             final String assignedVar = XPathParser.getAssignTargetIdentifier(stmt);

@@ -15,39 +15,53 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.w3c.dom.Node;
-
 import lombok.Getter;
+import lombok.Setter;
 
 /**
- *
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class FortranOperation implements IDataflowEndpoint {
+public class FortranParameter {
 
     @Getter
     String name;
 
     @Getter
-    private final Map<String, CommonBlock> commonBlocks = new HashMap<>();
+    @Setter
+    String type;
 
     @Getter
-    private final Set<String> variables = new HashSet<>();
+    @Setter
+    EDirection direction;
 
-    @Getter
-    private final Map<String, FortranParameter> parameters = new HashMap<>();
-
-    @Getter
-    private final Node node;
-
-    public FortranOperation(final String name, final Node node) {
+    public FortranParameter(final String name) {
+        this.direction = EDirection.NONE;
         this.name = name;
-        this.node = node;
+    }
+
+    public void addDirection(final EDirection value) {
+        switch (this.direction) {
+        case NONE:
+            this.direction = value;
+            break;
+        case READ:
+            if (value == EDirection.WRITE || value == EDirection.BOTH) {
+                this.direction = EDirection.BOTH;
+            } else {
+                this.direction = EDirection.READ;
+            }
+            break;
+        case WRITE:
+            if (value == EDirection.READ || value == EDirection.BOTH) {
+                this.direction = EDirection.BOTH;
+            } else {
+                this.direction = EDirection.WRITE;
+            }
+            break;
+        case BOTH:
+            this.direction = EDirection.BOTH;
+            break;
+        }
     }
 }
