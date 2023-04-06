@@ -15,8 +15,15 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.oceandsl.tools.fxca.tools.Pair;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Henning Schnoor
@@ -28,6 +35,14 @@ public class FortranProject {
      * Actual list to which List-calls are delegated.
      */
     private final Map<String, FortranModule> modules;
+
+    /** note this is a temporary hack until dataflow properly supports a default module. */
+    @Getter
+    @Setter
+    private FortranModule defaultModule;
+
+    @Getter
+    private final Collection<Pair<Pair<FortranModule, IDataflowEndpoint>, Pair<FortranModule, IDataflowEndpoint>>> dataflows = new ArrayList<>();
 
     /**
      * Constructs Project Model with empty content.

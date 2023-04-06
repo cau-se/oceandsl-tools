@@ -34,6 +34,9 @@ import org.oceandsl.tools.fxca.model.CommonBlock;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranProject;
+import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
+import org.oceandsl.tools.fxca.tools.NodePredicateUtils;
+import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 import org.oceandsl.tools.fxca.tools.Pair;
 
 public class ProcessDataFlowAnalysisStage extends AbstractTransformation<FortranProject, Output> {
@@ -71,6 +74,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
             }
 
             this.analyzeExecutionPart(operation.getNode(), module, project, operation.getName());
+            this.analyzeBodyPart(project, module, operation);
         }
     }
 
@@ -79,53 +83,159 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
         this.analyzeExecutionPart(module.getDocument(), module, project, "main");
     }
 
-    private void analyzeExecutionPart(final Node parent, final FortranModule module, final FortranProject project,
-            final String caller) {
-        // Dataflow call stmt
-        final Set<Node> callStmts = XPathParser.getCallStmts(parent);
-        this.analyzeCallStatements(callStmts, caller, module, project);
-
-        // Dataflow ifelse
-        final Set<Node> ifElseStmts = XPathParser.getIfElseStmts(parent);
-        this.analyzeReadsFromStatements(ifElseStmts, caller, module, project);
-
-        // Dataflow select case
-        final Set<Node> selectStmts = XPathParser.getSelectStmts(parent);
-        this.analyzeReadsFromStatements(selectStmts, caller, module, project);
-
-        // Dataflow do while
-        final Set<Node> loopCtrlStmts = XPathParser.getLoopCtrlStmts(parent);
-        for (final Node loopCtrl : loopCtrlStmts) {
-            final String loopAssignedVar = XPathParser.getLoopControlVar(loopCtrl);
-            final List<String> isInBlock = this.getCommonBlockIdsForGivenVariable(loopAssignedVar,
-                    module.getCommonBlocks());
-            if (!isInBlock.isEmpty()) {
-                try {
-                    this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X", "X",
-                            isInBlock.get(0), ProcessDataFlowAnalysisStage.WRITE);
-                } catch (final ValueConversionErrorException e) {
-                    this.logger.error("Cannot add row to dataflow table {}", e.getLocalizedMessage());
-                }
-            }
-        }
-        // Analyze Reads
-        this.analyzeReadsFromStatements(loopCtrlStmts, caller, module, project);
-
-        // Dataflow assignments
-        final Set<Node> assignStmts = XPathParser.getAssignmentStmts(parent);
-        this.analyzeAssignmentStatements(assignStmts, null, caller, module, project);
+    private void analyzeBodyPart(final FortranProject project, final FortranModule module,
+            final FortranOperation operation) {
+        System.err.println("caller " + operation.getName());
+        operation.getParameters().forEach(p -> System.err.println("\tP " + p));
+        operation.getVariables().forEach(p -> System.err.println("\tV " + p));
+        NodeProcessingUtils
+                .findAllSiblings(operation.getNode(), o -> true,
+                        NodePredicateUtils.isEndSubroutineStatement.or(NodePredicateUtils.isEndFunctionStatement))
+                .forEach(node -> this.analyzeNode(node, project, module, operation));
     }
 
-    private void analyzeCallStatements(final Set<Node> callStatements, final String caller, final FortranModule module,
+    private void analyzeNode(final Node node, final FortranProject project, final FortranModule module,
+            final FortranOperation operation) {
+        if (NodePredicateUtils.isCallStatement.test(node)) {
+            this.analyzeCallStatement(node, project, module, operation);
+        } else if (NodePredicateUtils.isAssignmentStatement.test(node)) {
+            this.analyzeAssignmentStatement(node, project, module, operation);
+        } else if (NodePredicateUtils.isIfThenStatement.test(node)) {
+            this.analyzeIfThenStatement(node, project, module, operation);
+        } else if (NodePredicateUtils.isSelectCaseStatement.test(node)) {
+            this.analyzeSelectCaseStatement(node, project, module, operation);
+        } else if (NodePredicateUtils.isDoStatement.test(node)) {
+            this.analyzeDoStatement(node, project, module, operation);
+        }
+    }
+
+    private void analyzeCallStatement(final Node node, final FortranProject project, final FortranModule module,
+            final FortranOperation operation) {
+        final String calleeName = NodeProcessingUtils.getCalleeNameFromCall(node);
+        System.err.println("callee " + calleeName);
+        final Pair<FortranModule, FortranOperation> callee = this.findOperation(project.getModules().values(),
+                calleeName);
+        final Node argumentSpec = NodeProcessingUtils.findChildFirst(node, NodePredicateUtils.isArgumentSpecification);
+        if (argumentSpec != null) {
+            final List<Node> arguments = NodeProcessingUtils.findAllSiblings(argumentSpec.getFirstChild(),
+                    NodePredicateUtils.isArgument, o -> false);
+            arguments.forEach(argument -> {
+                this.analyzeParameter(project, module, operation, callee, argument.getFirstChild());
+            });
+        }
+    }
+
+    private void analyzeParameter(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Pair<FortranModule, FortranOperation> callee, final Node content) {
+        if (NodePredicateUtils.isNamedExpressionAccess.test(content)) {
+            this.analyzeFunctionCall(project, module, operation, content);
+        } else if (NodePredicateUtils.isNamedExpression.test(content)) {
+            final String argumentName = NodeProcessingUtils.getName(content);
+            if (this.isOperationValue(operation, argumentName)) {
+                project.getDataflows().add(this.createDataFlow(module, operation, callee.first, callee.second));
+            } else if (this.isModuleCommonBlock(module, argumentName)) {
+                project.getDataflows().add(this.createDataFlow(module, argumentName, callee.first, callee.second));
+            } else if (this.isOperationCommonBlock(operation, argumentName)) {
+                project.getDataflows()
+                        .add(this.createDataFlow(module, operation, argumentName, callee.first, callee.second));
+            } else {
+                System.err.println("argument name " + argumentName);
+            }
+        } else {
+            System.err.println("<> unknown content " + content);
+        }
+    }
+
+    private void analyzeFunctionCall(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Node content) {
+        final String functionName = NodeProcessingUtils.getName(content);
+        final Pair<FortranModule, FortranOperation> callee = this.findOrCreateOperation(project, functionName);
+        final List<Node> rlt = NodeProcessingUtils.findAllSiblings(content.getFirstChild(), NodePredicateUtils.isRLT,
+                o -> false);
+        final Node parensR = rlt.get(0).getFirstChild();
+        if (NodePredicateUtils.isParensR.test(parensR)) {
+            final Node elementLT = NodeProcessingUtils.findChildFirst(parensR, NodePredicateUtils.isElementLT);
+            final List<Node> elements = NodeProcessingUtils.findAllSiblings(elementLT.getFirstChild(),
+                    NodePredicateUtils.isElement, o -> false);
+            elements.forEach(element -> {
+                this.analyzeParameter(project, module, operation, callee, element.getFirstChild());
+            });
+        } else {
+            System.err.println("unknown function parameter.");
+        }
+    }
+
+    private Pair<FortranModule, FortranOperation> findOrCreateOperation(final FortranProject project,
+            final String functionName) {
+        final Pair<FortranModule, FortranOperation> callee = this.findOperation(project.getModules().values(),
+                functionName);
+        if (callee == null) { // built-in or library function
+            FortranModule builtInModule = project.getDefaultModule();
+            if (builtInModule == null) {
+                builtInModule = new FortranModule("<runtime>", "<runtime>", true, null);
+                project.setDefaultModule(builtInModule);
+            }
+            FortranOperation builtInOperation = builtInModule.getOperations().get(functionName);
+            if (builtInOperation == null) {
+                builtInOperation = new FortranOperation(functionName, null);
+                builtInModule.getOperations().put(functionName, builtInOperation);
+            }
+
+            return new Pair<>(builtInModule, builtInOperation);
+        } else { // built-in or library function
+            return callee;
+        }
+    }
+
+    private Pair<Pair<FortranModule, IDataflowEndpoint>, Pair<FortranModule, IDataflowEndpoint>> createDataFlow(
+            final FortranModule module, final FortranOperation operation, final String argumentName,
+            final FortranModule targetModule, final FortranOperation targetOperation) {
+        final Optional<CommonBlock> commonBlockOptional = operation.getCommonBlocks().values().stream()
+                .filter(commonBlock -> commonBlock.getElements().contains(argumentName)).findFirst();
+        return new Pair<>(new Pair<>(module, commonBlockOptional.get()), new Pair<>(targetModule, targetOperation));
+    }
+
+    private Pair<Pair<FortranModule, IDataflowEndpoint>, Pair<FortranModule, IDataflowEndpoint>> createDataFlow(
+            final FortranModule module, final String argumentName, final FortranModule targetModel,
+            final FortranOperation targetOperation) {
+        final Optional<CommonBlock> commonBlockOptional = module.getCommonBlocks().values().stream()
+                .filter(commonBlock -> commonBlock.getElements().contains(argumentName)).findFirst();
+        return new Pair<>(new Pair<>(module, commonBlockOptional.get()), new Pair<>(targetModel, targetOperation));
+    }
+
+    private Pair<Pair<FortranModule, IDataflowEndpoint>, Pair<FortranModule, IDataflowEndpoint>> createDataFlow(
+            final FortranModule module, final FortranOperation operation, final FortranModule targetModel,
+            final FortranOperation targetOperation) {
+        return new Pair<>(new Pair<>(module, operation), new Pair<>(targetModel, targetOperation));
+    }
+
+    private boolean isOperationValue(final FortranOperation operation, final String argumentName) {
+        if (operation.getParameters().contains(argumentName)) {
+            return true;
+        }
+        return operation.getVariables().contains(argumentName);
+    }
+
+    private boolean isOperationCommonBlock(final FortranOperation operation, final String argumentName) {
+        return operation.getCommonBlocks().values().stream()
+                .anyMatch(commonBlock -> commonBlock.getElements().contains(argumentName));
+    }
+
+    private boolean isModuleCommonBlock(final FortranModule module, final String argumentName) {
+        return module.getCommonBlocks().values().stream()
+                .anyMatch(commonBlock -> commonBlock.getElements().contains(argumentName));
+    }
+
+    private void analyzeCallStatements(final List<Node> callStatements, final String caller, final FortranModule module,
             final FortranProject project) {
 
         for (final Node callStmt : callStatements) {
             final List<String> args = XPathParser.callHasArgs(callStmt);
             if (!args.isEmpty()) {
                 // this.checkArgsWithCommon(args, commonBlocList, dataflowLineRest, caller);
-                final String calleeName = XPathParser.getCallStmtId(callStmt);
+                final String calleeName = NodeProcessingUtils.getCalleeNameFromCall(callStmt);
 
-                final Pair<FortranModule, String> callee = this.findOperation(project.getModules().values(),
+                final Pair<FortranModule, FortranOperation> callee = this.findOperation(project.getModules().values(),
                         calleeName);
 
                 if (callee == null) {
@@ -149,7 +259,73 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
         }
     }
 
-    private void analyzeReadsFromStatements(final Set<Node> stmts, final String caller, final FortranModule module,
+    private void analyzeAssignmentStatement(final Node node, final FortranProject project, final FortranModule module,
+            final FortranOperation operation) {
+        // TODO Auto-generated method stub
+
+    }
+
+    private void analyzeIfThenStatement(final Node node, final FortranProject project, final FortranModule module,
+            final FortranOperation operation) {
+        // TODO Auto-generated method stub
+
+    }
+
+    private void analyzeSelectCaseStatement(final Node node, final FortranProject project, final FortranModule module,
+            final FortranOperation operation) {
+        // TODO Auto-generated method stub
+
+    }
+
+    private void analyzeDoStatement(final Node node, final FortranProject project, final FortranModule module,
+            final FortranOperation operation) {
+        // TODO Auto-generated method stub
+
+    }
+
+    private void analyzeExecutionPart(final Node parent, final FortranModule module, final FortranProject project,
+            final String caller) {
+
+        if (parent == null) {
+            return;
+        }
+
+        // Dataflow call stmt
+        final List<Node> callStmts = XPathParser.getCallStmts(parent);
+        this.analyzeCallStatements(callStmts, caller, module, project);
+
+        // Dataflow ifelse
+        final List<Node> ifElseStmts = XPathParser.getIfElseStmts(parent);
+        this.analyzeReadsFromStatements(ifElseStmts, caller, module, project);
+
+        // Dataflow select case
+        final List<Node> selectStmts = XPathParser.getSelectStmts(parent);
+        this.analyzeReadsFromStatements(selectStmts, caller, module, project);
+
+        // Dataflow do while
+        final List<Node> loopCtrlStmts = XPathParser.getLoopCtrlStmts(parent);
+        for (final Node loopCtrl : loopCtrlStmts) {
+            final String loopAssignedVar = XPathParser.getLoopControlVar(loopCtrl);
+            final List<String> isInBlock = this.getCommonBlockIdsForGivenVariable(loopAssignedVar,
+                    module.getCommonBlocks());
+            if (!isInBlock.isEmpty()) {
+                try {
+                    this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X", "X",
+                            isInBlock.get(0), ProcessDataFlowAnalysisStage.WRITE);
+                } catch (final ValueConversionErrorException e) {
+                    this.logger.error("Cannot add row to dataflow table {}", e.getLocalizedMessage());
+                }
+            }
+        }
+        // Analyze Reads
+        this.analyzeReadsFromStatements(loopCtrlStmts, caller, module, project);
+
+        // Dataflow assignments
+        final List<Node> assignStmts = XPathParser.getAssignmentStmts(parent);
+        this.analyzeAssignmentStatements(assignStmts, null, caller, module, project);
+    }
+
+    private void analyzeReadsFromStatements(final List<Node> stmts, final String caller, final FortranModule module,
             final FortranProject project) {
         for (final Node stmt : stmts) {
             final List<String> names = XPathParser.getNamesFromStatement(stmt);
@@ -166,7 +342,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
 
     }
 
-    private void analyzeAssignmentStatements(final Set<Node> stmts, final List<String> bl, final String caller,
+    private void analyzeAssignmentStatements(final List<Node> stmts, final List<String> bl, final String caller,
             final FortranModule module, final FortranProject project) {
 
         for (final Node stmt : stmts) {
@@ -218,8 +394,8 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
                 for (final Node cons : nonArgsFunc) {
                     this.checkAssignWithCommon(assignedVar, caller, module, project);
                     final String functionId = XPathParser.getStructureConstructorIdentifier(cons);
-                    final Pair<FortranModule, String> operation = this.findOperation(project.getModules().values(),
-                            functionId);
+                    final Pair<FortranModule, FortranOperation> operation = this
+                            .findOperation(project.getModules().values(), functionId);
                     try {
                         this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller,
                                 operation.getFirst().getFileName(), operation.getFirst().getModuleName(), functionId,
@@ -293,8 +469,8 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
                                 .addAll(this.getCommonBlockIdsForGivenVariable(arg, module.getCommonBlocks()));
                     }
 
-                    final Pair<FortranModule, String> operation = this.findOperation(project.getModules().values(),
-                            functionIdentifier);
+                    final Pair<FortranModule, FortranOperation> operation = this
+                            .findOperation(project.getModules().values(), functionIdentifier);
 
                     final String moduleName;
                     final String fileName;
@@ -313,8 +489,8 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
                         this.logger.error("Cannot add both dataflow call->f {}", e.getLocalizedMessage());
                     }
                 } else {
-                    final Pair<FortranModule, String> operation = this.findOperation(project.getModules().values(),
-                            functionIdentifier);
+                    final Pair<FortranModule, FortranOperation> operation = this
+                            .findOperation(project.getModules().values(), functionIdentifier);
 
                     final String moduleName;
                     final String fileName;
@@ -439,11 +615,12 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
     }
 
     // TODO duplicate form ProcessOperationCallStage
-    private Pair<FortranModule, String> findOperation(final Collection<FortranModule> modules, final String signature) {
+    private Pair<FortranModule, FortranOperation> findOperation(final Collection<FortranModule> modules,
+            final String signature) {
         final Optional<FortranModule> moduleOptional = modules.stream().filter(module -> module.getOperations().values()
                 .stream().anyMatch(operation -> operation.getName().equals(signature))).findFirst();
         if (moduleOptional.isPresent()) {
-            return new Pair<>(moduleOptional.get(), signature);
+            return new Pair<>(moduleOptional.get(), moduleOptional.get().getOperations().get(signature));
         } else {
             return null;
         }

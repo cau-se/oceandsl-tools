@@ -14,7 +14,7 @@ public class Output {
             new StringValueHandler("target-file"), new StringValueHandler("target-module"),
             new StringValueHandler("target-operation"), new StringValueHandler("direction"));
     private final Table fileContent = new Table(Output.FILE_CONTENT, new StringValueHandler("file"),
-            new StringValueHandler("module"), new StringValueHandler("operation"), new StringValueHandler("kind"));
+            new StringValueHandler("module"), new StringValueHandler("operation"));
     private final Table commonBlocks = new Table(Output.COMMON_BLOCKS, new StringValueHandler("file"),
             new StringValueHandler("module"), new StringValueHandler("operation"), new StringValueHandler("block-name"),
             new StringValueHandler("variables"));

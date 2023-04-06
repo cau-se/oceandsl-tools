@@ -16,6 +16,7 @@
 package org.oceandsl.tools.fxca.stages;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
@@ -177,6 +178,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             throws ParserConfigurationException, SAXException, IOException {
         final FortranOperation operation = new FortranOperation(NodeProcessingUtils.getNameOfOperation(node), node);
 
+        System.err.println("operation " + operation.getName());
+
         this.createFortranOperationParameters(operation, node);
 
         this.createFortranOperationCommonBlock(operation, node);
@@ -188,7 +191,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void createFortranOperationParameters(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
-        final Node argumentListNode = NodeProcessingUtils.findFirstChild(node, NodePredicateUtils.isDummyArgumentLT);
+        final Node argumentListNode = NodeProcessingUtils.findChildFirst(node, NodePredicateUtils.isDummyArgumentLT);
         if (argumentListNode != null) {
             for (Node argument = argumentListNode.getFirstChild(); argument != null; argument = argument
                     .getNextSibling()) {
@@ -202,7 +205,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void createFortranOperationCommonBlock(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
-        final Set<Node> commonStatements = NodeProcessingUtils.findAllSiblings(node,
+        final List<Node> commonStatements = NodeProcessingUtils.findAllSiblings(node,
                 NodePredicateUtils.isCommonStatement, NodePredicateUtils.isEndSubroutineStatement);
         commonStatements.forEach(statement -> {
             final Node commonBlockNameNode = statement.getChildNodes().item(1);
@@ -216,10 +219,12 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void createFortranOperationVariables(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
-        final Set<Node> declarationStatements = NodeProcessingUtils.findAllSiblings(node,
+        final List<Node> declarationStatements = NodeProcessingUtils.findAllSiblings(node,
                 NodePredicateUtils.isTDeclStmt, NodePredicateUtils.isEndSubroutineStatement);
         declarationStatements.forEach(statement -> {
-            final Node declarationElements = statement.getChildNodes().item(2);
+            final Node declarationElements = NodeProcessingUtils.findChildFirst(statement,
+                    NodePredicateUtils.isENdeclLT);
+
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
                 final Node declarationObject = declarationElements.getChildNodes().item(i);
                 if ("EN-decl".equals(declarationObject.getNodeName())) {

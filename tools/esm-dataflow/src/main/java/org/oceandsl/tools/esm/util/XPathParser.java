@@ -2,7 +2,6 @@ package org.oceandsl.tools.esm.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -14,85 +13,32 @@ import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 
 public class XPathParser {
 
-    /**
-     * Return list of bodies of subroutines
-     *
-     * @param document
-     * @return return list of subroutine bodies
-     */
-    public static List<List<Node>> getSubroutineContents(final Document document) {
-        final List<List<Node>> subRs = new ArrayList<>();
-
-        final NodeList nList = document.getElementsByTagName("subroutine-stmt");
-
-        for (int i = 0; i < nList.getLength(); i++) {
-            Node node = nList.item(i);
-            final List<Node> currentNList = new ArrayList<>();
-            currentNList.add(node);
-            while ((node.getNextSibling() != null)
-                    && !node.getNextSibling().getNodeName().equals("end-subroutine-stmt")) {
-                currentNList.add(node.getNextSibling());
-                node = node.getNextSibling();
-            }
-            subRs.add(currentNList);
-
-        }
-
-        return subRs;
-
-    }
-
-    /**
-     * Return list of bodies of functions
-     *
-     * @param xml
-     * @return return list of functions bodies
-     */
-    public static List<List<Node>> getFuncContents(final Document document) {
-        final List<List<Node>> subRs = new ArrayList<>();
-        final NodeList nList = document.getElementsByTagName("function-stmt");
-
-        for (int i = 0; i < nList.getLength(); i++) {
-            Node node = nList.item(i);
-            final List<Node> currentNList = new ArrayList<>();
-            currentNList.add(node);
-            while ((node.getNextSibling() != null) && node.getNextSibling().getNodeName().equals("end-function-stmt")) {
-                currentNList.add(node.getNextSibling());
-                node = node.getNextSibling();
-            }
-            subRs.add(currentNList);
-
-        }
-
-        return subRs;
-    }
-
-    public static Set<Node> getMain(final Document document) {
+    public static List<Node> getMain(final Document document) {
         return NodeProcessingUtils.findAllSiblings(document.getFirstChild(), NodePredicateUtils.isProgramStatement,
                 NodePredicateUtils.isEndProgramStatement);
     }
 
-    public static Set<Node> getCallStmts(final Node body) {
+    public static List<Node> getCallStmts(final Node body) {
         return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isCallStatement,
                 NodePredicateUtils.isEndSubroutineStatement);
     }
 
-    public static Set<Node> getCommonBlocks(final Node body) {
+    public static List<Node> getCommonBlocks(final Node body) {
         return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isCommonStatement,
                 o -> false);
     }
 
-    public static Set<Node> getIfElseStmts(final Node body) {
+    public static List<Node> getIfElseStmts(final Node body) {
         return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isIfThenStatement,
                 NodePredicateUtils.isEndIfStatement);
     }
 
-    public static Set<Node> getSelectStmts(final Node body) {
+    public static List<Node> getSelectStmts(final Node body) {
         return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isSelectCaseStatement,
                 o -> false);
     }
 
-    public static Set<Node> getLoopCtrlStmts(final Node body) {
+    public static List<Node> getLoopCtrlStmts(final Node body) {
         return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isDoStatement, o -> false);
     }
 
@@ -108,7 +54,7 @@ public class XPathParser {
         return result;
     }
 
-    public static Set<Node> getAssignmentStmts(final Node body) {
+    public static List<Node> getAssignmentStmts(final Node body) {
         return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isAssignmentStatement,
                 o -> false);
     }
@@ -208,12 +154,6 @@ public class XPathParser {
 
     public static String getFunctionId(final List<Node> body) {
         final Element e = (Element) body.get(0);
-        final NodeList nameElems = e.getElementsByTagName("n");
-        return nameElems.item(0).getTextContent();
-    }
-
-    public static String getCallStmtId(final Node callStmt) {
-        final Element e = (Element) callStmt;
         final NodeList nameElems = e.getElementsByTagName("n");
         return nameElems.item(0).getTextContent();
     }

@@ -53,8 +53,6 @@ public class FortranModule {
     @Getter
     private final Collection<Pair<Pair<FortranModule, String>, Pair<FortranModule, String>>> calls = new ArrayList<>();
     @Getter
-    private final Collection<Pair<Pair<FortranModule, String>, Pair<FortranModule, String>>> dataflows = new ArrayList<>();
-    @Getter
     private final Map<String, CommonBlock> commonBlocks = new HashMap<>();
     @Getter
     private final Set<String> variables = new HashSet<>();

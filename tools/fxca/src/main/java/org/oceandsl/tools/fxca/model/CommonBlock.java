@@ -26,7 +26,7 @@ import lombok.Getter;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CommonBlock {
+public class CommonBlock implements IDataflowEndpoint {
 
     @Getter
     private final String name;

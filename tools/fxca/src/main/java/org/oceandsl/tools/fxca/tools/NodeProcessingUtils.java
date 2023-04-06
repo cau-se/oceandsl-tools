@@ -141,7 +141,7 @@ public class NodeProcessingUtils {
         }
     }
 
-    public static Node findFirstChild(final Node parent, final Predicate<Node> condition) {
+    public static Node findChildFirst(final Node parent, final Predicate<Node> condition) {
         for (Node node = parent.getFirstChild(); node != null; node = node.getNextSibling()) {
             if (condition.test(node)) {
                 return node;
@@ -150,10 +150,10 @@ public class NodeProcessingUtils {
         return null;
     }
 
-    public static Set<Node> findAllSiblings(final Node firstNode, final Predicate<Node> select,
+    public static List<Node> findAllSiblings(final Node firstNode, final Predicate<Node> select,
             final Predicate<Node> terminate) {
-        final Set<Node> nodes = new HashSet<>();
-        for (Node node = firstNode; (node != null) && !terminate.test(node); node = node.getNextSibling()) {
+        final List<Node> nodes = new ArrayList<>();
+        for (Node node = firstNode; node != null && !terminate.test(node); node = node.getNextSibling()) {
             if (select.test(node)) {
                 nodes.add(node);
             }
@@ -214,9 +214,9 @@ public class NodeProcessingUtils {
         boolean inParanthesisInterval = false;
         // End if we do not have anywhere to search, or we have reached the limit (where "-1" counts
         // as "no limit").
-        while ((current != null) && ((result.size() < maxElementsToFind) || (maxElementsToFind == -1))) {
+        while (current != null && (result.size() < maxElementsToFind || maxElementsToFind == -1)) {
 
-            if (!inParanthesisInterval && condition.test(current) && ((current != parent) || includeSelf)) {
+            if (!inParanthesisInterval && condition.test(current) && (current != parent || includeSelf)) {
                 result.add(current);
             }
 
@@ -305,10 +305,12 @@ public class NodeProcessingUtils {
     }
 
     public static String getName(final Node node) {
-        final Node bigNNode = node.getChildNodes().item(0);
-        final Node littleNNode = bigNNode.getChildNodes().item(0);
-
+        final Node littleNNode = node.getFirstChild().getFirstChild();
         return littleNNode.getTextContent().toLowerCase(Locale.getDefault());
+    }
+
+    public static String getCalleeNameFromCall(final Node callStatementNode) {
+        return NodeProcessingUtils.getName(callStatementNode.getFirstChild().getNextSibling());
     }
 
     public static List<Pair<String, String>> findSubroutineCalls(final Node node)
@@ -321,7 +323,7 @@ public class NodeProcessingUtils {
     public static List<Pair<String, String>> findFunctionCalls(final Node node)
             throws ParserConfigurationException, SAXException, IOException {
         return NodeProcessingUtils.findOperationCalls(node,
-                NodePredicateUtils.namedExpressionAccess.and(NodePredicateUtils.isLocalAccess.negate()),
+                NodePredicateUtils.isNamedExpressionAccess.and(NodePredicateUtils.isLocalAccess.negate()),
                 functionCall -> NodeProcessingUtils.nameOfCalledFunction(functionCall));
     }
 
@@ -373,11 +375,11 @@ public class NodeProcessingUtils {
 
         final short type = node.getNodeType();
 
-        if ((type == Node.TEXT_NODE) && (node.getChildNodes().getLength() > 0)) {
+        if (type == Node.TEXT_NODE && node.getChildNodes().getLength() > 0) {
             throw new IllegalArgumentException("text node with children");
         }
 
-        if ("call-stmt".equals(node.getNodeName()) && (node.getChildNodes().getLength() < 2)) {
+        if ("call-stmt".equals(node.getNodeName()) && node.getChildNodes().getLength() < 2) {
             NodeProcessingUtils.printNode(node, 0);
             throw new IllegalArgumentException("call statement with < 2 children");
         }

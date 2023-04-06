@@ -37,7 +37,7 @@ public class EsmMain extends AbstractService<TeetimeConfiguration, Settings> {
     public static void main(final String[] args) {
         final EsmMain main = new EsmMain();
         try {
-            final int exitCode = main.run("architecture model operations", "mop", args, new Settings());
+            final int exitCode = main.run("fxca dataflow analysis", "fxca-dw", args, new Settings());
             System.exit(exitCode);
         } catch (final IllegalArgumentException e) {
             LoggerFactory.getLogger(EsmMain.class).error("Configuration error: {}", e.getLocalizedMessage());

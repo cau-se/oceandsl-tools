@@ -34,6 +34,9 @@ public class StringValueHandler implements IValueHandler<String> {
 
     @Override
     public String checkValue(final Object value) throws ValueConversionErrorException {
+        if (value == null) {
+            throw new ValueConversionErrorException(String.format("value %s cannot hold null value", this.label));
+        }
         if (value instanceof String) {
             return (String) value;
         } else {
@@ -46,7 +49,7 @@ public class StringValueHandler implements IValueHandler<String> {
         if (value instanceof String) {
             return String.format("\"%s\"", ((String) value).replaceAll("\\\"", "\\\\\""));
         } else {
-            throw new ValueConversionErrorException(value + " is not an long value.");
+            throw new ValueConversionErrorException(value + " is not a string value.");
         }
     }
 

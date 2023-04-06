@@ -107,7 +107,7 @@ public class LocalExpressionAccess {
 
     public static boolean isNamedExpressionLocalReference(final Node node, final LocalAccessParameters parameters) {
 
-        if (!NodePredicateUtils.namedExpressionAccess.test(node)) {
+        if (!NodePredicateUtils.isNamedExpressionAccess.test(node)) {
             return false;
         }
 
@@ -138,7 +138,7 @@ public class LocalExpressionAccess {
     }
 
     public static boolean isLocalAccess(final Node referenceNode) {
-        return NodePredicateUtils.isCallStatement.or(NodePredicateUtils.namedExpressionAccess).test(referenceNode)
+        return NodePredicateUtils.isCallStatement.or(NodePredicateUtils.isNamedExpressionAccess).test(referenceNode)
                 && (LocalExpressionAccess.typeOfReferenceAccess(referenceNode) != accessType.OPERATION_CALL);
     }
 

@@ -54,6 +54,9 @@ public class NodePredicateUtils {
     public static Predicate<Node> isEntryName = NodeProcessingUtils.hasName("entry-N");
     public static Predicate<Node> isArgumentName = NodeProcessingUtils.hasName("arg-N");
 
+    public static Predicate<Node> isArgumentSpecification = NodeProcessingUtils.hasName("arg-spec");
+    public static Predicate<Node> isArgument = NodeProcessingUtils.hasName("arg");
+
     public static Predicate<Node> isNamedExpression = NodeProcessingUtils.hasName("named-E");
     public static Predicate<Node> isBigN = NodeProcessingUtils.hasName("N");
     public static Predicate<Node> isTDeclStmt = NodeProcessingUtils.hasName("T-decl-stmt");
@@ -71,7 +74,7 @@ public class NodePredicateUtils {
     public static Predicate<Node> isLocalAccess = node -> LocalExpressionAccess.isLocalAccess(node);
     public static Predicate<Node> isDummyArgumentLT = NodeProcessingUtils.hasName("dummy-arg-LT");
 
-    public static Predicate<Node> namedExpressionAccess = NodePredicateUtils.isNamedExpression
+    public static Predicate<Node> isNamedExpressionAccess = NodePredicateUtils.isNamedExpression
             .and(NodeProcessingUtils.childSatisfies("0", NodePredicateUtils.isBigN))
             .and(NodeProcessingUtils.childSatisfies("0,0", NodePredicateUtils.isSmallN))
             .and(NodeProcessingUtils.childSatisfies("1", NodePredicateUtils.isRLT))
@@ -90,5 +93,6 @@ public class NodePredicateUtils {
     public static Predicate<Node> isSelectCaseStatement = NodeProcessingUtils.hasName("select-case-stmt");
     public static Predicate<Node> isDoStatement = NodeProcessingUtils.hasName("do-stmt");
     public static Predicate<Node> isAssignmentStatement = NodeProcessingUtils.hasName("a-stmt");
+    public static Predicate<Node> isENdeclLT = NodeProcessingUtils.hasName("EN-decl-LT");
 
 }
