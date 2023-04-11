@@ -16,7 +16,6 @@
 package org.oceandsl.tools.esm.stages;
 
 import java.util.List;
-import java.util.Set;
 
 import org.w3c.dom.Node;
 
@@ -43,6 +42,9 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
             module.getOperations().values().forEach(operation -> {
                 System.err.println("  processing operation " + operation.getName());
                 this.computeParameterDirectionality(operation);
+                operation.getParameters().values()
+                        .forEach(p -> System.err.printf("%s %s ", p.getName(), p.getDirection().name()));
+                System.err.println();
             });
         });
         // this.outputPort.send(project);
@@ -53,37 +55,60 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                 NodePredicateUtils.isEndSubroutineStatement.or(NodePredicateUtils.isEndProgramStatement)
                         .or(NodePredicateUtils.isEndFunctionStatement));
         siblings.forEach(sibling -> {
-            final Set<Node> assignments = NodeProcessingUtils.allDescendents(sibling,
-                    NodePredicateUtils.isAssignmentStatement, false);
-            assignments.forEach(assignment -> {
-                this.checkAssignee(operation, assignment);
-                this.checkAssignmentExpression(operation, assignment);
-            });
-            final Set<Node> calls = NodeProcessingUtils.allDescendents(sibling, NodePredicateUtils.isCallStatement,
-                    false);
-            calls.forEach(call -> {
-                this.checkCall(operation, call);
-            });
+            if (NodePredicateUtils.isAssignmentStatement.test(sibling)) {
+                this.checkAssignee(operation, sibling);
+                this.checkAssignmentExpression(operation, sibling);
+            } else if (NodePredicateUtils.isCallStatement.test(sibling)) {
+                this.checkCall(operation, sibling);
+            } else if (NodePredicateUtils.isIfThenStatement.test(sibling)) {
+                this.checkIfThen(operation, sibling);
+            } else if (NodePredicateUtils.isDoStatement.test(sibling)) {
+                this.checkDoLoop(operation, sibling);
+            } else if (NodePredicateUtils.isM.test(sibling)) {
+                // ignore
+            } else if (NodePredicateUtils.isText.test(sibling)) {
+                // ignore text
+            } else {
+                System.err.println(" --> unknown sibling" + sibling);
+            }
         });
 
     }
 
+    private void checkDoLoop(final FortranOperation operation, final Node doLoop) {
+        final Node lowerBound = NodeProcessingUtils.findChildFirst(doLoop, NodePredicateUtils.isLowerBound);
+        final Node upperBound = NodeProcessingUtils.findChildFirst(doLoop, NodePredicateUtils.isUpperBound);
+        if (lowerBound != null) {
+            this.checkExpression(operation, lowerBound);
+        }
+        if (upperBound != null) {
+            this.checkExpression(operation, upperBound);
+        }
+
+    }
+
+    private void checkIfThen(final FortranOperation operation, final Node ifThen) {
+        final Node condition = ifThen.getFirstChild().getNextSibling();
+        this.checkExpression(operation, condition);
+    }
+
     private void checkCall(final FortranOperation operation, final Node call) {
-        System.err
-                .println("Call " + NodeProcessingUtils.getName(call.getFirstChild().getNextSibling().getFirstChild()));
+        // System.err
+        // .println("Call " +
+        // NodeProcessingUtils.getName(call.getFirstChild().getNextSibling().getFirstChild()));
         final Node argumentSpecification = NodeProcessingUtils.findChildFirst(call,
                 NodePredicateUtils.isArgumentSpecification);
         if (argumentSpecification != null) {
             final List<Node> arguments = NodeProcessingUtils.findAllSiblings(argumentSpecification.getFirstChild(),
                     NodePredicateUtils.isArgument, o -> false);
             arguments.forEach(argument -> {
-                System.err.println(" arg " + argument.getFirstChild());
+                // System.err.println(" arg " + argument.getFirstChild());
                 this.checkExpression(operation, argument.getFirstChild());
             });
         } else {
             System.err.println(" no arguments");
         }
-        System.err.println("end call");
+        // System.err.println("end call");
     }
 
     private void checkAssignmentExpression(final FortranOperation operation, final Node assignment) {
@@ -109,7 +134,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                     if (parameter != null) {
                         parameter.addDirection(EDirection.READ);
                     } else if (operation.getVariables().contains(elementName)) {
-                        System.err.println(" variable " + elementName);
+                        // System.err.println(" variable " + elementName);
                     } else {
                         System.err.println(" other " + elementName + " " + element);
                     }

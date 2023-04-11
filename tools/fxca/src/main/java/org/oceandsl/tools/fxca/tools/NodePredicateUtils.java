@@ -105,4 +105,7 @@ public class NodePredicateUtils {
     public static Predicate<Node> isAssignmentE1 = NodeProcessingUtils.hasName("E-1");
     public static Predicate<Node> isAssignmentE2 = NodeProcessingUtils.hasName("E-2");
     public static Predicate<Node> isFile = NodeProcessingUtils.hasName("file");
+
+    public static Predicate<Node> isLowerBound = NodeProcessingUtils.hasName("lower-bound");
+    public static Predicate<Node> isUpperBound = NodeProcessingUtils.hasName("upper-bound");
 }
