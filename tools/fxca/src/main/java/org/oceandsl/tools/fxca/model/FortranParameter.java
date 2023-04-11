@@ -22,7 +22,7 @@ import lombok.Setter;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class FortranParameter {
+public class FortranParameter implements IContainable {
 
     @Getter
     String name;
@@ -35,6 +35,10 @@ public class FortranParameter {
     @Setter
     EDirection direction;
 
+    @Getter
+    @Setter
+    Object parent;
+
     public FortranParameter(final String name) {
         this.direction = EDirection.NONE;
         this.name = name;
@@ -46,14 +50,14 @@ public class FortranParameter {
             this.direction = value;
             break;
         case READ:
-            if (value == EDirection.WRITE || value == EDirection.BOTH) {
+            if ((value == EDirection.WRITE) || (value == EDirection.BOTH)) {
                 this.direction = EDirection.BOTH;
             } else {
                 this.direction = EDirection.READ;
             }
             break;
         case WRITE:
-            if (value == EDirection.READ || value == EDirection.BOTH) {
+            if ((value == EDirection.READ) || (value == EDirection.BOTH)) {
                 this.direction = EDirection.BOTH;
             } else {
                 this.direction = EDirection.WRITE;

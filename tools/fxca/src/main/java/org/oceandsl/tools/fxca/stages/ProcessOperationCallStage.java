@@ -134,12 +134,12 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
     }
 
     private boolean isVariableReference(final FortranModule module, final String variableName) {
-        return module.getVariables().contains(variableName.toLowerCase(Locale.getDefault()));
+        return module.getVariables().keySet().contains(variableName.toLowerCase(Locale.getDefault()));
     }
 
     private boolean isCommonBlockVariable(final FortranModule module, final String variableName) {
-        return module.getCommonBlocks().values().stream()
-                .anyMatch(block -> block.getElements().contains(variableName.toLowerCase(Locale.getDefault())));
+        return module.getCommonBlocks().values().stream().anyMatch(
+                block -> block.getVariables().keySet().contains(variableName.toLowerCase(Locale.getDefault())));
     }
 
     public OutputPort<Table> getNotFoundOutputPort() {

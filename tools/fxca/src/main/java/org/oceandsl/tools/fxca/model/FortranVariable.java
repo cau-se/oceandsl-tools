@@ -15,10 +15,6 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
-import java.util.Map;
-
-import org.w3c.dom.Node;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,34 +22,53 @@ import lombok.Setter;
  *
  * @author Reiner Jung
  * @since 1.3.0
+ *
  */
-public class FortranOperation implements IDataflowEndpoint, IContainable {
+public class FortranVariable implements IContainable {
 
     @Getter
     String name;
 
     @Getter
-    private final Map<String, CommonBlock> commonBlocks = new ContainmentHashMap<>(this);
-
-    @Getter
-    private final Map<String, FortranVariable> variables = new ContainmentHashMap<>(this);
-
-    @Getter
-    private final Map<String, FortranParameter> parameters = new ContainmentHashMap<>(this);
-
-    @Getter
-    private final Node node;
+    @Setter
+    String type;
 
     @Getter
     @Setter
-    private FortranModule module;
+    EDirection direction;
 
     @Getter
     @Setter
     Object parent;
 
-    public FortranOperation(final String name, final Node node) {
+    public FortranVariable(final String name) {
+        this.direction = EDirection.NONE;
         this.name = name;
-        this.node = node;
     }
+
+    public void addDirection(final EDirection value) {
+        switch (this.direction) {
+        case NONE:
+            this.direction = value;
+            break;
+        case READ:
+            if ((value == EDirection.WRITE) || (value == EDirection.BOTH)) {
+                this.direction = EDirection.BOTH;
+            } else {
+                this.direction = EDirection.READ;
+            }
+            break;
+        case WRITE:
+            if ((value == EDirection.READ) || (value == EDirection.BOTH)) {
+                this.direction = EDirection.BOTH;
+            } else {
+                this.direction = EDirection.WRITE;
+            }
+            break;
+        case BOTH:
+            this.direction = EDirection.BOTH;
+            break;
+        }
+    }
+
 }

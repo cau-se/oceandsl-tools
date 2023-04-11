@@ -286,13 +286,13 @@ public class NodeProcessingUtils {
     }
 
     public static String getNameOfOperation(final Node node) {
-        if (NodePredicateUtils.isSubroutineStatement.test(node)) {
-            return NodeProcessingUtils.getNameOfOperation(node, NodePredicateUtils.isSubroutineName);
-        } else if (NodePredicateUtils.isFunctionStatement.test(node)) {
-            return NodeProcessingUtils.getNameOfOperation(node, NodePredicateUtils.isFunctionName);
-        } else if (NodePredicateUtils.isEntryStatement.test(node)) {
-            return NodeProcessingUtils.getNameOfOperation(node, NodePredicateUtils.isEntryName);
-        } else if (NodePredicateUtils.isProgramStatement.test(node)) {
+        if (Predicates.isSubroutineStatement.test(node)) {
+            return NodeProcessingUtils.getNameOfOperation(node, Predicates.isSubroutineName);
+        } else if (Predicates.isFunctionStatement.test(node)) {
+            return NodeProcessingUtils.getNameOfOperation(node, Predicates.isFunctionName);
+        } else if (Predicates.isEntryStatement.test(node)) {
+            return NodeProcessingUtils.getNameOfOperation(node, Predicates.isEntryName);
+        } else if (Predicates.isProgramStatement.test(node)) {
             return NodeProcessingUtils.ROOT_PROGRAM;
         }
 
@@ -316,14 +316,14 @@ public class NodeProcessingUtils {
     public static List<Pair<String, String>> findSubroutineCalls(final Node node)
             throws ParserConfigurationException, SAXException, IOException {
         return NodeProcessingUtils.findOperationCalls(node,
-                NodePredicateUtils.isCallStatement.and(NodePredicateUtils.isLocalAccess.negate()),
+                Predicates.isCallStatement.and(Predicates.isLocalAccess.negate()),
                 subroutineCall -> NodeProcessingUtils.nameOfCalledOperation(subroutineCall));
     }
 
     public static List<Pair<String, String>> findFunctionCalls(final Node node)
             throws ParserConfigurationException, SAXException, IOException {
         return NodeProcessingUtils.findOperationCalls(node,
-                NodePredicateUtils.isNamedExpressionAccess.and(NodePredicateUtils.isLocalAccess.negate()),
+                Predicates.isNamedExpressionAccess.and(Predicates.isLocalAccess.negate()),
                 functionCall -> NodeProcessingUtils.nameOfCalledFunction(functionCall));
     }
 
@@ -357,7 +357,7 @@ public class NodeProcessingUtils {
 
     private static String getNameOfContainingOperation(final Node node) {
         final Node containingOperationStatement = NodeProcessingUtils.findContainingStatement(node,
-                NodePredicateUtils.isOperationStatement, NodePredicateUtils.paranthesisTypes);
+                Predicates.isOperationStatement, Predicates.paranthesisTypes);
         return containingOperationStatement == null ? NodeProcessingUtils.ROOT_PROGRAM
                 : NodeProcessingUtils.getNameOfOperation(containingOperationStatement);
     }
@@ -384,16 +384,16 @@ public class NodeProcessingUtils {
             throw new IllegalArgumentException("call statement with < 2 children");
         }
 
-        if (NodePredicateUtils.isNamedExpression.test(node)) {
+        if (Predicates.isNamedExpression.test(node)) {
             // NodeList children = node.getChildNodes();
             final Node firstChild = node.getFirstChild();
             final Node firstGrandChild = firstChild.getFirstChild();
-            if (!NodePredicateUtils.isBigN.test(firstChild)) {
+            if (!Predicates.isBigN.test(firstChild)) {
                 throw new IllegalArgumentException(String.format(
                         "Expected <N> in named expression, but found %s as first child.", firstChild.getNodeName()));
             }
 
-            if (!NodePredicateUtils.isSmallN.test(firstGrandChild)) {
+            if (!Predicates.isSmallN.test(firstGrandChild)) {
                 throw new IllegalArgumentException(
                         String.format("Expected <n> in named expression, but found %s as first gand child.",
                                 firstGrandChild.getNodeName()));

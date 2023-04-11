@@ -46,16 +46,16 @@ public class LocalExpressionAccess {
         COMMON_BLOCK, LOCAL_VARIABLE, OPERATION_PARAMETER, OPERATION_CALL
     }
 
-    static LocalAccessParameters namesInCommonBlocks = new LocalAccessParameters(NodePredicateUtils.isCommonStatement,
-            NodePredicateUtils.isCommonBlockObjectStatement, NodePredicateUtils.isSmallN,
+    static LocalAccessParameters namesInCommonBlocks = new LocalAccessParameters(Predicates.isCommonStatement,
+            Predicates.isCommonBlockObjectStatement, Predicates.isSmallN,
             smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static LocalAccessParameters namesInOperationParameterList = new LocalAccessParameters(
-            NodePredicateUtils.isOperationStatement, NodePredicateUtils.isArgumentName, NodePredicateUtils.isSmallN,
+            Predicates.isOperationStatement, Predicates.isArgumentName, Predicates.isSmallN,
             smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
-    static LocalAccessParameters namesInLocalVariableList = new LocalAccessParameters(NodePredicateUtils.isTDeclStmt,
-            NodePredicateUtils.isEnDcl, NodePredicateUtils.isSmallN,
+    static LocalAccessParameters namesInLocalVariableList = new LocalAccessParameters(Predicates.isTDeclStmt,
+            Predicates.isEnDcl, Predicates.isSmallN,
             smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static Set<String> localNamesDefinedInApplyingBlocks(final Node node, final LocalAccessParameters parameters,
@@ -68,7 +68,7 @@ public class LocalExpressionAccess {
         while (current != null) {
             final List<Node> applyingBlocksOnThisLevel = NodeProcessingUtils.findAll(current,
                     nnode -> nnode.getPreviousSibling(), parameters.blockNodeTypeCheckPredicate, true,
-                    NodePredicateUtils.paranthesisTypes, -1);
+                    Predicates.paranthesisTypes, -1);
             applyingBlocks.addAll(applyingBlocksOnThisLevel);
             current = current.getParentNode();
         }
@@ -107,7 +107,7 @@ public class LocalExpressionAccess {
 
     public static boolean isNamedExpressionLocalReference(final Node node, final LocalAccessParameters parameters) {
 
-        if (!NodePredicateUtils.isNamedExpressionAccess.test(node)) {
+        if (!Predicates.isNamedExpressionAccess.test(node)) {
             return false;
         }
 
@@ -138,7 +138,7 @@ public class LocalExpressionAccess {
     }
 
     public static boolean isLocalAccess(final Node referenceNode) {
-        return NodePredicateUtils.isCallStatement.or(NodePredicateUtils.isNamedExpressionAccess).test(referenceNode)
+        return Predicates.isCallStatement.or(Predicates.isNamedExpressionAccess).test(referenceNode)
                 && (LocalExpressionAccess.typeOfReferenceAccess(referenceNode) != accessType.OPERATION_CALL);
     }
 

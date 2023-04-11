@@ -8,38 +8,38 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.oceandsl.tools.fxca.tools.NodePredicateUtils;
+import org.oceandsl.tools.fxca.tools.Predicates;
 import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 
 public class XPathParser {
 
     public static List<Node> getMain(final Document document) {
-        return NodeProcessingUtils.findAllSiblings(document.getFirstChild(), NodePredicateUtils.isProgramStatement,
-                NodePredicateUtils.isEndProgramStatement);
+        return NodeProcessingUtils.findAllSiblings(document.getFirstChild(), Predicates.isProgramStatement,
+                Predicates.isEndProgramStatement);
     }
 
     public static List<Node> getCallStmts(final Node body) {
-        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isCallStatement,
-                NodePredicateUtils.isEndSubroutineStatement);
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), Predicates.isCallStatement,
+                Predicates.isEndSubroutineStatement);
     }
 
     public static List<Node> getCommonBlocks(final Node body) {
-        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isCommonStatement,
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), Predicates.isCommonStatement,
                 o -> false);
     }
 
     public static List<Node> getIfElseStmts(final Node body) {
-        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isIfThenStatement,
-                NodePredicateUtils.isEndIfStatement);
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), Predicates.isIfThenStatement,
+                Predicates.isEndIfStatement);
     }
 
     public static List<Node> getSelectStmts(final Node body) {
-        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isSelectCaseStatement,
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), Predicates.isSelectCaseStatement,
                 o -> false);
     }
 
     public static List<Node> getLoopCtrlStmts(final Node body) {
-        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isDoStatement, o -> false);
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), Predicates.isDoStatement, o -> false);
     }
 
     public static String getLoopControlVar(final Node loopStatement) {
@@ -55,7 +55,7 @@ public class XPathParser {
     }
 
     public static List<Node> getAssignmentStmts(final Node body) {
-        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), NodePredicateUtils.isAssignmentStatement,
+        return NodeProcessingUtils.findAllSiblings(body.getFirstChild(), Predicates.isAssignmentStatement,
                 o -> false);
     }
 

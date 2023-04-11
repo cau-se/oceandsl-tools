@@ -37,9 +37,10 @@ import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranProject;
+import org.oceandsl.tools.fxca.model.FortranVariable;
 import org.oceandsl.tools.fxca.tools.IUriProcessor;
 import org.oceandsl.tools.fxca.tools.ListTools;
-import org.oceandsl.tools.fxca.tools.NodePredicateUtils;
+import org.oceandsl.tools.fxca.tools.Predicates;
 import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 
 /**
@@ -51,19 +52,27 @@ import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
  */
 public class ProcessModuleStructureStage extends AbstractTransformation<Document, FortranProject> {
 
+    private static final String RUNTIME = "<runtime>";
     private final FortranProject project;
     private final IUriProcessor uriProcessor;
 
-    public ProcessModuleStructureStage(final IUriProcessor uriProcessor) {
+    public ProcessModuleStructureStage(final IUriProcessor uriProcessor, final List<FortranOperation> operations) {
         this.project = new FortranProject();
+        this.project.getModules().put(ProcessModuleStructureStage.RUNTIME, this.createModule(operations));
         this.uriProcessor = uriProcessor;
+    }
+
+    private FortranModule createModule(final List<FortranOperation> operations) {
+        final FortranModule module = new FortranModule(ProcessModuleStructureStage.RUNTIME, "", true, null);
+        operations.forEach(operation -> module.getOperations().put(operation.getName(), operation));
+        return module;
     }
 
     @Override
     protected void execute(final Document document) throws Exception {
         final Element documentElement = document.getDocumentElement();
         final Node moduleStatement = ListTools.getUniqueElementIfNonEmpty(
-                NodeProcessingUtils.allDescendents(documentElement, NodePredicateUtils.isModuleStatement, true), null);
+                NodeProcessingUtils.allDescendents(documentElement, Predicates.isModuleStatement, true), null);
 
         final boolean namedModule = moduleStatement != null;
         final String fileName = this.uriProcessor.process(document.getBaseURI());
@@ -83,7 +92,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     private void computeInternalVariables(final FortranModule module, final Element documentElement)
             throws ParserConfigurationException, SAXException, IOException {
         final Set<Node> declarationStatements = this.getDescendentAttributes(documentElement,
-                NodePredicateUtils.isTDeclStmt, operationNode -> operationNode);
+                Predicates.isTDeclStmt, operationNode -> operationNode);
         declarationStatements.forEach(statement -> {
             final Node declarationElements = statement.getChildNodes().item(2);
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
@@ -91,16 +100,21 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                 if ("EN-decl".equals(declarationObject.getNodeName())) {
                     final String objectName = declarationObject.getFirstChild().getFirstChild().getFirstChild()
                             .getTextContent();
-                    module.getVariables().add(objectName.toLowerCase(Locale.getDefault()));
+                    final String variableName = objectName.toLowerCase(Locale.getDefault());
+                    module.getVariables().put(variableName, this.createVariable(variableName));
                 }
             }
         });
     }
 
+    private FortranVariable createVariable(final String variableName) {
+        return new FortranVariable(variableName);
+    }
+
     private void computeInternalDimensionVariables(final FortranModule module, final Element documentElement)
             throws ParserConfigurationException, SAXException, IOException {
         final Set<Node> declarationStatements = this.getDescendentAttributes(documentElement,
-                NodePredicateUtils.isDimStmt, operationNode -> operationNode);
+                Predicates.isDimStmt, operationNode -> operationNode);
         declarationStatements.forEach(statement -> {
             final Node declarationElements = statement.getChildNodes().item(1);
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
@@ -108,7 +122,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                 if ("EN-decl".equals(declarationObject.getNodeName())) {
                     final String objectName = declarationObject.getFirstChild().getFirstChild().getFirstChild()
                             .getTextContent();
-                    module.getVariables().add(objectName.toLowerCase(Locale.getDefault()));
+                    final String variableName = objectName.toLowerCase(Locale.getDefault());
+                    module.getVariables().put(variableName, this.createVariable(variableName));
                 }
             }
         });
@@ -117,7 +132,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     private void computeCommonBlocks(final FortranModule module, final Element documentElement)
             throws ParserConfigurationException, SAXException, IOException {
         final Set<Node> commonStatements = this.getDescendentAttributes(documentElement,
-                NodePredicateUtils.isCommonStatement, operationNode -> operationNode);
+                Predicates.isCommonStatement, operationNode -> operationNode);
         commonStatements.forEach(statement -> {
             final Node commonBlockNameNode = statement.getChildNodes().item(1);
             final String commonBlockName = commonBlockNameNode.getFirstChild().getTextContent()
@@ -138,7 +153,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             if ("common-block-obj".equals(commonBlockObject.getNodeName())) {
                 final String objectName = commonBlockObject.getFirstChild().getFirstChild().getFirstChild()
                         .getTextContent();
-                commonBlock.getElements().add(objectName.toLowerCase(Locale.getDefault()));
+                final String variableName = objectName.toLowerCase(Locale.getDefault());
+                commonBlock.getVariables().put(variableName, this.createVariable(variableName));
             }
         }
 
@@ -152,7 +168,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     }
 
     private void computeUsedModels(final FortranModule module, final Element rootNode) {
-        final Set<Node> useStatements = NodeProcessingUtils.allDescendents(rootNode, NodePredicateUtils.isUseStatement,
+        final Set<Node> useStatements = NodeProcessingUtils.allDescendents(rootNode, Predicates.isUseStatement,
                 false);
         for (final Node useStatement : useStatements) {
             final String usedModuleName = useStatement.getChildNodes().item(1).getTextContent();
@@ -164,7 +180,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void computeOperationDeclarations(final FortranModule module, final Element documentElement)
             throws ParserConfigurationException, SAXException, IOException {
-        this.getDescendentAttributes(documentElement, NodePredicateUtils.isOperationStatement, operationNode -> {
+        this.getDescendentAttributes(documentElement, Predicates.isOperationStatement, operationNode -> {
             try {
                 final FortranOperation operation = this.createFortranOperation(operationNode);
                 return module.getOperations().put(operation.getName(), operation);
@@ -175,26 +191,39 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
         });
     }
 
-    private FortranOperation createFortranOperation(final Node node)
+    private FortranOperation createFortranOperation(final Node operationNode)
             throws ParserConfigurationException, SAXException, IOException {
-        final FortranOperation operation = new FortranOperation(NodeProcessingUtils.getNameOfOperation(node), node);
+        final FortranOperation operation = new FortranOperation(NodeProcessingUtils.getNameOfOperation(operationNode),
+                operationNode);
 
-        this.createFortranOperationParameters(operation, node);
+        this.createFortranOperationParameters(operation, operationNode);
 
-        this.createFortranOperationCommonBlock(operation, node);
-        this.createFortranOperationVariables(operation, node);
-        this.createFortranOperationDimensionalVariables(operation, node);
+        // This is necessary as an entry "inherits" all variable and common block values from the
+        // subroutine it belongs to
+        if (Predicates.isEntryStatement.test(operationNode)) {
+            Node belongingSubroutine = operationNode.getPreviousSibling();
+            while (!Predicates.isSubroutineStatement.test(belongingSubroutine)) {
+                belongingSubroutine = belongingSubroutine.getPreviousSibling();
+            }
 
+            this.createFortranOperationCommonBlock(operation, belongingSubroutine);
+            this.createFortranOperationVariables(operation, belongingSubroutine);
+            this.createFortranOperationDimensionalVariables(operation, belongingSubroutine);
+        } else {
+            this.createFortranOperationCommonBlock(operation, operationNode);
+            this.createFortranOperationVariables(operation, operationNode);
+            this.createFortranOperationDimensionalVariables(operation, operationNode);
+        }
         return operation;
     }
 
     private void createFortranOperationParameters(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
-        final Node argumentListNode = NodeProcessingUtils.findChildFirst(node, NodePredicateUtils.isDummyArgumentLT);
+        final Node argumentListNode = NodeProcessingUtils.findChildFirst(node, Predicates.isDummyArgumentLT);
         if (argumentListNode != null) {
             for (Node argument = argumentListNode.getFirstChild(); argument != null; argument = argument
                     .getNextSibling()) {
-                if (NodePredicateUtils.isArgumentName.test(argument)) {
+                if (Predicates.isArgumentName.test(argument)) {
                     final String parameterName = NodeProcessingUtils.getName(argument);
                     operation.getParameters().put(parameterName, new FortranParameter(parameterName));
                 }
@@ -205,7 +234,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     private void createFortranOperationCommonBlock(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
         final List<Node> commonStatements = NodeProcessingUtils.findAllSiblings(node,
-                NodePredicateUtils.isCommonStatement, NodePredicateUtils.isEndSubroutineStatement);
+                Predicates.isCommonStatement, Predicates.isEndSubroutineStatement);
         commonStatements.forEach(statement -> {
             final Node commonBlockNameNode = statement.getChildNodes().item(1);
             final String name = commonBlockNameNode.getFirstChild().getTextContent().toLowerCase(Locale.getDefault());
@@ -218,8 +247,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void createFortranOperationVariables(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
-        final List<Node> files = NodeProcessingUtils.findAllSiblings(node, NodePredicateUtils.isFile,
-                NodePredicateUtils.isEndSubroutineStatement);
+        final List<Node> files = NodeProcessingUtils.findAllSiblings(node, Predicates.isFile,
+                Predicates.isEndSubroutineStatement);
 
         this.createFortranOperationPartVariables(operation, node);
         files.forEach(file -> this.createFortranOperationPartVariables(operation, file.getFirstChild()));
@@ -227,10 +256,10 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void createFortranOperationPartVariables(final FortranOperation operation, final Node node) {
         final List<Node> declarationStatements = NodeProcessingUtils.findAllSiblings(node,
-                NodePredicateUtils.isTDeclStmt, NodePredicateUtils.isEndSubroutineStatement);
+                Predicates.isTDeclStmt, Predicates.isEndSubroutineStatement);
         declarationStatements.forEach(statement -> {
             final Node declarationElements = NodeProcessingUtils.findChildFirst(statement,
-                    NodePredicateUtils.isENdeclLT);
+                    Predicates.isENdeclLT);
 
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
                 final Node declarationObject = declarationElements.getChildNodes().item(i);
@@ -239,7 +268,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                             .getTextContent();
                     final String caseInsensitiveObjectName = objectName.toLowerCase(Locale.getDefault());
                     if (operation.getParameters().get(caseInsensitiveObjectName) == null) {
-                        operation.getVariables().add(caseInsensitiveObjectName);
+                        final String variableName = objectName.toLowerCase(Locale.getDefault());
+                        operation.getVariables().put(variableName, this.createVariable(variableName));
                     } else {
                         // here you could set the parameter type
                     }
@@ -250,8 +280,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void createFortranOperationDimensionalVariables(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
-        final List<Node> files = NodeProcessingUtils.findAllSiblings(node, NodePredicateUtils.isFile,
-                NodePredicateUtils.isEndSubroutineStatement);
+        final List<Node> files = NodeProcessingUtils.findAllSiblings(node, Predicates.isFile,
+                Predicates.isEndSubroutineStatement);
 
         this.createFortranOperationPartDimensionalVariables(operation, node);
         files.forEach(file -> {
@@ -265,7 +295,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void createFortranOperationPartDimensionalVariables(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
-        final Set<Node> declarationStatements = this.getDescendentAttributes(node, NodePredicateUtils.isDimStmt,
+        final Set<Node> declarationStatements = this.getDescendentAttributes(node, Predicates.isDimStmt,
                 operationNode -> operationNode);
         declarationStatements.forEach(statement -> {
             final Node declarationElements = statement.getChildNodes().item(1);
@@ -274,7 +304,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                 if ("EN-decl".equals(declarationObject.getNodeName())) {
                     final String objectName = declarationObject.getFirstChild().getFirstChild().getFirstChild()
                             .getTextContent();
-                    operation.getVariables().add(objectName.toLowerCase(Locale.getDefault()));
+                    final String variableName = objectName.toLowerCase(Locale.getDefault());
+                    operation.getVariables().put(variableName, this.createVariable(variableName));
                 }
             }
         });
