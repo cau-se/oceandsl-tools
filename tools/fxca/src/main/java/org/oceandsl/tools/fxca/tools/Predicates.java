@@ -55,10 +55,10 @@ public class Predicates {
     public static Predicate<Node> isSubroutineName = NodeProcessingUtils.hasName("subroutine-N");
     public static Predicate<Node> isFunctionName = NodeProcessingUtils.hasName("function-N");
     public static Predicate<Node> isEntryName = NodeProcessingUtils.hasName("entry-N");
-    public static Predicate<Node> isArgumentName = NodeProcessingUtils.hasName("arg-N");
 
     public static Predicate<Node> isArgumentSpecification = NodeProcessingUtils.hasName("arg-spec");
     public static Predicate<Node> isArgument = NodeProcessingUtils.hasName("arg");
+    public static Predicate<Node> isArgumentName = NodeProcessingUtils.hasName("arg-N");
 
     public static Predicate<Node> isNamedExpression = NodeProcessingUtils.hasName("named-E");
     public static Predicate<Node> isBigN = NodeProcessingUtils.hasName("N");
@@ -101,7 +101,7 @@ public class Predicates {
     public static Predicate<Node> isDoStatement = NodeProcessingUtils.hasName("do-stmt");
     public static Predicate<Node> isEndDoStatement = NodeProcessingUtils.hasName("end-do-stmt");
     public static Predicate<Node> isAssignmentStatement = NodeProcessingUtils.hasName("a-stmt");
-    public static Predicate<Node> isENdeclLT = NodeProcessingUtils.hasName("EN-decl-LT");
+    public static Predicate<Node> isENDeclLT = NodeProcessingUtils.hasName("EN-decl-LT");
 
     public static Predicate<Node> isOperandExpression = NodeProcessingUtils.hasName("op-E");
     public static Predicate<Node> isLiteralE = NodeProcessingUtils.hasName("literal-E");
@@ -134,6 +134,10 @@ public class Predicates {
     public static Predicate<Node> isDataStatementValue = NodeProcessingUtils.hasName("data-stmt-value");
     public static Predicate<Node> isDataStatementConstant = NodeProcessingUtils.hasName("data-stmt-constant");
 
+    public static Predicate<Node> isReturnStatement = NodeProcessingUtils.hasName("return-stmt");
+    public static Predicate<Node> isWhereStatement = NodeProcessingUtils.hasName("where-stmt");
+    public static Predicate<Node> isPrintStatement = NodeProcessingUtils.hasName("print-stmt");
+
     public static Predicate<Node> isWriteStatement = NodeProcessingUtils.hasName("write-stmt");
     public static Predicate<Node> isLabel = NodeProcessingUtils.hasName("label");
     public static Predicate<Node> isFormatStatement = NodeProcessingUtils.hasName("format-stmt");
@@ -144,9 +148,43 @@ public class Predicates {
     public static Predicate<Node> isIOControl = NodeProcessingUtils.hasName("io-control");
     public static Predicate<Node> isOutputItemLT = NodeProcessingUtils.hasName("output-item-LT");
     public static Predicate<Node> isOutputItem = NodeProcessingUtils.hasName("output-item");
+
+    public static Predicate<Node> isReadStatement = NodeProcessingUtils.hasName("read-stmt");
+    public static Predicate<Node> isInputItemLT = NodeProcessingUtils.hasName("input-item-LT");
+    public static Predicate<Node> isInputItem = NodeProcessingUtils.hasName("input-item");
+
+    public static Predicate<Node> isStopStatement = NodeProcessingUtils.hasName("stop-stmt");
+
     public static Predicate<Node> isActionStatement = NodeProcessingUtils.hasName("action-stmt");
     public static Predicate<Node> isElseStatement = NodeProcessingUtils.hasName("else-stmt");
-    public static Predicate<Node> isSavedEnLt = NodeProcessingUtils.hasName("saved-EN-LT");
+    public static Predicate<Node> isSavedEnLT = NodeProcessingUtils.hasName("saved-EN-LT");
     public static Predicate<Node> isSavedEn = NodeProcessingUtils.hasName("saved-EN");
     public static Predicate<Node> isEnN = NodeProcessingUtils.hasName("EN-N");
+    public static Predicate<Node> isMaskExpression = NodeProcessingUtils.hasName("mask-E");
+    public static Predicate<Node> isAllocateStatement = NodeProcessingUtils.hasName("allocate-stmt");
+    public static Predicate<Node> isDeallocateStatement = NodeProcessingUtils.hasName("deallocate-stmt");
+
+    public static Predicate<Node> isParameterStatement = NodeProcessingUtils.hasName("parameter-stmt");
+    public static Predicate<Node> isInquireStatement = NodeProcessingUtils.hasName("inquire-stmt");
+    public static Predicate<Node> isArrayConstructorExpression = NodeProcessingUtils.hasName("array-constructor-E");
+    public static Predicate<Node> isAcValueLT = NodeProcessingUtils.hasName("ac-value-LT");
+    public static Predicate<Node> isAcValue = NodeProcessingUtils.hasName("ac-value");
+
+    public static Predicate<Node> isCloseStatement = NodeProcessingUtils.hasName("close-stmt");
+    public static Predicate<Node> isDIMStatement = NodeProcessingUtils.hasName("DIM-stmt");
+    public static Predicate<Node> isDoLabelStatement = NodeProcessingUtils.hasName("do-label-stmt");
+    public static Predicate<Node> isEndFileStatement = NodeProcessingUtils.hasName("end-file-stmt");
+    public static Predicate<Node> isExitStatement = NodeProcessingUtils.hasName("exit-stmt");
+    public static Predicate<Node> isNamelistStatement = NodeProcessingUtils.hasName("namelist-stmt");
+    public static Predicate<Node> isOpenStatement = NodeProcessingUtils.hasName("open-stmt");
+
+    public static Predicate<Node> isArraySpecification = NodeProcessingUtils.hasName("array-spec");
+    public static Predicate<Node> isShapeSpecLT = NodeProcessingUtils.hasName("shape-spec-LT");
+    public static Predicate<Node> isShapeSpec = NodeProcessingUtils.hasName("shape-spec");
+    public static Predicate<Node> isDoV = NodeProcessingUtils.hasName("do-V");
+
+    public static Predicate<Node> isNamelistGroupObjLT = NodeProcessingUtils.hasName("namelist-group-obj-LT");
+    public static Predicate<Node> isNamelistGroupObj = NodeProcessingUtils.hasName("namelist-group-obj");
+    public static Predicate<Node> isNamelistGroupObjN = NodeProcessingUtils.hasName("namelist-group-obj-N");
+    public static Predicate<Node> isTestExpression = NodeProcessingUtils.hasName("test-E");;
 }

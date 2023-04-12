@@ -93,8 +93,7 @@ public class TeetimeConfiguration extends Configuration {
 
         this.connectPorts(processModuleStructureStage.getOutputPort(),
                 computeDirectionalityOfParametersStage.getInputPort());
-        // this.connectPorts(computeDirectionalityOfParametersStage.getOutputPort(),
-        // dataFlowAnalysisStage.getInputPort());
+        this.connectPorts(computeDirectionalityOfParametersStage.getOutputPort(), dataFlowAnalysisStage.getInputPort());
         //
         // this.connectPorts(dataFlowAnalysisStage.getOutputPort(), outputStage.getInputPort());
         //

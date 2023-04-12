@@ -39,7 +39,7 @@ public class BuiltInFunctionsUtils {
 
         for (final String operationName : BuiltInFunctionsUtils.operationNames) {
             final FortranOperation operation = new FortranOperation(operationName, null);
-            final FortranParameter parameter = new FortranParameter("value");
+            final FortranParameter parameter = new FortranParameter("value", 0);
             parameter.setDirection(EDirection.READ);
             operation.getParameters().put("value", parameter);
             operations.add(operation);

@@ -40,8 +40,8 @@ import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.model.FortranVariable;
 import org.oceandsl.tools.fxca.tools.IUriProcessor;
 import org.oceandsl.tools.fxca.tools.ListTools;
-import org.oceandsl.tools.fxca.tools.Predicates;
 import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
+import org.oceandsl.tools.fxca.tools.Predicates;
 
 /**
  *
@@ -80,6 +80,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
         final FortranModule module = new FortranModule(moduleName, fileName, namedModule, document);
 
+        this.computeMainProgram(module, documentElement);
+
         this.computeUsedModels(module, documentElement);
         this.computeOperationDeclarations(module, documentElement);
         this.computeCommonBlocks(module, documentElement);
@@ -89,10 +91,18 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
         this.project.getModules().put(module.getModuleName(), module);
     }
 
+    private void computeMainProgram(final FortranModule module, final Element documentElement) {
+        final Node mainProgram = ListTools.getUniqueElementIfNonEmpty(
+                NodeProcessingUtils.allDescendents(documentElement, Predicates.isProgramStatement, true), null);
+        if (mainProgram != null) {
+            module.getOperations().put("main", new FortranOperation("main", mainProgram));
+        }
+    }
+
     private void computeInternalVariables(final FortranModule module, final Element documentElement)
             throws ParserConfigurationException, SAXException, IOException {
-        final Set<Node> declarationStatements = this.getDescendentAttributes(documentElement,
-                Predicates.isTDeclStmt, operationNode -> operationNode);
+        final Set<Node> declarationStatements = this.getDescendentAttributes(documentElement, Predicates.isTDeclStmt,
+                operationNode -> operationNode);
         declarationStatements.forEach(statement -> {
             final Node declarationElements = statement.getChildNodes().item(2);
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
@@ -113,8 +123,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void computeInternalDimensionVariables(final FortranModule module, final Element documentElement)
             throws ParserConfigurationException, SAXException, IOException {
-        final Set<Node> declarationStatements = this.getDescendentAttributes(documentElement,
-                Predicates.isDimStmt, operationNode -> operationNode);
+        final Set<Node> declarationStatements = this.getDescendentAttributes(documentElement, Predicates.isDimStmt,
+                operationNode -> operationNode);
         declarationStatements.forEach(statement -> {
             final Node declarationElements = statement.getChildNodes().item(1);
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
@@ -131,8 +141,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void computeCommonBlocks(final FortranModule module, final Element documentElement)
             throws ParserConfigurationException, SAXException, IOException {
-        final Set<Node> commonStatements = this.getDescendentAttributes(documentElement,
-                Predicates.isCommonStatement, operationNode -> operationNode);
+        final Set<Node> commonStatements = this.getDescendentAttributes(documentElement, Predicates.isCommonStatement,
+                operationNode -> operationNode);
         commonStatements.forEach(statement -> {
             final Node commonBlockNameNode = statement.getChildNodes().item(1);
             final String commonBlockName = commonBlockNameNode.getFirstChild().getTextContent()
@@ -168,8 +178,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     }
 
     private void computeUsedModels(final FortranModule module, final Element rootNode) {
-        final Set<Node> useStatements = NodeProcessingUtils.allDescendents(rootNode, Predicates.isUseStatement,
-                false);
+        final Set<Node> useStatements = NodeProcessingUtils.allDescendents(rootNode, Predicates.isUseStatement, false);
         for (final Node useStatement : useStatements) {
             final String usedModuleName = useStatement.getChildNodes().item(1).getTextContent();
             this.logger.debug("found use statement: {}, module name: {}", useStatement.getTextContent(),
@@ -221,11 +230,12 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             throws ParserConfigurationException, SAXException, IOException {
         final Node argumentListNode = NodeProcessingUtils.findChildFirst(node, Predicates.isDummyArgumentLT);
         if (argumentListNode != null) {
+            int i = 0;
             for (Node argument = argumentListNode.getFirstChild(); argument != null; argument = argument
                     .getNextSibling()) {
                 if (Predicates.isArgumentName.test(argument)) {
                     final String parameterName = NodeProcessingUtils.getName(argument);
-                    operation.getParameters().put(parameterName, new FortranParameter(parameterName));
+                    operation.getParameters().put(parameterName, new FortranParameter(parameterName, i++));
                 }
             }
         }
@@ -233,8 +243,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void createFortranOperationCommonBlock(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
-        final List<Node> commonStatements = NodeProcessingUtils.findAllSiblings(node,
-                Predicates.isCommonStatement, Predicates.isEndSubroutineStatement);
+        final List<Node> commonStatements = NodeProcessingUtils.findAllSiblings(node, Predicates.isCommonStatement,
+                Predicates.isEndSubroutineStatement);
         commonStatements.forEach(statement -> {
             final Node commonBlockNameNode = statement.getChildNodes().item(1);
             final String name = commonBlockNameNode.getFirstChild().getTextContent().toLowerCase(Locale.getDefault());
@@ -255,11 +265,10 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     }
 
     private void createFortranOperationPartVariables(final FortranOperation operation, final Node node) {
-        final List<Node> declarationStatements = NodeProcessingUtils.findAllSiblings(node,
-                Predicates.isTDeclStmt, Predicates.isEndSubroutineStatement);
+        final List<Node> declarationStatements = NodeProcessingUtils.findAllSiblings(node, Predicates.isTDeclStmt,
+                Predicates.isEndSubroutineStatement);
         declarationStatements.forEach(statement -> {
-            final Node declarationElements = NodeProcessingUtils.findChildFirst(statement,
-                    Predicates.isENdeclLT);
+            final Node declarationElements = NodeProcessingUtils.findChildFirst(statement, Predicates.isENDeclLT);
 
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
                 final Node declarationObject = declarationElements.getChildNodes().item(i);

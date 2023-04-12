@@ -17,7 +17,6 @@ package org.oceandsl.tools.fxca.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.oceandsl.tools.fxca.tools.Pair;
@@ -48,7 +47,7 @@ public class FortranProject {
      * Constructs Project Model with empty content.
      */
     public FortranProject() {
-        this.modules = new HashMap<>();
+        this.modules = new ContainmentHashMap<>(this);
     }
 
     public Map<String, FortranModule> getModules() {

@@ -25,23 +25,28 @@ import lombok.Setter;
 public class FortranParameter implements IContainable {
 
     @Getter
-    String name;
+    private final String name;
 
     @Getter
     @Setter
-    String type;
+    private String type;
 
     @Getter
     @Setter
-    EDirection direction;
+    private EDirection direction;
 
     @Getter
     @Setter
-    Object parent;
+    private Object parent;
 
-    public FortranParameter(final String name) {
+    @Getter
+    @Setter
+    private int position;
+
+    public FortranParameter(final String name, final int position) {
         this.direction = EDirection.NONE;
         this.name = name;
+        this.position = position;
     }
 
     public void addDirection(final EDirection value) {

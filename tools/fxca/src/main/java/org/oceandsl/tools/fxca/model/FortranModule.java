@@ -26,12 +26,13 @@ import org.w3c.dom.Document;
 import org.oceandsl.tools.fxca.tools.Pair;
 
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Henning Schnoor
  * @since 1.3.0
  */
-public class FortranModule {
+public class FortranModule implements IContainable {
 
     @Getter
     private final Set<String> usedModules = new HashSet<>();
@@ -52,6 +53,10 @@ public class FortranModule {
     @Getter
     private final Map<String, FortranVariable> variables = new ContainmentHashMap<>(this);
 
+    @Getter
+    @Setter
+    Object parent;
+
     public FortranModule(final String moduleName, final String fileName, final boolean namedModule,
             final Document document) {
         this.moduleName = moduleName;
@@ -59,4 +64,5 @@ public class FortranModule {
         this.namedModule = namedModule;
         this.document = document;
     }
+
 }

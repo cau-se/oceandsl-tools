@@ -52,6 +52,10 @@ public class FortranOperation implements IDataflowEndpoint, IContainable {
     @Setter
     Object parent;
 
+    @Getter
+    @Setter
+    boolean implicit;
+
     public FortranOperation(final String name, final Node node) {
         this.name = name;
         this.node = node;
