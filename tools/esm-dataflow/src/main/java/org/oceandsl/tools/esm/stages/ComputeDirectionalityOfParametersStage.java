@@ -40,20 +40,13 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        project.getModules().values().forEach(module -> {
-            // System.err.println("Processing module " + module.getFileName());
-            module.getOperations().values().forEach(operation -> {
-                // System.err.println(" processing operation " + operation.getName());
-                this.computeParameterDirectionality(operation);
-                // operation.getParameters().values()
-                // .forEach(p -> System.err.printf("%s %s ", p.getName(), p.getDirection().name()));
-                // System.err.println();
-            });
-        });
+        project.getModules().values().forEach(module -> module.getOperations().values()
+                .forEach(operation -> this.computeParameterDirectionality(module, operation)));
+        this.logger.info("Computed parameter directionality and variable dependencies.");
         this.outputPort.send(project);
     }
 
-    private void computeParameterDirectionality(final FortranOperation operation) {
+    private void computeParameterDirectionality(final FortranModule module, final FortranOperation operation) {
         final List<Node> statements = NodeProcessingUtils.findAllSiblings(operation.getNode(), o -> true,
                 Predicates.isEndSubroutineStatement.or(Predicates.isEndProgramStatement)
                         .or(Predicates.isEndFunctionStatement));
@@ -69,13 +62,13 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
             } else if (Predicates.isElseIfStatement.test(statement)) {
                 this.checkIfThen(operation, statement);
             } else if (Predicates.isDoStatement.or(Predicates.isDoLabelStatement).test(statement)) {
-                this.checkDoStatement(operation, statement);
+                this.checkDoStatement(module, operation, statement);
             } else if (Predicates.isReadStatement.test(statement)) {
                 this.checkReadStatement(operation, statement);
             } else if (Predicates.isWriteStatement.test(statement)) {
                 this.checkWriteStatement(operation, statement);
             } else if (Predicates.isSaveStatement.test(statement)) {
-                this.checkSaveStatement(operation, statement);
+                this.checkSaveStatement(module, operation, statement);
             } else if (Predicates.isDataStatement.test(statement)) {
                 this.checkDataStatement(operation, statement);
             } else if (Predicates.isPrintStatement.test(statement)) {
@@ -87,7 +80,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
             } else if (Predicates.isOpenStatement.test(statement)) {
                 this.checkOpenStatement(operation, statement);
             } else if (Predicates.isDIMStatement.test(statement)) {
-                this.checkDIMStatement(operation, statement);
+                this.checkDIMStatement(module, operation, statement);
             } else if (Predicates.isEndFileStatement.test(statement)) {
                 this.checkEndFileStatement(operation, statement);
             } else if (Predicates.isNamelistStatement.test(statement)) {
@@ -115,13 +108,14 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         // no dataflow
     }
 
-    private void checkDIMStatement(final FortranOperation operation, final Node dimStatement) {
+    private void checkDIMStatement(final FortranModule module, final FortranOperation operation,
+            final Node dimStatement) {
         final List<Node> enDecls = NodeProcessingUtils.findAllSiblings(dimStatement.getFirstChild(),
                 Predicates.isENDeclLT, o -> false);
-        enDecls.forEach(enDecl -> this.checkEnDecl(operation, enDecl));
+        enDecls.forEach(enDecl -> this.checkEnDecl(module, operation, enDecl));
     }
 
-    private void checkEnDecl(final FortranOperation operation, final Node enDecl) {
+    private void checkEnDecl(final FortranModule module, final FortranOperation operation, final Node enDecl) {
         final Node enN = NodeProcessingUtils.findChildFirst(enDecl, Predicates.isEnN);
         if (enN != null) {
             final Node bigN = NodeProcessingUtils.findChildFirst(enN, Predicates.isBigN);
@@ -134,7 +128,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                                 Predicates.isShapeSpecLT);
                         NodeProcessingUtils
                                 .findAllSiblings(shapeSpecLT.getFirstChild(), Predicates.isShapeSpec, o -> false)
-                                .forEach(shapeSpec -> this.checkLimits(operation, shapeSpec));
+                                .forEach(shapeSpec -> this.checkLimits(module, operation, null, shapeSpec));
                     });
         }
     }
@@ -176,6 +170,10 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         if (parameter != null) {
             parameter.addDirection(EDirection.WRITE);
         }
+        final FortranVariable variable = operation.getVariables().get(name);
+        if (variable != null) {
+            variable.addDirection(EDirection.WRITE);
+        }
     }
 
     private void checkAssignmentExpression(final FortranOperation operation, final Node assignment) {
@@ -189,34 +187,63 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         }
     }
 
-    private void checkDoStatement(final FortranOperation operation, final Node doStatement) {
+    private void checkDoStatement(final FortranModule module, final FortranOperation operation,
+            final Node doStatement) {
         final Node doV = NodeProcessingUtils.findChildFirst(doStatement, Predicates.isDoV);
         if (doV == null) { // do while
             final Node testE = NodeProcessingUtils.findChildFirst(doStatement, Predicates.isTestExpression);
             this.checkExpression(operation, testE, EDirection.READ);
         } else { // do statement or do label statement
             final String elementName = NodeProcessingUtils.getName(doV);
-            if (!this.checkParameter(operation, elementName)
-                    && !this.checkVariable(operation, elementName, EDirection.WRITE)) {
+            FortranVariable loopVariable = this.checkVariable(operation, elementName, EDirection.WRITE);
+            if (!this.checkParameter(operation, elementName) && loopVariable == null) {
                 if (!operation.isImplicit()) {
                     this.logger.error("Unknown value assignee {}", elementName);
                 } else {
-                    operation.getVariables().put(elementName, new FortranVariable(elementName));
+                    loopVariable = new FortranVariable(elementName);
+                    loopVariable.setDirection(EDirection.WRITE);
+                    operation.getVariables().put(elementName, loopVariable);
                 }
             }
-            this.checkLimits(operation, doStatement);
+            this.checkLimits(module, operation, loopVariable, doStatement);
         }
     }
 
-    private void checkLimits(final FortranOperation operation, final Node range) {
+    private void checkLimits(final FortranModule module, final FortranOperation operation,
+            final FortranVariable variable, final Node range) {
         final Node lowerBound = NodeProcessingUtils.findChildFirst(range, Predicates.isLowerBound);
         final Node upperBound = NodeProcessingUtils.findChildFirst(range, Predicates.isUpperBound);
         if (lowerBound != null) {
             this.checkExpression(operation, lowerBound, EDirection.READ);
+            if (variable != null) {
+                this.linkVariables(module, operation, variable, lowerBound);
+            }
         }
         if (upperBound != null) {
             this.checkExpression(operation, upperBound, EDirection.READ);
+            if (variable != null) {
+                this.linkVariables(module, operation, variable, upperBound);
+            }
         }
+    }
+
+    private void linkVariables(final FortranModule module, final FortranOperation operation,
+            final FortranVariable variable, final Node bound) {
+        NodeProcessingUtils.allDescendents(bound, Predicates.isNamedExpression, true).stream().forEach(element -> {
+            final String elementName = NodeProcessingUtils.getName(element);
+            final FortranVariable sourceVariable = operation.getVariables().get(elementName);
+            if (sourceVariable != null) {
+                variable.getSources().add(sourceVariable);
+            }
+            final FortranVariable sourceModuleVariable = module.getVariables().get(elementName);
+            if (sourceModuleVariable != null) {
+                variable.getSources().add(sourceModuleVariable);
+            }
+            final FortranParameter sourceParameter = operation.getParameters().get(elementName);
+            if (sourceParameter != null) {
+                variable.getSources().add(sourceParameter);
+            }
+        });
     }
 
     private void checkReadStatement(final FortranOperation operation, final Node readStatement) {
@@ -255,10 +282,11 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         }
     }
 
-    private void checkSaveStatement(final FortranOperation operation, final Node saveStatement) {
+    private void checkSaveStatement(final FortranModule module, final FortranOperation operation,
+            final Node saveStatement) {
         final Node savedEnLt = NodeProcessingUtils.findChildFirst(saveStatement, Predicates.isSavedEnLT);
         NodeProcessingUtils.findAllSiblings(savedEnLt.getFirstChild(), Predicates.isSavedEn, o -> false)
-                .forEach(savedEn -> this.checkEnDecl(operation, savedEn));
+                .forEach(savedEn -> this.checkEnDecl(module, operation, savedEn));
     }
 
     private void checkWhereStatement(final FortranOperation operation, final Node whereStatement) {
@@ -352,11 +380,9 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         expression.forEach(expressionElement -> {
             if (Predicates.isNamedExpression.test(expressionElement)) {
                 final String elementName = NodeProcessingUtils.getName(expressionElement);
-                if (!this.checkParameter(operation, elementName)
-                        && !this.checkVariable(operation, elementName, direction)
-                        && !this.checkFunction(operation, expressionElement, elementName)) {
-                    // System.err.println(" other " + elementName + " " + expressionElement);
-                }
+                this.checkVariable(operation, elementName, direction);
+                this.checkParameter(operation, elementName);
+                this.checkFunction(operation, expressionElement, elementName);
             } else if (Predicates.isOperand.test(expressionElement)) {
                 // System.err.println(" operand " + expressionElement.getTextContent());
             } else if (Predicates.isM.test(expressionElement)) {
@@ -377,7 +403,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                 this.checkArgumentName(operation, expressionElement);
             } else if (Predicates.isArrayConstructorExpression.test(expressionElement)) {
                 this.checkArrayConstructorExpression(operation, expressionElement, direction);
-            } else if (Predicates.isC.test(expressionElement)) {
+            } else if (Predicates.isC.or(Predicates.isLabel).test(expressionElement)) {
                 // ignore
             } else if (expressionElement.getNodeType() == Node.TEXT_NODE) {
                 // System.err.println(" text node " + expressionElement.getTextContent());
@@ -409,29 +435,26 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         }
     }
 
-    private boolean checkVariable(final FortranOperation operation, final String elementName,
+    private FortranVariable checkVariable(final FortranOperation operation, final String elementName,
             final EDirection direction) {
         if (operation.getVariables().containsKey(elementName)) {
-            // System.err.println(" local var " + elementName);
             final FortranVariable variable = operation.getVariables().get(elementName);
             variable.addDirection(direction);
-            return true;
+            return variable;
         } else if (((FortranModule) operation.getParent()).getVariables().containsKey(elementName)) {
-            // System.err.println(" module var " + elementName);
             final FortranVariable variable = ((FortranModule) operation.getParent()).getVariables().get(elementName);
             variable.addDirection(direction);
-            return true;
+            return variable;
         } else {
             final Optional<FortranVariable> variableOptional = ((FortranModule) operation.getParent()).getCommonBlocks()
                     .values().stream().map(commonBlock -> {
-                        // System.err.println(" common block " + commonBlock.getName());
                         return commonBlock.getVariables().get(elementName);
                     }).filter(v -> v != null).findFirst();
             if (variableOptional.isPresent()) {
                 variableOptional.get().addDirection(direction);
-                return true;
+                return variableOptional.get();
             } else {
-                return false;
+                return null;
             }
         }
     }

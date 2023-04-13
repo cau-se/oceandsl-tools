@@ -18,8 +18,6 @@ package org.oceandsl.tools.esm;
 import java.io.IOException;
 
 import teetime.framework.Configuration;
-import teetime.stage.basic.distributor.Distributor;
-import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
 import org.oceandsl.analysis.generic.stages.DirectoryProducer;
 import org.oceandsl.analysis.generic.stages.DirectoryScannerStage;
@@ -27,11 +25,8 @@ import org.oceandsl.analysis.generic.stages.TableCSVSink;
 import org.oceandsl.tools.esm.stages.ComputeDirectionalityOfParametersStage;
 import org.oceandsl.tools.esm.stages.CreateCommonBlocksTableStage;
 import org.oceandsl.tools.esm.stages.CreateDataflowTableStage;
-import org.oceandsl.tools.esm.stages.CreateFileContentsTableStage;
-import org.oceandsl.tools.esm.stages.OutputStage;
-import org.oceandsl.tools.esm.stages.ProcessDataFlowAnalysisStage;
+import org.oceandsl.tools.esm.stages.DataFlowAnalysisStage;
 import org.oceandsl.tools.fxca.BuiltInFunctionsUtils;
-import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.stages.ProcessModuleStructureStage;
 import org.oceandsl.tools.fxca.stages.ReadDomStage;
 import org.oceandsl.tools.fxca.tools.PatternUriProcessor;
@@ -66,17 +61,13 @@ public class TeetimeConfiguration extends Configuration {
 
         final ComputeDirectionalityOfParametersStage computeDirectionalityOfParametersStage = new ComputeDirectionalityOfParametersStage();
 
-        final ProcessDataFlowAnalysisStage dataFlowAnalysisStage = new ProcessDataFlowAnalysisStage(
-                settings.getDefaultComponent());
+        final DataFlowAnalysisStage dataFlowAnalysisStage = new DataFlowAnalysisStage(settings.getDefaultComponent());
 
-        final Distributor<FortranProject> projectDistributor = new Distributor<>(new CopyByReferenceStrategy());
+        final AggregateCommonBlocksStage aggregateCommonBlocksStage = new AggregateCommonBlocksStage();
 
         /** tables */
         final CreateDataflowTableStage dataflowTableStage = new CreateDataflowTableStage();
-        final CreateFileContentsTableStage fileContentTableStage = new CreateFileContentsTableStage();
-        final CreateCommonBlocksTableStage commonBlockTableStage = new CreateCommonBlocksTableStage();
-
-        final OutputStage outputStage = new OutputStage();
+        final CreateCommonBlocksTableStage commonBlocksTableStage = new CreateCommonBlocksTableStage();
 
         /** output stages */
         final TableCSVSink dataflowTableSink = new TableCSVSink(
@@ -94,6 +85,9 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(processModuleStructureStage.getOutputPort(),
                 computeDirectionalityOfParametersStage.getInputPort());
         this.connectPorts(computeDirectionalityOfParametersStage.getOutputPort(), dataFlowAnalysisStage.getInputPort());
+        this.connectPorts(dataFlowAnalysisStage.getCommonBlockOutputPort(),
+                aggregateCommonBlocksStage.getInputPort());
+        this.connectPorts(aggregateCommonBlocksStage.getOutputPort(), commonBlocksTableStage.getInputPort());
         //
         // this.connectPorts(dataFlowAnalysisStage.getOutputPort(), outputStage.getInputPort());
         //
@@ -115,7 +109,6 @@ public class TeetimeConfiguration extends Configuration {
         // //
         // // this.connectPorts(projectDistributor.getNewOutputPort(),
         // // commonBlockTableStage.getInputPort());
-        // // this.connectPorts(commonBlockTableStage.getOutputPort(),
-        // // commonBlocksTableSink.getInputPort());
+        this.connectPorts(commonBlocksTableStage.getOutputPort(), commonBlocksTableSink.getInputPort());
     }
 }

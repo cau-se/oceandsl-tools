@@ -34,7 +34,6 @@ public class OutputStage extends AbstractConsumerStage<Output> {
     @Override
     protected void execute(final Output element) throws Exception {
         this.dataflowPort.send(element.getDataflow());
-        this.commonBlocksPort.send(element.getCommonBlocks());
         this.fileContentPort.send(element.getFileContent());
     }
 

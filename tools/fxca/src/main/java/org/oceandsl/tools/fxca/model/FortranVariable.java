@@ -15,6 +15,9 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,7 +27,7 @@ import lombok.Setter;
  * @since 1.3.0
  *
  */
-public class FortranVariable implements IContainable {
+public class FortranVariable implements IContainable, IDataflowSource {
 
     @Getter
     String name;
@@ -41,6 +44,9 @@ public class FortranVariable implements IContainable {
     @Setter
     Object parent;
 
+    @Getter
+    Set<IDataflowSource> sources = new HashSet<>();
+
     public FortranVariable(final String name) {
         this.direction = EDirection.NONE;
         this.name = name;
@@ -52,14 +58,14 @@ public class FortranVariable implements IContainable {
             this.direction = value;
             break;
         case READ:
-            if ((value == EDirection.WRITE) || (value == EDirection.BOTH)) {
+            if (value == EDirection.WRITE || value == EDirection.BOTH) {
                 this.direction = EDirection.BOTH;
             } else {
                 this.direction = EDirection.READ;
             }
             break;
         case WRITE:
-            if ((value == EDirection.READ) || (value == EDirection.BOTH)) {
+            if (value == EDirection.READ || value == EDirection.BOTH) {
                 this.direction = EDirection.BOTH;
             } else {
                 this.direction = EDirection.WRITE;

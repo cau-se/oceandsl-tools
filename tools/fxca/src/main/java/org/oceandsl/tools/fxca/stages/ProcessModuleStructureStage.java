@@ -58,7 +58,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     public ProcessModuleStructureStage(final IUriProcessor uriProcessor, final List<FortranOperation> operations) {
         this.project = new FortranProject();
-        this.project.getModules().put(ProcessModuleStructureStage.RUNTIME, this.createModule(operations));
+        this.project.setDefaultModule(this.createModule(operations));
+        this.project.getModules().put(ProcessModuleStructureStage.RUNTIME, this.project.getDefaultModule());
         this.uriProcessor = uriProcessor;
     }
 
@@ -129,7 +130,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             final Node declarationElements = statement.getChildNodes().item(1);
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
                 final Node declarationObject = declarationElements.getChildNodes().item(i);
-                if ("EN-decl".equals(declarationObject.getNodeName())) {
+                if (Predicates.isEnDcl.test(declarationObject)) {
                     final String objectName = declarationObject.getFirstChild().getFirstChild().getFirstChild()
                             .getTextContent();
                     final String variableName = objectName.toLowerCase(Locale.getDefault());
@@ -160,7 +161,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
         final Node commonBlockElements = statement.getChildNodes().item(3);
         for (int i = 0; i < commonBlockElements.getChildNodes().getLength(); i++) {
             final Node commonBlockObject = commonBlockElements.getChildNodes().item(i);
-            if ("common-block-obj".equals(commonBlockObject.getNodeName())) {
+            if (Predicates.isCommonBlockObject.test(commonBlockObject)) {
                 final String objectName = commonBlockObject.getFirstChild().getFirstChild().getFirstChild()
                         .getTextContent();
                 final String variableName = objectName.toLowerCase(Locale.getDefault());
@@ -204,6 +205,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             throws ParserConfigurationException, SAXException, IOException {
         final FortranOperation operation = new FortranOperation(NodeProcessingUtils.getNameOfOperation(operationNode),
                 operationNode);
+
+        // System.err.printf("CREATE operation %s\n", operation.getName());
 
         this.createFortranOperationParameters(operation, operationNode);
 
@@ -268,13 +271,16 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
         final List<Node> declarationStatements = NodeProcessingUtils.findAllSiblings(node, Predicates.isTDeclStmt,
                 Predicates.isEndSubroutineStatement);
         declarationStatements.forEach(statement -> {
+            // System.err.println("<decl-stmt>");
             final Node declarationElements = NodeProcessingUtils.findChildFirst(statement, Predicates.isENDeclLT);
 
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
+                // System.err.printf(" declaration %d\n", i);
                 final Node declarationObject = declarationElements.getChildNodes().item(i);
-                if ("EN-decl".equals(declarationObject.getNodeName())) {
+                if (Predicates.isEnDcl.test(declarationObject)) {
                     final String objectName = declarationObject.getFirstChild().getFirstChild().getFirstChild()
                             .getTextContent();
+                    // System.err.printf(" -> %s\n", objectName);
                     final String caseInsensitiveObjectName = objectName.toLowerCase(Locale.getDefault());
                     if (operation.getParameters().get(caseInsensitiveObjectName) == null) {
                         final String variableName = objectName.toLowerCase(Locale.getDefault());
@@ -284,6 +290,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                     }
                 }
             }
+            // System.err.println("</decl-stmt>");
         });
     }
 

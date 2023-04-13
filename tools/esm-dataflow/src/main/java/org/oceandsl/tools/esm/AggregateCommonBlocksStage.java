@@ -13,37 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
+package org.oceandsl.tools.esm;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.w3c.dom.Node;
+import teetime.stage.basic.AbstractFilter;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.oceandsl.tools.esm.stages.CommonBlockEntry;
 
 /**
+ * Aggregate common block entries.
+ *
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CommonBlock implements IDataflowSource, IContainable {
+public class AggregateCommonBlocksStage extends AbstractFilter<CommonBlockEntry> {
 
-    @Getter
-    private final String name;
+    Map<String, CommonBlockEntry> entries = new HashMap<>();
 
-    @Getter
-    private final Map<String, FortranVariable> variables = new ContainmentHashMap<>(this);
+    @Override
+    protected void execute(final CommonBlockEntry entry) throws Exception {
+        final CommonBlockEntry existingEntry = this.entries.get(entry.getName());
+        if (existingEntry != null) {
+            existingEntry.merge(entry);
+        } else {
+            this.entries.put(entry.getName(), entry);
+        }
+    }
 
-    @Getter
-    private final Node node;
-
-    @Getter
-    @Setter
-    private Object parent;
-
-    public CommonBlock(final String name, final Node node) {
-        this.name = name;
-        this.node = node;
+    @Override
+    protected void onTerminating() {
+        this.entries.values().forEach(entry -> this.outputPort.send(entry));
+        super.onTerminating();
     }
 
 }

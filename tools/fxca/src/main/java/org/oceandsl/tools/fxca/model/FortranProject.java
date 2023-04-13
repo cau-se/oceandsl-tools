@@ -41,7 +41,7 @@ public class FortranProject {
     private FortranModule defaultModule;
 
     @Getter
-    private final Collection<Pair<Pair<FortranModule, IDataflowEndpoint>, Pair<FortranModule, IDataflowEndpoint>>> dataflows = new ArrayList<>();
+    private final Collection<Pair<Pair<FortranModule, IDataflowSource>, Pair<FortranModule, IDataflowSource>>> dataflows = new ArrayList<>();
 
     /**
      * Constructs Project Model with empty content.

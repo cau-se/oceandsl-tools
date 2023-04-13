@@ -21,9 +21,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.w3c.dom.Node;
 
+import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractTransformation;
 
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
@@ -32,55 +34,59 @@ import org.oceandsl.tools.esm.util.XPathParser;
 import org.oceandsl.tools.fxca.model.CommonBlock;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
+import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranProject;
-import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
+import org.oceandsl.tools.fxca.model.FortranVariable;
+import org.oceandsl.tools.fxca.model.IDataflowSource;
 import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 import org.oceandsl.tools.fxca.tools.Pair;
 import org.oceandsl.tools.fxca.tools.Predicates;
 
-public class ProcessDataFlowAnalysisStage extends AbstractTransformation<FortranProject, Output> {
+public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject, Output> {
 
     private static final String READ = "READ";
     private static final String WRITE = "WRITE";
     private static final String BOTH = "BOTH";
 
+    private final OutputPort<CommonBlockEntry> commonBlockOutputPort = this.createOutputPort(CommonBlockEntry.class);
+    private final OutputPort<IDataflowEntry> dataflowOutputPort = this.createOutputPort(IDataflowEntry.class);
+
     private final Output out = new Output();
 
     private final String defaultModuleName;
 
-    public ProcessDataFlowAnalysisStage(final String defaultModuleName) {
+    public DataFlowAnalysisStage(final String defaultModuleName) {
         this.defaultModuleName = defaultModuleName != null ? defaultModuleName : "<unknown>";
+    }
+
+    public OutputPort<CommonBlockEntry> getCommonBlockOutputPort() {
+        return this.commonBlockOutputPort;
     }
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
         project.getModules().values().stream().filter(module -> !module.getModuleName().equals(this.defaultModuleName))
                 .forEach(module -> {
-                    this.analyzeOperations(module, project);
+                    module.getCommonBlocks().values()
+                            .forEach(commonBlock -> this.analyzeCommonBlock(module, commonBlock));
+                    module.getOperations().values()
+                            .forEach(operation -> this.analyzeOperation(project, module, operation));
                 });
 
         this.outputPort.send(this.out);
     }
 
-    private void analyzeOperations(final FortranModule module, final FortranProject project) {
-        for (final FortranOperation operation : module.getOperations().values()) {
-            this.writeCommonBlocksName(operation.getCommonBlocks(), module.getFileName());
-            try {
-                this.out.getFileContent().addRow(module.getFileName(), module.getModuleName(), operation.getName());
-            } catch (final ValueConversionErrorException e) {
-                this.logger.error("File content table error: {}", e.getLocalizedMessage());
-            }
-
-            this.analyzeExecutionPart(project, module, operation);
-            this.analyzeBodyPart(project, module, operation);
-        }
+    private void analyzeCommonBlock(final FortranModule module, final CommonBlock commonBlock) {
+        final CommonBlockEntry entry = new CommonBlockEntry(commonBlock.getName());
+        entry.getModules().add(module);
+        commonBlock.getVariables().values().forEach(variable -> entry.getVariables().add(variable.getName()));
+        this.commonBlockOutputPort.send(entry);
     }
 
-    private void analyzeBodyPart(final FortranProject project, final FortranModule module,
+    private void analyzeOperation(final FortranProject project, final FortranModule module,
             final FortranOperation operation) {
-        System.err.println("caller " + operation.getName());
-        operation.getParameters().keySet().forEach(p -> System.err.println("\tP " + p));
-        operation.getVariables().keySet().forEach(v -> System.err.println("\tV " + v));
+        operation.getCommonBlocks().values().forEach(commonBlock -> this.analyzeCommonBlock(module, commonBlock));
+
         NodeProcessingUtils
                 .findAllSiblings(operation.getNode(), o -> true,
                         Predicates.isEndSubroutineStatement.or(Predicates.isEndFunctionStatement))
@@ -91,59 +97,186 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
             final FortranOperation operation) {
         if (Predicates.isCallStatement.test(node)) {
             this.analyzeCallStatement(project, module, operation, node);
-        } else if (Predicates.isAssignmentStatement.test(node)) {
-            this.analyzeAssignmentStatement(node, project, module, operation);
-        } else if (Predicates.isIfThenStatement.test(node)) {
-            this.analyzeIfThenStatement(node, project, module, operation);
-        } else if (Predicates.isSelectCaseStatement.test(node)) {
-            this.analyzeSelectCaseStatement(node, project, module, operation);
-        } else if (Predicates.isDoStatement.test(node)) {
-            this.analyzeDoStatement(node, project, module, operation);
         }
+//        else if (Predicates.isAssignmentStatement.test(node)) {
+//            this.analyzeAssignmentStatement(node, project, module, operation);
+//        } else if (Predicates.isIfThenStatement.test(node)) {
+//            this.analyzeIfThenStatement(node, project, module, operation);
+//        } else if (Predicates.isSelectCaseStatement.test(node)) {
+//            this.analyzeSelectCaseStatement(node, project, module, operation);
+//        } else if (Predicates.isDoStatement.test(node)) {
+//            this.analyzeDoStatement(node, project, module, operation);
+//        }
     }
 
     private void analyzeCallStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node node) {
         final String calleeName = NodeProcessingUtils.getCalleeNameFromCall(node);
-        System.err.println("callee " + calleeName);
         final Pair<FortranModule, FortranOperation> callee = this.findOperation(project.getModules().values(),
                 calleeName);
+        System.err.printf("call: %s::%s -> %s::%s\n", module.getFileName(), operation.getName(),
+                callee.first.getFileName(), callee.second.getName());
         final Node argumentSpec = NodeProcessingUtils.findChildFirst(node, Predicates.isArgumentSpecification);
         if (argumentSpec != null) {
             final List<Node> arguments = NodeProcessingUtils.findAllSiblings(argumentSpec.getFirstChild(),
                     Predicates.isArgument, o -> false);
-            arguments.forEach(argument -> {
-                this.analyzeParameter(project, module, operation, callee, argument.getFirstChild());
-            });
+            for (int i = 0; i < arguments.size(); i++) {
+                this.analyzeArgument(project, module, operation, callee, arguments.get(i).getFirstChild(), i);
+            }
         }
     }
 
-    private void analyzeParameter(final FortranProject project, final FortranModule module,
-            final FortranOperation operation, final Pair<FortranModule, FortranOperation> callee, final Node content) {
-        if (Predicates.isNamedExpressionAccess.test(content)) {
-            this.analyzeFunctionCall(project, module, operation, content);
-        } else if (Predicates.isNamedExpression.test(content)) {
-            final String argumentName = NodeProcessingUtils.getName(content);
-            if (this.isOperationParameterOrVariable(operation, argumentName)) {
-                System.err.println("  operation parameter or variable " + argumentName);
-                project.getDataflows().add(this.createDataFlow(module, operation, callee.first, callee.second));
-            } else if (this.isModuleCommonBlock(module, argumentName)) {
-                System.err.println("  module common block " + argumentName);
-                project.getDataflows().add(this.createDataFlow(module, argumentName, callee.first, callee.second));
-            } else if (this.isOperationCommonBlock(operation, argumentName)) {
-                System.err.println("  operation common block " + argumentName);
-                project.getDataflows()
-                        .add(this.createDataFlow(module, operation, argumentName, callee.first, callee.second));
+    private void analyzeArgument(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Pair<FortranModule, FortranOperation> callee,
+            final Node argumentNode, final int argumentIndex) {
+        if (Predicates.isNamedExpressionAccess.test(argumentNode)) {
+            final String argumentName = NodeProcessingUtils.getName(argumentNode);
+            if (operation.getParameters().containsKey(argumentName)
+                    || operation.getVariables().containsKey(argumentName)) {
+                this.analyzeParameterOrParameterValue(project, module, operation, callee, argumentNode, argumentIndex);
             } else {
-                System.err.println("argument name " + argumentName);
+                this.analyzeFunctionCall(project, module, operation, argumentNode);
             }
-        } else if (Predicates.isOperandExpression.test(content)) {
-            this.analyzeExpression(project, module, operation, callee, content);
-        } else if (Predicates.isLiteralE.test(content)) {
-            System.err.println("Literal can be ignored " + content.getFirstChild().getTextContent());
+        } else if (Predicates.isNamedExpression.test(argumentNode)) {
+            this.analyzeParameterOrParameterValue(project, module, operation, callee, argumentNode, argumentIndex);
+        } else if (Predicates.isOperandExpression.test(argumentNode)) {
+            this.analyzeExpression(project, module, operation, callee, argumentNode);
+        } else if (Predicates.isLiteralE.or(Predicates.isStringE).test(argumentNode)) {
+            // System.err.println("Literal can be ignored " +
+            // argument.getFirstChild().getTextContent());
         } else {
-            System.err.println("<> unknown content " + content + " in " + module.getFileName());
+            System.err.println("<> unknown content " + argumentNode + " in " + module.getFileName());
         }
+    }
+
+    private void analyzeParameterOrParameterValue(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Pair<FortranModule, FortranOperation> callee,
+            final Node argumentNode, final int argumentIndex) {
+        final String argumentName = NodeProcessingUtils.getName(argumentNode);
+        if (operation.getParameters().containsKey(argumentName)) {
+            // is parameter access
+            System.err.println("  parameter access link operation to callee");
+        } else if (operation.getVariables().containsKey(argumentName)) {
+            final int index;
+            if (callee.getSecond().isVariableArguments() && argumentIndex >= callee.second.getParameters().size()) {
+                index = callee.second.getParameters().size() - 1;
+            } else {
+                index = argumentIndex;
+            }
+            final FortranParameter argument = callee.second.getParameters().values().stream()
+                    .filter(parameter -> parameter.getPosition() == index).findFirst().get();
+            this.analyzeVariableDataflow(project, module, operation, argumentName, callee, argument);
+        } else {
+            System.err.println("No var or parameter name " + argumentName);
+        }
+    }
+
+    /**
+     * Analyze whether a variable is linked directly or indirectly to a parameter or a common block
+     * and create a dataflow object accordingly. In case there is no link to an parameter or common
+     * block do not create a dataflow element.
+     *
+     * @param project
+     *            project object
+     * @param callerModule
+     *            module context
+     * @param callerOperation
+     *            caller
+     * @param variableName
+     *            name of the variable
+     * @param callee
+     *            callee containing module and operation
+     * @param argument
+     *            argument of the callee
+     */
+    private void analyzeVariableDataflow(final FortranProject project, final FortranModule callerModule,
+            final FortranOperation callerOperation, final String variableName,
+            final Pair<FortranModule, FortranOperation> callee, final FortranParameter argument) {
+        System.err.println("  operation variable " + variableName);
+        final CommonBlock commonBlock = this.findCommonBlock(callerModule, callerOperation, variableName);
+        if (commonBlock != null) {
+            // communication between argument and common block
+            System.err.println("Variable is from common block. link callee to common block");
+        } else {
+            // is variable connected to another variable or parameter?
+            final FortranVariable variable = callerOperation.getVariables().get(variableName);
+            variable.getSources().stream().filter(source -> source instanceof FortranParameter).forEach(
+                    source -> this.createParameterToArgumentLink(callerModule, callerOperation, callee, argument));
+            if (!this.seekAndLinkDataOrigin(callerModule, callerOperation, variable, callee.getFirst(),
+                    callee.getSecond(), argument)) {
+                this.createCallerCalleeDataflow(callerModule, callerOperation, variable, callee.getFirst(),
+                        callee.getSecond(), argument);
+            }
+        }
+    }
+
+    private boolean seekAndLinkDataOrigin(final FortranModule module, final FortranOperation operation,
+            final FortranVariable variable, final FortranModule calleeModule, final FortranOperation calleeOperation,
+            final FortranParameter calleeArgument) {
+        final Stream<IDataflowSource> variables = variable.getSources().stream()
+                .filter(source -> source instanceof FortranVariable);
+
+        return variables.map(source -> {
+            final CommonBlock commonBlock = this.findCommonBlock(module, operation, variable.getName());
+            if (commonBlock == null) {
+                return this.seekAndLinkDataOrigin(module, operation, (FortranVariable) source, calleeModule,
+                        calleeOperation, calleeArgument);
+            } else {
+                System.err.println("Variable is transitively from common block. link callee to common block");
+                this.createArgumentToCommonBlockLink(commonBlock, calleeModule, calleeOperation, calleeArgument);
+                return true;
+            }
+        }).reduce(false, (result, value) -> result || value);
+    }
+
+    /** create dataflow output. */
+
+    private void createArgumentToCommonBlockLink(final CommonBlock commonBlock, final FortranModule calleeModule,
+            final FortranOperation calleeOperation, final FortranParameter calleeArgument) {
+        this.dataflowOutputPort.send(new CommonBlockArgumentDataflow(commonBlock.getName(), calleeModule.getFileName(),
+                calleeModule.getModuleName(), calleeArgument.getDirection()));
+    }
+
+    private void createCallerCalleeDataflow(final FortranModule callerModule, final FortranOperation callerOperation,
+            final FortranVariable variable, final FortranModule calleeModule, final FortranOperation calleeOperation,
+            final FortranParameter argument) {
+        System.err.println("Still link operation to callee.");
+        this.dataflowOutputPort.send(new CallerCalleeDataflow(callerModule.getFileName(), callerModule.getModuleName(),
+                callerOperation.getName(), calleeModule.getFileName(), calleeModule.getModuleName(),
+                calleeOperation.getName(), argument.getDirection()));
+    }
+
+    private void createParameterToArgumentLink(final FortranModule callerModule, final FortranOperation callerOperation,
+            final Pair<FortranModule, FortranOperation> callee, final FortranParameter argument) {
+        System.err.println("parameter link");
+        this.dataflowOutputPort.send(new CallerCalleeDataflow(callerModule.getFileName(), callerModule.getModuleName(),
+                callerOperation.getName(), callee.first.getFileName(), callee.first.getModuleName(),
+                callee.second.getName(), argument.getDirection()));
+    }
+
+    /** helper. */
+
+    private CommonBlock findCommonBlock(final FortranModule module, final FortranOperation operation,
+            final String variableName) {
+        final Optional<CommonBlock> commonBlock = this.findCommonBlockForVariable(operation.getCommonBlocks(),
+                variableName);
+        if (commonBlock.isPresent()) {
+            return commonBlock.get();
+        } else {
+            final Optional<CommonBlock> moduleCommonBlock = this.findCommonBlockForVariable(module.getCommonBlocks(),
+                    variableName);
+            if (moduleCommonBlock.isPresent()) {
+                return moduleCommonBlock.get();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    private Optional<CommonBlock> findCommonBlockForVariable(final Map<String, CommonBlock> commonBlocks,
+            final String variableName) {
+        return commonBlocks.values().stream().filter(block -> block.getVariables().get(variableName) != null)
+                .findFirst();
     }
 
     private void analyzeExpression(final FortranProject project, final FortranModule module,
@@ -175,11 +308,11 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
         final Node parensR = rlt.get(0).getFirstChild();
         if (Predicates.isParensR.test(parensR)) {
             final Node elementLT = NodeProcessingUtils.findChildFirst(parensR, Predicates.isElementLT);
-            final List<Node> elements = NodeProcessingUtils.findAllSiblings(elementLT.getFirstChild(),
+            final List<Node> arguments = NodeProcessingUtils.findAllSiblings(elementLT.getFirstChild(),
                     Predicates.isElement, o -> false);
-            elements.forEach(element -> {
-                this.analyzeParameter(project, module, operation, callee, element.getFirstChild());
-            });
+            for (int i = 0; i < arguments.size(); i++) {
+                this.analyzeArgument(project, module, operation, callee, arguments.get(i).getFirstChild(), i);
+            }
         } else {
             System.err.println("unknown function parameter.");
         }
@@ -190,11 +323,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
         final Pair<FortranModule, FortranOperation> callee = this.findOperation(project.getModules().values(),
                 functionName);
         if (callee == null) { // built-in or library function
-            FortranModule builtInModule = project.getDefaultModule();
-            if (builtInModule == null) {
-                builtInModule = new FortranModule("<runtime>", "<runtime>", true, null);
-                project.setDefaultModule(builtInModule);
-            }
+            final FortranModule builtInModule = project.getDefaultModule();
             FortranOperation builtInOperation = builtInModule.getOperations().get(functionName);
             if (builtInOperation == null) {
                 builtInOperation = new FortranOperation(functionName, null);
@@ -205,28 +334,6 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
         } else { // built-in or library function
             return callee;
         }
-    }
-
-    private Pair<Pair<FortranModule, IDataflowEndpoint>, Pair<FortranModule, IDataflowEndpoint>> createDataFlow(
-            final FortranModule module, final FortranOperation operation, final String argumentName,
-            final FortranModule targetModule, final FortranOperation targetOperation) {
-        final Optional<CommonBlock> commonBlockOptional = operation.getCommonBlocks().values().stream()
-                .filter(commonBlock -> commonBlock.getVariables().containsKey(argumentName)).findFirst();
-        return new Pair<>(new Pair<>(module, commonBlockOptional.get()), new Pair<>(targetModule, targetOperation));
-    }
-
-    private Pair<Pair<FortranModule, IDataflowEndpoint>, Pair<FortranModule, IDataflowEndpoint>> createDataFlow(
-            final FortranModule module, final String argumentName, final FortranModule targetModel,
-            final FortranOperation targetOperation) {
-        final Optional<CommonBlock> commonBlockOptional = module.getCommonBlocks().values().stream()
-                .filter(commonBlock -> commonBlock.getVariables().containsKey(argumentName)).findFirst();
-        return new Pair<>(new Pair<>(module, commonBlockOptional.get()), new Pair<>(targetModel, targetOperation));
-    }
-
-    private Pair<Pair<FortranModule, IDataflowEndpoint>, Pair<FortranModule, IDataflowEndpoint>> createDataFlow(
-            final FortranModule module, final FortranOperation operation, final FortranModule targetModel,
-            final FortranOperation targetOperation) {
-        return new Pair<>(new Pair<>(module, operation), new Pair<>(targetModel, targetOperation));
     }
 
     private boolean isOperationParameterOrVariable(final FortranOperation operation, final String argumentName) {
@@ -365,7 +472,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
                 for (final String blockId : blockIdentifierList) {
                     try {
                         this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "FILE",
-                                "/" + blockId + "/", "VARIABLES", ProcessDataFlowAnalysisStage.READ);
+                                "/" + blockId + "/", "VARIABLES", DataFlowAnalysisStage.READ);
                     } catch (final ValueConversionErrorException e) {
                         this.logger.error("Cannot add read dataflow call->cb {}", e.getLocalizedMessage());
                     }
@@ -377,7 +484,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
                 final String blockId = blockIdentifierAssign.get(0);
                 try {
                     this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "FILE",
-                            "/" + blockId + "/", "VARIABLES", ProcessDataFlowAnalysisStage.WRITE);
+                            "/" + blockId + "/", "VARIABLES", DataFlowAnalysisStage.WRITE);
                 } catch (final ValueConversionErrorException e) {
                     this.logger.error("Cannot add write dataflow call->cb {}", e.getLocalizedMessage());
                 }
@@ -391,7 +498,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
                 try {
                     this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller,
                             operation.getFirst().getFileName(), operation.getFirst().getModuleName(), functionId,
-                            ProcessDataFlowAnalysisStage.READ);
+                            DataFlowAnalysisStage.READ);
                 } catch (final ValueConversionErrorException e) {
                     this.logger.error("Cannot add read dataflow call->cb {}", e.getLocalizedMessage());
                 }
@@ -406,7 +513,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
                     final String blockId = blockIdentifierAssign.get(0);
                     try {
                         this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X", "X",
-                                blockId, ProcessDataFlowAnalysisStage.WRITE);
+                                blockId, DataFlowAnalysisStage.WRITE);
                     } catch (final ValueConversionErrorException e) {
                         this.logger.error("Cannot add write dataflow call->cb {}", e.getLocalizedMessage());
                     }
@@ -418,7 +525,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
                 for (final String blockId : blockIdentifierList) {
                     try {
                         this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller.getName(),
-                                "X", "X", blockId, ProcessDataFlowAnalysisStage.READ);
+                                "X", "X", blockId, DataFlowAnalysisStage.READ);
                     } catch (final ValueConversionErrorException e) {
                         this.logger.error("Cannot add read dataflow call->cb {}", e.getLocalizedMessage());
                     }
@@ -434,7 +541,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
         for (final String block : blocks) {
             try {
                 this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "BLOCK",
-                        "/" + block + "/", "VARIABLES", ProcessDataFlowAnalysisStage.READ);
+                        "/" + block + "/", "VARIABLES", DataFlowAnalysisStage.READ);
             } catch (final ValueConversionErrorException e) {
                 this.logger.error("Dataflow for reading from common block failed {}", e.getLocalizedMessage());
             }
@@ -488,7 +595,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
 
                     try {
                         this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, fileName,
-                                moduleName, functionIdentifier, ProcessDataFlowAnalysisStage.BOTH);
+                                moduleName, functionIdentifier, DataFlowAnalysisStage.BOTH);
                     } catch (final ValueConversionErrorException e) {
                         this.logger.error("Cannot add both dataflow call->f {}", e.getLocalizedMessage());
                     }
@@ -508,7 +615,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
 
                     try {
                         this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, fileName,
-                                moduleName, functionIdentifier, ProcessDataFlowAnalysisStage.BOTH);
+                                moduleName, functionIdentifier, DataFlowAnalysisStage.BOTH);
                     } catch (final ValueConversionErrorException e) {
                         this.logger.error("Cannot add both dataflow call->f {}", e.getLocalizedMessage());
                     }
@@ -527,14 +634,14 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
             if (blockIdentifierAssign.equals(blockIdentifier)) {
                 try {
                     this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X", "X",
-                            blockIdentifier, ProcessDataFlowAnalysisStage.BOTH);
+                            blockIdentifier, DataFlowAnalysisStage.BOTH);
                 } catch (final ValueConversionErrorException e) {
                     this.logger.error("Cannot add bidirection dataflow {}", e.getLocalizedMessage());
                 }
             } else {
                 try {
                     this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X", "X",
-                            blockIdentifier, ProcessDataFlowAnalysisStage.READ);
+                            blockIdentifier, DataFlowAnalysisStage.READ);
                 } catch (final ValueConversionErrorException e) {
                     this.logger.error("Cannot add read dataflow {}", e.getLocalizedMessage());
                 }
@@ -584,7 +691,7 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
             for (final String blockId : blockIdentifierList) {
                 try {
                     this.out.getDataflow().addRow(module.getFileName(), module.getModuleName(), caller, "X", "X",
-                            blockId, ProcessDataFlowAnalysisStage.WRITE);
+                            blockId, DataFlowAnalysisStage.WRITE);
                 } catch (final ValueConversionErrorException e) {
                     this.logger.error("Cannot add write dataflow {}", e.getLocalizedMessage());
                 }
@@ -602,17 +709,6 @@ public class ProcessDataFlowAnalysisStage extends AbstractTransformation<Fortran
             return blockIdentifierList;
         }
         return blockIdentifierList;
-    }
-
-    private void writeCommonBlocksName(final Map<String, CommonBlock> commonBlocks, final String filename) {
-        commonBlocks.values().forEach(commonBlock -> {
-            try {
-                this.out.getCommonBlocks().addRow(filename, "<no-module>", "<no-operation>", commonBlock.getName(),
-                        commonBlock.getVariables());
-            } catch (final ValueConversionErrorException e) {
-                this.logger.error("Common blocks file error {}", e.getLocalizedMessage());
-            }
-        });
     }
 
     // TODO duplicate form ProcessOperationCallStage

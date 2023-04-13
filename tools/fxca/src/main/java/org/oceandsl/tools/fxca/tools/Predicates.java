@@ -73,7 +73,8 @@ public class Predicates {
     public static Predicate<Node> isRegularLeftParanthesis = Predicates.isParensR
             .and(node -> node.getTextContent().startsWith("("));
     public static Predicate<Node> isCommonStatement = NodeProcessingUtils.hasName("common-stmt");
-    public static Predicate<Node> isCommonBlockObjectStatement = NodeProcessingUtils.hasName("common-block-obj-N");
+    public static Predicate<Node> isCommonBlockObjectName = NodeProcessingUtils.hasName("common-block-obj-N");
+    public static Predicate<Node> isCommonBlockObject = NodeProcessingUtils.hasName("common-block-obj");
     public static Predicate<Node> isLocalAccess = node -> LocalExpressionAccess.isLocalAccess(node);
     public static Predicate<Node> isDummyArgumentLT = NodeProcessingUtils.hasName("dummy-arg-LT");
 
@@ -186,5 +187,5 @@ public class Predicates {
     public static Predicate<Node> isNamelistGroupObjLT = NodeProcessingUtils.hasName("namelist-group-obj-LT");
     public static Predicate<Node> isNamelistGroupObj = NodeProcessingUtils.hasName("namelist-group-obj");
     public static Predicate<Node> isNamelistGroupObjN = NodeProcessingUtils.hasName("namelist-group-obj-N");
-    public static Predicate<Node> isTestExpression = NodeProcessingUtils.hasName("test-E");;
+    public static Predicate<Node> isTestExpression = NodeProcessingUtils.hasName("test-E");
 }

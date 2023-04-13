@@ -15,35 +15,12 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
-import java.util.Map;
-
-import org.w3c.dom.Node;
-
-import lombok.Getter;
-import lombok.Setter;
-
 /**
+ * Marker interface for dataflow endpoints
+ *
  * @author Reiner Jung
- * @since 1.3.0
+ *
  */
-public class CommonBlock implements IDataflowSource, IContainable {
-
-    @Getter
-    private final String name;
-
-    @Getter
-    private final Map<String, FortranVariable> variables = new ContainmentHashMap<>(this);
-
-    @Getter
-    private final Node node;
-
-    @Getter
-    @Setter
-    private Object parent;
-
-    public CommonBlock(final String name, final Node node) {
-        this.name = name;
-        this.node = node;
-    }
+public interface IDataflowSource {
 
 }

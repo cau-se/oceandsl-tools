@@ -47,7 +47,7 @@ public class LocalExpressionAccess {
     }
 
     static LocalAccessParameters namesInCommonBlocks = new LocalAccessParameters(Predicates.isCommonStatement,
-            Predicates.isCommonBlockObjectStatement, Predicates.isSmallN,
+            Predicates.isCommonBlockObjectName, Predicates.isSmallN,
             smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static LocalAccessParameters namesInOperationParameterList = new LocalAccessParameters(

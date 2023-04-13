@@ -27,10 +27,10 @@ import lombok.Setter;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class FortranOperation implements IDataflowEndpoint, IContainable {
+public class FortranOperation implements IDataflowSource, IContainable {
 
     @Getter
-    String name;
+    private final String name;
 
     @Getter
     private final Map<String, CommonBlock> commonBlocks = new ContainmentHashMap<>(this);
@@ -50,14 +50,24 @@ public class FortranOperation implements IDataflowEndpoint, IContainable {
 
     @Getter
     @Setter
-    Object parent;
+    private Object parent;
 
     @Getter
     @Setter
-    boolean implicit;
+    private boolean implicit;
+
+    @Getter
+    private final boolean variableArguments;
 
     public FortranOperation(final String name, final Node node) {
         this.name = name;
         this.node = node;
+        this.variableArguments = false;
+    }
+
+    public FortranOperation(final String name, final Node node, final boolean variableArguments) {
+        this.name = name;
+        this.node = node;
+        this.variableArguments = variableArguments;
     }
 }
