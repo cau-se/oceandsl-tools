@@ -70,4 +70,9 @@ public class FortranOperation implements IDataflowSource, IContainable {
         this.node = node;
         this.variableArguments = variableArguments;
     }
+
+    @Override
+    public String toString() {
+        return "op " + this.name;
+    }
 }

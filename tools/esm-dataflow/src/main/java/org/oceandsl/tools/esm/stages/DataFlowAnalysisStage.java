@@ -32,6 +32,7 @@ import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.esm.util.Output;
 import org.oceandsl.tools.esm.util.XPathParser;
 import org.oceandsl.tools.fxca.model.CommonBlock;
+import org.oceandsl.tools.fxca.model.EDirection;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranParameter;
@@ -97,10 +98,10 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
             final FortranOperation operation) {
         if (Predicates.isCallStatement.test(node)) {
             this.analyzeCallStatement(project, module, operation, node);
+        } else if (Predicates.isAssignmentStatement.test(node)) {
+            this.analyzeAssignmentStatement(project, module, operation, node);
         }
-//        else if (Predicates.isAssignmentStatement.test(node)) {
-//            this.analyzeAssignmentStatement(node, project, module, operation);
-//        } else if (Predicates.isIfThenStatement.test(node)) {
+        // else if (Predicates.isIfThenStatement.test(node)) {
 //            this.analyzeIfThenStatement(node, project, module, operation);
 //        } else if (Predicates.isSelectCaseStatement.test(node)) {
 //            this.analyzeSelectCaseStatement(node, project, module, operation);
@@ -114,8 +115,6 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
         final String calleeName = NodeProcessingUtils.getCalleeNameFromCall(node);
         final Pair<FortranModule, FortranOperation> callee = this.findOperation(project.getModules().values(),
                 calleeName);
-        System.err.printf("call: %s::%s -> %s::%s\n", module.getFileName(), operation.getName(),
-                callee.first.getFileName(), callee.second.getName());
         final Node argumentSpec = NodeProcessingUtils.findChildFirst(node, Predicates.isArgumentSpecification);
         if (argumentSpec != null) {
             final List<Node> arguments = NodeProcessingUtils.findAllSiblings(argumentSpec.getFirstChild(),
@@ -126,48 +125,70 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
         }
     }
 
-    private void analyzeArgument(final FortranProject project, final FortranModule module,
+    private void analyzeArgument(final FortranProject project, final FortranModule callerModule,
             final FortranOperation operation, final Pair<FortranModule, FortranOperation> callee,
             final Node argumentNode, final int argumentIndex) {
         if (Predicates.isNamedExpressionAccess.test(argumentNode)) {
             final String argumentName = NodeProcessingUtils.getName(argumentNode);
             if (operation.getParameters().containsKey(argumentName)
                     || operation.getVariables().containsKey(argumentName)) {
-                this.analyzeParameterOrParameterValue(project, module, operation, callee, argumentNode, argumentIndex);
+                this.analyzeParameterOrParameterValue(project, callerModule, operation, callee, argumentNode,
+                        argumentIndex);
             } else {
-                this.analyzeFunctionCall(project, module, operation, argumentNode);
+                this.analyzeFunctionCall(project, callerModule, operation, argumentNode);
             }
         } else if (Predicates.isNamedExpression.test(argumentNode)) {
-            this.analyzeParameterOrParameterValue(project, module, operation, callee, argumentNode, argumentIndex);
+            this.analyzeParameterOrParameterValue(project, callerModule, operation, callee, argumentNode,
+                    argumentIndex);
         } else if (Predicates.isOperandExpression.test(argumentNode)) {
-            this.analyzeExpression(project, module, operation, callee, argumentNode);
+            this.analyzeExpression(project, callerModule, operation, callee.getFirst(), callee.getSecond(),
+                    argumentNode);
         } else if (Predicates.isLiteralE.or(Predicates.isStringE).test(argumentNode)) {
             // System.err.println("Literal can be ignored " +
             // argument.getFirstChild().getTextContent());
         } else {
-            System.err.println("<> unknown content " + argumentNode + " in " + module.getFileName());
+            System.err.println("<> unknown content " + argumentNode + " in " + callerModule.getFileName());
         }
     }
 
     private void analyzeParameterOrParameterValue(final FortranProject project, final FortranModule module,
-            final FortranOperation operation, final Pair<FortranModule, FortranOperation> callee,
+            final FortranOperation callerOperation, final Pair<FortranModule, FortranOperation> callee,
             final Node argumentNode, final int argumentIndex) {
         final String argumentName = NodeProcessingUtils.getName(argumentNode);
-        if (operation.getParameters().containsKey(argumentName)) {
-            // is parameter access
-            System.err.println("  parameter access link operation to callee");
-        } else if (operation.getVariables().containsKey(argumentName)) {
-            final int index;
-            if (callee.getSecond().isVariableArguments() && argumentIndex >= callee.second.getParameters().size()) {
-                index = callee.second.getParameters().size() - 1;
-            } else {
-                index = argumentIndex;
-            }
-            final FortranParameter argument = callee.second.getParameters().values().stream()
-                    .filter(parameter -> parameter.getPosition() == index).findFirst().get();
-            this.analyzeVariableDataflow(project, module, operation, argumentName, callee, argument);
+        final int index = this.computeArgumentIndex(callee.getSecond(), argumentIndex);
+
+        final Optional<FortranParameter> argumentOptional = callee.second.getParameters().values().stream()
+                .filter(parameter -> parameter.getPosition() == index).findFirst();
+
+        if (argumentOptional.isEmpty()) {
+            System.err.println("++");
+        }
+
+        final FortranParameter argument = argumentOptional.get();
+
+        if (callerOperation.getParameters().containsKey(argumentName)) {
+            this.createParameterToArgumentLink(module, callerOperation, callee, argument);
+        } else if (callerOperation.getVariables().containsKey(argumentName)) {
+            this.analyzeVariableDataflow(project, module, callerOperation, argumentName, callee, argument);
         } else {
-            System.err.println("No var or parameter name " + argumentName);
+            // could be a function
+            final Pair<FortranModule, FortranOperation> function = this.findOperation(project.getModules().values(),
+                    argumentName);
+            if (function != null) {
+                this.analyzeFunctionCall(project, callee.getFirst(), callee.getSecond(), argumentNode);
+            } else {
+                this.logger.warn("Named element {} in expression context in {}::{} -> {}::{}", argumentName,
+                        module.getFileName(), callerOperation.getName(), callee.getFirst().getFileName(),
+                        callee.getSecond().getName());
+            }
+        }
+    }
+
+    private int computeArgumentIndex(final FortranOperation operation, final int argumentIndex) {
+        if (operation.isVariableArguments() && argumentIndex >= operation.getParameters().size()) {
+            return operation.getParameters().size() - 1;
+        } else {
+            return argumentIndex;
         }
     }
 
@@ -192,11 +213,10 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
     private void analyzeVariableDataflow(final FortranProject project, final FortranModule callerModule,
             final FortranOperation callerOperation, final String variableName,
             final Pair<FortranModule, FortranOperation> callee, final FortranParameter argument) {
-        System.err.println("  operation variable " + variableName);
         final CommonBlock commonBlock = this.findCommonBlock(callerModule, callerOperation, variableName);
         if (commonBlock != null) {
             // communication between argument and common block
-            System.err.println("Variable is from common block. link callee to common block");
+            this.createArgumentToCommonBlockLink(commonBlock, callee.getFirst(), callee.getSecond(), argument);
         } else {
             // is variable connected to another variable or parameter?
             final FortranVariable variable = callerOperation.getVariables().get(variableName);
@@ -222,7 +242,7 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
                 return this.seekAndLinkDataOrigin(module, operation, (FortranVariable) source, calleeModule,
                         calleeOperation, calleeArgument);
             } else {
-                System.err.println("Variable is transitively from common block. link callee to common block");
+                // Variable is transitively from common block. link callee to common block
                 this.createArgumentToCommonBlockLink(commonBlock, calleeModule, calleeOperation, calleeArgument);
                 return true;
             }
@@ -240,15 +260,21 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
     private void createCallerCalleeDataflow(final FortranModule callerModule, final FortranOperation callerOperation,
             final FortranVariable variable, final FortranModule calleeModule, final FortranOperation calleeOperation,
             final FortranParameter argument) {
-        System.err.println("Still link operation to callee.");
         this.dataflowOutputPort.send(new CallerCalleeDataflow(callerModule.getFileName(), callerModule.getModuleName(),
                 callerOperation.getName(), calleeModule.getFileName(), calleeModule.getModuleName(),
                 calleeOperation.getName(), argument.getDirection()));
     }
 
+    private void createCallerCalleeDataflowRead(final FortranModule callerModule,
+            final FortranOperation callerOperation, final FortranModule calleeModule,
+            final FortranOperation calleeOperation) {
+        this.dataflowOutputPort.send(new CallerCalleeDataflow(callerModule.getFileName(), callerModule.getModuleName(),
+                callerOperation.getName(), calleeModule.getFileName(), calleeModule.getModuleName(),
+                calleeOperation.getName(), EDirection.READ));
+    }
+
     private void createParameterToArgumentLink(final FortranModule callerModule, final FortranOperation callerOperation,
             final Pair<FortranModule, FortranOperation> callee, final FortranParameter argument) {
-        System.err.println("parameter link");
         this.dataflowOutputPort.send(new CallerCalleeDataflow(callerModule.getFileName(), callerModule.getModuleName(),
                 callerOperation.getName(), callee.first.getFileName(), callee.first.getModuleName(),
                 callee.second.getName(), argument.getDirection()));
@@ -279,42 +305,111 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
                 .findFirst();
     }
 
-    private void analyzeExpression(final FortranProject project, final FortranModule module,
-            final FortranOperation operation, final Pair<FortranModule, FortranOperation> callee, final Node content) {
+    private void analyzeExpression(final FortranProject project, final FortranModule contextModule,
+            final FortranOperation contextOperation, final FortranModule calleeModule,
+            final FortranOperation calleeOperation, final Node content) {
         final List<Node> nodes = NodeProcessingUtils.findAllSiblings(content.getFirstChild(),
                 Predicates.isNamedExpression, o -> false);
         nodes.forEach(node -> {
-            if (Predicates.isNamedExpression.test(node)) {
-                final String nodeName = NodeProcessingUtils.getName(node);
-                if (operation.getVariables().keySet().contains(nodeName)) {
-                    System.err.println(
-                            "got variable " + nodeName + " in callee parameter " + callee.getSecond().getName());
-                } else if (operation.getParameters().get(nodeName) != null) {
-                    System.err.println(
-                            "got parameter " + nodeName + " in callee parameter " + callee.getSecond().getName());
+            final String nodeName = NodeProcessingUtils.getName(node);
+            if (contextOperation.getVariables().keySet().contains(nodeName)) {
+                this.createCallerCalleeDataflowRead(contextModule, contextOperation, calleeModule, calleeOperation);
+            } else if (contextOperation.getParameters().get(nodeName) != null) {
+                this.createCallerCalleeDataflowRead(contextModule, contextOperation, calleeModule, calleeOperation);
+            } else { // could be a function
+                final Pair<FortranModule, FortranOperation> function = this.findOperation(project.getModules().values(),
+                        nodeName);
+                if (function != null) {
+                    this.analyzeFunctionCall(project, contextModule, contextOperation, calleeModule, calleeOperation,
+                            node);
                 } else {
-                    System.err.println("not a variable or parameter " + nodeName);
+                    this.logger.warn("Named element {} in expression context in {}::{} -> {}::{}", nodeName,
+                            contextModule.getFileName(), contextOperation.getName(), calleeModule.getFileName(),
+                            calleeOperation.getName());
                 }
             }
         });
     }
 
-    private void analyzeFunctionCall(final FortranProject project, final FortranModule module,
-            final FortranOperation operation, final Node content) {
-        final String functionName = NodeProcessingUtils.getName(content);
+    /**
+     *
+     * @param project
+     * @param contextModule
+     * @param contextOperation
+     * @param content
+     */
+    private void analyzeAssignmentExpression(final FortranProject project, final FortranModule contextModule,
+            final FortranOperation contextOperation, final Node content) {
+        final List<Node> nodes = NodeProcessingUtils.findAllSiblings(content.getFirstChild(),
+                Predicates.isNamedExpression, o -> false);
+        nodes.forEach(node -> {
+            final String nodeName = NodeProcessingUtils.getName(node);
+            if (!contextOperation.getVariables().keySet().contains(nodeName)
+                    && !contextOperation.getParameters().containsKey(nodeName)) {
+                // could be a function
+                final Pair<FortranModule, FortranOperation> function = this.findOperation(project.getModules().values(),
+                        nodeName);
+                if (function != null) {
+                    this.analyzeFunctionCall(project, contextModule, contextOperation, function.getFirst(),
+                            function.getSecond(), node);
+                } else {
+                    this.logger.warn("Named element {} in expression context in {}::{} is not a function.", nodeName,
+                            contextModule.getFileName(), contextOperation.getName());
+                }
+
+            }
+        });
+    }
+
+    private void analyzeFunctionCall(final FortranProject project, final FortranModule contextModule,
+            final FortranOperation contextOperation, final FortranModule callerModule,
+            final FortranOperation callerOperation, final Node calleeNode) {
+        final String functionName = NodeProcessingUtils.getName(calleeNode);
         final Pair<FortranModule, FortranOperation> callee = this.findOrCreateOperation(project, functionName);
-        final List<Node> rlt = NodeProcessingUtils.findAllSiblings(content.getFirstChild(), Predicates.isRLT,
+        final List<Node> rlt = NodeProcessingUtils.findAllSiblings(calleeNode.getFirstChild(), Predicates.isRLT,
                 o -> false);
-        final Node parensR = rlt.get(0).getFirstChild();
-        if (Predicates.isParensR.test(parensR)) {
-            final Node elementLT = NodeProcessingUtils.findChildFirst(parensR, Predicates.isElementLT);
-            final List<Node> arguments = NodeProcessingUtils.findAllSiblings(elementLT.getFirstChild(),
-                    Predicates.isElement, o -> false);
-            for (int i = 0; i < arguments.size(); i++) {
-                this.analyzeArgument(project, module, operation, callee, arguments.get(i).getFirstChild(), i);
+        if (rlt.size() > 0) {
+            final Node parensR = rlt.get(0).getFirstChild();
+            if (Predicates.isParensR.test(parensR)) {
+                final Node elementLT = NodeProcessingUtils.findChildFirst(parensR, Predicates.isElementLT);
+                final List<Node> arguments = NodeProcessingUtils.findAllSiblings(elementLT.getFirstChild(),
+                        Predicates.isElement, o -> false);
+                for (int i = 0; i < arguments.size(); i++) {
+                    this.analyzeArgument(project, contextModule, contextOperation, callee,
+                            arguments.get(i).getFirstChild(), i);
+                }
+            } else {
+                System.err.println("unknown function parameter.");
             }
         } else {
-            System.err.println("unknown function parameter.");
+            System.err.printf("No parameter for inline function %s in expression in call %s::%s -> %s::%s\n",
+                    functionName, contextModule.getFileName(), contextOperation.getName(),
+                    callee.getFirst().getFileName(), callee.getSecond().getName());
+        }
+    }
+
+    private void analyzeFunctionCall(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Node calleeNode) {
+        final String functionName = NodeProcessingUtils.getName(calleeNode);
+        final Pair<FortranModule, FortranOperation> callee = this.findOrCreateOperation(project, functionName);
+        final List<Node> rlt = NodeProcessingUtils.findAllSiblings(calleeNode.getFirstChild(), Predicates.isRLT,
+                o -> false);
+        if (rlt.size() > 0) {
+            final Node parensR = rlt.get(0).getFirstChild();
+            if (Predicates.isParensR.test(parensR)) {
+                final Node elementLT = NodeProcessingUtils.findChildFirst(parensR, Predicates.isElementLT);
+                final List<Node> arguments = NodeProcessingUtils.findAllSiblings(elementLT.getFirstChild(),
+                        Predicates.isElement, o -> false);
+                for (int i = 0; i < arguments.size(); i++) {
+                    this.analyzeArgument(project, module, operation, callee, arguments.get(i).getFirstChild(), i);
+                }
+            } else {
+                System.err.println("unknown function parameter.");
+            }
+        } else {
+            System.err.printf("No parameter for function %s in expression in call %s::%s -> %s::%s\n", functionName,
+                    module.getFileName(), operation.getName(), callee.getFirst().getFileName(),
+                    callee.getSecond().getName());
         }
     }
 
@@ -353,9 +448,14 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
                 .anyMatch(commonBlock -> commonBlock.getVariables().containsKey(argumentName));
     }
 
-    private void analyzeAssignmentStatement(final Node node, final FortranProject project, final FortranModule module,
-            final FortranOperation operation) {
-        System.err.println("Missing assignment");
+    private void analyzeAssignmentStatement(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Node node) {
+        final Node expessionNode = XPathParser.getAssignmentExpression(node);
+        if (Predicates.isAssignmentE2.test(expessionNode)) {
+            this.analyzeAssignmentExpression(project, module, operation, expessionNode);
+        } else {
+            this.logger.warn("Unknown expression type {}", node.toString());
+        }
     }
 
     private void analyzeIfThenStatement(final Node node, final FortranProject project, final FortranModule module,

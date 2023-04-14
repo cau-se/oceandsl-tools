@@ -53,4 +53,10 @@ public class FortranProject {
     public Map<String, FortranModule> getModules() {
         return this.modules;
     }
+
+    @Override
+    public String toString() {
+        return this.modules.values().stream().map(module -> module.getFileName()).reduce("",
+                (r, name) -> r + ", " + name);
+    }
 }

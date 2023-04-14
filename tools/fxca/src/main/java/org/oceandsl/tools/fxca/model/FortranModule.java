@@ -65,4 +65,9 @@ public class FortranModule implements IContainable {
         this.document = document;
     }
 
+    @Override
+    public String toString() {
+        return this.fileName + ":" + this.moduleName;
+    }
+
 }

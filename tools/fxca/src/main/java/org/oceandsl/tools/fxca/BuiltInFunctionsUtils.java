@@ -52,7 +52,7 @@ public class BuiltInFunctionsUtils {
         operations.add(createOperation("log10", 1));
         operations.add(createOperation("max", 2, true));
         operations.add(createOperation("min", 2, true));
-        operations.add(createOperation("mod", 1));
+        operations.add(createOperation("mod", 2));
         operations.add(createOperation("nint", 1));
         operations.add(createOperation("real", 2));
         operations.add(createOperation("sign", 1));
