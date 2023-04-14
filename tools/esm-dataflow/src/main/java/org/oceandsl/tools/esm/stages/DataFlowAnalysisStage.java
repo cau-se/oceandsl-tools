@@ -161,7 +161,8 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
                 .filter(parameter -> parameter.getPosition() == index).findFirst();
 
         if (argumentOptional.isEmpty()) {
-            System.err.println("++");
+            System.err.printf("++ %s:%s -> %s:%s %s\n", module.getFileName(), callerOperation.getName(),
+                    callee.getFirst().getFileName(), callee.getSecond().getName(), argumentName);
         }
 
         final FortranParameter argument = argumentOptional.get();

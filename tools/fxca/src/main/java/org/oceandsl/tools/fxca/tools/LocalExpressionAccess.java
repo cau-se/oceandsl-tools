@@ -55,7 +55,7 @@ public class LocalExpressionAccess {
             smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static LocalAccessParameters namesInLocalVariableList = new LocalAccessParameters(Predicates.isTDeclStmt,
-            Predicates.isEnDcl, Predicates.isSmallN,
+            Predicates.isEnDecl, Predicates.isSmallN,
             smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static Set<String> localNamesDefinedInApplyingBlocks(final Node node, final LocalAccessParameters parameters,

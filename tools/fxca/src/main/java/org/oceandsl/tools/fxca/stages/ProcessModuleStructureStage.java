@@ -16,6 +16,7 @@
 package org.oceandsl.tools.fxca.stages;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -130,7 +131,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             final Node declarationElements = statement.getChildNodes().item(1);
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
                 final Node declarationObject = declarationElements.getChildNodes().item(i);
-                if (Predicates.isEnDcl.test(declarationObject)) {
+                if (Predicates.isEnDecl.test(declarationObject)) {
                     final String objectName = declarationObject.getFirstChild().getFirstChild().getFirstChild()
                             .getTextContent();
                     final String variableName = objectName.toLowerCase(Locale.getDefault());
@@ -277,7 +278,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
                 // System.err.printf(" declaration %d\n", i);
                 final Node declarationObject = declarationElements.getChildNodes().item(i);
-                if (Predicates.isEnDcl.test(declarationObject)) {
+                if (Predicates.isEnDecl.test(declarationObject)) {
                     final String objectName = declarationObject.getFirstChild().getFirstChild().getFirstChild()
                             .getTextContent();
                     // System.err.printf(" -> %s\n", objectName);
@@ -311,13 +312,17 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void createFortranOperationPartDimensionalVariables(final FortranOperation operation, final Node node)
             throws ParserConfigurationException, SAXException, IOException {
-        final Set<Node> declarationStatements = this.getDescendentAttributes(node, Predicates.isDimStmt,
-                operationNode -> operationNode);
+        System.err.println("operation " + operation.getName());
+
+        final List<Node> declarationStatements = this.findAllSiblingsAndDescendents(node, Predicates.isDimStmt,
+                Predicates.isEndSubroutineStatement);
+        System.err.println("<dim-stat>");
         declarationStatements.forEach(statement -> {
+            System.err.println("is EN-decl-LT " + Predicates.isENDeclLT.test(statement));
             final Node declarationElements = statement.getChildNodes().item(1);
             for (int i = 0; i < declarationElements.getChildNodes().getLength(); i++) {
                 final Node declarationObject = declarationElements.getChildNodes().item(i);
-                if ("EN-decl".equals(declarationObject.getNodeName())) {
+                if (Predicates.isEnDecl.test(declarationObject)) {
                     final String objectName = declarationObject.getFirstChild().getFirstChild().getFirstChild()
                             .getTextContent();
                     final String variableName = objectName.toLowerCase(Locale.getDefault());
@@ -325,6 +330,17 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                 }
             }
         });
+        System.err.println("</dim-stat>");
+    }
+
+    private List<Node> findAllSiblingsAndDescendents(final Node node, final Predicate<Node> findPredicate,
+            final Predicate<Node> endPredicate) {
+        final List<Node> result = new ArrayList<>();
+        NodeProcessingUtils.findAllSiblings(node, o -> true, endPredicate).forEach(sibling -> {
+            final Set<Node> values = NodeProcessingUtils.allDescendents(sibling, Predicates.isDimStmt, true);
+            result.addAll(values);
+        });
+        return result;
     }
 
     private <T> Set<T> getDescendentAttributes(final Node node, final Predicate<Node> predicate,
