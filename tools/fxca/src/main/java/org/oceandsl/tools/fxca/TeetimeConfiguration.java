@@ -53,7 +53,7 @@ public class TeetimeConfiguration extends Configuration {
         /** computing stages. */
         final ReadDomStage readDomStage = new ReadDomStage();
         final ProcessModuleStructureStage processModuleStructureStage = new ProcessModuleStructureStage(uriProcessor,
-                BuiltInFunctionsUtils.createOperations());
+                BuiltInFunctionsUtils.createOperations(), settings.getDefaultComponent());
         final ProcessOperationCallStage processOperationCallStage = new ProcessOperationCallStage(
                 settings.getDefaultComponent());
 

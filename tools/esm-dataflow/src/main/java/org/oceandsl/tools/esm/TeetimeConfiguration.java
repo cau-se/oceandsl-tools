@@ -57,7 +57,7 @@ public class TeetimeConfiguration extends Configuration {
         final ReadDomStage readDomStage = new ReadDomStage();
 
         final ProcessModuleStructureStage processModuleStructureStage = new ProcessModuleStructureStage(uriProcessor,
-                BuiltInFunctionsUtils.createOperations());
+                BuiltInFunctionsUtils.createOperations(), settings.getDefaultComponent());
 
         final ComputeDirectionalityOfParametersStage computeDirectionalityOfParametersStage = new ComputeDirectionalityOfParametersStage();
 
@@ -85,8 +85,7 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(processModuleStructureStage.getOutputPort(),
                 computeDirectionalityOfParametersStage.getInputPort());
         this.connectPorts(computeDirectionalityOfParametersStage.getOutputPort(), dataFlowAnalysisStage.getInputPort());
-        this.connectPorts(dataFlowAnalysisStage.getCommonBlockOutputPort(),
-                aggregateCommonBlocksStage.getInputPort());
+        this.connectPorts(dataFlowAnalysisStage.getCommonBlockOutputPort(), aggregateCommonBlocksStage.getInputPort());
         this.connectPorts(aggregateCommonBlocksStage.getOutputPort(), commonBlocksTableStage.getInputPort());
         //
         // this.connectPorts(dataFlowAnalysisStage.getOutputPort(), outputStage.getInputPort());

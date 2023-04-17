@@ -33,46 +33,48 @@ public class BuiltInFunctionsUtils {
     public static List<FortranOperation> createOperations() {
         final List<FortranOperation> operations = new ArrayList<>();
 
-        operations.add(createOperation("abs", 1));
-        operations.add(createOperation("aint", 1));
-        operations.add(createOperation("anint", 1));
-        operations.add(createOperation("acos", 1));
-        operations.add(createOperation("asin", 1));
-        operations.add(createOperation("atan", 1));
-        operations.add(createOperation("cbrt", 1));
-        operations.add(createOperation("conjg", 1));
-        operations.add(createOperation("cos", 1));
-        operations.add(createOperation("cosh", 1));
-        operations.add(createOperation("dim", 1));
-        operations.add(createOperation("erf", 1));
-        operations.add(createOperation("exp", 1));
-        operations.add(createOperation("float", 1));
-        operations.add(createOperation("imag", 1));
-        operations.add(createOperation("log", 1));
-        operations.add(createOperation("log10", 1));
-        operations.add(createOperation("max", 2, true));
-        operations.add(createOperation("min", 2, true));
-        operations.add(createOperation("mod", 2));
-        operations.add(createOperation("nint", 1));
-        operations.add(createOperation("real", 2));
-        operations.add(createOperation("sign", 1));
-        operations.add(createOperation("sin", 1));
-        operations.add(createOperation("sinh", 1));
-        operations.add(createOperation("sqrt", 1));
-        operations.add(createOperation("tan", 1));
-        operations.add(createOperation("tanh", 1));
-        operations.add(createOperation("trim", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("abs", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("aint", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("anint", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("acos", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("asin", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("atan", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("cbrt", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("conjg", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("cos", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("cosh", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("dble", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("dim", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("erf", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("exp", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("float", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("imag", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("int", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("log", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("log10", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("max", 2, true));
+        operations.add(BuiltInFunctionsUtils.createOperation("min", 2, true));
+        operations.add(BuiltInFunctionsUtils.createOperation("mod", 2));
+        operations.add(BuiltInFunctionsUtils.createOperation("nint", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("real", 2));
+        operations.add(BuiltInFunctionsUtils.createOperation("sign", 2));
+        operations.add(BuiltInFunctionsUtils.createOperation("sin", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("sinh", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("sqrt", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("tan", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("tanh", 1));
+        operations.add(BuiltInFunctionsUtils.createOperation("trim", 1));
 
         return operations;
     }
 
     private static FortranOperation createOperation(final String name, final int arguments) {
-        return createOperation(name, arguments, false);
+        return BuiltInFunctionsUtils.createOperation(name, arguments, false);
     }
 
     private static FortranOperation createOperation(final String name, final int arguments,
             final boolean variableArguments) {
-        final FortranOperation operation = new FortranOperation(name, null, variableArguments);
+        final FortranOperation operation = new FortranOperation(name, null, true, variableArguments);
         for (int i = 0; i < arguments; i++) {
             final String label = "v" + i;
             final FortranParameter parameter = new FortranParameter(label, i);

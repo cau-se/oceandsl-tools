@@ -34,6 +34,8 @@ import org.oceandsl.analysis.generic.validators.PathIsReadableValidator;
  */
 public class Settings { // NOPMD data class
 
+    private static final String RUNTIME = "<runtime>";
+
     @Parameter(names = { "-i",
             "--input" }, required = true, variableArity = true, description = "One or more paths to fxtran-generated XML files.", converter = PathConverter.class, validateWith = {
                     PathIsReadableValidator.class, PathIsDirectoryValidator.class })
@@ -68,7 +70,11 @@ public class Settings { // NOPMD data class
     }
 
     public String getDefaultComponent() {
-        return this.defaultComponent;
+        if (this.defaultComponent == null) {
+            return Settings.RUNTIME;
+        } else {
+            return this.defaultComponent;
+        }
     }
 
     public boolean isFlat() {

@@ -59,16 +59,22 @@ public class FortranOperation implements IDataflowSource, IContainable {
     @Getter
     private final boolean variableArguments;
 
-    public FortranOperation(final String name, final Node node) {
+    @Getter
+    private final boolean function;
+
+    public FortranOperation(final String name, final Node node, final boolean function) {
         this.name = name;
         this.node = node;
         this.variableArguments = false;
+        this.function = function;
     }
 
-    public FortranOperation(final String name, final Node node, final boolean variableArguments) {
+    public FortranOperation(final String name, final Node node, final boolean function,
+            final boolean variableArguments) {
         this.name = name;
         this.node = node;
         this.variableArguments = variableArguments;
+        this.function = function;
     }
 
     @Override

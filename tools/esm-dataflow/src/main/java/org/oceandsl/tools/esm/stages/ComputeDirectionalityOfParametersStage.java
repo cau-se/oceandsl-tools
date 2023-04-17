@@ -22,13 +22,13 @@ import org.w3c.dom.Node;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.tools.esm.util.XPathParser;
 import org.oceandsl.tools.fxca.model.EDirection;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.model.FortranVariable;
+import org.oceandsl.tools.fxca.stages.XPathParser;
 import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 import org.oceandsl.tools.fxca.tools.Predicates;
 
@@ -196,9 +196,10 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         } else { // do statement or do label statement
             final String elementName = NodeProcessingUtils.getName(doV);
             FortranVariable loopVariable = this.checkVariable(operation, elementName, EDirection.WRITE);
-            if (!this.checkParameter(operation, elementName) && loopVariable == null) {
+            if (!this.checkParameter(operation, elementName) && (loopVariable == null)) {
                 if (!operation.isImplicit()) {
-                    this.logger.error("Unknown value assignee {}", elementName);
+                    this.logger.error("Unknown value assignee {} after do statement in {}::{}", elementName,
+                            module.getFileName(), operation.getName());
                 } else {
                     loopVariable = new FortranVariable(elementName);
                     loopVariable.setDirection(EDirection.WRITE);

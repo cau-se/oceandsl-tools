@@ -153,7 +153,7 @@ public class NodeProcessingUtils {
     public static List<Node> findAllSiblings(final Node firstNode, final Predicate<Node> select,
             final Predicate<Node> terminate) {
         final List<Node> nodes = new ArrayList<>();
-        for (Node node = firstNode; node != null && !terminate.test(node); node = node.getNextSibling()) {
+        for (Node node = firstNode; (node != null) && !terminate.test(node); node = node.getNextSibling()) {
             if (select.test(node)) {
                 nodes.add(node);
             }
@@ -214,9 +214,9 @@ public class NodeProcessingUtils {
         boolean inParanthesisInterval = false;
         // End if we do not have anywhere to search, or we have reached the limit (where "-1" counts
         // as "no limit").
-        while (current != null && (result.size() < maxElementsToFind || maxElementsToFind == -1)) {
+        while ((current != null) && ((result.size() < maxElementsToFind) || (maxElementsToFind == -1))) {
 
-            if (!inParanthesisInterval && condition.test(current) && (current != parent || includeSelf)) {
+            if (!inParanthesisInterval && condition.test(current) && ((current != parent) || includeSelf)) {
                 result.add(current);
             }
 
@@ -305,7 +305,8 @@ public class NodeProcessingUtils {
     }
 
     public static String getName(final Node node) {
-        final Node littleNNode = node.getFirstChild().getFirstChild();
+        final Node bigNNode = node.getFirstChild();
+        final Node littleNNode = bigNNode.getFirstChild();
         return littleNNode.getTextContent().toLowerCase(Locale.getDefault());
     }
 
@@ -375,11 +376,11 @@ public class NodeProcessingUtils {
 
         final short type = node.getNodeType();
 
-        if (type == Node.TEXT_NODE && node.getChildNodes().getLength() > 0) {
+        if ((type == Node.TEXT_NODE) && (node.getChildNodes().getLength() > 0)) {
             throw new IllegalArgumentException("text node with children");
         }
 
-        if ("call-stmt".equals(node.getNodeName()) && node.getChildNodes().getLength() < 2) {
+        if ("call-stmt".equals(node.getNodeName()) && (node.getChildNodes().getLength() < 2)) {
             NodeProcessingUtils.printNode(node, 0);
             throw new IllegalArgumentException("call statement with < 2 children");
         }

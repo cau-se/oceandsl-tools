@@ -41,6 +41,8 @@ public class Predicates {
 
     public static Predicate<Node> isEndSubroutineStatement = NodeProcessingUtils.hasName("end-subroutine-stmt");
     public static Predicate<Node> isEndFunctionStatement = NodeProcessingUtils.hasName("end-function-stmt");
+    public static Predicate<Node> isEndOperationStatement = Predicates.isEndSubroutineStatement
+            .or(Predicates.isEndFunctionStatement);
 
     public static Predicate<Node> isModuleStatement = NodeProcessingUtils.hasName("module-stmt");
     public static Predicate<Node> isUseStatement = NodeProcessingUtils.hasName("use-stmt");
