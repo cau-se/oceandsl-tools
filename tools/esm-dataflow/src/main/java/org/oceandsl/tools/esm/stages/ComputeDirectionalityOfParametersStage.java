@@ -396,7 +396,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                 // System.err.println(" string literal " + expressionElement.getTextContent());
             } else if (Predicates.isOperandExpression.test(expressionElement)) {
                 this.checkExpression(operation, expressionElement, EDirection.READ);
-            } else if (Predicates.isParensE.test(expressionElement)) {
+            } else if (Predicates.isParensExpression.test(expressionElement)) {
                 this.checkExpression(operation, expressionElement, EDirection.READ);
             } else if (Predicates.isIterator.test(expressionElement)) {
                 this.checkIterator(operation, expressionElement);

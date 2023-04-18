@@ -3,6 +3,9 @@ package org.oceandsl.tools.esm.stages;
 import org.oceandsl.tools.fxca.model.EDirection;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
+import org.oceandsl.tools.fxca.model.FortranParameter;
+import org.oceandsl.tools.fxca.model.FortranVariable;
+import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
 
 import lombok.Getter;
 
@@ -17,9 +20,14 @@ public class DataflowEndpoint implements IDataflowEndpoint {
     @Getter
     private EDirection direction;
 
-    public DataflowEndpoint(final FortranModule module, final FortranOperation operation, final EDirection direction) {
+    @Getter
+    private final IDataflowEndpoint endpoint;
+
+    public DataflowEndpoint(final FortranModule module, final FortranOperation operation,
+            final IDataflowEndpoint endpoint, final EDirection direction) {
         this.module = module;
         this.operation = operation;
+        this.endpoint = endpoint;
         this.direction = direction;
     }
 
@@ -27,7 +35,20 @@ public class DataflowEndpoint implements IDataflowEndpoint {
     public String toString() {
         final String moduleName = this.module != null ? this.module.getFileName() : "<>";
         final String operationName = this.operation != null ? this.operation.getName() : "<>";
-        return moduleName + "::" + operationName + " ~ " + this.direction.name();
+        final String endpointName = this.endpoint != null ? this.endpointName() : "<>";
+        return moduleName + "::" + operationName + " ~ " + endpointName + ":" + this.direction.name();
+    }
+
+    private String endpointName() {
+        if (this.endpoint instanceof FortranOperation) {
+            return "<return-value>";
+        } else if (this.endpoint instanceof FortranParameter) {
+            return ((FortranParameter) this.endpoint).getName();
+        } else if (this.endpoint instanceof FortranVariable) {
+            return ((FortranVariable) this.endpoint).getName();
+        } else {
+            return "<" + this.endpoint.getClass().getSimpleName() + ">";
+        }
     }
 
     public void merge(final EDirection newDirection) {

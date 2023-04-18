@@ -302,8 +302,8 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     }
 
     private void createFortranOperationPartVariables(final FortranOperation operation, final Node node) {
-        final List<Node> declarationStatements = NodeProcessingUtils.findAllSiblings(node, Predicates.isTDeclStmt,
-                Predicates.isEndSubroutineStatement);
+        final List<Node> declarationStatements = NodeProcessingUtils.findAllSiblings(node,
+                Predicates.isTDeclStmt.or(Predicates.isParameterStatement), Predicates.isEndSubroutineStatement);
         declarationStatements.forEach(statement -> {
             final Node declarationElements = NodeProcessingUtils.findChildFirst(statement, Predicates.isENDeclLT);
 

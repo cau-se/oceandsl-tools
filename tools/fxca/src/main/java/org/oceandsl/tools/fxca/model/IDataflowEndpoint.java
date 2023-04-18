@@ -16,11 +16,11 @@
 package org.oceandsl.tools.fxca.model;
 
 /**
- * Marker interface for dataflow endpoints
+ * Marker interface for dataflow endpoints.
  *
  * @author Reiner Jung
  *
  */
-public interface IDataflowSource {
+public interface IDataflowEndpoint {
 
 }

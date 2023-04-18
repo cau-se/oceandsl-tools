@@ -43,7 +43,6 @@ public class TeetimeConfiguration extends Configuration {
     private static final String REPLACEMENT_PATTERN = "$1";
 
     private static final String DATAFLOW = "dataflow.csv";
-    private static final String FILE_CONENT = "file-content.csv";
     private static final String COMMON_BLOCKS = "common-blocks.csv";
 
     public TeetimeConfiguration(final Settings settings) throws IOException {
@@ -64,6 +63,7 @@ public class TeetimeConfiguration extends Configuration {
         final DataFlowAnalysisStage dataFlowAnalysisStage = new DataFlowAnalysisStage(settings.getDefaultComponent());
 
         final AggregateCommonBlocksStage aggregateCommonBlocksStage = new AggregateCommonBlocksStage();
+        final AggregateDataflowStage aggregateDataflowStage = new AggregateDataflowStage();
 
         /** tables */
         final CreateDataflowTableStage dataflowTableStage = new CreateDataflowTableStage();
@@ -72,8 +72,6 @@ public class TeetimeConfiguration extends Configuration {
         /** output stages */
         final TableCSVSink dataflowTableSink = new TableCSVSink(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.DATAFLOW), true);
-        final TableCSVSink fileContentTableSink = new TableCSVSink(
-                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.FILE_CONENT), true);
         final TableCSVSink commonBlocksTableSink = new TableCSVSink(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.COMMON_BLOCKS), true);
 
@@ -87,27 +85,11 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(computeDirectionalityOfParametersStage.getOutputPort(), dataFlowAnalysisStage.getInputPort());
         this.connectPorts(dataFlowAnalysisStage.getCommonBlockOutputPort(), aggregateCommonBlocksStage.getInputPort());
         this.connectPorts(aggregateCommonBlocksStage.getOutputPort(), commonBlocksTableStage.getInputPort());
-        //
-        // this.connectPorts(dataFlowAnalysisStage.getOutputPort(), outputStage.getInputPort());
-        //
-        // // projectDistributor.getInputPort());
-        //
-        // // this.connectPorts(projectDistributor.getNewOutputPort(),
-        // // dataflowTableStage.getInputPort());
-        // // this.connectPorts(dataflowTableStage.getOutputPort(),
-        // dataflowTableSink.getInputPort());
-        // this.connectPorts(outputStage.getDataflowPort(), dataflowTableSink.getInputPort());
-        // this.connectPorts(outputStage.getFileContentPort(), fileContentTableSink.getInputPort());
-        // this.connectPorts(outputStage.getCommonBlocksPort(),
-        // commonBlocksTableSink.getInputPort());
-        // //
-        // // this.connectPorts(projectDistributor.getNewOutputPort(),
-        // // fileContentTableStage.getInputPort());
-        // // this.connectPorts(fileContentTableStage.getOutputPort(),
-        // // fileContentTableSink.getInputPort());
-        // //
-        // // this.connectPorts(projectDistributor.getNewOutputPort(),
-        // // commonBlockTableStage.getInputPort());
+
+        this.connectPorts(dataFlowAnalysisStage.getDataflowOutputPort(), aggregateDataflowStage.getInputPort());
+        this.connectPorts(aggregateDataflowStage.getOutputPort(), dataflowTableStage.getInputPort());
+
         this.connectPorts(commonBlocksTableStage.getOutputPort(), commonBlocksTableSink.getInputPort());
+        this.connectPorts(dataflowTableStage.getOutputPort(), dataflowTableSink.getInputPort());
     }
 }

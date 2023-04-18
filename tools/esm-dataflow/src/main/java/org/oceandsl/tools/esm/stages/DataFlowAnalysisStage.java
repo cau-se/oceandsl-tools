@@ -21,10 +21,9 @@ import java.util.Optional;
 
 import org.w3c.dom.Node;
 
+import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
-import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.tools.esm.util.Output;
 import org.oceandsl.tools.fxca.model.CommonBlock;
 import org.oceandsl.tools.fxca.model.EDirection;
 import org.oceandsl.tools.fxca.model.FortranModule;
@@ -32,16 +31,16 @@ import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.model.FortranVariable;
+import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
+import org.oceandsl.tools.fxca.stages.XPathParser;
 import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
 import org.oceandsl.tools.fxca.tools.Pair;
 import org.oceandsl.tools.fxca.tools.Predicates;
 
-public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject, Output> {
+public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject> {
 
     private final OutputPort<CommonBlockEntry> commonBlockOutputPort = this.createOutputPort(CommonBlockEntry.class);
     private final OutputPort<IDataflowEntry> dataflowOutputPort = this.createOutputPort(IDataflowEntry.class);
-
-    private final Output out = new Output();
 
     private final String defaultModuleName;
 
@@ -53,6 +52,10 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
         return this.commonBlockOutputPort;
     }
 
+    public OutputPort<IDataflowEntry> getDataflowOutputPort() {
+        return this.dataflowOutputPort;
+    }
+
     @Override
     protected void execute(final FortranProject project) throws Exception {
         project.getModules().values().stream().filter(module -> !module.getModuleName().equals(this.defaultModuleName))
@@ -62,8 +65,6 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
                     module.getOperations().values()
                             .forEach(operation -> this.analyzeOperation(project, module, operation));
                 });
-
-        this.outputPort.send(this.out);
     }
 
     private void analyzeCommonBlock(final FortranModule module, final CommonBlock commonBlock) {
@@ -71,6 +72,7 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
         entry.getModules().add(module);
         commonBlock.getVariables().values().forEach(variable -> entry.getVariables().add(variable.getName()));
         this.commonBlockOutputPort.send(entry);
+        System.err.println("Compute dataflow link");
     }
 
     private void analyzeOperation(final FortranProject project, final FortranModule module,
@@ -80,22 +82,72 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
         NodeProcessingUtils
                 .findAllSiblings(operation.getNode(), o -> true,
                         Predicates.isEndSubroutineStatement.or(Predicates.isEndFunctionStatement))
-                .forEach(node -> this.analyzeNode(node, project, module, operation));
+                .forEach(node -> this.analyzeStatement(project, module, operation, node));
     }
 
-    private void analyzeNode(final Node statement, final FortranProject project, final FortranModule module,
-            final FortranOperation operation) {
+    private void analyzeStatement(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Node statement) {
         if (Predicates.isCallStatement.test(statement)) {
             this.analyzeCallStatement(project, module, operation, statement);
         } else if (Predicates.isAssignmentStatement.test(statement)) {
             this.analyzeAssignmentStatement(project, module, operation, statement);
+        } else if (Predicates.isIfStatement.test(statement)) {
+            this.analyzeIfStatement(project, module, operation, statement);
         } else if (Predicates.isIfThenStatement.test(statement)) {
             this.analyzeIfThenStatement(project, module, operation, statement);
+        } else if (Predicates.isElseIfStatement.test(statement)) {
+            this.analyzeElseIfStatement(project, module, operation, statement);
         } else if (Predicates.isSelectCaseStatement.test(statement)) {
             this.analyzeSelectCaseStatement(project, module, operation, statement);
-        } else if (Predicates.isDoStatement.test(statement)) {
+        } else if (Predicates.isDataStatement.test(statement)) {
+            this.analyzeDataStatement(project, module, operation, statement);
+        } else if (Predicates.isDoStatement.or(Predicates.isDoLabelStatement).test(statement)) {
             this.analyzeDoStatement(project, module, operation, statement);
+        } else if (Predicates.isSaveStatement.test(statement)) {
+            this.analyzeSaveArgument(project, module, operation, statement);
+        } else if (Predicates.isWhereStatement.test(statement)) {
+            this.analyzeWhereStatement(project, module, operation, statement);
+        } else if (Predicates.isAllocateStatement.or(Predicates.isC).or(Predicates.isCloseStatement)
+                .or(Predicates.isCommonStatement).or(Predicates.isContinueStatement)
+                .or(Predicates.isDeallocateStatement).or(Predicates.isDIMStatement).or(Predicates.isElseStatement)
+                .or(Predicates.isEndFileStatement).or(Predicates.isEndStatement).or(Predicates.isExitStatement)
+                .or(Predicates.isFile).or(Predicates.isFormatStatement).or(Predicates.isGotoStatement)
+                .or(Predicates.isImplicitNoneStmt).or(Predicates.isInclude).or(Predicates.isInquireStatement)
+                .or(Predicates.isLabel).or(Predicates.isM).or(Predicates.isNamelistStatement)
+                .or(Predicates.isOpenStatement).or(Predicates.isOperationStatement).or(Predicates.isParameterStatement)
+                .or(Predicates.isPrintStatement).or(Predicates.isReadStatement).or(Predicates.isReturnStatement)
+                .or(Predicates.isRewindStatement).or(Predicates.isStopStatement).or(Predicates.isTDeclStmt)
+                .or(Predicates.isWriteStatement).test(statement)) {
+            // ignore
+        } else if (statement.getNodeType() == Node.TEXT_NODE) {
+            // ignore
+        } else {
+            System.err.println("Unknown statement " + statement);
         }
+    }
+
+    private void analyzeSaveArgument(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Node statement) {
+        // save variables after termination of a subroutine
+        // https://docs.oracle.com/cd/E19957-01/805-4939/6j4m0vnb7/index.html
+    }
+
+    private void analyzeDataStatement(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Node statement) {
+        final Node dataStementSet = NodeProcessingUtils.findChildFirst(statement, Predicates.isDataStatementSet);
+        final Node objectLT = NodeProcessingUtils.findChildFirst(dataStementSet, Predicates.isDataStatementObjectLT);
+        final Node object = NodeProcessingUtils.findChildFirst(objectLT, Predicates.isDataStatementObject);
+        final String dataName = NodeProcessingUtils.getName(object);
+
+        // initialize variable or parameter
+    }
+
+    private void analyzeWhereStatement(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Node statement) {
+        final Node maskExpression = NodeProcessingUtils.findChildFirst(statement, Predicates.isMaskExpression);
+        final Node expression = NodeProcessingUtils.findChildFirst(maskExpression, Predicates.isExpression);
+        final IDataflowEndpoint endpoint = this.analyzeExpression(project, module, operation, expression);
+        this.createFlowFromEndpointToOperation(endpoint, module, operation);
     }
 
     /**
@@ -133,12 +185,45 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
 
     private void analyzeAssignmentStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
-        System.err.println("ASSIGNMENT");
+        final Node expessionNode = XPathParser.getAssignmentExpression(statement);
+        if (Predicates.isAssignmentE2.test(expessionNode)) {
+            final Node content = NodeProcessingUtils.findChildFirst(expessionNode, Predicates.isExpression);
+            if (content != null) {
+                final IDataflowEndpoint endpoint = this.analyzeExpression(project, module, operation, content);
+                this.createFlowFromEndpointToOperation(endpoint, module, operation);
+            }
+        } else {
+            this.logger.warn("Unknown expression type {}", statement.toString());
+        }
     }
 
     private void analyzeDoStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
-        System.err.println("DO");
+        final Node doV = NodeProcessingUtils.findChildFirst(statement, Predicates.isDoV);
+        if (doV == null) { // do while
+            final Node testExpression = NodeProcessingUtils.findChildFirst(statement, Predicates.isTestExpression);
+            final Node expression = NodeProcessingUtils.findChildFirst(testExpression, Predicates.isExpression);
+            this.analyzeExpression(project, module, operation, expression);
+        } else { // do statement or do label statement
+            final String elementName = NodeProcessingUtils.getName(doV);
+            final IDataflowEndpoint writeEndpoint = this.findEndpoint(module, operation, elementName);
+
+            this.analyzeLimit(project, module, operation,
+                    NodeProcessingUtils.findChildFirst(statement, Predicates.isLowerBound), writeEndpoint);
+            this.analyzeLimit(project, module, operation,
+                    NodeProcessingUtils.findChildFirst(statement, Predicates.isUpperBound), writeEndpoint);
+        }
+    }
+
+    private void analyzeLimit(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Node boundary, final IDataflowEndpoint writeEndpoint) {
+        if (boundary != null) {
+            final Node expression = NodeProcessingUtils.findChildFirst(boundary, Predicates.isExpression);
+            if (expression != null) {
+                final IDataflowEndpoint readEndpoint = this.analyzeExpression(project, module, operation, expression);
+                this.createFlowFromEndpointToOperation(writeEndpoint, readEndpoint);
+            }
+        }
     }
 
     private void analyzeSelectCaseStatement(final FortranProject project, final FortranModule module,
@@ -146,9 +231,33 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
         System.err.println("CASE");
     }
 
+    private void analyzeIfStatement(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Node statement) {
+        final Node condition = NodeProcessingUtils.findChildFirst(statement, Predicates.isConditionExpression);
+        final Node expression = NodeProcessingUtils.findChildFirst(condition, Predicates.isExpression);
+        this.createFlowFromEndpointToOperation(this.analyzeExpression(project, module, operation, expression), module,
+                operation);
+
+        final Node actionStatement = NodeProcessingUtils.findChildFirst(statement, Predicates.isActionStatement);
+
+        NodeProcessingUtils.findAllSiblings(actionStatement.getFirstChild(), Predicates.isStatement, o -> false)
+                .forEach(containedStatement -> this.analyzeStatement(project, module, operation, containedStatement));
+    }
+
     private void analyzeIfThenStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
-        System.err.println("IF");
+        final Node condition = NodeProcessingUtils.findChildFirst(statement, Predicates.isConditionExpression);
+        final Node expression = NodeProcessingUtils.findChildFirst(condition, Predicates.isExpression);
+        this.createFlowFromEndpointToOperation(this.analyzeExpression(project, module, operation, expression), module,
+                operation);
+    }
+
+    private void analyzeElseIfStatement(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final Node statement) {
+        final Node condition = NodeProcessingUtils.findChildFirst(statement, Predicates.isConditionExpression);
+        final Node expression = NodeProcessingUtils.findChildFirst(condition, Predicates.isExpression);
+        this.createFlowFromEndpointToOperation(this.analyzeExpression(project, module, operation, expression), module,
+                operation);
     }
 
     /**
@@ -177,25 +286,69 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
                     calleeOperation.getName());
         }
         final IDataflowEndpoint endpoint = this.analyzeExpression(project, contextModule, contextOperation,
-                calleeModule, calleeOperation, argumentNode);
-        // create dataflow from the expression to the callee
-        this.crateFlowFromEndpointToOperation(endpoint, calleeModule, calleeOperation);
+                argumentNode);
+        this.createFlowFromEndpointToOperation(endpoint, calleeModule, calleeOperation);
     }
 
-    private void crateFlowFromEndpointToOperation(final IDataflowEndpoint endpoint, final FortranModule calleeModule,
+    private void createFlowFromEndpointToOperation(final IDataflowEndpoint endpoint, final FortranModule calleeModule,
             final FortranOperation calleeOperation) {
         if (endpoint != null) {
             if (endpoint instanceof DataflowEndpoint) {
-                System.err.printf("CREATE FLOW from %s -> %s::%s\n", endpoint.toString(), calleeModule.getFileName(),
-                        calleeOperation.getName());
+                final DataflowEndpoint simpleEndpoint = (DataflowEndpoint) endpoint;
+                this.dataflowOutputPort.send(new CallerCalleeDataflow(simpleEndpoint.getModule().getFileName(),
+                        simpleEndpoint.getModule().getModuleName(), simpleEndpoint.getOperation().getName(),
+                        calleeModule.getFileName(), calleeModule.getModuleName(), calleeOperation.getName(),
+                        simpleEndpoint.getDirection()));
+                // System.err.printf("CREATE FLOW from %s -> %s::%s\n", endpoint.toString(),
+                // calleeModule.getFileName(),
+                // calleeOperation.getName());
             } else if (endpoint instanceof MultipleDataflowEndpoint) {
                 ((MultipleDataflowEndpoint) endpoint).getEndpoints().forEach(e -> {
-                    System.err.printf("CREATE FLOW from %s -> %s::%s\n", e.toString(), calleeModule.getFileName(),
-                            calleeOperation.getName());
+                    this.dataflowOutputPort.send(new CallerCalleeDataflow(e.getModule().getFileName(),
+                            e.getModule().getModuleName(), e.getOperation().getName(), calleeModule.getFileName(),
+                            calleeModule.getModuleName(), calleeOperation.getName(), e.getDirection()));
+                    // System.err.printf("CREATE FLOW from %s -> %s::%s\n", e.toString(),
+                    // calleeModule.getFileName(),
+                    // calleeOperation.getName());
                 });
             }
+        }
+    }
+
+    private IDataflowEndpoint findEndpoint(final FortranModule module, final FortranOperation operation,
+            final String elementName) {
+        final FortranParameter parameterOperation = operation.getParameters().get(elementName);
+        if (parameterOperation != null) {
+            return parameterOperation;
+        }
+
+        final FortranVariable variableOperation = operation.getVariables().get(elementName);
+        if (variableOperation != null) {
+            return variableOperation;
+        }
+
+        final FortranVariable variableModule = module.getVariables().get(elementName);
+        if (variableModule != null) {
+            return variableModule;
+        }
+
+        return null;
+    }
+
+    private void createFlowFromEndpointToOperation(final IDataflowEndpoint writeEndpoint,
+            final IDataflowEndpoint readEndpoint) {
+        if (readEndpoint instanceof DataflowEndpoint) {
+            final DataflowEndpoint dataflowEndpoint = (DataflowEndpoint) readEndpoint;
+            this.createFlowFromEndpointToOperation(writeEndpoint, dataflowEndpoint.getModule(),
+                    dataflowEndpoint.getOperation());
+        } else if (readEndpoint instanceof MultipleDataflowEndpoint) {
+            ((MultipleDataflowEndpoint) readEndpoint).getEndpoints().forEach(e -> {
+                this.createFlowFromEndpointToOperation(writeEndpoint, e);
+            });
+        } else if (readEndpoint == null) {
+            // skip
         } else {
-            System.err.println("No endpoint");
+            this.logger.error("Internal error: Illegal read endpoint {}", readEndpoint.toString());
         }
     }
 
@@ -213,26 +366,22 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
      *            data source node
      */
     private IDataflowEndpoint analyzeExpression(final FortranProject project, final FortranModule contextModule,
-            final FortranOperation contextOperation, final FortranModule calleeModule,
-            final FortranOperation calleeOperation, final Node expressionNode) {
+            final FortranOperation contextOperation, final Node expressionNode) {
         if (Predicates.isNamedExpressionAccess.test(expressionNode)) {
-            return this.analyzeNamedExpressionAccess(project, contextModule, contextOperation, calleeModule,
-                    calleeOperation, expressionNode);
+            return this.analyzeNamedExpressionAccess(project, contextModule, contextOperation, expressionNode);
         } else if (Predicates.isNamedExpression.test(expressionNode)) {
-            return this.analyzeNamedExpressionAccess(project, contextModule, contextOperation, calleeModule,
-                    calleeOperation, expressionNode);
+            return this.analyzeNamedExpressionAccess(project, contextModule, contextOperation, expressionNode);
         } else if (Predicates.isOperandExpression.test(expressionNode)) {
-            return this.analyzeOperationExpression(project, contextModule, contextOperation, calleeModule,
-                    calleeOperation, expressionNode);
-        } else if (Predicates.isParensE.test(expressionNode)) {
-            return this.analyzeExpression(project, contextModule, contextOperation, calleeModule, calleeOperation,
+            return this.analyzeOperationExpression(project, contextModule, contextOperation, expressionNode);
+        } else if (Predicates.isParensExpression.test(expressionNode)) {
+            return this.analyzeExpression(project, contextModule, contextOperation,
                     expressionNode.getFirstChild().getNextSibling());
-        } else if (Predicates.isLiteralE.or(Predicates.isStringE).test(expressionNode)) {
+        } else if (Predicates.isLiteralE.or(Predicates.isStringE).or(Predicates.isM).test(expressionNode)) {
             // skip
             return null;
         } else {
             System.err.println("ILLEGAL " + expressionNode);
-            return new DataflowEndpoint(calleeModule, calleeOperation, EDirection.NONE);
+            return new DataflowEndpoint(contextModule, contextOperation, null, EDirection.NONE);
         }
     }
 
@@ -242,36 +391,33 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
      * @param project
      * @param contextModule
      * @param contextOperation
-     * @param calleeModule
-     * @param calleeOperation
      * @param expressionNode
      * @return
      */
     private IDataflowEndpoint analyzeOperationExpression(final FortranProject project,
-            final FortranModule contextModule, final FortranOperation contextOperation,
-            final FortranModule calleeModule, final FortranOperation calleeOperation, final Node expressionNode) {
+            final FortranModule contextModule, final FortranOperation contextOperation, final Node expressionNode) {
         final List<Node> operators = NodeProcessingUtils.findAllSiblings(expressionNode.getFirstChild(),
                 Predicates.isOperand.negate(), o -> false);
 
         final MultipleDataflowEndpoint multipleEndpoint = new MultipleDataflowEndpoint();
-        operators.stream().map(operator -> this.analyzeExpression(project, contextModule, contextOperation,
-                calleeModule, calleeOperation, operator)).forEach(endpoint -> multipleEndpoint.add(endpoint));
+        operators.stream().filter(Predicates.isExpression)
+                .map(operator -> this.analyzeExpression(project, contextModule, contextOperation, operator))
+                .forEach(endpoint -> multipleEndpoint.add(endpoint));
 
         return multipleEndpoint;
     }
 
     private IDataflowEndpoint analyzeNamedExpressionAccess(final FortranProject project,
-            final FortranModule contextModule, final FortranOperation contextOperation,
-            final FortranModule calleeModule, final FortranOperation calleeOperation, final Node namedElementNode) {
+            final FortranModule contextModule, final FortranOperation contextOperation, final Node namedElementNode) {
         final String elementName = NodeProcessingUtils.getName(namedElementNode);
         // check whether this is a parameter or variable
         final FortranParameter parameter = contextOperation.getParameters().get(elementName);
         if (parameter != null) {
-            return this.createFlowEndpoint(contextModule, contextOperation, parameter.getDirection());
+            return this.createFlowEndpoint(contextModule, contextOperation, parameter, parameter.getDirection());
         } else {
             final FortranVariable variable = contextOperation.getVariables().get(elementName);
             if (variable != null) {
-                return this.createFlowEndpoint(contextModule, contextOperation, variable.getDirection());
+                return this.createFlowEndpoint(contextModule, contextOperation, variable, variable.getDirection());
             } else {
                 return this.analyzeFunctionCall(project, contextModule, contextOperation, elementName,
                         namedElementNode);
@@ -305,17 +451,17 @@ public class DataFlowAnalysisStage extends AbstractTransformation<FortranProject
                         contextModule.getFileName(), contextOperation.getName(), callee.getFirst().getFileName(),
                         callee.getSecond().getName());
             }
+            return new DataflowEndpoint(callee.first, callee.second, callee.second, EDirection.READ);
         } else {
             this.logger.error("In expression context {}::{} unknown function {} invoked", contextModule.getFileName(),
                     contextOperation.getName(), functionName);
+            return null;
         }
-
-        return new DataflowEndpoint(callee.first, callee.second, EDirection.READ);
     }
 
     private IDataflowEndpoint createFlowEndpoint(final FortranModule module, final FortranOperation operation,
-            final EDirection direction) {
-        return new DataflowEndpoint(module, operation, direction);
+            final IDataflowEndpoint endpoint, final EDirection direction) {
+        return new DataflowEndpoint(module, operation, endpoint, direction);
     }
 
     private Optional<FortranParameter> findCalleeParameter(final FortranOperation calleeOperation,

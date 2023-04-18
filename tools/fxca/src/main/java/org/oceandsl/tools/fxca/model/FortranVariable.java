@@ -27,7 +27,7 @@ import lombok.Setter;
  * @since 1.3.0
  *
  */
-public class FortranVariable implements IContainable, IDataflowSource {
+public class FortranVariable implements IContainable, IDataflowEndpoint {
 
     @Getter
     String name;
@@ -45,7 +45,7 @@ public class FortranVariable implements IContainable, IDataflowSource {
     Object parent;
 
     @Getter
-    Set<IDataflowSource> sources = new HashSet<>();
+    Set<IDataflowEndpoint> sources = new HashSet<>();
 
     public FortranVariable(final String name) {
         this.direction = EDirection.NONE;

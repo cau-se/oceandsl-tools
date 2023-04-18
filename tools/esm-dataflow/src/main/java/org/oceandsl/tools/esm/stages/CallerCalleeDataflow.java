@@ -45,7 +45,7 @@ public class CallerCalleeDataflow implements IDataflowEntry {
     private final String targetOperatioName;
 
     @Getter
-    private final EDirection direction;
+    private EDirection direction;
 
     public CallerCalleeDataflow(final String sourceFileName, final String sourceModuleName,
             final String sourceOperationName, final String targetFileName, final String targetModuleName,
@@ -57,6 +57,36 @@ public class CallerCalleeDataflow implements IDataflowEntry {
         this.targetModuleName = targetModuleName;
         this.targetOperatioName = targetOperatioName;
         this.direction = direction;
+    }
+
+    public void merge(final EDirection newDirection) {
+        switch (this.direction) {
+        case NONE:
+            this.direction = newDirection;
+            break;
+        case BOTH:
+            break;
+        case READ:
+            switch (newDirection) {
+            case BOTH:
+            case WRITE:
+                this.direction = EDirection.BOTH;
+                break;
+            case READ:
+            case NONE:
+                break;
+            }
+        case WRITE:
+            switch (newDirection) {
+            case BOTH:
+            case READ:
+                this.direction = EDirection.BOTH;
+                break;
+            case WRITE:
+            case NONE:
+                break;
+            }
+        }
     }
 
 }

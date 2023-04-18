@@ -110,7 +110,7 @@ public class Predicates {
     public static Predicate<Node> isLiteralE = NodeProcessingUtils.hasName("literal-E");
     public static Predicate<Node> isStringE = NodeProcessingUtils.hasName("string-E");
     public static Predicate<Node> isOperand = NodeProcessingUtils.hasName("op");
-    public static Predicate<Node> isParensE = NodeProcessingUtils.hasName("parens-E");
+    public static Predicate<Node> isParensExpression = NodeProcessingUtils.hasName("parens-E");
     public static Predicate<Node> isM = NodeProcessingUtils.hasName("m");
     public static Predicate<Node> isCnt = NodeProcessingUtils.hasName("cnt");
     public static Predicate<Node> isText = node -> !node.getTextContent().isEmpty();
@@ -190,4 +190,12 @@ public class Predicates {
     public static Predicate<Node> isNamelistGroupObj = NodeProcessingUtils.hasName("namelist-group-obj");
     public static Predicate<Node> isNamelistGroupObjN = NodeProcessingUtils.hasName("namelist-group-obj-N");
     public static Predicate<Node> isTestExpression = NodeProcessingUtils.hasName("test-E");
+    public static Predicate<Node> isExpression = Predicates.isOperandExpression.or(Predicates.isNamedExpression)
+            .or(Predicates.isNamedExpressionAccess).or(Predicates.isParensExpression);
+    public static Predicate<Node> isConditionExpression = NodeProcessingUtils.hasName("condition-E");
+    public static Predicate<Node> isStatement = Predicates.isAssignmentStatement.or(Predicates.isCallStatement)
+            .or(Predicates.isIfStatement).or(Predicates.isIfThenStatement).or(Predicates.isDataStatement)
+            .or(Predicates.isDoStatement).or(Predicates.isDoLabelStatement).or(Predicates.isReadStatement)
+            .or(Predicates.isWriteStatement).or(Predicates.isWhereStatement).or(Predicates.isCloseStatement)
+            .or(Predicates.isOpenStatement).or(Predicates.isSaveStatement);
 }

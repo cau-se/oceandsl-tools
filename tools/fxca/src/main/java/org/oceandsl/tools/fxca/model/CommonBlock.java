@@ -26,7 +26,7 @@ import lombok.Setter;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CommonBlock implements IDataflowSource, IContainable {
+public class CommonBlock implements IDataflowEndpoint, IContainable {
 
     @Getter
     private final String name;

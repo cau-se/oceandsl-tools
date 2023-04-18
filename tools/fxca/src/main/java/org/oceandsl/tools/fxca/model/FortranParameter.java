@@ -22,7 +22,7 @@ import lombok.Setter;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class FortranParameter implements IContainable, IDataflowSource {
+public class FortranParameter implements IContainable, IDataflowEndpoint {
 
     @Getter
     private final String name;
