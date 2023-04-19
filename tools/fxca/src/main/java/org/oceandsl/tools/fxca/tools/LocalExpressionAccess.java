@@ -48,15 +48,15 @@ public class LocalExpressionAccess {
 
     static LocalAccessParameters namesInCommonBlocks = new LocalAccessParameters(Predicates.isCommonStatement,
             Predicates.isCommonBlockObjectName, Predicates.isSmallN,
-            smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
+            smallNNode -> NodeUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static LocalAccessParameters namesInOperationParameterList = new LocalAccessParameters(
             Predicates.isOperationStatement, Predicates.isArgumentName, Predicates.isSmallN,
-            smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
+            smallNNode -> NodeUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static LocalAccessParameters namesInLocalVariableList = new LocalAccessParameters(Predicates.isTDeclStmt,
             Predicates.isEnDecl, Predicates.isSmallN,
-            smallNNode -> NodeProcessingUtils.getSuccessorNode(smallNNode, "0").getTextContent());
+            smallNNode -> NodeUtils.getSuccessorNode(smallNNode, "0").getTextContent());
 
     static Set<String> localNamesDefinedInApplyingBlocks(final Node node, final LocalAccessParameters parameters,
             final boolean verbose) {
@@ -66,7 +66,7 @@ public class LocalExpressionAccess {
         Node current = node;
 
         while (current != null) {
-            final List<Node> applyingBlocksOnThisLevel = NodeProcessingUtils.findAll(current,
+            final List<Node> applyingBlocksOnThisLevel = NodeUtils.findAll(current,
                     nnode -> nnode.getPreviousSibling(), parameters.blockNodeTypeCheckPredicate, true,
                     Predicates.paranthesisTypes, -1);
             applyingBlocks.addAll(applyingBlocksOnThisLevel);
@@ -94,9 +94,9 @@ public class LocalExpressionAccess {
         }
 
         final HashSet<String> result = new HashSet<>();
-        for (final Node element : NodeProcessingUtils.allDescendents(blockNode, parameters.outerDelimiterPredicate,
+        for (final Node element : NodeUtils.allDescendents(blockNode, parameters.outerDelimiterPredicate,
                 true)) {
-            for (final Node smallN : NodeProcessingUtils.allDescendents(element, parameters.innerDelimiterPredicate,
+            for (final Node smallN : NodeUtils.allDescendents(element, parameters.innerDelimiterPredicate,
                     true)) {
                 result.add(parameters.extractName.apply(smallN));
             }
@@ -111,7 +111,7 @@ public class LocalExpressionAccess {
             return false;
         }
 
-        final String nameOfCalledFunction = NodeProcessingUtils.nameOfCalledFunction(node);
+        final String nameOfCalledFunction = NodeUtils.nameOfCalledFunction(node);
 
         return LocalExpressionAccess.localNamesDefinedInApplyingBlocks(node, parameters, false)
                 .contains(nameOfCalledFunction);
@@ -165,7 +165,7 @@ public class LocalExpressionAccess {
             throw new IllegalStateException();
         }
 
-        return NodeProcessingUtils.nameOfCalledFunction(referenceNode) + suffix;
+        return NodeUtils.nameOfCalledFunction(referenceNode) + suffix;
     }
 
     public static class LocalAccessParameters {

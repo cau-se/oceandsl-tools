@@ -1,5 +1,8 @@
 package org.oceandsl.tools.esm.stages;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.oceandsl.tools.fxca.model.EDirection;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
@@ -8,6 +11,7 @@ import org.oceandsl.tools.fxca.model.FortranVariable;
 import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public class DataflowEndpoint implements IDataflowEndpoint {
 
@@ -18,7 +22,11 @@ public class DataflowEndpoint implements IDataflowEndpoint {
     private final FortranOperation operation;
 
     @Getter
+    @Setter
     private EDirection direction;
+
+    @Getter
+    private final List<IDataflowEndpoint> sources = new ArrayList<>();
 
     @Getter
     private final IDataflowEndpoint endpoint;
@@ -51,33 +59,4 @@ public class DataflowEndpoint implements IDataflowEndpoint {
         }
     }
 
-    public void merge(final EDirection newDirection) {
-        switch (this.direction) {
-        case NONE:
-            this.direction = newDirection;
-            break;
-        case BOTH:
-            break;
-        case READ:
-            switch (newDirection) {
-            case BOTH:
-            case WRITE:
-                this.direction = EDirection.BOTH;
-                break;
-            case READ:
-            case NONE:
-                break;
-            }
-        case WRITE:
-            switch (newDirection) {
-            case BOTH:
-            case READ:
-                this.direction = EDirection.BOTH;
-                break;
-            case WRITE:
-            case NONE:
-                break;
-            }
-        }
-    }
 }

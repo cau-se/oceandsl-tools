@@ -28,8 +28,7 @@ import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.model.FortranVariable;
-import org.oceandsl.tools.fxca.stages.XPathParser;
-import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
+import org.oceandsl.tools.fxca.tools.NodeUtils;
 import org.oceandsl.tools.fxca.tools.Predicates;
 
 /**
@@ -47,7 +46,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
     }
 
     private void computeParameterDirectionality(final FortranModule module, final FortranOperation operation) {
-        final List<Node> statements = NodeProcessingUtils.findAllSiblings(operation.getNode(), o -> true,
+        final List<Node> statements = NodeUtils.findAllSiblings(operation.getNode(), o -> true,
                 Predicates.isEndSubroutineStatement.or(Predicates.isEndProgramStatement)
                         .or(Predicates.isEndFunctionStatement));
         statements.forEach(statement -> {
@@ -110,26 +109,23 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
 
     private void checkDIMStatement(final FortranModule module, final FortranOperation operation,
             final Node dimStatement) {
-        final List<Node> enDecls = NodeProcessingUtils.findAllSiblings(dimStatement.getFirstChild(),
-                Predicates.isENDeclLT, o -> false);
+        final List<Node> enDecls = NodeUtils.findAllSiblings(dimStatement.getFirstChild(), Predicates.isENDeclLT,
+                o -> false);
         enDecls.forEach(enDecl -> this.checkEnDecl(module, operation, enDecl));
     }
 
     private void checkEnDecl(final FortranModule module, final FortranOperation operation, final Node enDecl) {
-        final Node enN = NodeProcessingUtils.findChildFirst(enDecl, Predicates.isEnN);
+        final Node enN = NodeUtils.findChildFirst(enDecl, Predicates.isEnN);
         if (enN != null) {
-            final Node bigN = NodeProcessingUtils.findChildFirst(enN, Predicates.isBigN);
-            final Node smallN = NodeProcessingUtils.findChildFirst(bigN, Predicates.isSmallN);
+            final Node bigN = NodeUtils.findChildFirst(enN, Predicates.isBigN);
+            final Node smallN = NodeUtils.findChildFirst(bigN, Predicates.isSmallN);
             this.checkVariable(operation, smallN.getTextContent(), EDirection.READ);
 
-            NodeProcessingUtils.findAllSiblings(enN, Predicates.isArraySpecification, o -> false)
-                    .forEach(arraySpecification -> {
-                        final Node shapeSpecLT = NodeProcessingUtils.findChildFirst(arraySpecification,
-                                Predicates.isShapeSpecLT);
-                        NodeProcessingUtils
-                                .findAllSiblings(shapeSpecLT.getFirstChild(), Predicates.isShapeSpec, o -> false)
-                                .forEach(shapeSpec -> this.checkLimits(module, operation, null, shapeSpec));
-                    });
+            NodeUtils.findAllSiblings(enN, Predicates.isArraySpecification, o -> false).forEach(arraySpecification -> {
+                final Node shapeSpecLT = NodeUtils.findChildFirst(arraySpecification, Predicates.isShapeSpecLT);
+                NodeUtils.findAllSiblings(shapeSpecLT.getFirstChild(), Predicates.isShapeSpec, o -> false)
+                        .forEach(shapeSpec -> this.checkLimits(module, operation, null, shapeSpec));
+            });
         }
     }
 
@@ -138,14 +134,13 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
     }
 
     private void checkNamelistStatement(final FortranOperation operation, final Node namelistStatement) {
-        final Node namelistGroupObjLT = NodeProcessingUtils.findChildFirst(namelistStatement,
-                Predicates.isNamelistGroupObjLT);
-        NodeProcessingUtils.findAllSiblings(namelistGroupObjLT, Predicates.isNamelistGroupObj, o -> false)
+        final Node namelistGroupObjLT = NodeUtils.findChildFirst(namelistStatement, Predicates.isNamelistGroupObjLT);
+        NodeUtils.findAllSiblings(namelistGroupObjLT, Predicates.isNamelistGroupObj, o -> false)
                 .forEach(namelistGroupObj -> this.checkNamelistGroupObj(operation, namelistGroupObj));
     }
 
     private void checkNamelistGroupObj(final FortranOperation operation, final Node namelistGroupObj) {
-        final String elementName = NodeProcessingUtils.getName(namelistGroupObj);
+        final String elementName = NodeUtils.getName(namelistGroupObj);
         final FortranParameter parameter = operation.getParameters().get(elementName);
         if (parameter != null) {
             parameter.addDirection(EDirection.WRITE);
@@ -165,7 +160,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
     }
 
     private void checkAssignee(final FortranOperation operation, final Node assignment) {
-        final String name = NodeProcessingUtils.getName(XPathParser.getAssigmentVariable(assignment));
+        final String name = NodeUtils.getName(NodeUtils.getAssigmentVariable(assignment));
         final FortranParameter parameter = operation.getParameters().get(name);
         if (parameter != null) {
             parameter.addDirection(EDirection.WRITE);
@@ -177,7 +172,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
     }
 
     private void checkAssignmentExpression(final FortranOperation operation, final Node assignment) {
-        final Node node = XPathParser.getAssignmentExpression(assignment);
+        final Node node = NodeUtils.getAssignmentExpression(assignment);
         if (Predicates.isNamedExpression.test(node)) {
             // System.err.println(" named expression " + NodeProcessingUtils.getName(node));
         } else if (Predicates.isAssignmentE2.test(node)) {
@@ -189,12 +184,12 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
 
     private void checkDoStatement(final FortranModule module, final FortranOperation operation,
             final Node doStatement) {
-        final Node doV = NodeProcessingUtils.findChildFirst(doStatement, Predicates.isDoV);
+        final Node doV = NodeUtils.findChildFirst(doStatement, Predicates.isDoV);
         if (doV == null) { // do while
-            final Node testE = NodeProcessingUtils.findChildFirst(doStatement, Predicates.isTestExpression);
+            final Node testE = NodeUtils.findChildFirst(doStatement, Predicates.isTestExpression);
             this.checkExpression(operation, testE, EDirection.READ);
         } else { // do statement or do label statement
-            final String elementName = NodeProcessingUtils.getName(doV);
+            final String elementName = NodeUtils.getName(doV);
             FortranVariable loopVariable = this.checkVariable(operation, elementName, EDirection.WRITE);
             if (!this.checkParameter(operation, elementName) && (loopVariable == null)) {
                 if (!operation.isImplicit()) {
@@ -212,8 +207,8 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
 
     private void checkLimits(final FortranModule module, final FortranOperation operation,
             final FortranVariable variable, final Node range) {
-        final Node lowerBound = NodeProcessingUtils.findChildFirst(range, Predicates.isLowerBound);
-        final Node upperBound = NodeProcessingUtils.findChildFirst(range, Predicates.isUpperBound);
+        final Node lowerBound = NodeUtils.findChildFirst(range, Predicates.isLowerBound);
+        final Node upperBound = NodeUtils.findChildFirst(range, Predicates.isUpperBound);
         if (lowerBound != null) {
             this.checkExpression(operation, lowerBound, EDirection.READ);
             if (variable != null) {
@@ -230,8 +225,8 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
 
     private void linkVariables(final FortranModule module, final FortranOperation operation,
             final FortranVariable variable, final Node bound) {
-        NodeProcessingUtils.allDescendents(bound, Predicates.isNamedExpression, true).stream().forEach(element -> {
-            final String elementName = NodeProcessingUtils.getName(element);
+        NodeUtils.allDescendents(bound, Predicates.isNamedExpression, true).stream().forEach(element -> {
+            final String elementName = NodeUtils.getName(element);
             final FortranVariable sourceVariable = operation.getVariables().get(elementName);
             if (sourceVariable != null) {
                 variable.getSources().add(sourceVariable);
@@ -248,60 +243,59 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
     }
 
     private void checkReadStatement(final FortranOperation operation, final Node readStatement) {
-        final Node controls = NodeProcessingUtils.findChildFirst(readStatement, Predicates.isIOControlSpec);
+        final Node controls = NodeUtils.findChildFirst(readStatement, Predicates.isIOControlSpec);
         if (controls != null) {
-            NodeProcessingUtils.findAllSiblings(controls.getFirstChild(), Predicates.isIOControl, o -> false)
+            NodeUtils.findAllSiblings(controls.getFirstChild(), Predicates.isIOControl, o -> false)
                     .forEach(value -> this.checkExpression(operation, value, EDirection.READ));
         }
 
-        final Node outputs = NodeProcessingUtils.findChildFirst(readStatement, Predicates.isInputItemLT);
+        final Node outputs = NodeUtils.findChildFirst(readStatement, Predicates.isInputItemLT);
         if (outputs != null) {
-            NodeProcessingUtils.findAllSiblings(outputs.getFirstChild(), Predicates.isInputItem, o -> false).forEach(
-                    value -> this.checkVariable(operation, NodeProcessingUtils.getName(value), EDirection.WRITE));
+            NodeUtils.findAllSiblings(outputs.getFirstChild(), Predicates.isInputItem, o -> false)
+                    .forEach(value -> this.checkVariable(operation, NodeUtils.getName(value), EDirection.WRITE));
         }
     }
 
     private void checkWriteStatement(final FortranOperation operation, final Node writeStatement) {
-        final Node controls = NodeProcessingUtils.findChildFirst(writeStatement, Predicates.isIOControlSpec);
+        final Node controls = NodeUtils.findChildFirst(writeStatement, Predicates.isIOControlSpec);
         if (controls != null) {
-            NodeProcessingUtils.findAllSiblings(controls.getFirstChild(), Predicates.isIOControl, o -> false)
+            NodeUtils.findAllSiblings(controls.getFirstChild(), Predicates.isIOControl, o -> false)
                     .forEach(value -> this.checkExpression(operation, value, EDirection.READ));
         }
 
-        final Node outputs = NodeProcessingUtils.findChildFirst(writeStatement, Predicates.isOutputItemLT);
+        final Node outputs = NodeUtils.findChildFirst(writeStatement, Predicates.isOutputItemLT);
         if (outputs != null) {
-            NodeProcessingUtils.findAllSiblings(outputs.getFirstChild(), Predicates.isOutputItem, o -> false).forEach(
-                    value -> this.checkVariable(operation, NodeProcessingUtils.getName(value), EDirection.READ));
+            NodeUtils.findAllSiblings(outputs.getFirstChild(), Predicates.isOutputItem, o -> false)
+                    .forEach(value -> this.checkVariable(operation, NodeUtils.getName(value), EDirection.READ));
         }
     }
 
     private void checkPrintStatement(final FortranOperation operation, final Node printStatement) {
-        final Node outputs = NodeProcessingUtils.findChildFirst(printStatement, Predicates.isOutputItemLT);
+        final Node outputs = NodeUtils.findChildFirst(printStatement, Predicates.isOutputItemLT);
         if (outputs != null) {
-            NodeProcessingUtils.findAllSiblings(outputs.getFirstChild(), Predicates.isOutputItem, o -> false).forEach(
-                    value -> this.checkVariable(operation, NodeProcessingUtils.getName(value), EDirection.READ));
+            NodeUtils.findAllSiblings(outputs.getFirstChild(), Predicates.isOutputItem, o -> false)
+                    .forEach(value -> this.checkVariable(operation, NodeUtils.getName(value), EDirection.READ));
         }
     }
 
     private void checkSaveStatement(final FortranModule module, final FortranOperation operation,
             final Node saveStatement) {
-        final Node savedEnLt = NodeProcessingUtils.findChildFirst(saveStatement, Predicates.isSavedEnLT);
-        NodeProcessingUtils.findAllSiblings(savedEnLt.getFirstChild(), Predicates.isSavedEn, o -> false)
+        final Node savedEnLt = NodeUtils.findChildFirst(saveStatement, Predicates.isSavedEnLT);
+        NodeUtils.findAllSiblings(savedEnLt.getFirstChild(), Predicates.isSavedEn, o -> false)
                 .forEach(savedEn -> this.checkEnDecl(module, operation, savedEn));
     }
 
     private void checkWhereStatement(final FortranOperation operation, final Node whereStatement) {
-        final Node maskExpression = NodeProcessingUtils.findChildFirst(whereStatement, Predicates.isMaskExpression);
+        final Node maskExpression = NodeUtils.findChildFirst(whereStatement, Predicates.isMaskExpression);
         this.checkExpression(operation, maskExpression, EDirection.READ);
-        this.checkActionStatement(operation,
-                NodeProcessingUtils.findChildFirst(whereStatement, Predicates.isActionStatement));
+        this.checkActionStatement(operation, NodeUtils.findChildFirst(whereStatement, Predicates.isActionStatement));
     }
 
     private void checkDataStatement(final FortranOperation operation, final Node dataStatement) {
-        final Node dataStementSet = NodeProcessingUtils.findChildFirst(dataStatement, Predicates.isDataStatementSet);
-        final Node objectLT = NodeProcessingUtils.findChildFirst(dataStementSet, Predicates.isDataStatementObjectLT);
-        final Node object = NodeProcessingUtils.findChildFirst(objectLT, Predicates.isDataStatementObject);
-        final String dataName = NodeProcessingUtils.getName(object);
+        final Node dataStementSet = NodeUtils.findChildFirst(dataStatement, Predicates.isDataStatementSet);
+        final Node objectLT = NodeUtils.findChildFirst(dataStementSet, Predicates.isDataStatementObjectLT);
+        final Node object = NodeUtils.findChildFirst(objectLT, Predicates.isDataStatementObject);
+        final String dataName = NodeUtils.getName(object);
         this.checkVariable(operation, dataName, EDirection.WRITE);
     }
 
@@ -313,26 +307,23 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
     private void checkIf(final FortranOperation operation, final Node ifStatement) {
         final Node condition = ifStatement.getFirstChild().getNextSibling();
         this.checkExpression(operation, condition, EDirection.READ);
-        this.checkActionStatement(operation,
-                NodeProcessingUtils.findChildFirst(ifStatement, Predicates.isActionStatement));
+        this.checkActionStatement(operation, NodeUtils.findChildFirst(ifStatement, Predicates.isActionStatement));
     }
 
     private void checkActionStatement(final FortranOperation operation, final Node actionStatement) {
-        NodeProcessingUtils
-                .findAllSiblings(actionStatement.getFirstChild(), Predicates.isAssignmentStatement, o -> false)
+        NodeUtils.findAllSiblings(actionStatement.getFirstChild(), Predicates.isAssignmentStatement, o -> false)
                 .forEach(assignment -> this.checkAssignment(operation, assignment));
     }
 
     private void checkCall(final FortranOperation operation, final Node call) {
-        final String calleeName = NodeProcessingUtils.getName(call.getFirstChild().getNextSibling().getFirstChild());
+        final String calleeName = NodeUtils.getName(call.getFirstChild().getNextSibling().getFirstChild());
         final FortranOperation callee = this
                 .findOperation((FortranProject) ((FortranModule) operation.getParent()).getParent(), calleeName);
 
         if (callee != null) {
-            final Node argumentSpecification = NodeProcessingUtils.findChildFirst(call,
-                    Predicates.isArgumentSpecification);
+            final Node argumentSpecification = NodeUtils.findChildFirst(call, Predicates.isArgumentSpecification);
             if (argumentSpecification != null) {
-                final List<Node> arguments = NodeProcessingUtils.findAllSiblings(argumentSpecification.getFirstChild(),
+                final List<Node> arguments = NodeUtils.findAllSiblings(argumentSpecification.getFirstChild(),
                         Predicates.isArgument, o -> false);
                 for (int i = 0; i < arguments.size(); i++) {
                     final Node argument = arguments.get(i);
@@ -377,10 +368,10 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
      *            direction of variable value access
      */
     private void checkExpression(final FortranOperation operation, final Node node, final EDirection direction) {
-        final List<Node> expression = NodeProcessingUtils.findAllSiblings(node.getFirstChild(), o -> true, o -> false);
+        final List<Node> expression = NodeUtils.findAllSiblings(node.getFirstChild(), o -> true, o -> false);
         expression.forEach(expressionElement -> {
             if (Predicates.isNamedExpression.test(expressionElement)) {
-                final String elementName = NodeProcessingUtils.getName(expressionElement);
+                final String elementName = NodeUtils.getName(expressionElement);
                 this.checkVariable(operation, elementName, direction);
                 this.checkParameter(operation, elementName);
                 this.checkFunction(operation, expressionElement, elementName);
@@ -416,8 +407,8 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
 
     private void checkArrayConstructorExpression(final FortranOperation operation, final Node expression,
             final EDirection direction) {
-        final Node acValueLT = NodeProcessingUtils.findChildFirst(expression, Predicates.isAcValueLT);
-        NodeProcessingUtils.findAllSiblings(acValueLT.getFirstChild(), Predicates.isAcValue, o -> false)
+        final Node acValueLT = NodeUtils.findChildFirst(expression, Predicates.isAcValueLT);
+        NodeUtils.findAllSiblings(acValueLT.getFirstChild(), Predicates.isAcValue, o -> false)
                 .forEach(value -> this.checkExpression(operation, value, direction));
     }
 
@@ -428,7 +419,6 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
     private boolean checkParameter(final FortranOperation operation, final String elementName) {
         final FortranParameter parameter = operation.getParameters().get(elementName);
         if (parameter != null) {
-            // System.err.println(" param " + elementName);
             parameter.addDirection(EDirection.READ);
             return true;
         } else {
@@ -464,11 +454,11 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
             final String elementName) {
         if (Predicates.isNamedExpressionAccess.test(expressionElement)) {
             // System.err.println("function " + elementName);
-            final Node rlt = NodeProcessingUtils.findChildFirst(expressionElement, Predicates.isRLT);
-            final Node parensR = NodeProcessingUtils.findChildFirst(rlt, Predicates.isParensR);
-            final Node elementLT = NodeProcessingUtils.findChildFirst(parensR, Predicates.isElementLT);
-            final List<Node> elements = NodeProcessingUtils.findAllSiblings(elementLT.getFirstChild(),
-                    Predicates.isElement, o -> false);
+            final Node rlt = NodeUtils.findChildFirst(expressionElement, Predicates.isRLT);
+            final Node parensR = NodeUtils.findChildFirst(rlt, Predicates.isParensR);
+            final Node elementLT = NodeUtils.findChildFirst(parensR, Predicates.isElementLT);
+            final List<Node> elements = NodeUtils.findAllSiblings(elementLT.getFirstChild(), Predicates.isElement,
+                    o -> false);
             elements.forEach(element -> this.checkExpression(operation, element, EDirection.READ));
             return true;
         } else {
@@ -477,10 +467,10 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
     }
 
     private void checkIterator(final FortranOperation operation, final Node iterator) {
-        final List<Node> definitions = NodeProcessingUtils.findAllSiblings(iterator, Predicates.isIteratorDefinitionLT,
+        final List<Node> definitions = NodeUtils.findAllSiblings(iterator, Predicates.isIteratorDefinitionLT,
                 o -> false);
         definitions.forEach(definition -> {
-            NodeProcessingUtils.findAllSiblings(definition.getFirstChild(), o -> true, o -> false)
+            NodeUtils.findAllSiblings(definition.getFirstChild(), o -> true, o -> false)
                     .forEach(element -> this.checkExpression(operation, element, EDirection.READ));
         });
     }

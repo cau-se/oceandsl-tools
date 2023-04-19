@@ -18,6 +18,7 @@ package org.oceandsl.tools.esm.stages;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.w3c.dom.Node;
 
@@ -31,9 +32,10 @@ import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.model.FortranVariable;
+import org.oceandsl.tools.fxca.model.IContainable;
 import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
-import org.oceandsl.tools.fxca.stages.XPathParser;
-import org.oceandsl.tools.fxca.tools.NodeProcessingUtils;
+import org.oceandsl.tools.fxca.model.INamedVariable;
+import org.oceandsl.tools.fxca.tools.NodeUtils;
 import org.oceandsl.tools.fxca.tools.Pair;
 import org.oceandsl.tools.fxca.tools.Predicates;
 
@@ -72,17 +74,155 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
         entry.getModules().add(module);
         commonBlock.getVariables().values().forEach(variable -> entry.getVariables().add(variable.getName()));
         this.commonBlockOutputPort.send(entry);
-        System.err.println("Compute dataflow link");
     }
 
     private void analyzeOperation(final FortranProject project, final FortranModule module,
             final FortranOperation operation) {
-        operation.getCommonBlocks().values().forEach(commonBlock -> this.analyzeCommonBlock(module, commonBlock));
+        // common blocks specified explicitly in this subroutine
+        operation.getCommonBlocks().values().forEach(commonBlock -> {
+            this.analyzeCommonBlock(module, commonBlock);
+            this.analyzeCommonBlockOperationDataflow(project, module, operation, commonBlock);
+        });
+        // common blocks specified explicitly in the module/file of the operation
+        operation.getModule().getCommonBlocks().values().forEach(
+                commonBlock -> this.analyzeCommonBlockOperationDataflow(project, module, operation, commonBlock));
 
-        NodeProcessingUtils
+        // call based dataflow
+        NodeUtils
                 .findAllSiblings(operation.getNode(), o -> true,
                         Predicates.isEndSubroutineStatement.or(Predicates.isEndFunctionStatement))
                 .forEach(node -> this.analyzeStatement(project, module, operation, node));
+    }
+
+    private String makeStringSet(final Set<String> set) {
+        final Optional<String> result = set.stream().reduce((a, b) -> a + "," + b);
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            return "---";
+        }
+    }
+
+    private void analyzeCommonBlockOperationDataflow(final FortranProject project, final FortranModule module,
+            final FortranOperation operation, final CommonBlock commonBlock) {
+        System.err.println("-----------------------------");
+        System.err.printf(">> %s::%s <-> %s\n", operation.getModule().getFileName(), operation.getName(),
+                commonBlock.getName());
+
+        final boolean duplicate = operation.getParameters().values().stream().map(p -> p.getName())
+                .anyMatch(v -> operation.getVariables().containsKey(v));
+        if (duplicate) {
+            System.err.printf("----------------------------------\n");
+            System.err.printf("op %s\n", operation.getName());
+            System.err.printf("  parameter " + this.makeStringSet(operation.getParameters().keySet()));
+            System.err.printf("  variables " + this.makeStringSet(operation.getVariables().keySet()));
+        }
+
+        final boolean parametersInvolved = operation.getParameters().values().stream()
+                .anyMatch(parameter -> commonBlock.getVariables().containsKey(parameter.getName()));
+
+        System.err.printf("  vars: %s\n",
+                operation.getVariables().values().stream()
+                        .map(v -> v.getName() + ":" + v.getSources().size() + " " + v.getSources().stream()
+                                .map(s -> s.getClass().getSimpleName() + " " + ((INamedVariable) s).getName() + " "
+                                        + ((IContainable) s).getParent())
+                                .reduce("", (o, b) -> o + "," + b))
+                        .reduce("", (o, b) -> o + "#" + b));
+
+        if (operation.getVariables().values().stream()
+                .anyMatch(variable -> commonBlock.getVariables().containsKey(variable.getName())
+                        || this.sourcesContainedInCommonBlock(variable.getSources(), commonBlock))) {
+            EDirection direction = this.computeVariableCommonBlockDirection(operation, commonBlock);
+            if (parametersInvolved) {
+                direction = this.computeParameterCommonBlockDirection(operation, commonBlock, direction);
+            }
+
+            System.err.printf("   %s::%s <-> %s %s\n", operation.getModule().getFileName(), operation.getName(),
+                    commonBlock.getName(), direction.name());
+            this.dataflowOutputPort.send(new CommonBlockArgumentDataflow(commonBlock.getName(), module.getFileName(),
+                    module.getModuleName(), operation.getName(), direction));
+        } else if (parametersInvolved) {
+            final EDirection direction = this.computeParameterCommonBlockDirection(operation, commonBlock,
+                    EDirection.NONE);
+
+            System.err.printf("   %s::%s <-> %s %s\n", operation.getModule().getFileName(), operation.getName(),
+                    commonBlock.getName(), direction.name());
+            this.dataflowOutputPort.send(new CommonBlockArgumentDataflow(commonBlock.getName(), module.getFileName(),
+                    module.getModuleName(), operation.getName(), direction));
+        }
+        // if no variable and no parameter uses something from the common block
+    }
+
+    private boolean sourcesContainedInCommonBlock(final Set<IDataflowEndpoint> sources, final CommonBlock commonBlock) {
+        return sources.stream().anyMatch(source -> {
+            if (source instanceof FortranVariable) {
+                return commonBlock.getVariables().containsKey(((FortranVariable) source).getName());
+            } else {
+                return commonBlock.getVariables().containsKey(((FortranParameter) source).getName());
+            }
+        });
+    }
+
+    private EDirection computeParameterCommonBlockDirection(final FortranOperation operation,
+            final CommonBlock commonBlock, final EDirection direction) {
+        return operation.getParameters().values().stream().map(parameter -> {
+            if (commonBlock.getVariables().containsKey(parameter.getName())) {
+                return parameter.getDirection();
+            } else {
+                return EDirection.NONE;
+            }
+        }).reduce(direction, (d, n) -> d.merge(n));
+    }
+
+    private EDirection computeVariableCommonBlockDirection(final FortranOperation operation,
+            final CommonBlock commonBlock) {
+        return operation.getVariables().values().stream().map(variable -> {
+            if (commonBlock.getVariables().containsKey(variable.getName())) {
+                System.err.printf("++ %s %s\n", commonBlock.getName(), variable.getName());
+                return this.resolveDirection(variable);
+            } else {
+                return variable.getSources().stream().map(source -> this.findDirection(source, commonBlock))
+                        .reduce(EDirection.NONE, (d, n) -> d.merge(n));
+            }
+        }).reduce(EDirection.NONE, (d, n) -> d.merge(n));
+    }
+
+    private EDirection findDirection(final IDataflowEndpoint source, final CommonBlock commonBlock) {
+        if (source instanceof FortranVariable) {
+            final FortranVariable sourceVariable = (FortranVariable) source;
+            if (commonBlock.getVariables().containsKey(sourceVariable.getName())) {
+                System.err.printf("++ %s %s\n", commonBlock.getName(), sourceVariable.getName());
+                return this.resolveDirection(sourceVariable);
+            } else {
+                return EDirection.NONE;
+            }
+        } else { // must be parameter
+            final FortranParameter sourceParameter = (FortranParameter) source;
+            if (commonBlock.getVariables().containsKey(sourceParameter.getName())) {
+                System.err.printf("++ %s %s\n", commonBlock.getName(), sourceParameter.getName());
+                return sourceParameter.getDirection();
+            } else {
+                return EDirection.NONE;
+            }
+        }
+    }
+
+    private EDirection resolveDirection(final FortranVariable variable) {
+        if (variable.getDirection() == EDirection.BOTH) {
+            return EDirection.BOTH;
+        } else if (variable.getSources().size() > 0) {
+            return variable.getSources().stream().map(source -> {
+                if (source instanceof FortranVariable) {
+                    return ((FortranVariable) source).getDirection();
+                } else if (source instanceof FortranParameter) {
+                    return ((FortranParameter) source).getDirection();
+                } else {
+                    return EDirection.NONE;
+                }
+            }).reduce(variable.getDirection(), (o, n) -> o.merge(n));
+        } else {
+            return variable.getDirection();
+        }
     }
 
     private void analyzeStatement(final FortranProject project, final FortranModule module,
@@ -134,18 +274,13 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
 
     private void analyzeDataStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
-        final Node dataStementSet = NodeProcessingUtils.findChildFirst(statement, Predicates.isDataStatementSet);
-        final Node objectLT = NodeProcessingUtils.findChildFirst(dataStementSet, Predicates.isDataStatementObjectLT);
-        final Node object = NodeProcessingUtils.findChildFirst(objectLT, Predicates.isDataStatementObject);
-        final String dataName = NodeProcessingUtils.getName(object);
-
-        // initialize variable or parameter
+        // nothing to be done here, as read/write access is determined in other stage
     }
 
     private void analyzeWhereStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
-        final Node maskExpression = NodeProcessingUtils.findChildFirst(statement, Predicates.isMaskExpression);
-        final Node expression = NodeProcessingUtils.findChildFirst(maskExpression, Predicates.isExpression);
+        final Node maskExpression = NodeUtils.findChildFirst(statement, Predicates.isMaskExpression);
+        final Node expression = NodeUtils.findChildFirst(maskExpression, Predicates.isExpression);
         final IDataflowEndpoint endpoint = this.analyzeExpression(project, module, operation, expression);
         this.createFlowFromEndpointToOperation(endpoint, module, operation);
     }
@@ -167,14 +302,13 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
     private void analyzeCallStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
         // get the called subroutine
-        final String calleeName = NodeProcessingUtils.getCalleeNameFromCall(statement);
+        final String calleeName = NodeUtils.getCalleeNameFromCall(statement);
         final Pair<FortranModule, FortranOperation> callee = this.findOperation(project.getModules().values(),
                 calleeName);
         // get all arguments for the call
-        final Node argumentSpecification = NodeProcessingUtils.findChildFirst(statement,
-                Predicates.isArgumentSpecification);
+        final Node argumentSpecification = NodeUtils.findChildFirst(statement, Predicates.isArgumentSpecification);
         if (argumentSpecification != null) {
-            final List<Node> arguments = NodeProcessingUtils.findAllSiblings(argumentSpecification.getFirstChild(),
+            final List<Node> arguments = NodeUtils.findAllSiblings(argumentSpecification.getFirstChild(),
                     Predicates.isArgument, o -> false);
             for (int i = 0; i < arguments.size(); i++) {
                 this.analyzeArgument(project, module, operation, callee.first, callee.second,
@@ -185,9 +319,9 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
 
     private void analyzeAssignmentStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
-        final Node expessionNode = XPathParser.getAssignmentExpression(statement);
+        final Node expessionNode = NodeUtils.getAssignmentExpression(statement);
         if (Predicates.isAssignmentE2.test(expessionNode)) {
-            final Node content = NodeProcessingUtils.findChildFirst(expessionNode, Predicates.isExpression);
+            final Node content = NodeUtils.findChildFirst(expessionNode, Predicates.isExpression);
             if (content != null) {
                 final IDataflowEndpoint endpoint = this.analyzeExpression(project, module, operation, content);
                 this.createFlowFromEndpointToOperation(endpoint, module, operation);
@@ -199,26 +333,26 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
 
     private void analyzeDoStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
-        final Node doV = NodeProcessingUtils.findChildFirst(statement, Predicates.isDoV);
+        final Node doV = NodeUtils.findChildFirst(statement, Predicates.isDoV);
         if (doV == null) { // do while
-            final Node testExpression = NodeProcessingUtils.findChildFirst(statement, Predicates.isTestExpression);
-            final Node expression = NodeProcessingUtils.findChildFirst(testExpression, Predicates.isExpression);
+            final Node testExpression = NodeUtils.findChildFirst(statement, Predicates.isTestExpression);
+            final Node expression = NodeUtils.findChildFirst(testExpression, Predicates.isExpression);
             this.analyzeExpression(project, module, operation, expression);
         } else { // do statement or do label statement
-            final String elementName = NodeProcessingUtils.getName(doV);
+            final String elementName = NodeUtils.getName(doV);
             final IDataflowEndpoint writeEndpoint = this.findEndpoint(module, operation, elementName);
 
-            this.analyzeLimit(project, module, operation,
-                    NodeProcessingUtils.findChildFirst(statement, Predicates.isLowerBound), writeEndpoint);
-            this.analyzeLimit(project, module, operation,
-                    NodeProcessingUtils.findChildFirst(statement, Predicates.isUpperBound), writeEndpoint);
+            this.analyzeLimit(project, module, operation, NodeUtils.findChildFirst(statement, Predicates.isLowerBound),
+                    writeEndpoint);
+            this.analyzeLimit(project, module, operation, NodeUtils.findChildFirst(statement, Predicates.isUpperBound),
+                    writeEndpoint);
         }
     }
 
     private void analyzeLimit(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node boundary, final IDataflowEndpoint writeEndpoint) {
         if (boundary != null) {
-            final Node expression = NodeProcessingUtils.findChildFirst(boundary, Predicates.isExpression);
+            final Node expression = NodeUtils.findChildFirst(boundary, Predicates.isExpression);
             if (expression != null) {
                 final IDataflowEndpoint readEndpoint = this.analyzeExpression(project, module, operation, expression);
                 this.createFlowFromEndpointToOperation(writeEndpoint, readEndpoint);
@@ -233,29 +367,29 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
 
     private void analyzeIfStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
-        final Node condition = NodeProcessingUtils.findChildFirst(statement, Predicates.isConditionExpression);
-        final Node expression = NodeProcessingUtils.findChildFirst(condition, Predicates.isExpression);
+        final Node condition = NodeUtils.findChildFirst(statement, Predicates.isConditionExpression);
+        final Node expression = NodeUtils.findChildFirst(condition, Predicates.isExpression);
         this.createFlowFromEndpointToOperation(this.analyzeExpression(project, module, operation, expression), module,
                 operation);
 
-        final Node actionStatement = NodeProcessingUtils.findChildFirst(statement, Predicates.isActionStatement);
+        final Node actionStatement = NodeUtils.findChildFirst(statement, Predicates.isActionStatement);
 
-        NodeProcessingUtils.findAllSiblings(actionStatement.getFirstChild(), Predicates.isStatement, o -> false)
+        NodeUtils.findAllSiblings(actionStatement.getFirstChild(), Predicates.isStatement, o -> false)
                 .forEach(containedStatement -> this.analyzeStatement(project, module, operation, containedStatement));
     }
 
     private void analyzeIfThenStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
-        final Node condition = NodeProcessingUtils.findChildFirst(statement, Predicates.isConditionExpression);
-        final Node expression = NodeProcessingUtils.findChildFirst(condition, Predicates.isExpression);
+        final Node condition = NodeUtils.findChildFirst(statement, Predicates.isConditionExpression);
+        final Node expression = NodeUtils.findChildFirst(condition, Predicates.isExpression);
         this.createFlowFromEndpointToOperation(this.analyzeExpression(project, module, operation, expression), module,
                 operation);
     }
 
     private void analyzeElseIfStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
-        final Node condition = NodeProcessingUtils.findChildFirst(statement, Predicates.isConditionExpression);
-        final Node expression = NodeProcessingUtils.findChildFirst(condition, Predicates.isExpression);
+        final Node condition = NodeUtils.findChildFirst(statement, Predicates.isConditionExpression);
+        final Node expression = NodeUtils.findChildFirst(condition, Predicates.isExpression);
         this.createFlowFromEndpointToOperation(this.analyzeExpression(project, module, operation, expression), module,
                 operation);
     }
@@ -396,7 +530,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
      */
     private IDataflowEndpoint analyzeOperationExpression(final FortranProject project,
             final FortranModule contextModule, final FortranOperation contextOperation, final Node expressionNode) {
-        final List<Node> operators = NodeProcessingUtils.findAllSiblings(expressionNode.getFirstChild(),
+        final List<Node> operators = NodeUtils.findAllSiblings(expressionNode.getFirstChild(),
                 Predicates.isOperand.negate(), o -> false);
 
         final MultipleDataflowEndpoint multipleEndpoint = new MultipleDataflowEndpoint();
@@ -409,7 +543,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
 
     private IDataflowEndpoint analyzeNamedExpressionAccess(final FortranProject project,
             final FortranModule contextModule, final FortranOperation contextOperation, final Node namedElementNode) {
-        final String elementName = NodeProcessingUtils.getName(namedElementNode);
+        final String elementName = NodeUtils.getName(namedElementNode);
         // check whether this is a parameter or variable
         final FortranParameter parameter = contextOperation.getParameters().get(elementName);
         if (parameter != null) {
@@ -431,13 +565,13 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
                 functionName);
 
         if (callee != null) {
-            final List<Node> rlt = NodeProcessingUtils.findAllSiblings(functionNode.getFirstChild(), Predicates.isRLT,
+            final List<Node> rlt = NodeUtils.findAllSiblings(functionNode.getFirstChild(), Predicates.isRLT,
                     o -> false);
             if (rlt.size() > 0) {
                 final Node parensR = rlt.get(0).getFirstChild();
                 if (Predicates.isParensR.test(parensR)) {
-                    final Node elementLT = NodeProcessingUtils.findChildFirst(parensR, Predicates.isElementLT);
-                    final List<Node> arguments = NodeProcessingUtils.findAllSiblings(elementLT.getFirstChild(),
+                    final Node elementLT = NodeUtils.findChildFirst(parensR, Predicates.isElementLT);
+                    final List<Node> arguments = NodeUtils.findAllSiblings(elementLT.getFirstChild(),
                             Predicates.isElement, o -> false);
                     for (int i = 0; i < arguments.size(); i++) {
                         this.analyzeArgument(project, contextModule, contextOperation, callee.first, callee.second,

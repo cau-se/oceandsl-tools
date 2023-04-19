@@ -26,9 +26,7 @@ import org.oceandsl.analysis.code.stages.data.Table;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CreateDataflowTableStage extends AbstractTransformation<IDataflowEntry, Table> {
-
-    // TODO does not create dataflow table
+public class CreateCallerCalleeDataflowTableStage extends AbstractTransformation<CallerCalleeDataflow, Table> {
 
     private static final String SOURCE_PATH = "callerfilename";
     private static final String SOURCE_MODULE = "callermodule";
@@ -40,24 +38,23 @@ public class CreateDataflowTableStage extends AbstractTransformation<IDataflowEn
 
     private final Table callsTable;
 
-    public CreateDataflowTableStage() {
-        this.callsTable = new Table("calls", new StringValueHandler(CreateDataflowTableStage.SOURCE_PATH),
-                new StringValueHandler(CreateDataflowTableStage.SOURCE_MODULE),
-                new StringValueHandler(CreateDataflowTableStage.SOURCE_OPERATION),
-                new StringValueHandler(CreateDataflowTableStage.TARGET_PATH),
-                new StringValueHandler(CreateDataflowTableStage.TARGET_MODULE),
-                new StringValueHandler(CreateDataflowTableStage.TARGET_OPERATION),
-                new StringValueHandler(CreateDataflowTableStage.DIRECTION));
+    public CreateCallerCalleeDataflowTableStage() {
+        this.callsTable = new Table("dataflow-cc",
+                new StringValueHandler(CreateCallerCalleeDataflowTableStage.SOURCE_PATH),
+                new StringValueHandler(CreateCallerCalleeDataflowTableStage.SOURCE_MODULE),
+                new StringValueHandler(CreateCallerCalleeDataflowTableStage.SOURCE_OPERATION),
+                new StringValueHandler(CreateCallerCalleeDataflowTableStage.TARGET_PATH),
+                new StringValueHandler(CreateCallerCalleeDataflowTableStage.TARGET_MODULE),
+                new StringValueHandler(CreateCallerCalleeDataflowTableStage.TARGET_OPERATION),
+                new StringValueHandler(CreateCallerCalleeDataflowTableStage.DIRECTION));
     }
 
     @Override
-    protected void execute(final IDataflowEntry entry) throws Exception {
-        if (entry instanceof CallerCalleeDataflow) {
-            final CallerCalleeDataflow ccd = (CallerCalleeDataflow) entry;
-            this.callsTable.addRow(ccd.getSourceFileName(), ccd.getSourceModuleName(), ccd.getSourceOperationName(),
-                    ccd.getTargetFileName(), ccd.getTargetModuleName(), ccd.getTargetOperatioName(),
-                    ccd.getDirection().name());
-        }
+    protected void execute(final CallerCalleeDataflow callerCalleeDataflow) throws Exception {
+        this.callsTable.addRow(callerCalleeDataflow.getSourceFileName(), callerCalleeDataflow.getSourceModuleName(),
+                callerCalleeDataflow.getSourceOperationName(), callerCalleeDataflow.getTargetFileName(),
+                callerCalleeDataflow.getTargetModuleName(), callerCalleeDataflow.getTargetOperatioName(),
+                callerCalleeDataflow.getDirection().name());
     }
 
     @Override

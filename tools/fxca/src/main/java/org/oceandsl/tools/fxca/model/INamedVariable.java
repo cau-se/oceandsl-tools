@@ -15,39 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
-/**
- *
- * @author Reiner Jung
- * @since 1.3.0
- */
-public enum EDirection {
-    READ, WRITE, BOTH, NONE;
+public interface INamedVariable {
 
-    public EDirection merge(final EDirection direction) {
-        switch (this) {
-        case NONE:
-            return direction;
-        case BOTH:
-            return BOTH;
-        case READ:
-            switch (direction) {
-            case BOTH:
-            case WRITE:
-                return EDirection.BOTH;
-            case READ:
-            case NONE:
-                return READ;
-            }
-        case WRITE:
-            switch (direction) {
-            case BOTH:
-            case READ:
-                return EDirection.BOTH;
-            case WRITE:
-            case NONE:
-                return WRITE;
-            }
-        }
-        return NONE;
-    }
+    String getName();
 }

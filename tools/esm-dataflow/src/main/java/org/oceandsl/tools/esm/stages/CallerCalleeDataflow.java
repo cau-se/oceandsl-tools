@@ -18,6 +18,7 @@ package org.oceandsl.tools.esm.stages;
 import org.oceandsl.tools.fxca.model.EDirection;
 
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Reiner Jung
@@ -45,6 +46,7 @@ public class CallerCalleeDataflow implements IDataflowEntry {
     private final String targetOperatioName;
 
     @Getter
+    @Setter
     private EDirection direction;
 
     public CallerCalleeDataflow(final String sourceFileName, final String sourceModuleName,
@@ -57,36 +59,6 @@ public class CallerCalleeDataflow implements IDataflowEntry {
         this.targetModuleName = targetModuleName;
         this.targetOperatioName = targetOperatioName;
         this.direction = direction;
-    }
-
-    public void merge(final EDirection newDirection) {
-        switch (this.direction) {
-        case NONE:
-            this.direction = newDirection;
-            break;
-        case BOTH:
-            break;
-        case READ:
-            switch (newDirection) {
-            case BOTH:
-            case WRITE:
-                this.direction = EDirection.BOTH;
-                break;
-            case READ:
-            case NONE:
-                break;
-            }
-        case WRITE:
-            switch (newDirection) {
-            case BOTH:
-            case READ:
-                this.direction = EDirection.BOTH;
-                break;
-            case WRITE:
-            case NONE:
-                break;
-            }
-        }
     }
 
 }

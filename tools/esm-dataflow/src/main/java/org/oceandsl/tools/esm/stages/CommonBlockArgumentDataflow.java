@@ -18,6 +18,7 @@ package org.oceandsl.tools.esm.stages;
 import org.oceandsl.tools.fxca.model.EDirection;
 
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Reiner Jung
@@ -36,13 +37,18 @@ public class CommonBlockArgumentDataflow implements IDataflowEntry {
     private final String moduleName;
 
     @Getter
-    private final EDirection direction;
+    private final String operationName;
+
+    @Getter
+    @Setter
+    private EDirection direction;
 
     public CommonBlockArgumentDataflow(final String commonBlockName, final String fileName, final String moduleName,
-            final EDirection direction) {
+            final String operationName, final EDirection direction) {
         this.commonBlockName = commonBlockName;
         this.fileName = fileName;
         this.moduleName = moduleName;
+        this.operationName = operationName;
         this.direction = direction;
     }
 

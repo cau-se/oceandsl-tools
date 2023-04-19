@@ -47,7 +47,8 @@ public class MultipleDataflowEndpoint implements IDataflowEndpoint {
                 .findFirst();
 
         if (selectedEndpoint.isPresent()) {
-            selectedEndpoint.get().merge(newEndpoint.getDirection());
+            final DataflowEndpoint endpoint = selectedEndpoint.get();
+            endpoint.setDirection(endpoint.getDirection().merge(newEndpoint.getDirection()));
         } else {
             this.endpoints.add(newEndpoint);
         }
