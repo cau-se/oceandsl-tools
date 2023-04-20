@@ -13,33 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.stages;
+package org.oceandsl.tools.fxca.utils;
 
-import java.nio.file.Path;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-
-import teetime.stage.basic.AbstractTransformation;
+import java.util.regex.Pattern;
 
 /**
+ * Process path uris.
  *
- * @author Henning Schnoor -- initial contribution
+ *
  * @author Reiner Jung
  *
  * @since 1.3.0
  */
-public class ReadDomStage extends AbstractTransformation<Path, Document> {
+public class PatternUriProcessor implements IUriProcessor {
+
+    private final Pattern regex;
+    private final String replacement;
+
+    public PatternUriProcessor(final String pattern, final String replacement) {
+        this.regex = Pattern.compile(pattern);
+        this.replacement = replacement;
+    }
 
     @Override
-    protected void execute(final Path path) throws Exception {
-        final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        final Document document = builder.parse(path.toFile());
-        document.getDocumentElement().normalize();
-
-        this.outputPort.send(document);
+    public String process(final String uri) {
+        return this.regex.matcher(uri).replaceFirst(this.replacement);
     }
 
 }

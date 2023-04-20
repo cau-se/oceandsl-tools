@@ -13,33 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.stages;
-
-import java.nio.file.Path;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-
-import teetime.stage.basic.AbstractTransformation;
+package org.oceandsl.tools.fxca.stages.dataflow.data;
 
 /**
- *
- * @author Henning Schnoor -- initial contribution
  * @author Reiner Jung
- *
  * @since 1.3.0
  */
-public class ReadDomStage extends AbstractTransformation<Path, Document> {
-
-    @Override
-    protected void execute(final Path path) throws Exception {
-        final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        final Document document = builder.parse(path.toFile());
-        document.getDocumentElement().normalize();
-
-        this.outputPort.send(document);
-    }
+public interface IDataflowEntry {
 
 }

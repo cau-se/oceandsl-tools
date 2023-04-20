@@ -35,11 +35,13 @@ public class Table {
     }
 
     public void addRow(final Object... values) throws ValueConversionErrorException {
+        if (values.length != this.valueHandlers.length) {
+            throw new ValueConversionErrorException(String.format("Row must have %d values, but %d values found.",
+                    this.valueHandlers.length, values.length));
+        }
         final Object[] rowValues = new Object[this.valueHandlers.length];
-        int i = 0;
-        for (final Object value : values) {
-            rowValues[i] = this.valueHandlers[i].checkValue(value);
-            i++;
+        for (int i = 0; i < values.length; i++) {
+            rowValues[i] = this.valueHandlers[i].checkValue(values[i]);
         }
         this.rows.add(rowValues);
     }

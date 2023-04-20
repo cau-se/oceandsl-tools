@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
+package org.oceandsl.tools.fxca.stages.dataflow;
 
-import java.util.Map;
-
-import org.w3c.dom.Node;
+import org.oceandsl.tools.fxca.model.EDirection;
+import org.oceandsl.tools.fxca.stages.dataflow.data.IDataflowEntry;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,25 +24,33 @@ import lombok.Setter;
 /**
  * @author Reiner Jung
  * @since 1.3.0
+ *
  */
-public class CommonBlock implements IDataflowEndpoint, IContainable {
+public class CommonBlockArgumentDataflow implements IDataflowEntry {
 
     @Getter
-    private final String name;
+    private final String commonBlockName;
 
     @Getter
-    private final Map<String, FortranVariable> variables = new ContainmentHashMap<>(this);
+    private final String fileName;
 
     @Getter
-    private final Node node;
+    private final String moduleName;
+
+    @Getter
+    private final String operationName;
 
     @Getter
     @Setter
-    private Object parent;
+    private EDirection direction;
 
-    public CommonBlock(final String name, final Node node) {
-        this.name = name;
-        this.node = node;
+    public CommonBlockArgumentDataflow(final String commonBlockName, final String fileName, final String moduleName,
+            final String operationName, final EDirection direction) {
+        this.commonBlockName = commonBlockName;
+        this.fileName = fileName;
+        this.moduleName = moduleName;
+        this.operationName = operationName;
+        this.direction = direction;
     }
 
 }

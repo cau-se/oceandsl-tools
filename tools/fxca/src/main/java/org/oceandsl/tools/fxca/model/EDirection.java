@@ -13,33 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.stages;
-
-import java.nio.file.Path;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-
-import teetime.stage.basic.AbstractTransformation;
+package org.oceandsl.tools.fxca.model;
 
 /**
  *
- * @author Henning Schnoor -- initial contribution
  * @author Reiner Jung
- *
  * @since 1.3.0
  */
-public class ReadDomStage extends AbstractTransformation<Path, Document> {
+public enum EDirection {
+    READ, WRITE, BOTH, NONE;
 
-    @Override
-    protected void execute(final Path path) throws Exception {
-        final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        final Document document = builder.parse(path.toFile());
-        document.getDocumentElement().normalize();
-
-        this.outputPort.send(document);
+    public EDirection merge(final EDirection direction) {
+        switch (this) {
+        case NONE:
+            return direction;
+        case BOTH:
+            return BOTH;
+        case READ:
+            switch (direction) {
+            case BOTH:
+            case WRITE:
+                return EDirection.BOTH;
+            case READ:
+            case NONE:
+                return READ;
+            }
+        case WRITE:
+            switch (direction) {
+            case BOTH:
+            case READ:
+                return EDirection.BOTH;
+            case WRITE:
+            case NONE:
+                return WRITE;
+            }
+        }
+        return NONE;
     }
-
 }

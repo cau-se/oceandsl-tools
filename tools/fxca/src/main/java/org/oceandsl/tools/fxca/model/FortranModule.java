@@ -15,33 +15,25 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import org.oceandsl.tools.fxca.tools.Pair;
-
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Henning Schnoor
  * @since 1.3.0
  */
-public class FortranModule {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(FortranModule.class);
+public class FortranModule implements IContainable {
 
     @Getter
     private final Set<String> usedModules = new HashSet<>();
     @Getter
-    private final Set<String> specifiedOperations = new HashSet<>();
+    private final Map<String, FortranOperation> operations = new ContainmentHashMap<>(this);
     @Getter
     private final String moduleName;
     @Getter
@@ -51,11 +43,13 @@ public class FortranModule {
     @Getter
     private final String fileName;
     @Getter
-    private final Collection<Pair<Pair<FortranModule, String>, Pair<FortranModule, String>>> calls = new ArrayList<>();
+    private final Map<String, CommonBlock> commonBlocks = new ContainmentHashMap<>(this);
     @Getter
-    private final Map<String, CommonBlock> commonBlocks = new HashMap<>();
+    private final Map<String, FortranVariable> variables = new ContainmentHashMap<>(this);
+
     @Getter
-    private final Set<String> variables = new HashSet<>();
+    @Setter
+    Object parent;
 
     public FortranModule(final String moduleName, final String fileName, final boolean namedModule,
             final Document document) {
@@ -65,14 +59,9 @@ public class FortranModule {
         this.document = document;
     }
 
-    @Deprecated
-    public void printSummary() {
-        FortranModule.LOGGER.debug("# Summary");
-        FortranModule.LOGGER.debug(" [moduleName]           {}", this.moduleName);
-        FortranModule.LOGGER.debug(" [used modules]         ");
-        this.usedModules.forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
-
-        FortranModule.LOGGER.debug(" [operation definitions] ");
-        this.specifiedOperations.forEach(name -> FortranModule.LOGGER.debug("  * {}", name));
+    @Override
+    public String toString() {
+        return this.fileName + ":" + this.moduleName;
     }
+
 }

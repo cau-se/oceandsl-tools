@@ -13,33 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.stages;
+package org.oceandsl.tools.fxca.utils;
 
-import java.nio.file.Path;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-
-import teetime.stage.basic.AbstractTransformation;
+import java.util.Iterator;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  *
- * @author Henning Schnoor -- initial contribution
- * @author Reiner Jung
+ * @author Henning Schnoor
+ *
+ * @param <T>
+ *            element type
  *
  * @since 1.3.0
  */
-public class ReadDomStage extends AbstractTransformation<Path, Document> {
+public class IndexIterator<T> implements Iterator<T> {
 
-    @Override
-    protected void execute(final Path path) throws Exception {
-        final DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        final Document document = builder.parse(path.toFile());
-        document.getDocumentElement().normalize();
+    private final Supplier<Integer> getLength;
+    private final Function<Integer, T> getElement;
+    private int index;
 
-        this.outputPort.send(document);
+    public IndexIterator(final Supplier<Integer> getLength, final Function<Integer, T> getElement) {
+        this.getLength = getLength;
+        this.getElement = getElement;
+        this.index = 0;
     }
 
+    @Override
+    public boolean hasNext() {
+        return this.index < this.getLength.get();
+    }
+
+    @Override
+    public T next() {
+        return this.getElement.apply(this.index++);
+    }
 }

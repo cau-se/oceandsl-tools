@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright 2023 Kieker Project (http://kieker-monitoring.net)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,37 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
-
-import java.util.Map;
-
-import org.w3c.dom.Node;
-
-import lombok.Getter;
-import lombok.Setter;
+package org.oceandsl.tools.fxca.utils;
 
 /**
  * @author Reiner Jung
+ *
  * @since 1.3.0
  */
-public class CommonBlock implements IDataflowEndpoint, IContainable {
+public interface IUriProcessor {
 
-    @Getter
-    private final String name;
-
-    @Getter
-    private final Map<String, FortranVariable> variables = new ContainmentHashMap<>(this);
-
-    @Getter
-    private final Node node;
-
-    @Getter
-    @Setter
-    private Object parent;
-
-    public CommonBlock(final String name, final Node node) {
-        this.name = name;
-        this.node = node;
-    }
+    String process(String uri);
 
 }

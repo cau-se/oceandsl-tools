@@ -15,7 +15,9 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.w3c.dom.Node;
 
@@ -23,27 +25,66 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ *
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CommonBlock implements IDataflowEndpoint, IContainable {
+public class FortranOperation implements IDataflowEndpoint, IContainable {
 
     @Getter
     private final String name;
 
     @Getter
+    private final Map<String, CommonBlock> commonBlocks = new ContainmentHashMap<>(this);
+
+    @Getter
     private final Map<String, FortranVariable> variables = new ContainmentHashMap<>(this);
+
+    @Getter
+    private final Map<String, FortranParameter> parameters = new ContainmentHashMap<>(this);
+
+    @Getter
+    private final Set<String> usedModules = new HashSet<>();
 
     @Getter
     private final Node node;
 
     @Getter
     @Setter
+    private FortranModule module;
+
+    @Getter
+    @Setter
     private Object parent;
 
-    public CommonBlock(final String name, final Node node) {
+    @Getter
+    @Setter
+    private boolean implicit;
+
+    @Getter
+    private final boolean variableArguments;
+
+    @Getter
+    private final boolean function;
+
+    public FortranOperation(final String name, final Node node, final boolean function) {
         this.name = name;
         this.node = node;
+        this.variableArguments = false;
+        this.function = function;
+    }
+
+    public FortranOperation(final String name, final Node node, final boolean function,
+            final boolean variableArguments) {
+        this.name = name;
+        this.node = node;
+        this.variableArguments = variableArguments;
+        this.function = function;
+    }
+
+    @Override
+    public String toString() {
+        return "op " + this.name;
     }
 
 }

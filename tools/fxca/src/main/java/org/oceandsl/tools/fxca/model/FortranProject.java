@@ -15,8 +15,14 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
+
+import org.oceandsl.tools.fxca.utils.Pair;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Henning Schnoor
@@ -29,14 +35,31 @@ public class FortranProject {
      */
     private final Map<String, FortranModule> modules;
 
+    /** note this is a temporary hack until dataflow properly supports a default module. */
+    @Getter
+    @Setter
+    private FortranModule defaultModule;
+
+    @Getter
+    private final Collection<Pair<Pair<FortranModule, FortranOperation>, Pair<FortranModule, FortranOperation>>> calls = new ArrayList<>();
+
+    @Getter
+    private final Collection<Pair<Pair<FortranModule, IDataflowEndpoint>, Pair<FortranModule, IDataflowEndpoint>>> dataflows = new ArrayList<>();
+
     /**
      * Constructs Project Model with empty content.
      */
     public FortranProject() {
-        this.modules = new HashMap<>();
+        this.modules = new ContainmentHashMap<>(this);
     }
 
     public Map<String, FortranModule> getModules() {
         return this.modules;
+    }
+
+    @Override
+    public String toString() {
+        return this.modules.values().stream().map(module -> module.getFileName()).reduce("",
+                (r, name) -> r + ", " + name);
     }
 }

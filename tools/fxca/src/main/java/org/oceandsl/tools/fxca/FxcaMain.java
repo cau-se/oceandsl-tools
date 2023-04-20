@@ -35,7 +35,7 @@ import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
 
-import org.oceandsl.tools.fxca.tools.IOUtils;
+import org.oceandsl.tools.fxca.utils.IOUtils;
 
 /**
  * Tool to process fxtran XML files into a calltable, operation-definitions and a notfound file.
