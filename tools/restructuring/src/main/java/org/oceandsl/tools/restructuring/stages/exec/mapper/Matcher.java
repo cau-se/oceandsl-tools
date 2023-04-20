@@ -39,7 +39,7 @@ public class Matcher extends AbstractMapper {
 
 	public Matcher(AssemblyModel orig, AssemblyModel goal) {
 		this.orig = RestructurerTools.cloneModel(orig);
-		this.goal = goal;
+		this.goal = RestructurerTools.alterComponentNames(goal);
 		this.s.addAll(this.orig.getComponents().keySet());
 		this.t.addAll(this.goal.getComponents().keySet());
 		this.graph = new SimpleWeightedGraph<String, DefaultEdge>(DefaultEdge.class);

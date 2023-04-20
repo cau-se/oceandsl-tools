@@ -29,4 +29,24 @@ public class RestructurerTools {
 		
 		return result;
 	}
+	
+	public static AssemblyModel alterComponentNames(AssemblyModel model) {
+	    String prefix = "_";
+		AssemblyFactory factory = AssemblyFactory.eINSTANCE;
+		AssemblyModel result = factory.createAssemblyModel();
+		
+		for(Entry<String, AssemblyComponent> e:model.getComponents().entrySet()) {
+			AssemblyComponent comp = factory.createAssemblyComponent();
+			result.getComponents().put(prefix +e.getKey(), comp);
+			for(Entry<String, AssemblyOperation>op: e.getValue().getOperations().entrySet()) {
+				AssemblyOperation o = factory.createAssemblyOperation();
+				result.getComponents().get(e.getKey()).getOperations().put(op.getKey(), o);
+			}
+		}
+		if (!TransformationFactory.areSameModels(model, result))
+			throw new Error("Models were not clonned succesfully!");
+			
+		
+		return result;
+	}
 }
