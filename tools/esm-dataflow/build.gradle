@@ -15,7 +15,7 @@ dependencies {
 	implementation project(':common')
 	implementation project(':analysis')
 	implementation project(':tools:fxca')
-	
+
 	compileOnly 'org.projectlombok:lombok:1.18.26'
 	testCompileOnly 'org.projectlombok:lombok:1.18.26'
 	annotationProcessor 'org.projectlombok:lombok:1.18.26'
