@@ -27,7 +27,7 @@ import lombok.Setter;
  * @since 1.3.0
  *
  */
-public class FortranVariable implements IContainable, IDataflowEndpoint, INamedVariable {
+public class FortranVariable implements IContainable, IDataflowEndpoint {
 
     @Getter
     String name;
@@ -58,14 +58,14 @@ public class FortranVariable implements IContainable, IDataflowEndpoint, INamedV
             this.direction = value;
             break;
         case READ:
-            if ((value == EDirection.WRITE) || (value == EDirection.BOTH)) {
+            if (value == EDirection.WRITE || value == EDirection.BOTH) {
                 this.direction = EDirection.BOTH;
             } else {
                 this.direction = EDirection.READ;
             }
             break;
         case WRITE:
-            if ((value == EDirection.READ) || (value == EDirection.BOTH)) {
+            if (value == EDirection.READ || value == EDirection.BOTH) {
                 this.direction = EDirection.BOTH;
             } else {
                 this.direction = EDirection.WRITE;

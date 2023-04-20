@@ -13,15 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
+package org.oceandsl.tools.fxca.utils;
+
+import java.util.regex.Pattern;
 
 /**
- * Marker interface for dataflow endpoints.
+ * Process path uris.
+ *
  *
  * @author Reiner Jung
  *
+ * @since 1.3.0
  */
-public interface IDataflowEndpoint {
+public class PatternUriProcessor implements IUriProcessor {
 
-    String getName();
+    private final Pattern regex;
+    private final String replacement;
+
+    public PatternUriProcessor(final String pattern, final String replacement) {
+        this.regex = Pattern.compile(pattern);
+        this.replacement = replacement;
+    }
+
+    @Override
+    public String process(final String uri) {
+        return this.regex.matcher(uri).replaceFirst(this.replacement);
+    }
+
 }

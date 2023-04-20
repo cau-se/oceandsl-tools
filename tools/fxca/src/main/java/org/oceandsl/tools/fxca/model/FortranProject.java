@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import org.oceandsl.tools.fxca.tools.Pair;
+import org.oceandsl.tools.fxca.utils.Pair;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +39,9 @@ public class FortranProject {
     @Getter
     @Setter
     private FortranModule defaultModule;
+
+    @Getter
+    private final Collection<Pair<Pair<FortranModule, FortranOperation>, Pair<FortranModule, FortranOperation>>> calls = new ArrayList<>();
 
     @Getter
     private final Collection<Pair<Pair<FortranModule, IDataflowEndpoint>, Pair<FortranModule, IDataflowEndpoint>>> dataflows = new ArrayList<>();

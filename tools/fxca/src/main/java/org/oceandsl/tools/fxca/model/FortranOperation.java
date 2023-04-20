@@ -15,7 +15,9 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.w3c.dom.Node;
 
@@ -40,6 +42,9 @@ public class FortranOperation implements IDataflowEndpoint, IContainable {
 
     @Getter
     private final Map<String, FortranParameter> parameters = new ContainmentHashMap<>(this);
+
+    @Getter
+    private final Set<String> usedModules = new HashSet<>();
 
     @Getter
     private final Node node;

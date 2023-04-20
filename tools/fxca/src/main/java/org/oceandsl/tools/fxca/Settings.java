@@ -27,10 +27,14 @@ import org.oceandsl.analysis.generic.validators.PathIsDirectoryValidator;
 import org.oceandsl.analysis.generic.validators.PathIsReadableValidator;
 
 /**
+ * All settings including command line parameters for the analysis.
+ *
  * @author Reiner Jung
- * @since 1.3.0
+ * @since 1.1.0
  */
-public class Settings {
+public class Settings { // NOPMD data class
+
+    private static final String RUNTIME = "<runtime>";
 
     @Parameter(names = { "-i",
             "--input" }, required = true, variableArity = true, description = "One or more paths to fxtran-generated XML files.", converter = PathConverter.class, validateWith = {
@@ -58,11 +62,16 @@ public class Settings {
         return this.outputDirectoryPath;
     }
 
+    public String getDefaultComponent() {
+        if (this.defaultComponent == null) {
+            return Settings.RUNTIME;
+        } else {
+            return this.defaultComponent;
+        }
+    }
+
     public boolean isFlat() {
         return this.flat;
     }
 
-    public String getDefaultComponent() {
-        return this.defaultComponent;
-    }
 }

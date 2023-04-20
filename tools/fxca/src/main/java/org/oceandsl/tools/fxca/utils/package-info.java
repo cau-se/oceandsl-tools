@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
 
 /**
- * Marker interface for dataflow endpoints.
+ * @author Henning Schnoor
  *
- * @author Reiner Jung
- *
+ * @since 1.3.0
  */
-public interface IDataflowEndpoint {
-
-    String getName();
-}
+package org.oceandsl.tools.fxca.utils;

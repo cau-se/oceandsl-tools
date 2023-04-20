@@ -39,10 +39,10 @@ import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.model.FortranVariable;
-import org.oceandsl.tools.fxca.tools.IUriProcessor;
-import org.oceandsl.tools.fxca.tools.ListTools;
-import org.oceandsl.tools.fxca.tools.NodeUtils;
-import org.oceandsl.tools.fxca.tools.Predicates;
+import org.oceandsl.tools.fxca.utils.IUriProcessor;
+import org.oceandsl.tools.fxca.utils.ListTools;
+import org.oceandsl.tools.fxca.utils.NodeUtils;
+import org.oceandsl.tools.fxca.utils.Predicates;
 
 /**
  *
@@ -66,7 +66,10 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private FortranModule createModule(final String defaultModuleName, final List<FortranOperation> operations) {
         final FortranModule module = new FortranModule(defaultModuleName, "", true, null);
-        operations.forEach(operation -> module.getOperations().put(operation.getName(), operation));
+        operations.forEach(operation -> {
+            module.getOperations().put(operation.getName(), operation);
+            operation.setModule(module);
+        });
         return module;
     }
 
@@ -82,24 +85,62 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
         final FortranModule module = new FortranModule(moduleName, fileName, namedModule, document);
 
-        this.computeMainProgram(module, documentElement);
+        this.computeModule(module, documentElement);
 
-        this.computeUsedModels(module, documentElement);
-        this.computeOperationDeclarations(module, documentElement);
-        this.computeCommonBlocks(module, documentElement);
-        this.computeInternalVariables(module, documentElement);
-        this.computeInternalImplicitVariables(module, documentElement);
-        this.computeInternalDimensionVariables(module, documentElement);
+        this.computeMainProgram(module, documentElement);
+        this.computeOperations(module, documentElement);
 
         this.project.getModules().put(module.getModuleName(), module);
     }
 
-    private void computeMainProgram(final FortranModule module, final Element documentElement) {
-        final Node mainProgram = ListTools.getUniqueElementIfNonEmpty(
+    @Override
+    protected void onTerminating() {
+        this.outputPort.send(this.project);
+        super.onTerminating();
+    }
+
+    private void computeMainProgram(final FortranModule module, final Element documentElement)
+            throws ParserConfigurationException, SAXException, IOException {
+        final Node mainProgramNode = ListTools.getUniqueElementIfNonEmpty(
                 NodeUtils.allDescendents(documentElement, Predicates.isProgramStatement, true), null);
-        if (mainProgram != null) {
-            module.getOperations().put("main", new FortranOperation("main", mainProgram, false));
+        if (mainProgramNode != null) {
+            final FortranOperation operation = new FortranOperation("main", mainProgramNode, false);
+
+            this.createFortranOperationCommonBlock(operation, mainProgramNode);
+            this.createFortranOperationVariables(operation, mainProgramNode);
+            this.createFortranOperationImplicitVariables(operation, mainProgramNode);
+            this.createFortranOperationDimensionalVariables(operation, mainProgramNode);
+
+            operation.setModule(module);
+            module.getOperations().put("main", operation);
         }
+    }
+
+    private void computeModule(final FortranModule module, final Element documentElement) {
+        final Node moduleNode = ListTools.getUniqueElementIfNonEmpty(
+                NodeUtils.allDescendents(documentElement, Predicates.isModuleStatement, true), null);
+        if (moduleNode != null) {
+            this.computeUsedModules(module.getUsedModules(), moduleNode);
+            // TODO modules can include variables and parameters
+
+            // this.computeCommonBlocks(module, documentElement);
+            // this.computeInternalVariables(module, documentElement);
+            // this.computeInternalImplicitVariables(module, documentElement);
+            // this.computeInternalDimensionVariables(module, documentElement);
+        }
+    }
+
+    private void computeOperations(final FortranModule module, final Element documentElement)
+            throws ParserConfigurationException, SAXException, IOException {
+        this.getDescendentAttributes(documentElement, Predicates.isOperationStatement, operationNode -> {
+            try {
+                final FortranOperation operation = this.createFortranOperation(module, operationNode);
+                return module.getOperations().put(operation.getName(), operation);
+            } catch (ParserConfigurationException | SAXException | IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        });
     }
 
     private void computeInternalVariables(final FortranModule module, final Element documentElement)
@@ -164,12 +205,11 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             if (commonBlock == null) {
                 commonBlock = new CommonBlock(commonBlockName, statement);
             }
-            module.getCommonBlocks().put(commonBlockName,
-                    this.createCommonBlock(commonBlock, statement, commonBlockName));
+            module.getCommonBlocks().put(commonBlockName, this.createCommonBlock(commonBlock, statement));
         });
     }
 
-    private CommonBlock createCommonBlock(final CommonBlock commonBlock, final Node statement, final String name) {
+    private CommonBlock createCommonBlock(final CommonBlock commonBlock, final Node statement) {
         final Node commonBlockElements = statement.getChildNodes().item(3);
         for (int i = 0; i < commonBlockElements.getChildNodes().getLength(); i++) {
             final Node commonBlockObject = commonBlockElements.getChildNodes().item(i);
@@ -184,44 +224,15 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
         return commonBlock;
     }
 
-    @Override
-    protected void onTerminating() {
-        this.outputPort.send(this.project);
-        super.onTerminating();
-    }
-
-    private void computeUsedModels(final FortranModule module, final Element rootNode) {
-        final Set<Node> useStatements = NodeUtils.allDescendents(rootNode, Predicates.isUseStatement, false);
-        for (final Node useStatement : useStatements) {
-            final String usedModuleName = useStatement.getChildNodes().item(1).getTextContent();
-            this.logger.debug("found use statement: {}, module name: {}", useStatement.getTextContent(),
-                    usedModuleName);
-            module.getUsedModules().add(usedModuleName);
-        }
-    }
-
-    private void computeOperationDeclarations(final FortranModule module, final Element documentElement)
-            throws ParserConfigurationException, SAXException, IOException {
-        this.getDescendentAttributes(documentElement, Predicates.isOperationStatement, operationNode -> {
-            try {
-                final FortranOperation operation = this.createFortranOperation(operationNode);
-                operation.setModule(module);
-                return module.getOperations().put(operation.getName(), operation);
-            } catch (ParserConfigurationException | SAXException | IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-        });
-    }
-
-    private FortranOperation createFortranOperation(final Node operationNode)
+    private FortranOperation createFortranOperation(final FortranModule module, final Node operationNode)
             throws ParserConfigurationException, SAXException, IOException {
         final FortranOperation operation = new FortranOperation(NodeUtils.getNameOfOperation(operationNode),
                 operationNode, Predicates.isFunctionStatement.test(operationNode));
-
-        // System.err.printf("CREATE operation %s\n", operation.getName());
+        operation.setModule(module);
 
         this.createFortranOperationParameters(operation, operationNode);
+
+        this.computeUsedModules(operation.getUsedModules(), operationNode);
 
         // This is necessary as an entry "inherits" all variable and common block values from the
         // subroutine it belongs to
@@ -242,6 +253,16 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             this.createFortranOperationDimensionalVariables(operation, operationNode);
         }
         return operation;
+    }
+
+    private void computeUsedModules(final Set<String> usedModules, final Node rootNode) {
+        final Set<Node> useStatements = NodeUtils.allDescendents(rootNode, Predicates.isUseStatement, false);
+        for (final Node useStatement : useStatements) {
+            final String usedModuleName = useStatement.getChildNodes().item(1).getTextContent();
+            this.logger.debug("found use statement: {}, module name: {}", useStatement.getTextContent(),
+                    usedModuleName);
+            usedModules.add(usedModuleName);
+        }
     }
 
     private void createFortranOperationImplicitVariables(final FortranOperation operation, final Node operationNode)
@@ -290,10 +311,12 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
         commonStatements.forEach(statement -> {
             final Node commonBlockNameNode = statement.getChildNodes().item(1);
             final String name = commonBlockNameNode.getFirstChild().getTextContent().toLowerCase(Locale.getDefault());
-            final CommonBlock commonBlock = operation.getCommonBlocks().get(name);
+            CommonBlock commonBlock = operation.getCommonBlocks().get(name);
             if (commonBlock == null) {
-                operation.getCommonBlocks().put(name, new CommonBlock(name, statement));
+                commonBlock = new CommonBlock(name, statement);
+                operation.getCommonBlocks().put(name, commonBlock);
             }
+            this.createCommonBlock(commonBlock, statement);
         });
     }
 

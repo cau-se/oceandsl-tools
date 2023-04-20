@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright 2023 Kieker Project (http://kieker-monitoring.net)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
+package org.oceandsl.tools.fxca.utils;
 
 /**
- * Marker interface for dataflow endpoints.
- *
  * @author Reiner Jung
  *
+ * @since 1.3.0
  */
-public interface IDataflowEndpoint {
+public interface IUriProcessor {
 
-    String getName();
+    String process(String uri);
+
 }

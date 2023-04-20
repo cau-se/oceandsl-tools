@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
+package org.oceandsl.tools.fxca.stages.dataflow.data;
 
 /**
- * Marker interface for dataflow endpoints.
- *
  * @author Reiner Jung
- *
+ * @since 1.3.0
  */
-public interface IDataflowEndpoint {
+public interface IDataflowEntry {
 
-    String getName();
 }

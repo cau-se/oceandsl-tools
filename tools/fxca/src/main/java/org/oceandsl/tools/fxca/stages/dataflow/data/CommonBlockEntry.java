@@ -13,15 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.model;
+package org.oceandsl.tools.fxca.stages.dataflow.data;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.oceandsl.tools.fxca.model.FortranModule;
+
+import lombok.Getter;
 
 /**
- * Marker interface for dataflow endpoints.
- *
  * @author Reiner Jung
- *
+ * @since 1.3.0
  */
-public interface IDataflowEndpoint {
+public class CommonBlockEntry {
 
-    String getName();
+    @Getter
+    Set<FortranModule> modules = new HashSet<>();
+
+    @Getter
+    String name;
+
+    @Getter
+    Set<String> variables = new HashSet<>();
+
+    public CommonBlockEntry(final String name) {
+        this.name = name;
+    }
+
+    public void merge(final CommonBlockEntry entry) {
+        entry.modules.forEach(module -> this.modules.add(module));
+        entry.variables.forEach(variable -> this.variables.add(variable));
+    }
 }

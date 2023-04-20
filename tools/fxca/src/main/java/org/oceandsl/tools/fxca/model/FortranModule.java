@@ -15,15 +15,11 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.w3c.dom.Document;
-
-import org.oceandsl.tools.fxca.tools.Pair;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -46,8 +42,6 @@ public class FortranModule implements IContainable {
     private final Document document;
     @Getter
     private final String fileName;
-    @Getter
-    private final Collection<Pair<Pair<FortranModule, String>, Pair<FortranModule, String>>> calls = new ArrayList<>();
     @Getter
     private final Map<String, CommonBlock> commonBlocks = new ContainmentHashMap<>(this);
     @Getter
