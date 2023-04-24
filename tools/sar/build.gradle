@@ -19,6 +19,12 @@ dependencies {
 	implementation 'org.eclipse.emf:org.eclipse.emf.ecore:2.23.0'
 	implementation 'org.eclipse.emf:org.eclipse.emf.ecore.xmi:2.16.0'
 
+
+	compileOnly 'org.projectlombok:lombok:1.18.26'
+	testCompileOnly 'org.projectlombok:lombok:1.18.26'
+	annotationProcessor 'org.projectlombok:lombok:1.18.26'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+
 	// runtime 'org.eclipse.emf:org.eclipse.emf.ecore:2.23.0'
 
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.0'

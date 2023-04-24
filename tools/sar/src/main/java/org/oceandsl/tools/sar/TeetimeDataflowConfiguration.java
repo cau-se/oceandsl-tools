@@ -41,14 +41,9 @@ import kieker.model.analysismodel.type.StorageType;
 import kieker.model.analysismodel.type.TypePackage;
 
 import teetime.framework.Configuration;
-import teetime.framework.OutputPort;
 
-import org.oceandsl.analysis.code.OperationStorage;
 import org.oceandsl.analysis.code.stages.CsvReaderStage;
 import org.oceandsl.analysis.code.stages.IStorageSignatureExtractor;
-import org.oceandsl.analysis.code.stages.OperationStorageFactory;
-import org.oceandsl.analysis.code.stages.OperationStorageFixPathStage;
-import org.oceandsl.analysis.code.stages.OperationStorageMakeLowerCaseStage;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.EModuleMode;
 import org.oceandsl.analysis.generic.stages.StringFileWriterSink;
@@ -56,7 +51,6 @@ import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.ModuleBasedSignatureProcessor;
-import org.oceandsl.tools.sar.stages.dataflow.CleanupDataflowComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.dataflow.CountUniqueDataflowCallsStage;
 import org.oceandsl.tools.sar.stages.dataflow.ElementAndDataflow4StaticDataStage;
 import org.oceandsl.tools.sar.stages.dataflow.ExecutionModelDataflowAssemblerStage;
@@ -72,23 +66,28 @@ import org.oceandsl.tools.sar.stages.dataflow.StorageTypeModelAssembler;
  * @since 1.1
  */
 public class TeetimeDataflowConfiguration extends Configuration {
+
+    private static final String CALLER_CALLEE_DATAFLOW_FILENAME = "dataflow-cc.csv";
+    private static final String STORAGE_DATAFLOW_FILENAME = "dataflow-cb.csv";
+    private static final String STORAGE_FILENAME = "common-blocks.csv";
+
     public TeetimeDataflowConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
             throws IOException, ValueConversionErrorException {
-        super();
 
-        OutputPort<OperationStorage> readerPort;
+        final CsvReaderStage<CallerCalleeDataflow> callerCalleeDataflowReader = new CsvReaderStage<>(
+                settings.getDataflowInputFile().resolve(CALLER_CALLEE_DATAFLOW_FILENAME),
+                settings.getDataflowSplitSymbol(), true, new CallerCalleeDataflowFactory());
+        final CsvReaderStage<StorageOperationDataflow> storageOperationDataflowReader = new CsvReaderStage<>(
+                settings.getDataflowInputFile().resolve(STORAGE_DATAFLOW_FILENAME), settings.getDataflowSplitSymbol(),
+                true, new StorageOperationDataflowFactory());
+        final CsvReaderStage<Storage> storagesReader = new CsvReaderStage<>(
+                settings.getDataflowInputFile().resolve(STORAGE_FILENAME), settings.getDataflowSplitSymbol(), true,
+                new StorageFactory());
 
-        logger.info("Processing static call log");
-        readerPort = this.createReaderStage(settings.getOperationCallInputFile(), settings.getCallSplitSymbol());
-
-        readerPort = this.createOperationStorageFixPath(readerPort, settings.getFunctionNameFiles(),
-                settings.getCallSplitSymbol(), settings.getMissingFunctionsFile());
-
-        final OperationStorageMakeLowerCaseStage makeLowerCaseStage = new OperationStorageMakeLowerCaseStage(
-                settings.isCaseInsensitive());
-
-        final CleanupDataflowComponentSignatureStage cleanupComponentSignatureStage = new CleanupDataflowComponentSignatureStage(
-                this.createProcessors(settings.getModuleModes(), settings, logger));
+        // create from caller callees -> operationEvent -> operationAssembler
+        // storage -> storageEvent -> storageAssembler
+        // connect operation <-> storage
+        // connect operation <-> operation
 
         final StringFileWriterSink errorMessageSink;
         if (settings.getMissingMappingsFile() != null) {
@@ -138,16 +137,6 @@ public class TeetimeDataflowConfiguration extends Configuration {
                 repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
 
         /** connecting ports. */
-        this.connectPorts(readerPort, makeLowerCaseStage.getInputPort());
-        this.connectPorts(makeLowerCaseStage.getOutputPort(), cleanupComponentSignatureStage.getInputPort());
-        this.connectPorts(cleanupComponentSignatureStage.getOutputPort(),
-                elementAndDataflow4StaticDataStage.getInputPort());
-        if (errorMessageSink != null) {
-            this.connectPorts(cleanupComponentSignatureStage.getErrorMessageOutputPort(),
-                    errorMessageSink.getInputPort());
-        }
-
-        this.connectPorts(readerPort, elementAndDataflow4StaticDataStage.getInputPort());
 
         /** -- operation - */
         this.connectPorts(elementAndDataflow4StaticDataStage.getOperationOutputPort(),
@@ -170,29 +159,6 @@ public class TeetimeDataflowConfiguration extends Configuration {
                 executionModelDataflowGenerationStage.getInputPort());
         this.connectPorts(executionModelDataflowGenerationStage.getOutputPort(),
                 countUniqueDataflowCalls.getInputPort());
-    }
-
-    private OutputPort<OperationStorage> createReaderStage(final Path inputFile, final String splitSymbol)
-            throws IOException {
-        final CsvReaderStage<OperationStorage> readCsvStage = new CsvReaderStage<>(inputFile, splitSymbol, true,
-                new OperationStorageFactory());
-        return readCsvStage.getOutputPort();
-    }
-
-    private OutputPort<OperationStorage> createOperationStorageFixPath(final OutputPort<OperationStorage> readerPort,
-            final List<Path> functionNameFiles, final String namesSplitSymbol, final Path missingFunctionsFile)
-            throws IOException {
-        if (functionNameFiles != null && !functionNameFiles.isEmpty()) {
-            final OperationStorageFixPathStage fixPathStage = new OperationStorageFixPathStage(functionNameFiles,
-                    namesSplitSymbol);
-            if (missingFunctionsFile != null) {
-                final StringFileWriterSink missingFunctionsListSink = new StringFileWriterSink(missingFunctionsFile);
-                this.connectPorts(fixPathStage.getMissingEntryOutputPort(), missingFunctionsListSink.getInputPort());
-            }
-            this.connectPorts(readerPort, fixPathStage.getInputPort());
-            return fixPathStage.getOutputPort();
-        }
-        return readerPort;
     }
 
     private List<AbstractSignatureProcessor> createProcessors(final List<EModuleMode> modes, final Settings settings,
