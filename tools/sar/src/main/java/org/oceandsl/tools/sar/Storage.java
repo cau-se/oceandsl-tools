@@ -16,7 +16,6 @@
 package org.oceandsl.tools.sar;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.oceandsl.analysis.code.stages.data.ICsvRecord;
@@ -24,7 +23,8 @@ import org.oceandsl.analysis.code.stages.data.ICsvRecord;
 import lombok.Getter;
 
 /**
- * @author reiner
+ * @author Reiner Jung
+ * @since 1.3.0
  *
  */
 public class Storage implements ICsvRecord {
@@ -32,10 +32,16 @@ public class Storage implements ICsvRecord {
     @Getter
     private final String name;
 
+    @Getter
+    private final List<String> files = new ArrayList<>();
+
+    @Getter
+    private final List<String> modules = new ArrayList<>();
+
+    @Getter
     private final List<String> variables = new ArrayList<>();
 
-    public Storage(final String name, final Collection<String> variables) {
+    public Storage(final String name) {
         this.name = name;
-        this.variables.addAll(variables);
     }
 }

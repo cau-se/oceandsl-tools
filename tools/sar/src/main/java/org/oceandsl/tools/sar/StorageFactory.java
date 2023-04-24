@@ -15,20 +15,23 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.oceandsl.analysis.code.stages.data.ICsvRecordFactory;
 
 public class StorageFactory implements ICsvRecordFactory<Storage> {
 
     @Override
     public Storage createRecord(final String[] headerLabels, final String[] values) {
-        final Collection<String> variables = new ArrayList<>();
-        for (final String variable : values[3].split(",")) {
-            variables.add(variable);
+        final Storage storage = new Storage(values[0]);
+        for (final String file : values[1].split(",")) {
+            storage.getFiles().add(file);
         }
-        return new Storage(values[0], variables);
+        for (final String module : values[2].split(",")) {
+            storage.getModules().add(module);
+        }
+        for (final String variable : values[3].split(",")) {
+            storage.getVariables().add(variable);
+        }
+        return storage;
     }
 
 }

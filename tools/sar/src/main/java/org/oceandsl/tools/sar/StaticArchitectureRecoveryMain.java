@@ -93,6 +93,7 @@ public class StaticArchitectureRecoveryMain {
             this.executeConfiguration("call", label, this.createTeetimeCallConfiguration());
         }
         if (this.settings.getDataflowInputFile() != null) {
+            this.executeConfiguration("storage", label, this.createTeetimeStorageConfiguration());
             this.executeConfiguration("dataflow", label, this.createTeetimeDataflowConfiguration());
         }
 
@@ -140,6 +141,15 @@ public class StaticArchitectureRecoveryMain {
     private TeetimeCallConfiguration createTeetimeCallConfiguration() throws ConfigurationException {
         try {
             return new TeetimeCallConfiguration(this.logger, this.settings, this.repository);
+        } catch (final IOException | ValueConversionErrorException e) {
+            this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
+            throw new ConfigurationException(e);
+        }
+    }
+
+    private TeetimeDataflowConfiguration createTeetimeStorageConfiguration() throws ConfigurationException {
+        try {
+            return new TeetimeDataflowConfiguration(this.logger, this.settings, this.repository);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
