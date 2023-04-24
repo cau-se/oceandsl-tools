@@ -22,13 +22,12 @@ import java.util.Set;
 import org.w3c.dom.Document;
 
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author Henning Schnoor
  * @since 1.3.0
  */
-public class FortranModule implements IContainable {
+public class FortranModule extends MMObject implements IContainable {
 
     @Getter
     private final Set<String> usedModules = new HashSet<>();
@@ -46,10 +45,6 @@ public class FortranModule implements IContainable {
     private final Map<String, CommonBlock> commonBlocks = new ContainmentHashMap<>(this);
     @Getter
     private final Map<String, FortranVariable> variables = new ContainmentHashMap<>(this);
-
-    @Getter
-    @Setter
-    Object parent;
 
     public FortranModule(final String moduleName, final String fileName, final boolean namedModule,
             final Document document) {

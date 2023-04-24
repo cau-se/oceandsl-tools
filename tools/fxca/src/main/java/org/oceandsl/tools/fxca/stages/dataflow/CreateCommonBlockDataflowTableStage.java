@@ -26,7 +26,7 @@ import org.oceandsl.analysis.code.stages.data.Table;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CreateCommonblockDataflowTableStage extends AbstractTransformation<CommonBlockArgumentDataflow, Table> {
+public class CreateCommonBlockDataflowTableStage extends AbstractTransformation<CommonBlockArgumentDataflow, Table> {
 
     private static final String COMMON_BLOCK = "commonblock";
     private static final String PATH = "filename";
@@ -36,13 +36,13 @@ public class CreateCommonblockDataflowTableStage extends AbstractTransformation<
 
     private final Table callsTable;
 
-    public CreateCommonblockDataflowTableStage() {
+    public CreateCommonBlockDataflowTableStage() {
         this.callsTable = new Table("dataflow-cb",
-                new StringValueHandler(CreateCommonblockDataflowTableStage.COMMON_BLOCK),
-                new StringValueHandler(CreateCommonblockDataflowTableStage.PATH),
-                new StringValueHandler(CreateCommonblockDataflowTableStage.MODULE),
-                new StringValueHandler(CreateCommonblockDataflowTableStage.OPERATION),
-                new StringValueHandler(CreateCommonblockDataflowTableStage.DIRECTION));
+                new StringValueHandler(CreateCommonBlockDataflowTableStage.COMMON_BLOCK),
+                new StringValueHandler(CreateCommonBlockDataflowTableStage.PATH),
+                new StringValueHandler(CreateCommonBlockDataflowTableStage.MODULE),
+                new StringValueHandler(CreateCommonBlockDataflowTableStage.OPERATION),
+                new StringValueHandler(CreateCommonBlockDataflowTableStage.DIRECTION));
     }
 
     @Override

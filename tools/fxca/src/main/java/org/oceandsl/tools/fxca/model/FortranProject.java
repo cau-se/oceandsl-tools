@@ -28,7 +28,7 @@ import lombok.Setter;
  * @author Henning Schnoor
  * @since 1.3.0
  */
-public class FortranProject {
+public class FortranProject extends MMObject {
 
     /**
      * Actual list to which List-calls are delegated.

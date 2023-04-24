@@ -22,55 +22,15 @@ import lombok.Setter;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class FortranParameter implements IContainable, IDataflowEndpoint {
-
-    @Getter
-    private final String name;
-
-    @Getter
-    @Setter
-    private String type;
-
-    @Getter
-    @Setter
-    private EDirection direction;
-
-    @Getter
-    @Setter
-    private Object parent;
+public class FortranParameter extends DataflowObject implements IContainable, IDataflowEndpoint {
 
     @Getter
     @Setter
     private int position;
 
     public FortranParameter(final String name, final int position) {
-        this.direction = EDirection.NONE;
-        this.name = name;
+        super(name);
         this.position = position;
     }
 
-    public void addDirection(final EDirection value) {
-        switch (this.direction) {
-        case NONE:
-            this.direction = value;
-            break;
-        case READ:
-            if (value == EDirection.WRITE || value == EDirection.BOTH) {
-                this.direction = EDirection.BOTH;
-            } else {
-                this.direction = EDirection.READ;
-            }
-            break;
-        case WRITE:
-            if (value == EDirection.READ || value == EDirection.BOTH) {
-                this.direction = EDirection.BOTH;
-            } else {
-                this.direction = EDirection.WRITE;
-            }
-            break;
-        case BOTH:
-            this.direction = EDirection.BOTH;
-            break;
-        }
-    }
 }

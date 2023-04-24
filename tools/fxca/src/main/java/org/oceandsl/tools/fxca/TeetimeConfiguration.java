@@ -32,8 +32,8 @@ import org.oceandsl.tools.fxca.stages.dataflow.AggregateCommonBlocksStage;
 import org.oceandsl.tools.fxca.stages.dataflow.AggregateDataflowStage;
 import org.oceandsl.tools.fxca.stages.dataflow.ComputeDirectionalityOfParametersStage;
 import org.oceandsl.tools.fxca.stages.dataflow.CreateCallerCalleeDataflowTableStage;
+import org.oceandsl.tools.fxca.stages.dataflow.CreateCommonBlockDataflowTableStage;
 import org.oceandsl.tools.fxca.stages.dataflow.CreateCommonBlocksTableStage;
-import org.oceandsl.tools.fxca.stages.dataflow.CreateCommonblockDataflowTableStage;
 import org.oceandsl.tools.fxca.stages.dataflow.DataFlowAnalysisStage;
 import org.oceandsl.tools.fxca.utils.PatternUriProcessor;
 
@@ -86,7 +86,7 @@ public class TeetimeConfiguration extends Configuration {
 
         /** tables. */
         final CreateCallerCalleeDataflowTableStage callerCalleeDataflowTableStage = new CreateCallerCalleeDataflowTableStage();
-        final CreateCommonblockDataflowTableStage commonBlockDataflowTableStage = new CreateCommonblockDataflowTableStage();
+        final CreateCommonBlockDataflowTableStage commonBlockDataflowTableStage = new CreateCommonBlockDataflowTableStage();
         final CreateCommonBlocksTableStage commonBlocksTableStage = new CreateCommonBlocksTableStage();
 
         /** output stages. */
@@ -111,10 +111,9 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(processModuleStructureStage.getOutputPort(), processOperationCallStage.getInputPort());
 
         this.connectPorts(processOperationCallStage.getOutputPort(), projectDistributor.getInputPort());
+        this.connectPorts(processOperationCallStage.getNotFoundOutputPort(), notFoundSink.getInputPort());
 
         this.connectPorts(projectDistributor.getNewOutputPort(), computeDirectionalityOfParametersStage.getInputPort());
-
-        this.connectPorts(processOperationCallStage.getNotFoundOutputPort(), notFoundSink.getInputPort());
 
         this.connectPorts(projectDistributor.getNewOutputPort(), callTableStage.getInputPort());
         this.connectPorts(callTableStage.getOutputPort(), callTableSink.getInputPort());

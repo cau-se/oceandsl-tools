@@ -87,18 +87,18 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
             } else if (Predicates.isImplicitNoneStmt.test(statement)) {
                 operation.setImplicit(false);
             } else if (Predicates.isM.or(Predicates.isC).or(Predicates.isTDeclStmt).or(Predicates.isFile)
-                    .or(Predicates.isInclude).or(Predicates.isOperationStatement).or(Predicates.isEndStatement)
-                    .or(Predicates.isGotoStatement).or(Predicates.isLabel).or(Predicates.isContinueStatement)
-                    .or(Predicates.isFormatStatement).or(Predicates.isElseStatement).or(Predicates.isReturnStatement)
-                    .or(Predicates.isRewindStatement).or(Predicates.isStopStatement).or(Predicates.isAllocateStatement)
-                    .or(Predicates.isDeallocateStatement).or(Predicates.isInquireStatement)
-                    .or(Predicates.isParameterStatement).or(Predicates.isCommonStatement).or(Predicates.isExitStatement)
-                    .test(statement)) {
+                    .or(Predicates.isInclude).or(Predicates.isOperationStatement).or(Predicates.isProgramStatement)
+                    .or(Predicates.isEndStatement).or(Predicates.isGotoStatement).or(Predicates.isLabel)
+                    .or(Predicates.isContinueStatement).or(Predicates.isFormatStatement).or(Predicates.isElseStatement)
+                    .or(Predicates.isReturnStatement).or(Predicates.isRewindStatement).or(Predicates.isStopStatement)
+                    .or(Predicates.isAllocateStatement).or(Predicates.isDeallocateStatement)
+                    .or(Predicates.isInquireStatement).or(Predicates.isParameterStatement)
+                    .or(Predicates.isCommonStatement).or(Predicates.isExitStatement).test(statement)) {
                 // ignore
             } else if (statement.getNodeType() == Node.TEXT_NODE) {
                 // ignore text
             } else {
-                this.logger.warn("Unknown statement {} ", statement.toString());
+                System.err.println(this.getClass().getSimpleName() + ": Unknown statement " + statement);
             }
         });
     }
