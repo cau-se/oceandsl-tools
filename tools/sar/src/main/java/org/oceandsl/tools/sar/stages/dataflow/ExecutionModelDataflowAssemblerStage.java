@@ -115,7 +115,6 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
     private void addOperationStorageDataflow(final DeployedOperation operation, final DeployedStorage storage,
             final EDirection direction) {
         final Tuple<DeployedOperation, DeployedStorage> key = ExecutionFactory.eINSTANCE.createTuple();
-
         key.setFirst(operation);
         key.setSecond(storage);
         this.addObjectToSource(key);

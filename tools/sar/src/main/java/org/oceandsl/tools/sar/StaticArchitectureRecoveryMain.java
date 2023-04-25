@@ -147,9 +147,9 @@ public class StaticArchitectureRecoveryMain {
         }
     }
 
-    private TeetimeDataflowConfiguration createTeetimeStorageConfiguration() throws ConfigurationException {
+    private TeetimeStorageConfiguration createTeetimeStorageConfiguration() throws ConfigurationException {
         try {
-            return new TeetimeDataflowConfiguration(this.logger, this.settings, this.repository);
+            return new TeetimeStorageConfiguration(this.logger, this.settings, this.repository);
         } catch (final IOException | ValueConversionErrorException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
@@ -166,7 +166,7 @@ public class StaticArchitectureRecoveryMain {
     }
 
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if ((this.settings.getOperationCallInputFile() == null) && (this.settings.getDataflowInputFile() == null)) {
+        if (this.settings.getOperationCallInputFile() == null && this.settings.getDataflowInputFile() == null) {
             this.logger.error("You need at least operation calls or dataflow as input.");
             return false;
         }

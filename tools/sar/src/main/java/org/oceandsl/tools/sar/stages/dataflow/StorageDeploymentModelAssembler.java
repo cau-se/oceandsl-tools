@@ -18,6 +18,7 @@ package org.oceandsl.tools.sar.stages.dataflow;
 import kieker.analysis.architecture.recovery.AbstractModelAssembler;
 import kieker.analysis.architecture.recovery.events.StorageEvent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentContext;
@@ -128,8 +129,9 @@ public class StorageDeploymentModelAssembler extends AbstractModelAssembler impl
         DeployedStorage deployedStorage = deployedComponent.getStorages().get(storageSignature);
         if (deployedStorage == null) {
             deployedStorage = DeploymentFactory.eINSTANCE.createDeployedStorage();
-            deployedStorage
-                    .setAssemblyStorage(deployedComponent.getAssemblyComponent().getStorages().get(storageSignature));
+            final AssemblyStorage assmeblyStorage = deployedComponent.getAssemblyComponent().getStorages()
+                    .get(storageSignature);
+            deployedStorage.setAssemblyStorage(assmeblyStorage);
             deployedComponent.getStorages().put(storageSignature, deployedStorage);
             this.deploymentModel.getContexts().get(0).getValue().getComponents().put(deployedComponent.getSignature(),
                     deployedComponent);

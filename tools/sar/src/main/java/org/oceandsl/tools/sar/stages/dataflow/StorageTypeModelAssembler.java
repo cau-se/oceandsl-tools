@@ -55,31 +55,29 @@ public class StorageTypeModelAssembler extends AbstractModelAssembler implements
         final String componentSignature = event.getComponentSignature();
         final String operationSignature = event.getStorageSignature();
 
-        final ComponentType componentType = this.addComponentType(componentSignature);
+        final ComponentType componentType = this.findOrCreateComponentType(componentSignature);
         this.addStorageType(componentType, operationSignature);
     }
 
-    private ComponentType addComponentType(final String componentSignature) {
-        final String componentTypeKey = componentSignature;
-        ComponentType componentType = this.typeModel.getComponentTypes().get(componentTypeKey);
+    private ComponentType findOrCreateComponentType(final String componentSignature) {
+        ComponentType componentType = this.typeModel.getComponentTypes().get(componentSignature);
         if (componentType == null) {
             componentType = this.factory.createComponentType();
             componentType.setSignature(componentSignature);
             this.componentSignatureExtractor.extract(componentType);
-            this.typeModel.getComponentTypes().put(componentTypeKey, componentType);
+            this.typeModel.getComponentTypes().put(componentSignature, componentType);
         }
         this.updateSourceModel(componentType);
         return componentType;
     }
 
     private StorageType addStorageType(final ComponentType componentType, final String storageSignature) {
-        final String storageTypeKey = storageSignature;
         StorageType storageType = componentType.getProvidedStorages().get(storageSignature);
         if (storageType == null) {
             storageType = this.factory.createStorageType();
             storageType.setName(storageSignature);
             this.storageSignatureExtractor.extract(storageType);
-            componentType.getProvidedStorages().put(storageTypeKey, storageType);
+            componentType.getProvidedStorages().put(storageSignature, storageType);
         }
         this.updateSourceModel(storageType);
         return storageType;

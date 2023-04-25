@@ -78,6 +78,7 @@ public class TeetimeDataflowConfiguration extends Configuration {
         final ElementAndDataflow4StaticDataStage elementAndDataflow4StaticDataStage = new ElementAndDataflow4StaticDataStage(
                 settings.getHostname(), repository.getModel(TypePackage.Literals.TYPE_MODEL));
         elementAndDataflow4StaticDataStage.declareActive();
+        final DataflowConstraintStage syncStage = new DataflowConstraintStage();
 
         /** -- operation -- */
         final OperationEventModelAssemblerStage operationTypeModelAssemblerStage = new OperationEventModelAssemblerStage(
@@ -117,8 +118,9 @@ public class TeetimeDataflowConfiguration extends Configuration {
                 operationDeploymentModelAssemblerStage.getInputPort());
 
         /** -- dataflow - */
-        this.connectPorts(elementAndDataflow4StaticDataStage.getDataflowOutputPort(),
-                executionModelDataflowGenerationStage.getInputPort());
+        this.connectPorts(elementAndDataflow4StaticDataStage.getDataflowOutputPort(), syncStage.getInputPort());
+        this.connectPorts(operationDeploymentModelAssemblerStage.getOutputPort(), syncStage.getControlInputPort());
+        this.connectPorts(syncStage.getOutputPort(), executionModelDataflowGenerationStage.getInputPort());
         this.connectPorts(executionModelDataflowGenerationStage.getOutputPort(),
                 countUniqueDataflowCalls.getInputPort());
     }
