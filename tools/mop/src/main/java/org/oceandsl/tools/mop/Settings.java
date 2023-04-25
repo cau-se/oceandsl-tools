@@ -42,7 +42,7 @@ public class Settings { // NOPMD data class
     @Parameter(names = { "-e", "--experiment" }, required = true, description = "Experiment name")
     private String experimentName;
 
-    @Parameter(converter = OperationConverter.class, description = "Specify an operation merge, select")
+    @Parameter(converter = OperationConverter.class, required = true, description = "Specify an operation merge, select", validateWith = OperationValidator.class)
     private EOperation operation;
 
     @Parameter(names = { "-s",
