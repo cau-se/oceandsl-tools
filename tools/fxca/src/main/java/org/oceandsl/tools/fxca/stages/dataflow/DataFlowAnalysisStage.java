@@ -63,13 +63,11 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        project.getModules().values().stream().filter(module -> !module.getModuleName().equals(this.defaultModuleName))
-                .forEach(module -> {
-                    module.getCommonBlocks().values()
-                            .forEach(commonBlock -> this.analyzeCommonBlock(module, commonBlock));
-                    module.getOperations().values()
-                            .forEach(operation -> this.analyzeOperation(project, module, operation));
-                });
+        project.getModules().values().stream().forEach(module -> {
+            this.logger.debug("Dataflow analysis for {}", module.getFileName());
+            module.getCommonBlocks().values().forEach(commonBlock -> this.analyzeCommonBlock(module, commonBlock));
+            module.getOperations().values().forEach(operation -> this.analyzeOperation(project, module, operation));
+        });
     }
 
     private void analyzeCommonBlock(final FortranModule module, final CommonBlock commonBlock) {
@@ -217,7 +215,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
                 .or(Predicates.isOpenStatement).or(Predicates.isOperationStatement).or(Predicates.isParameterStatement)
                 .or(Predicates.isPrintStatement).or(Predicates.isReadStatement).or(Predicates.isReturnStatement)
                 .or(Predicates.isRewindStatement).or(Predicates.isStopStatement).or(Predicates.isTDeclStmt)
-                .or(Predicates.isWriteStatement).test(statement)) {
+                .or(Predicates.isWriteStatement).or(Predicates.isExternalStatement).test(statement)) {
             // ignore
         } else if (statement.getNodeType() == Node.TEXT_NODE) {
             // ignore

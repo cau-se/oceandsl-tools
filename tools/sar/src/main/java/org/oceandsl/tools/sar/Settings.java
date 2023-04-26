@@ -24,7 +24,7 @@ import com.beust.jcommander.converters.PathConverter;
 import org.oceandsl.analysis.generic.EModuleMode;
 import org.oceandsl.analysis.generic.EModuleModeConverter;
 import org.oceandsl.analysis.generic.validators.ParentPathIsWriteableValidator;
-import org.oceandsl.analysis.generic.validators.PathIsReadableValidator;
+import org.oceandsl.analysis.generic.validators.PathIsDirectoryValidator;
 import org.oceandsl.analysis.generic.validators.PathIsWriteableValidator;
 
 /**
@@ -36,28 +36,16 @@ import org.oceandsl.analysis.generic.validators.PathIsWriteableValidator;
 public class Settings { // NOPMD dataclass - required to contain settings
 
     @Parameter(names = { "-i",
-            "--call-input" }, required = false, converter = PathConverter.class, validateWith = PathIsReadableValidator.class, description = "Function call CSV file")
-    private Path operationCallInputFile;
+            "--input" }, required = true, converter = PathConverter.class, validateWith = PathIsDirectoryValidator.class, description = "Input directory")
+    private Path inputFile;
 
-    @Parameter(names = { "-j",
-            "--dataflow-input" }, required = false, converter = PathConverter.class, validateWith = PathIsReadableValidator.class, description = "Dataflow CSV file")
-    private Path dataflowInputFile;
+    @Parameter(names = { "-sc",
+            "--separation-character" }, required = false, description = "Separation character for CSV files, default is comma (,)")
+    private String splitSymbol;
 
-    @Parameter(names = { "-cs",
-            "--call-separation-char" }, required = false, description = "Separation character for operation call CSV files, default is comma (,)")
-    private String callSplitSymbol;
-
-    @Parameter(names = { "-ds",
-            "--dataflow-separation-char" }, required = false, description = "Separation character for dataflow CSV files, default is comma (,)")
-    private String dataflowSplitSymbol;
-
-    @Parameter(names = { "-ns",
-            "--names-separation-char" }, required = false, description = "Separation character for function name lists CSV files, default is comma (,)")
-    private String namesSplitSymbol;
-
-    @Parameter(names = { "-f",
-            "--function-names" }, required = false, variableArity = true, converter = PathConverter.class, validateWith = PathIsReadableValidator.class, description = "Function file map CSV file")
-    private List<Path> functionNameFiles;
+    @Parameter(names = { "-g",
+            "--input-mode" }, required = true, converter = InputModeConverter.class, validateWith = InputModeValidator.class, description = "Input mode to be used for static analysis")
+    private EInputMode inputMode;
 
     @Parameter(names = { "-a",
             "--missing-functions" }, required = false, converter = PathConverter.class, validateWith = ParentPathIsWriteableValidator.class, description = "Output file for the list of functions without an associated file")
@@ -78,10 +66,6 @@ public class Settings { // NOPMD dataclass - required to contain settings
     @Parameter(names = { "-l", "--source-label" }, required = true, description = "Set source label for the read data")
     private String sourceLabel;
 
-    @Parameter(names = { "-c",
-            "--case-insensitive" }, required = false, description = "Handle names in CSV case insensitive")
-    private boolean caseInsensitive;
-
     @Parameter(names = { "-H",
             "--hostname" }, required = false, description = "Hostname to be used in CSV reconstruction")
     private String hostname;
@@ -93,36 +77,20 @@ public class Settings { // NOPMD dataclass - required to contain settings
             "--missing-mappings-file" }, required = false, converter = PathConverter.class, validateWith = ParentPathIsWriteableValidator.class, description = "Output file for the list of files with a missing mapping in the mapping file.")
     private Path missingMappingsFile;
 
-    public Path getOperationCallInputFile() {
-        return this.operationCallInputFile;
+    public Path getInputFile() {
+        return this.inputFile;
     }
 
-    public List<Path> getFunctionNameFiles() {
-        return this.functionNameFiles;
-    }
-
-    public String getCallSplitSymbol() {
-        if (this.callSplitSymbol == null) {
+    public String getSplitSymbol() {
+        if (this.splitSymbol == null) {
             return ",";
         } else {
-            return this.callSplitSymbol;
+            return this.splitSymbol;
         }
     }
 
-    public String getDataflowSplitSymbol() {
-        if (this.dataflowSplitSymbol == null) {
-            return ",";
-        } else {
-            return this.dataflowSplitSymbol;
-        }
-    }
-
-    public String getNamesSplitSymbol() {
-        if (this.namesSplitSymbol == null) {
-            return ",";
-        } else {
-            return this.namesSplitSymbol;
-        }
+    public EInputMode getInputMode() {
+        return this.inputMode;
     }
 
     public List<EModuleMode> getModuleModes() {
@@ -137,10 +105,6 @@ public class Settings { // NOPMD dataclass - required to contain settings
         return this.sourceLabel;
     }
 
-    public boolean isCaseInsensitive() {
-        return this.caseInsensitive;
-    }
-
     public String getHostname() {
         return this.hostname == null ? "<static>" : this.hostname;
     }
@@ -151,10 +115,6 @@ public class Settings { // NOPMD dataclass - required to contain settings
 
     public List<Path> getComponentMapFiles() {
         return this.componentMapFiles;
-    }
-
-    public Path getDataflowInputFile() {
-        return this.dataflowInputFile;
     }
 
     public Path getMissingFunctionsFile() {

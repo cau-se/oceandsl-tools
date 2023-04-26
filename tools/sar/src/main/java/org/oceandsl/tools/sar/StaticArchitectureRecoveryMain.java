@@ -17,8 +17,6 @@ package org.oceandsl.tools.sar;
 
 import java.io.IOException;
 import java.lang.invoke.WrongMethodTypeException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
@@ -43,6 +41,11 @@ import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
  * @since 1.1
  */
 public class StaticArchitectureRecoveryMain {
+
+    public static final String CALLTABLE_FILENAME = "calltable.csv";
+    public static final String CALLER_CALLEE_DATAFLOW_FILENAME = "dataflow-cc.csv";
+    public static final String STORAGE_DATAFLOW_FILENAME = "dataflow-cb.csv";
+    public static final String STORAGE_FILENAME = "common-blocks.csv";
 
     /** Exit code for successful operation. */
     public static final int SUCCESS_EXIT_CODE = 0;
@@ -89,10 +92,10 @@ public class StaticArchitectureRecoveryMain {
         this.repository = ArchitectureModelManagementUtils.createModelRepository(String.format("%s-%s",
                 this.settings.getExperimentName(), this.settings.getComponentMapFiles() != null ? "map" : "file"));
 
-        if (this.settings.getOperationCallInputFile() != null) {
+        if (this.containsValue(this.settings.getInputMode(), EInputMode.CALL, EInputMode.BOTH)) {
             this.executeConfiguration("call", label, this.createTeetimeCallConfiguration());
         }
-        if (this.settings.getDataflowInputFile() != null) {
+        if (this.containsValue(this.settings.getInputMode(), EInputMode.DATAFLOW, EInputMode.BOTH)) {
             this.executeConfiguration("storage", label, this.createTeetimeStorageConfiguration());
             this.executeConfiguration("dataflow", label, this.createTeetimeDataflowConfiguration());
         }
@@ -100,6 +103,15 @@ public class StaticArchitectureRecoveryMain {
         this.shutdownService();
 
         this.logger.info("Done");
+    }
+
+    private boolean containsValue(final EInputMode hasMode, final EInputMode... modes) {
+        for (final EInputMode mode : modes) {
+            if (mode.equals(hasMode)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private <T extends Configuration> void executeConfiguration(final String type, final String label,
@@ -166,17 +178,26 @@ public class StaticArchitectureRecoveryMain {
     }
 
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (this.settings.getOperationCallInputFile() == null && this.settings.getDataflowInputFile() == null) {
-            this.logger.error("You need at least operation calls or dataflow as input.");
-            return false;
+        if (this.containsValue(this.settings.getInputMode(), EInputMode.CALL, EInputMode.BOTH)) {
+            if (!ParameterEvaluationUtils.isFileReadable(
+                    this.settings.getInputFile().resolve(StaticArchitectureRecoveryMain.CALLTABLE_FILENAME).toFile(),
+                    "", commander)) {
+                return false;
+            }
         }
-
-        if (this.settings.getFunctionNameFiles() != null) {
-            for (final Path functionNameFile : this.settings.getFunctionNameFiles()) {
-                if (!Files.isReadable(functionNameFile)) {
-                    this.logger.error("Function map file {} cannot be found", functionNameFile);
-                    return false;
-                }
+        if (this.containsValue(this.settings.getInputMode(), EInputMode.DATAFLOW, EInputMode.BOTH)) {
+            if (!ParameterEvaluationUtils.isFileReadable(this.settings.getInputFile()
+                    .resolve(StaticArchitectureRecoveryMain.CALLER_CALLEE_DATAFLOW_FILENAME).toFile(), "", commander)) {
+                return false;
+            }
+            if (!ParameterEvaluationUtils.isFileReadable(this.settings.getInputFile()
+                    .resolve(StaticArchitectureRecoveryMain.STORAGE_DATAFLOW_FILENAME).toFile(), "", commander)) {
+                return false;
+            }
+            if (!ParameterEvaluationUtils.isFileReadable(
+                    this.settings.getInputFile().resolve(StaticArchitectureRecoveryMain.STORAGE_FILENAME).toFile(), "",
+                    commander)) {
+                return false;
             }
         }
 

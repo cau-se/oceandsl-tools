@@ -56,21 +56,18 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     private final FortranProject project;
     private final IUriProcessor uriProcessor;
 
-    public ProcessModuleStructureStage(final IUriProcessor uriProcessor, final List<FortranOperation> operations,
+    public ProcessModuleStructureStage(final IUriProcessor uriProcessor, final List<FortranModule> modules,
             final String defaultModuleName) {
         this.project = new FortranProject();
-        this.project.setDefaultModule(this.createModule(defaultModuleName, operations));
-        this.project.getModules().put(defaultModuleName, this.project.getDefaultModule());
+        if (modules.size() > 0) {
+            this.project.setDefaultModule(modules.get(0));
+            this.project.getModules().put(this.project.getDefaultModule().getFileName(),
+                    this.project.getDefaultModule());
+        } else {
+            this.project.setDefaultModule(new FortranModule(defaultModuleName, "", true, null));
+            modules.forEach(module -> this.project.getModules().put(module.getFileName(), module));
+        }
         this.uriProcessor = uriProcessor;
-    }
-
-    private FortranModule createModule(final String defaultModuleName, final List<FortranOperation> operations) {
-        final FortranModule module = new FortranModule(defaultModuleName, "", true, null);
-        operations.forEach(operation -> {
-            module.getOperations().put(operation.getName(), operation);
-            operation.setModule(module);
-        });
-        return module;
     }
 
     @Override
@@ -84,7 +81,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
         final String moduleName = namedModule ? moduleStatement.getChildNodes().item(1).getTextContent() : fileName;
 
         final FortranModule module = new FortranModule(moduleName, fileName, namedModule, document);
-        this.logger.debug("Processing file {}", module.getFileName());
+        this.logger.debug("Processing file structure of {}", module.getFileName());
 
         this.computeModule(module, documentElement);
 
@@ -239,23 +236,38 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
         // This is necessary as an entry "inherits" all variable and common block values from the
         // subroutine it belongs to
+        Node belongingSubroutine = operationNode;
         if (Predicates.isEntryStatement.test(operationNode)) {
-            Node belongingSubroutine = operationNode.getPreviousSibling();
             while (!Predicates.isSubroutineStatement.test(belongingSubroutine)) {
                 belongingSubroutine = belongingSubroutine.getPreviousSibling();
             }
-
-            this.createFortranOperationCommonBlock(operation, belongingSubroutine);
-            this.createFortranOperationVariables(operation, belongingSubroutine);
-            this.createFortranOperationImplicitVariables(operation, belongingSubroutine);
-            this.createFortranOperationDimensionalVariables(operation, belongingSubroutine);
-        } else {
-            this.createFortranOperationCommonBlock(operation, operationNode);
-            this.createFortranOperationVariables(operation, operationNode);
-            this.createFortranOperationImplicitVariables(operation, operationNode);
-            this.createFortranOperationDimensionalVariables(operation, operationNode);
         }
+
+        this.createExternalOperation(module, belongingSubroutine);
+
+        this.createFortranOperationCommonBlock(operation, belongingSubroutine);
+        this.createFortranOperationVariables(operation, belongingSubroutine);
+        this.createFortranOperationImplicitVariables(operation, belongingSubroutine);
+        this.createFortranOperationDimensionalVariables(operation, belongingSubroutine);
+
         return operation;
+    }
+
+    private void createExternalOperation(final FortranModule module, final Node operationNode) {
+        final List<Node> externals = NodeUtils.findAllSiblingsDescendants(operationNode, Predicates.isExternalStatement,
+                Predicates.isEndSubroutineStatement, true);
+        externals.forEach(external -> {
+            final Node enDeclLt = NodeUtils.findChildFirst(external, Predicates.isENDeclLT);
+            final List<Node> declarations = NodeUtils.findAllSiblingsDescendants(enDeclLt, Predicates.isEnDecl,
+                    o -> false, true);
+            declarations.forEach(declaration -> {
+                final String name = NodeUtils.getName(declaration);
+                final FortranOperation operation = new FortranOperation(name, null, true, true);
+                operation.setModule(module);
+                operation.getParameters().put("v0", new FortranParameter("v0", 0));
+                module.getOperations().put(name, operation);
+            });
+        });
     }
 
     private void computeUsedModules(final Set<String> usedModules, final Node rootNode) {

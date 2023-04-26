@@ -49,14 +49,13 @@ import org.oceandsl.tools.sar.stages.dataflow.StorageTypeModelAssembler;
  */
 public class TeetimeStorageConfiguration extends Configuration {
 
-    private static final String STORAGE_FILENAME = "common-blocks.csv";
-
     public TeetimeStorageConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
             throws IOException, ValueConversionErrorException {
 
-        final CsvReaderStage<Storage> storagesReader = new CsvReaderStage<>(
-                settings.getDataflowInputFile().resolve(TeetimeStorageConfiguration.STORAGE_FILENAME),
-                settings.getDataflowSplitSymbol(), true, new StorageFactory());
+        final Path storagePath = settings.getInputFile().resolve(StaticArchitectureRecoveryMain.STORAGE_FILENAME);
+
+        final CsvReaderStage<Storage> storagesReader = new CsvReaderStage<>(storagePath, settings.getSplitSymbol(),
+                true, new StorageFactory());
 
         final StorageToStorageEventStage storageToStorageEventStage = new StorageToStorageEventStage(
                 settings.getHostname());

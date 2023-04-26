@@ -15,33 +15,20 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
-import lombok.Getter;
-
-import org.oceandsl.analysis.code.stages.data.ICsvRecord;
+import com.beust.jcommander.IStringConverter;
 
 /**
  * @author Reiner Jung
  * @since 1.3.0
  *
  */
-public class Storage implements ICsvRecord {
+public class InputModeConverter implements IStringConverter<EInputMode> {
 
-    @Getter
-    private final String name;
-
-    @Getter
-    private final List<String> files = new ArrayList<>();
-
-    @Getter
-    private final List<String> modules = new ArrayList<>();
-
-    @Getter
-    private final List<String> variables = new ArrayList<>();
-
-    public Storage(final String name) {
-        this.name = name;
+    @Override
+    public EInputMode convert(final String value) {
+        return EInputMode.valueOf(value.toUpperCase(Locale.getDefault()));
     }
+
 }

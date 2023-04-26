@@ -15,12 +15,12 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import kieker.model.analysismodel.execution.EDirection;
 
 import org.oceandsl.analysis.code.stages.data.ICsvRecord;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author Reiner Jung

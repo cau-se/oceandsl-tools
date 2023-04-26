@@ -50,6 +50,10 @@ public class Settings { // NOPMD data class
             "--default-component" }, required = false, description = "In case callees are identified that do not have an implementation in the code, assign the callee to this operation.")
     private String defaultComponent;
 
+    @Parameter(names = { "-l",
+            "--library-functions" }, required = false, variableArity = true, converter = PathConverter.class, validateWith = PathIsReadableValidator.class, description = "Map files for built-in and other runtime functions.")
+    private List<Path> libraryFunctionsPaths;
+
     @Parameter(names = { "-f",
             "--flat" }, required = false, description = "Scan source directories flat, i.e. not in recusrive mode.")
     private boolean flat;
@@ -72,6 +76,10 @@ public class Settings { // NOPMD data class
 
     public boolean isFlat() {
         return this.flat;
+    }
+
+    public List<Path> getLibraryFunctionsPaths() {
+        return this.libraryFunctionsPaths;
     }
 
 }

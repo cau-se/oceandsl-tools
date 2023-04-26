@@ -93,12 +93,13 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                     .or(Predicates.isReturnStatement).or(Predicates.isRewindStatement).or(Predicates.isStopStatement)
                     .or(Predicates.isAllocateStatement).or(Predicates.isDeallocateStatement)
                     .or(Predicates.isInquireStatement).or(Predicates.isParameterStatement)
-                    .or(Predicates.isCommonStatement).or(Predicates.isExitStatement).test(statement)) {
+                    .or(Predicates.isCommonStatement).or(Predicates.isExitStatement).or(Predicates.isExternalStatement)
+                    .test(statement)) {
                 // ignore
             } else if (statement.getNodeType() == Node.TEXT_NODE) {
                 // ignore text
             } else {
-                System.err.println(this.getClass().getSimpleName() + ": Unknown statement " + statement);
+                this.logger.debug("In file {}: Unkown statement {}", module.getFileName(), statement);
             }
         });
     }
@@ -327,8 +328,12 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                         Predicates.isArgument, o -> false);
                 for (int i = 0; i < arguments.size(); i++) {
                     final Node argument = arguments.get(i);
-                    final FortranParameter parameter = this.findParameter(callee, i);
-                    this.checkExpression(operation, argument, parameter.getDirection());
+                    final Optional<FortranParameter> parameter = this.findParameter(callee, i);
+                    if (parameter.isPresent()) {
+                        this.checkExpression(operation, argument, parameter.get().getDirection());
+                    } else {
+                        this.logger.warn("Operation {} has not parameter number {}", callee.getName(), i);
+                    }
                 }
             }
         } else {
@@ -336,13 +341,15 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         }
     }
 
-    private FortranParameter findParameter(final FortranOperation operation, final int i) {
+    private Optional<FortranParameter> findParameter(final FortranOperation operation, final int i) {
         final Optional<FortranParameter> parameterOptional = operation.getParameters().values().stream()
                 .filter(parameter -> parameter.getPosition() == i).findFirst();
         if (parameterOptional.isPresent()) {
-            return parameterOptional.get();
+            return parameterOptional;
         } else {
-            return null;
+            final Optional<FortranParameter> lastOptional = operation.getParameters().values().stream()
+                    .filter(parameter -> parameter.getPosition() == operation.getParameters().size()).findFirst();
+            return lastOptional;
         }
     }
 

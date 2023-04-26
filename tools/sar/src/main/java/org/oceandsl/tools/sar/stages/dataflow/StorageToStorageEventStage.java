@@ -22,8 +22,11 @@ import teetime.stage.basic.AbstractTransformation;
 import org.oceandsl.tools.sar.Storage;
 
 /**
- * @author reiner
+ * Convert {@link Storage} row objects into a {@link StorageEvent}. In case the storage is used in
+ * multiple components, use storage name as component name.
  *
+ * @author Reiner Jung
+ * @since 1.3.0
  */
 public class StorageToStorageEventStage extends AbstractTransformation<Storage, StorageEvent> {
 

@@ -78,24 +78,6 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
                 .getStorageDataflows().entrySet()) {
             final Tuple<DeployedOperation, DeployedStorage> key = entry.getKey();
 
-            System.err.printf("%s", key);
-
-            System.err.printf("f %s\n", key.getFirst());
-            System.err.printf("f c %s\n", key.getFirst().getComponent());
-            System.err.printf("f c s %s\n", key.getFirst().getComponent().getSignature());
-
-            System.err.printf("f o %s\n", key.getFirst().getAssemblyOperation());
-            System.err.printf("f o t %s\n", key.getFirst().getAssemblyOperation().getOperationType());
-            System.err.printf("f o t s %s\n", key.getFirst().getAssemblyOperation().getOperationType().getSignature());
-
-            System.err.printf("s %s\n", key.getSecond());
-            System.err.printf("s c %s\n", key.getSecond().getComponent());
-            System.err.printf("s c s %s\n", key.getSecond().getComponent().getSignature());
-
-            System.err.printf("s o %s\n", key.getSecond().getAssemblyStorage());
-            System.err.printf("s o t %s\n", key.getSecond().getAssemblyStorage().getStorageType());
-            System.err.printf("s o t s %s\n", key.getSecond().getAssemblyStorage().getStorageType().getName());
-
             if ((dataflow.getSource() instanceof OperationEvent) && (dataflow.getTarget() instanceof StorageEvent)) {
                 final OperationEvent operationEvent = (OperationEvent) dataflow.getSource();
                 final StorageEvent storageEvent = (StorageEvent) dataflow.getTarget();

@@ -62,23 +62,24 @@ import org.oceandsl.tools.sar.stages.dataflow.ExecutionModelDataflowAssemblerSta
  */
 public class TeetimeDataflowConfiguration extends Configuration {
 
-    private static final String CALLER_CALLEE_DATAFLOW_FILENAME = "dataflow-cc.csv";
-    private static final String STORAGE_DATAFLOW_FILENAME = "dataflow-cb.csv";
-
     public TeetimeDataflowConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
             throws IOException, ValueConversionErrorException {
 
+        final Path callerCalleeDataflowPath = settings.getInputFile()
+                .resolve(StaticArchitectureRecoveryMain.CALLER_CALLEE_DATAFLOW_FILENAME);
+        final Path storageDataflowPath = settings.getInputFile()
+                .resolve(StaticArchitectureRecoveryMain.STORAGE_DATAFLOW_FILENAME);
+
         final CsvReaderStage<CallerCalleeDataflow> callerCalleeDataflowReader = new CsvReaderStage<>(
-                settings.getDataflowInputFile().resolve(TeetimeDataflowConfiguration.CALLER_CALLEE_DATAFLOW_FILENAME),
-                settings.getDataflowSplitSymbol(), true, new CallerCalleeDataflowFactory());
+                callerCalleeDataflowPath, settings.getSplitSymbol(), true, new CallerCalleeDataflowFactory());
         final CsvReaderStage<StorageOperationDataflow> storageOperationDataflowReader = new CsvReaderStage<>(
-                settings.getDataflowInputFile().resolve(TeetimeDataflowConfiguration.STORAGE_DATAFLOW_FILENAME),
-                settings.getDataflowSplitSymbol(), true, new StorageOperationDataflowFactory());
+                storageDataflowPath, settings.getSplitSymbol(), true, new StorageOperationDataflowFactory());
 
         final ElementAndDataflow4StaticDataStage elementAndDataflow4StaticDataStage = new ElementAndDataflow4StaticDataStage(
                 settings.getHostname(), repository.getModel(TypePackage.Literals.TYPE_MODEL));
         elementAndDataflow4StaticDataStage.declareActive();
-        final DataflowConstraintStage syncStage = new DataflowConstraintStage();
+
+        final DataflowConstraintStage dataflowConstraintStage = new DataflowConstraintStage();
 
         /** -- operation -- */
         final OperationEventModelAssemblerStage operationTypeModelAssemblerStage = new OperationEventModelAssemblerStage(
@@ -118,9 +119,12 @@ public class TeetimeDataflowConfiguration extends Configuration {
                 operationDeploymentModelAssemblerStage.getInputPort());
 
         /** -- dataflow - */
-        this.connectPorts(elementAndDataflow4StaticDataStage.getDataflowOutputPort(), syncStage.getInputPort());
-        this.connectPorts(operationDeploymentModelAssemblerStage.getOutputPort(), syncStage.getControlInputPort());
-        this.connectPorts(syncStage.getOutputPort(), executionModelDataflowGenerationStage.getInputPort());
+        this.connectPorts(elementAndDataflow4StaticDataStage.getDataflowOutputPort(),
+                dataflowConstraintStage.getInputPort());
+        this.connectPorts(operationDeploymentModelAssemblerStage.getOutputPort(),
+                dataflowConstraintStage.getControlInputPort());
+        this.connectPorts(dataflowConstraintStage.getOutputPort(),
+                executionModelDataflowGenerationStage.getInputPort());
         this.connectPorts(executionModelDataflowGenerationStage.getOutputPort(),
                 countUniqueDataflowCalls.getInputPort());
     }
@@ -153,21 +157,20 @@ public class TeetimeDataflowConfiguration extends Configuration {
 
     private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger, final Settings settings) {
         logger.info("Module based component definition");
-        return new ModuleBasedSignatureProcessor(settings.isCaseInsensitive());
+        return new ModuleBasedSignatureProcessor(false);
     }
 
     private AbstractSignatureProcessor createFileBasedProcessor(final Logger logger,
             final Settings parameterConfiguration) {
         logger.info("File based component definition");
-        return new FileBasedSignatureProcessor(parameterConfiguration.isCaseInsensitive());
+        return new FileBasedSignatureProcessor(false);
     }
 
     private AbstractSignatureProcessor createMapBasedProcessor(final Logger logger, final Settings settings)
             throws IOException {
         if (settings.getComponentMapFiles() != null) {
             logger.info("Map based component definition");
-            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), settings.isCaseInsensitive(),
-                    settings.getCallSplitSymbol());
+            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), false, settings.getSplitSymbol());
         } else {
             logger.error("Missing map files for component identification.");
             return null;

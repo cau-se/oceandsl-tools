@@ -198,4 +198,5 @@ public class Predicates {
             .or(Predicates.isDoStatement).or(Predicates.isDoLabelStatement).or(Predicates.isReadStatement)
             .or(Predicates.isWriteStatement).or(Predicates.isWhereStatement).or(Predicates.isCloseStatement)
             .or(Predicates.isOpenStatement).or(Predicates.isSaveStatement);
+    public static Predicate<Node> isExternalStatement = NodeUtils.hasName("external-stmt");
 }
