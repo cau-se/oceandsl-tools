@@ -210,16 +210,14 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     }
 
     private CommonBlock createCommonBlock(final CommonBlock commonBlock, final Node statement) {
-        final Node commonBlockElements = statement.getChildNodes().item(3);
-        for (int i = 0; i < commonBlockElements.getChildNodes().getLength(); i++) {
-            final Node commonBlockObject = commonBlockElements.getChildNodes().item(i);
-            if (Predicates.isCommonBlockObject.test(commonBlockObject)) {
-                final String objectName = commonBlockObject.getFirstChild().getFirstChild().getFirstChild()
-                        .getTextContent();
-                final String variableName = objectName.toLowerCase(Locale.getDefault());
-                commonBlock.getVariables().put(variableName, this.createVariable(variableName));
-            }
-        }
+        final List<Node> commonBlockObjects = NodeUtils.findAllSiblingsDescendants(statement.getFirstChild(),
+                Predicates.isCommonBlockObject, o -> false, true);
+        commonBlockObjects.forEach(commonBlockObject -> {
+            final String objectName = commonBlockObject.getFirstChild().getFirstChild().getFirstChild()
+                    .getTextContent();
+            final String variableName = objectName.toLowerCase(Locale.getDefault());
+            commonBlock.getVariables().put(variableName, this.createVariable(variableName));
+        });
 
         return commonBlock;
     }
