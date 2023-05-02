@@ -35,6 +35,9 @@ public class Settings {
             "--output" }, required = true, variableArity = false, converter = PathConverter.class, description = "Output architecture model directory")
     private Path outputModelPath;
 
+    @Parameter(names = { "-E", "--experiment-name" }, required = false, description = "Name of the output model")
+    private String experimentName;
+
     @Parameter(names = { "-I",
             "--compute-interfaces" }, required = false, description = "Compute interfaces based on aggregated invocations")
     private boolean computeInterfaces;
@@ -79,6 +82,10 @@ public class Settings {
 
     public String getSeparator() {
         return this.separator;
+    }
+
+    public String getExperimentName() {
+        return this.experimentName;
     }
 
 }
