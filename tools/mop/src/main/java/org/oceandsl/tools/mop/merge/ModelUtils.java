@@ -49,6 +49,13 @@ public final class ModelUtils {
     }
 
     public static boolean areObjectsEqual(final EObject left, final EObject right) {
+        if (left == null) {
+            return right == null;
+        } else {
+            if (right == null) {
+                return false;
+            }
+        }
         if (left.getClass().equals(right.getClass())) {
             if (left instanceof DeployedOperation) {
                 return ModelUtils.isEqual((DeployedOperation) left, (DeployedOperation) right);
