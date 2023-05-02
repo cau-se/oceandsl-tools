@@ -173,6 +173,17 @@ public final class StatisticsModelMerger {
 
     private static boolean isIdenticalStorageDataflow(final StorageDataflow targetDataflow,
             final StorageDataflow dataflow) {
+        System.err.printf("df %s <- %s -> %s\n", dataflow.getCode().getComponent().getSignature(),
+                dataflow.getCode().getAssemblyOperation().getOperationType().getSignature(),
+                dataflow.getStorage().getComponent().getSignature(),
+                dataflow.getStorage().getAssemblyStorage().getStorageType().getName(), dataflow.getDirection().name());
+
+        System.err.printf("td %s <- %s -> %s\n", targetDataflow.getCode().getComponent().getSignature(),
+                targetDataflow.getCode().getAssemblyOperation().getOperationType().getSignature(),
+                targetDataflow.getStorage().getComponent().getSignature(),
+                targetDataflow.getStorage().getAssemblyStorage().getStorageType().getName(),
+                targetDataflow.getDirection().name());
+
         return StatisticsModelMerger.isIdenticalOperation(targetDataflow.getCode(), dataflow.getCode())
                 && StatisticsModelMerger.isIdenticalStorage(targetDataflow.getStorage(), dataflow.getStorage())
                 && StatisticsModelMerger.isIdenticalDirection(targetDataflow.getDirection(), dataflow.getDirection());
@@ -230,6 +241,9 @@ public final class StatisticsModelMerger {
     }
 
     private static boolean isIdenticalDirection(final EDirection left, final EDirection right) {
+        if (left == null) {
+            LOGGER.error("Left direction is not set.");
+        }
         if (left.equals(right)) {
             return true;
         } else {
