@@ -100,6 +100,7 @@ public class StorageAssemblyModelAssembler extends AbstractModelAssembler implem
                     .get(storageSignature);
             assemblyStorage.setStorageType(storageType);
             assemblyComponent.getStorages().put(storageSignature, assemblyStorage);
+            this.updateSourceModel(assemblyStorage);
         }
 
         return assemblyStorage;

@@ -70,7 +70,8 @@ public class GroupComponentsHierarchicallyStage extends AbstractTransformation<M
                 if (component.getContainedComponents().size() > 0) { // ignore empty main component
                     typeModel.getComponentTypes().put(componentName, componentType);
                     assemblyModel.getComponents().put(componentName, component);
-                }
+                } // TODO should also update source model and deployment model
+
             }
         });
         this.outputPort.send(repository);
