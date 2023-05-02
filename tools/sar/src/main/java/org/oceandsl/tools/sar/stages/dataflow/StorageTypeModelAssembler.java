@@ -76,6 +76,7 @@ public class StorageTypeModelAssembler extends AbstractModelAssembler implements
         if (storageType == null) {
             storageType = this.factory.createStorageType();
             storageType.setName(storageSignature);
+            storageType.setType("<unknown>");
             this.storageSignatureExtractor.extract(storageType);
             componentType.getProvidedStorages().put(storageSignature, storageType);
         }
