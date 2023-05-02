@@ -213,18 +213,12 @@ public final class StatisticsModelMerger {
         if (leftStorage.getName() == null) {
             LOGGER.error("Left storage type has no name.", left);
         }
-        if (leftStorage.getType() == null) {
-            LOGGER.warn("Left storage type {} has no type.", leftStorage.getName());
-        }
 
         if (rightStorage == null) {
             LOGGER.error("Right storage: Missing reference to storage type.", right);
         }
         if (rightStorage.getName() == null) {
             LOGGER.error("Right storage type has no name.", right);
-        }
-        if (rightStorage.getType() == null) {
-            LOGGER.warn("Right storage type {} has no type.", rightStorage.getName());
         }
 
         if (leftStorage.getName().equals(rightStorage.getName())
