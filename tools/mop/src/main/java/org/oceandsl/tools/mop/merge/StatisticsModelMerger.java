@@ -199,7 +199,7 @@ public final class StatisticsModelMerger {
             LOGGER.error("Left storage type has no name.", left);
         }
         if (leftStorage.getType() == null) {
-            LOGGER.error("Left storage type {} has no type.", leftStorage.getName());
+            LOGGER.warn("Left storage type {} has no type.", leftStorage.getName());
         }
 
         if (rightStorage == null) {
@@ -209,15 +209,23 @@ public final class StatisticsModelMerger {
             LOGGER.error("Right storage type has no name.", right);
         }
         if (rightStorage.getType() == null) {
-            LOGGER.error("Right storage type {} has no type.", rightStorage.getName());
+            LOGGER.warn("Right storage type {} has no type.", rightStorage.getName());
         }
 
         if (leftStorage.getName().equals(rightStorage.getName())
-                && leftStorage.getType().equals(rightStorage.getType())) {
+                && checkType(leftStorage.getType(), rightStorage.getType())) {
             return left.getComponent().getAssemblyComponent().getSignature()
                     .equals(right.getComponent().getAssemblyComponent().getSignature());
         } else {
             return false;
+        }
+    }
+
+    private static boolean checkType(final String left, final String right) {
+        if (left == null) {
+            return right == null;
+        } else {
+            return left.equals(right);
         }
     }
 
