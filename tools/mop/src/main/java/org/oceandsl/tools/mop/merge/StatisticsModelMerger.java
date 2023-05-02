@@ -191,6 +191,27 @@ public final class StatisticsModelMerger {
     private static boolean isIdenticalStorage(final DeployedStorage left, final DeployedStorage right) {
         final StorageType leftStorage = left.getAssemblyStorage().getStorageType();
         final StorageType rightStorage = right.getAssemblyStorage().getStorageType();
+
+        if (leftStorage == null) {
+            LOGGER.error("Left storage: Missing reference to storage type.", left);
+        }
+        if (leftStorage.getName() == null) {
+            LOGGER.error("Left storage type has no name.", left);
+        }
+        if (leftStorage.getType() == null) {
+            LOGGER.error("Left storage type {} has no type.", leftStorage.getName());
+        }
+
+        if (rightStorage == null) {
+            LOGGER.error("Right storage: Missing reference to storage type.", right);
+        }
+        if (rightStorage.getName() == null) {
+            LOGGER.error("Right storage type has no name.", right);
+        }
+        if (rightStorage.getType() == null) {
+            LOGGER.error("Right storage type {} has no type.", rightStorage.getName());
+        }
+
         if (leftStorage.getName().equals(rightStorage.getName())
                 && leftStorage.getType().equals(rightStorage.getType())) {
             return left.getComponent().getAssemblyComponent().getSignature()
