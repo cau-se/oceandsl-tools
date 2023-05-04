@@ -18,6 +18,8 @@ package org.oceandsl.tools.dar.signature.processor;
 import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
 
 /**
+ * Processes Java signatures.
+ *
  * @author Reiner Jung
  * @since 1.3.0
  */

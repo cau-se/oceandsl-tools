@@ -176,10 +176,7 @@ public class StaticArchitectureRecoveryMain {
             return false;
         }
 
-        return ParameterEvaluationUtils.isFileReadable(this.settings.getOperationCallInputFile().toFile(),
-                "operation call input", commander)
-                || ParameterEvaluationUtils.isFileReadable(this.settings.getDataflowInputFile().toFile(),
-                        "dataflow input", commander);
+        return true;
     }
 
     /**
