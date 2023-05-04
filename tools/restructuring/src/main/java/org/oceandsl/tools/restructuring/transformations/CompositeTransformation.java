@@ -6,20 +6,20 @@ import java.util.List;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 
 public abstract class CompositeTransformation extends AbstractTransformationStep {
-    
+
 	protected List<AbstractTransformationStep> steps;
-	
+
 	public CompositeTransformation(AssemblyModel model) {
 		super(model);
-		this.steps = new ArrayList<AbstractTransformationStep>();
+		this.steps = new ArrayList<>();
 		// TODO Auto-generated constructor stub
 	}
 	public List<AbstractTransformationStep> getSteps(){
 		return this.steps;
 	}
-	
-	
-   
-	
+
+
+
+
 
 }

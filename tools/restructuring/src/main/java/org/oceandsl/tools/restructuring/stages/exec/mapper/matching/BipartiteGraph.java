@@ -1,97 +1,106 @@
 package org.oceandsl.tools.restructuring.stages.exec.mapper.matching;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import org.jgrapht.Graph;
 import org.jgrapht.GraphType;
 
-public class BipartiteGraph implements Graph<Vertex,Edge> {
-    private int leftSize; // size of left partition
-    private int rightSize; // size of right partition
-    private Map<Vertex, List<Edge>> adjacencyList; // adjacency list representation of graph
+@Deprecated
+public class BipartiteGraph implements Graph<Vertex, Edge> {
+	private int leftSize; // size of left partition
+	private int rightSize; // size of right partition
+	private Map<Vertex, List<Edge>> adjacencyList; // adjacency list representation of graph
 
-    public BipartiteGraph(List<Vertex> leftVertices, List<Vertex> rightVertices) {
-        this.leftSize = leftVertices.size();
-        this.rightSize = rightVertices.size();
-        adjacencyList = new HashMap<>();
-        for (Vertex vertex : leftVertices) {
-            adjacencyList.put(vertex, new ArrayList<>());
-        }
-        for (Vertex vertex : rightVertices) {
-            adjacencyList.put(vertex, new ArrayList<>());
-        }
-    }
+	public BipartiteGraph(List<Vertex> leftVertices, List<Vertex> rightVertices) {
+		this.leftSize = leftVertices.size();
+		this.rightSize = rightVertices.size();
+		adjacencyList = new HashMap<>();
+		for (Vertex vertex : leftVertices) {
+			adjacencyList.put(vertex, new ArrayList<>());
+		}
+		for (Vertex vertex : rightVertices) {
+			adjacencyList.put(vertex, new ArrayList<>());
+		}
+	}
 
-    public int getLeftSize() {
-        return leftSize;
-    }
+	public int getLeftSize() {
+		return leftSize;
+	}
 
-    public int getRightSize() {
-        return rightSize;
-    }
-    
-    public Map<Vertex, List<Edge>> getAdjacencyList(){
-    	return this.adjacencyList;
-    }
+	public int getRightSize() {
+		return rightSize;
+	}
 
-    public void addEdge(Vertex leftVertex, Vertex rightVertex, double weight) {
-        if (!adjacencyList.containsKey(leftVertex)) {
-            throw new IllegalArgumentException("Left vertex not in graph");
-        }
-        if (!adjacencyList.containsKey(rightVertex)) {
-            throw new IllegalArgumentException("Right vertex not in graph");
-        }
-        Edge edge = new Edge(rightVertex, weight);
-        adjacencyList.get(leftVertex).add(edge);
-        Edge reverseEdge = new Edge(leftVertex, weight);
-        adjacencyList.get(rightVertex).add(reverseEdge);
-    }
+	public Map<Vertex, List<Edge>> getAdjacencyList() {
+		return this.adjacencyList;
+	}
 
-    public List<Edge> getNeighbors(Vertex vertex) {
-        if (!adjacencyList.containsKey(vertex)) {
-            throw new IllegalArgumentException("Vertex not in graph");
-        }
-        return adjacencyList.get(vertex);
-    }
+	public void addEdge(Vertex leftVertex, Vertex rightVertex, double weight) {
+		if (!adjacencyList.containsKey(leftVertex)) {
+			throw new IllegalArgumentException("Left vertex not in graph");
+		}
+		if (!adjacencyList.containsKey(rightVertex)) {
+			throw new IllegalArgumentException("Right vertex not in graph");
+		}
+		Edge edge = new Edge(rightVertex, weight);
+		adjacencyList.get(leftVertex).add(edge);
+		Edge reverseEdge = new Edge(leftVertex, weight);
+		adjacencyList.get(rightVertex).add(reverseEdge);
+	}
 
-    public boolean isBipartite() {
-        int[] color = new int[leftSize + rightSize];
-        Arrays.fill(color, -1);
-        for (Vertex vertex : adjacencyList.keySet()) {
-            if (color[getIndex(vertex)] == -1) {
-                color[getIndex(vertex)] = 0;
-                Queue<Vertex> queue = new LinkedList<>();
-                queue.offer(vertex);
-                while (!queue.isEmpty()) {
-                    Vertex curr = queue.poll();
-                    for (Edge edge : getNeighbors(curr)) {
-                        Vertex neighbor = edge.getVertex();
-                        if (color[getIndex(neighbor)] == -1) {
-                            color[getIndex(neighbor)] = 1 - color[getIndex(curr)];
-                            queue.offer(neighbor);
-                        } else if (color[getIndex(neighbor)] == color[getIndex(curr)]) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-        return true;
-    }
+	public List<Edge> getNeighbors(Vertex vertex) {
+		if (!adjacencyList.containsKey(vertex)) {
+			throw new IllegalArgumentException("Vertex not in graph");
+		}
+		return adjacencyList.get(vertex);
+	}
 
-    private int getIndex(Vertex vertex) {
-        if (adjacencyList.containsKey(vertex)) {
-            int index = 0;
-            for (Vertex v : adjacencyList.keySet()) {
-                if (v.equals(vertex)) {
-                    return index;
-                }
-                index++;
-            }
-        }
-        return -1;
-    }
+	public boolean isBipartite() {
+		int[] color = new int[leftSize + rightSize];
+		Arrays.fill(color, -1);
+		for (Vertex vertex : adjacencyList.keySet()) {
+			if (color[getIndex(vertex)] == -1) {
+				color[getIndex(vertex)] = 0;
+				Queue<Vertex> queue = new LinkedList<>();
+				queue.offer(vertex);
+				while (!queue.isEmpty()) {
+					Vertex curr = queue.poll();
+					for (Edge edge : getNeighbors(curr)) {
+						Vertex neighbor = edge.getVertex();
+						if (color[getIndex(neighbor)] == -1) {
+							color[getIndex(neighbor)] = 1 - color[getIndex(curr)];
+							queue.offer(neighbor);
+						} else if (color[getIndex(neighbor)] == color[getIndex(curr)]) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	private int getIndex(Vertex vertex) {
+		if (adjacencyList.containsKey(vertex)) {
+			int index = 0;
+			for (Vertex v : adjacencyList.keySet()) {
+				if (v.equals(vertex)) {
+					return index;
+				}
+				index++;
+			}
+		}
+		return -1;
+	}
 
 	@Override
 	public Set<Edge> getAllEdges(Vertex sourceVertex, Vertex targetVertex) {
@@ -270,8 +279,7 @@ public class BipartiteGraph implements Graph<Vertex,Edge> {
 	@Override
 	public void setEdgeWeight(Edge e, double weight) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
-   

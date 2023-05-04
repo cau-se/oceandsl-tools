@@ -15,7 +15,7 @@ public class FullTransformation extends CompositeTransformation {
 			step.applyTransformation(model);
 		}
 		this.model = model;
-		
+
 	}
 
 }

@@ -1,25 +1,22 @@
 package org.oceandsl.tools.restructuring.stages.exec.mapper;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
+
+import org.jgrapht.Graph;
+import org.jgrapht.alg.interfaces.MatchingAlgorithm.Matching;
+import org.jgrapht.alg.matching.MaximumWeightBipartiteMatching;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleWeightedGraph;
+import org.oceandsl.tools.restructuring.util.RestructurerTools;
 
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 
-import org.jgrapht.Graph;
-import org.jgrapht.alg.interfaces.MatchingAlgorithm.Matching;
-import org.jgrapht.alg.matching.KuhnMunkresMinimalWeightBipartitePerfectMatching;
-import org.jgrapht.alg.matching.MaximumWeightBipartiteMatching;
-import org.jgrapht.graph.*;
-import org.oceandsl.tools.restructuring.util.RestructurerTools;
-
-public class Matcher extends AbstractMapper {
+public class KuhnMatcherMapper extends AbstractMapper {
 	private ComponentsMapper compMapper;
 	private final static String GOAL = "20_";
 	private AssemblyModel orig;
@@ -37,7 +34,8 @@ public class Matcher extends AbstractMapper {
 	private HashMap<String, String> goalToOriginal = new HashMap<String, String>();
 	private HashMap<String, String> originallToGoal = new HashMap<String, String>();
 
-	public Matcher(AssemblyModel orig, AssemblyModel goal) {
+	public KuhnMatcherMapper(AssemblyModel orig, AssemblyModel goal, String originalModelName, String goalModelName) {
+		super(originalModelName, goalModelName);
 		this.orig = RestructurerTools.cloneModel(orig);
 		this.goal = RestructurerTools.alterComponentNames(goal);
 		this.s.addAll(this.orig.getComponents().keySet());
@@ -45,8 +43,8 @@ public class Matcher extends AbstractMapper {
 		this.graph = new SimpleWeightedGraph<String, DefaultEdge>(DefaultEdge.class);
 		populateOperationTocomponentG();
 		populateOperationToComponentO();
-		
-		if(this.operationToComponentO.size()!=this.operationToComponentG.size()) {
+
+		if (this.operationToComponentO.size() != this.operationToComponentG.size()) {
 			throw new Error("Some operations are lost?");
 		}
 		// System.out.println("Same comps:" +
@@ -65,7 +63,7 @@ public class Matcher extends AbstractMapper {
 																									// operations in
 																									// original
 																									// componen
-				
+
 				String goalVertex = this.operationToComponentG.get(ops.getKey());
 				if (!this.graph.containsVertex(goalVertex)) { // vertex was not added yet , thus simply create and edge
 					this.graph.addVertex(goalVertex); // component on goal as vertex
@@ -104,7 +102,7 @@ public class Matcher extends AbstractMapper {
 		 * AssemblyComponent>e:this.goal.getComponents().entrySet()) { DefaultEdge
 		 * edge=this.graph.addEdge(dummy, e.getKey()); this.graph.setEdgeWeight(edge,
 		 * 0); } }
-		 * 
+		 *
 		 * }else if(this.orig.getComponents().size()>this.goal.getComponents().size()) {
 		 * //stock up goal vertices with dummies int diff =
 		 * this.orig.getComponents().size()-this.goal.getComponents().size(); for(int
@@ -112,11 +110,11 @@ public class Matcher extends AbstractMapper {
 		 * this.t.add(dummy); for(Entry <String,
 		 * AssemblyComponent>e:this.orig.getComponents().entrySet()) { DefaultEdge
 		 * edge=this.graph.addEdge(e.getKey(), dummy);
-		 * 
+		 *
 		 * this.graph.setEdgeWeight(edge, 0); } } }
-		 * 
+		 *
 		 * //add 0 edges if not exist yet
-		 * 
+		 *
 		 * for(String o:this.s) { for(String g : this.t) {
 		 * if(!this.graph.containsEdge(o,g)) { DefaultEdge edge=this.graph.addEdge(o,
 		 * g); this.graph.setEdgeWeight(edge, 0); } } }
@@ -138,51 +136,63 @@ public class Matcher extends AbstractMapper {
 
 	}
 
+	@Override
 	public HashMap<String, String> getOperationToComponentO() {
 		return operationToComponentO;
 	}
 
+	@Override
 	public void setOperationToComponentO(HashMap<String, String> operationToComponentO) {
 		this.operationToComponentO = operationToComponentO;
 	}
 
+	@Override
 	public HashMap<String, String> getOperationToComponentG() {
 		return operationToComponentG;
 	}
 
+	@Override
 	public void setOperationToComponentG(HashMap<String, String> operationToComponentG) {
 		this.operationToComponentG = operationToComponentG;
 	}
 
+	@Override
 	public HashMap<String, HashMap<String, Integer>> getTraceModell() {
 		return traceModell;
 	}
 
+	@Override
 	public void setTraceModell(HashMap<String, HashMap<String, Integer>> traceModell) {
 		this.traceModell = traceModell;
 	}
 
+	@Override
 	public HashMap<String, String> getGoalToOriginal() {
 		return goalToOriginal;
 	}
 
+	@Override
 	public void setGoalToOriginal(HashMap<String, String> goalToOriginal) {
 		this.goalToOriginal = goalToOriginal;
 	}
 
+	@Override
 	public HashMap<String, String> getOriginallToGoal() {
 		return originallToGoal;
 	}
 
+	@Override
 	public void setOriginallToGoal(HashMap<String, String> originallToGoal) {
 		this.originallToGoal = originallToGoal;
 	}
 
+	@Override
 	public AssemblyModel getOrig() {
 		return this.orig;
 
 	}
 
+	@Override
 	public AssemblyModel getGoal() {
 		return this.goal;
 
@@ -204,21 +214,21 @@ public class Matcher extends AbstractMapper {
 	}
 
 	private void populateOperationToComponentO() {
-		for(Entry<String, AssemblyComponent> e:this.orig.getComponents().entrySet()) {
-			Set<String>ops = e.getValue().getOperations().keySet();
-			for(String s : ops) {
+		for (Entry<String, AssemblyComponent> e : this.orig.getComponents().entrySet()) {
+			Set<String> ops = e.getValue().getOperations().keySet();
+			for (String s : ops) {
 				this.operationToComponentO.put(s, e.getKey());
 			}
 		}
 	}
-	
+
 	private void populateOperationTocomponentG() {
-		for(Entry<String, AssemblyComponent> e:this.goal.getComponents().entrySet()) {
-			Set<String>ops = e.getValue().getOperations().keySet();
-			for(String s : ops) {
+		for (Entry<String, AssemblyComponent> e : this.goal.getComponents().entrySet()) {
+			Set<String> ops = e.getValue().getOperations().keySet();
+			for (String s : ops) {
 				this.operationToComponentG.put(s, e.getKey());
 			}
 		}
 	}
-	
+
 }

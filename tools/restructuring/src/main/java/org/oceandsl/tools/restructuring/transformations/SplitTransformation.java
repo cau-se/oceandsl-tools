@@ -8,15 +8,15 @@ import kieker.model.analysismodel.assembly.AssemblyModel;
 
 public class SplitTransformation extends CompositeTransformation {
 
-	
-	
+
+
 	public SplitTransformation(AssemblyModel model) {
 		super(model);
 		// TODO Auto-generated constructor stub
 	}
 
 
-    
+
 	@Override
 	public void applyTransformation(AssemblyModel model) {
 		//TODO CHEC IF THE LIST FORMAT IS APPROPRIETE
@@ -26,21 +26,21 @@ public class SplitTransformation extends CompositeTransformation {
 		}
 		this.model= model;
 	}
-	
+
 	public void add(AbstractTransformationStep step) {
 		this.steps.add(step);
 	}
-	
+
 	public CreateTransformation getCreateTransformation() {
 		return (CreateTransformation)this.steps.get(0);
 	}
-	
+
 	public List<AbstractTransformationStep> getMoveTransformation(){
-		  List<AbstractTransformationStep> result = new ArrayList<AbstractTransformationStep>();
+		  List<AbstractTransformationStep> result = new ArrayList<>();
 		  result.addAll(this.steps);
 		  result.remove(0);
 		  return  result;
-		  
+
 	}
 
 }

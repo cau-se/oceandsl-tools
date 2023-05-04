@@ -23,19 +23,19 @@ public class MergeTransformation extends CompositeTransformation {
 			}
 			this.model = model;
 		}
-		
+
 	public void add(AbstractTransformationStep step) {
 		this.steps.add(step);
 	}
-	
+
 	public DeleteTransformation getDeleteTransformation() {
 		return (DeleteTransformation)this.steps.get(this.steps.size()-1);
 	}
-	
+
 	public List<AbstractTransformationStep> getMoveTransformations() {
-		  List<AbstractTransformationStep> result = new ArrayList<AbstractTransformationStep>();
+		  List<AbstractTransformationStep> result = new ArrayList<>();
 		  result.addAll(this.steps);
-		  result.remove(this.steps.size()-1);	  		  
+		  result.remove(this.steps.size()-1);
 		  return  result;
 	}
 

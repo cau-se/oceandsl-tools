@@ -1,12 +1,13 @@
 package org.oceandsl.tools.restructuring.stages.exec.mapper.matching;
 
-import java.util.*;
-import org.jgrapht.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 
+@Deprecated
 public class HungarianAlgorithm {
-	
-	
-	
+
 	public static Map<Vertex, Vertex> getMaximumMatching(BipartiteGraph graph) {
 		Map<Vertex, Vertex> matching = new HashMap<>();
 		Map<Vertex, Boolean> visited = new HashMap<>();

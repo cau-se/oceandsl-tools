@@ -17,55 +17,50 @@ import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import restructuremodel.ComponentsTransformation;
 
 public class WriteModelUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ArchitectureModelManagementUtils.class);
-	
-	
-	public static void writeModelRepository(final Path outputDirectory,  ComponentsTransformation model)
-	            throws IOException {
+	private static final String OUTPUT_MODEL_NAME = "outputmodel.xmi";
 
-	        final Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
-	        final Map<String, Object> extensionToFactoryMap = registry.getExtensionToFactoryMap();
-	        extensionToFactoryMap.put("xmi", new XMIResourceFactoryImpl());
+	public static void writeModelRepository(final Path outputDirectory, ComponentsTransformation model)
+			throws IOException {
 
-	        // store models
-	        final ResourceSet resourceSet = new ResourceSetImpl();
-	        //resourceSet.setResourceFactoryRegistry(registry);
-	        //resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi",new XMIResourceFactoryImpl());
-	        if (!Files.exists(outputDirectory)) {
-	            Files.createDirectory(outputDirectory);
-	        }
+		final Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
+		final Map<String, Object> extensionToFactoryMap = registry.getExtensionToFactoryMap();
+		extensionToFactoryMap.put("xmi", new XMIResourceFactoryImpl());
 
-	        writeModel(resourceSet, outputDirectory,
-	               "outputmodel.xmi", model);
+		// store models
+		final ResourceSet resourceSet = new ResourceSetImpl();
+		// resourceSet.setResourceFactoryRegistry(registry);
+		// resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi",new
+		// XMIResourceFactoryImpl());
+		if (!Files.exists(outputDirectory)) {
+			Files.createDirectory(outputDirectory);
+		}
 
-	    }
+		writeModel(resourceSet, outputDirectory, OUTPUT_MODEL_NAME, model);
 
-	    private static <T extends EObject> void writeModel(final ResourceSet resourceSet, final Path outputDirectory,
-	            final String filename, final T model) {
-	       LOGGER.info("Saving model {}", filename);
+	}
 
-	        final File modelFile = createWriteModelFileHandle(outputDirectory, filename);
+	private static <T extends EObject> void writeModel(final ResourceSet resourceSet, final Path outputDirectory,
+			final String filename, final T model) {
+		LOGGER.info("Saving model {}", filename);
 
-	        final Resource resource = resourceSet.createResource(URI.createFileURI(modelFile.getAbsolutePath()));
-	        resource.getContents().add(model);
+		final File modelFile = createWriteModelFileHandler(outputDirectory, filename);
 
-	        try {
-	            resource.save(Collections.EMPTY_MAP);
-	        } catch (final IOException e) {
-	            LOGGER.error("Cannot write {} model to storage. Cause: {}",
-	                    modelFile.getAbsoluteFile(), e.getLocalizedMessage());
-	        }
-	    }
+		final Resource resource = resourceSet.createResource(URI.createFileURI(modelFile.getAbsolutePath()));
+		resource.getContents().add(model);
 
-	    private static File createReadModelFileHandle(final Path path, final String filename) {
-	        return new File(path.toString() + File.separator + filename);
-	    }
+		try {
+			resource.save(Collections.EMPTY_MAP);
+		} catch (final IOException e) {
+			LOGGER.error("Cannot write {} model to storage. Cause: {}", modelFile.getAbsoluteFile(),
+					e.getLocalizedMessage());
+		}
+	}
 
-	    private static File createWriteModelFileHandle(final Path path, final String filename) {
-	        return new File(path.toFile().getAbsolutePath() + File.separator + filename);
-	    }
+	private static File createWriteModelFileHandler(final Path path, final String filename) {
+		return new File(path.toFile().getAbsolutePath() + File.separator + filename);
+	}
 }
