@@ -1,15 +1,16 @@
 package org.oceandsl.tools.restructuring;
+
 import java.io.IOException;
 
-import teetime.framework.Configuration;
-
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryReaderStage;
-
 import org.oceandsl.analysis.architecture.stages.ModelSource;
-import org.oceandsl.tools.restructuring.stages.Restructurer;
-import org.oceandsl.tools.restructuring.stages.SinkStage;
-import org.oceandsl.tools.restructuring.stages.TraceRestorator;
+import org.oceandsl.analysis.generic.stages.TableCSVSink;
+import org.oceandsl.tools.restructuring.stages.AggregateModelEditDistanceStage;
+import org.oceandsl.tools.restructuring.stages.RestructureModelSinkStage;
+import org.oceandsl.tools.restructuring.stages.RestructurerStage;
+import org.oceandsl.tools.restructuring.stages.TraceRestoratorStage;
 
+import teetime.framework.Configuration;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -19,23 +20,29 @@ import org.oceandsl.tools.restructuring.stages.TraceRestorator;
  */
 public class TeetimeConfiguration extends Configuration {
 
-    public TeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
+	private static final String MED_RESULT_FILE_NAME = "med-result-file.csv";
 
-        final ModelSource modelSource = new ModelSource(parameterConfiguration.getInputModelPaths());
-        final ModelRepositoryReaderStage modelReader = new ModelRepositoryReaderStage();
-        final TraceRestorator traceRestorator = new TraceRestorator(parameterConfiguration.getMappingStrat());
-        final Restructurer restructurer = new Restructurer();
-        final SinkStage modelSink = new SinkStage(parameterConfiguration.getOutputDirectory());
-        
-        
-        
-        this.connectPorts(modelSource.getOutputPort(), modelReader.getInputPort());
-        
-        this.connectPorts(modelReader.getOutputPort(), traceRestorator.getInputPort());
+	public TeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
 
-        this.connectPorts(traceRestorator.getOutputPort(), restructurer.getInputPort());
-        
-        this.connectPorts(restructurer.getStepsOutputPort(), modelSink.getInputPort()); // PlaceHolder
- 
-    }
+		final ModelSource modelSource = new ModelSource(parameterConfiguration.getInputModelPaths());
+		final ModelRepositoryReaderStage modelReader = new ModelRepositoryReaderStage();
+		final TraceRestoratorStage traceRestorator = new TraceRestoratorStage(parameterConfiguration.getMappingStrat());
+		final RestructurerStage restructurer = new RestructurerStage();
+		final RestructureModelSinkStage modelSink = new RestructureModelSinkStage(
+				parameterConfiguration.getOutputDirectory());
+		AggregateModelEditDistanceStage aggregateStage = new AggregateModelEditDistanceStage();
+		TableCSVSink medSinkStage = new TableCSVSink(parameterConfiguration.getOutputDirectory(), MED_RESULT_FILE_NAME,
+				true);
+
+		this.connectPorts(modelSource.getOutputPort(), modelReader.getInputPort());
+
+		this.connectPorts(modelReader.getOutputPort(), traceRestorator.getInputPort());
+
+		this.connectPorts(traceRestorator.getOutputPort(), restructurer.getInputPort());
+
+		this.connectPorts(restructurer.getStepsOutputPort(), modelSink.getInputPort()); // PlaceHolder
+
+		this.connectPorts(restructurer.getNumberOfStepsOutputPort(), aggregateStage.getInputPort());
+		this.connectPorts(aggregateStage.getOutputPort(), medSinkStage.getInputPort());
+	}
 }

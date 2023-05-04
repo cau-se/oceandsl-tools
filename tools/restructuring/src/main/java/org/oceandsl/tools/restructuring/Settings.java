@@ -25,8 +25,8 @@ public class Settings { // NOPMD data class
     @Parameter(names = { "-e", "--experiment" }, required = true, description = "Experiment name")
     private String experimentName;
     
-    @Parameter(names = { "-s", "--strat" }, required = true, description = "Strat name")
-    private String mappingStrat;
+    @Parameter(names = { "-s", "--strategy" }, required = true, converter =MappingStrategyConverter.class , description = "Strategy identifier")
+    private EMappingStrategy mappingStrat;
 
     public List<Path> getInputModelPaths() {
         return this.inputModelPaths;
@@ -40,7 +40,7 @@ public class Settings { // NOPMD data class
         return this.experimentName;
     }
     
-    public String getMappingStrat() {
+    public EMappingStrategy getMappingStrat() {
     	return this.mappingStrat;
     }
 

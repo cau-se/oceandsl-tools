@@ -1,15 +1,10 @@
 package org.oceandsl.tools.restructuring.stages.exec;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractMapper;
 import org.oceandsl.tools.restructuring.stages.exec.mapper.ComponentsMapper;
 import org.oceandsl.tools.restructuring.transformations.AbstractTransformationStep;
@@ -31,21 +26,22 @@ public class RestructureStepFinder {
 	private AbstractMapper compMapper;
 	private AssemblyModel orig;
 	private AssemblyModel goal;
-	private int numSteps =  0;
+	private int numSteps = 0;
 
 	private List<AbstractTransformationStep> transformations = new ArrayList<AbstractTransformationStep>();
 
 	/**
 	 * Cosntructor is used to
-	 * 
+	 *
 	 * @param orig
 	 * @param goal
 	 * @param compMapper
 	 */
-	public RestructureStepFinder(AssemblyModel orig, AssemblyModel goal) {
+	public RestructureStepFinder(AssemblyModel orig, AssemblyModel goal, String originalModelName,
+			String goalModelName) {
 		this.orig = orig;
 		this.goal = goal;
-		this.compMapper = new ComponentsMapper(this.orig, this.goal);
+		this.compMapper = new ComponentsMapper(this.orig, this.goal, originalModelName, goalModelName);
 	}
 
 	public RestructureStepFinder(AssemblyModel orig, AssemblyModel goal, ComponentsMapper compMapper) {
@@ -60,6 +56,12 @@ public class RestructureStepFinder {
 		this.goal = compMapper.getGoal();
 	}
 
+	public RestructureStepFinder(AbstractMapper compMapper, String originalModelName, String goalModelName) {
+		this.compMapper = compMapper;
+		this.orig = compMapper.getOrig();
+		this.goal = compMapper.getGoal();
+	}
+
 	public List<AbstractTransformationStep> getSteps() {
 		return this.transformations;
 	}
@@ -67,51 +69,55 @@ public class RestructureStepFinder {
 	public AssemblyModel getOrig() {
 		return this.orig;
 	}
-	
+
 	public AssemblyModel getGoal() {
 		return this.goal;
 	}
-	public int getNumStep() {
+
+	public int getNumSteps() {
 		return this.numSteps;
 	}
+
 	public void findTransformation() {
 		// goalComponents.
-		//System.out.println("Num of gto in step finder:"+this.compMapper.getGoalToOriginal().size());
-		//System.out.println("Num of tgo in stepfinder:"+this.compMapper.getOriginallToGoal().size());
-		EMap<String, AssemblyComponent> originalComponents = (EcoreEMap<String, AssemblyComponent>) this.orig
-				.getComponents();
-		while(!TransformationFactory.areSameModels(goal, orig)) {
-		for (int i = 0; i < originalComponents.size(); i++) {
+		// System.out.println("Num of gto in step
+		// finder:"+this.compMapper.getGoalToOriginal().size());
+		// System.out.println("Num of tgo in
+		// stepfinder:"+this.compMapper.getOriginallToGoal().size());
+		EMap<String, AssemblyComponent> originalComponents = this.orig.getComponents();
+		while (!TransformationFactory.areSameModels(goal, orig)) {
+			for (int i = 0; i < originalComponents.size(); i++) {
 
-			Entry<String, AssemblyComponent> entry = originalComponents.get(i);
-			String nameOfOriginalC = entry.getKey();
-			String nameOfGoalC = this.compMapper.getOriginallToGoal().get(nameOfOriginalC);
+				Entry<String, AssemblyComponent> entry = originalComponents.get(i);
+				String nameOfOriginalC = entry.getKey();
+				String nameOfGoalC = this.compMapper.getOriginallToGoal().get(nameOfOriginalC);
 
-			// We could find a mapping, yeah!
-			if (nameOfGoalC != null) {
-				//System.out.println("Get nameOfGoalC "+ nameOfGoalC);
-				AssemblyComponent goalAssemblyComponentObject = this.goal.getComponents().get(nameOfGoalC);
-				EMap<String, AssemblyOperation> operationInGoalcomponent = goalAssemblyComponentObject.getOperations();
+				// We could find a mapping, yeah!
+				if (nameOfGoalC != null) {
+					// System.out.println("Get nameOfGoalC "+ nameOfGoalC);
+					AssemblyComponent goalAssemblyComponentObject = this.goal.getComponents().get(nameOfGoalC);
+					EMap<String, AssemblyOperation> operationInGoalcomponent = goalAssemblyComponentObject
+							.getOperations();
 
-				// If the original and corresponding goal component equal, nothing to do
-				// if (entry.getValue().equals(goalAssemblyComponentObject)) // the mapping
-				// matches look for next
-				if (TransformationFactory.areSameComponents(entry.getValue(), goalAssemblyComponentObject))
-					continue;
+					// If the original and corresponding goal component equal, nothing to do
+					// if (entry.getValue().equals(goalAssemblyComponentObject)) // the mapping
+					// matches look for next
+					if (TransformationFactory.areSameComponents(entry.getValue(), goalAssemblyComponentObject))
+						continue;
 
-				// Operations that are in original component but not in goal component
-				List<String> out = getOperationsToMove(entry.getValue(), goalAssemblyComponentObject);
-				// Operation that are in goal component but not in the original component
-				List<String> in = getOperationToAdd(entry.getValue(), goalAssemblyComponentObject);
-				transformModel(out, in, entry.getKey(), this.goal);
+					// Operations that are in original component but not in goal component
+					List<String> out = getOperationsToMove(entry.getValue(), goalAssemblyComponentObject);
+					// Operation that are in goal component but not in the original component
+					List<String> in = getOperationToAdd(entry.getValue(), goalAssemblyComponentObject);
+					transformModel(out, in, entry.getKey(), this.goal);
 
-			} else {
-				// Mapping could not be found
-				nonMappedComponentTransformation(entry.getValue(), this.orig, this.goal);
+				} else {
+					// Mapping could not be found
+					nonMappedComponentTransformation(entry.getValue(), this.orig, this.goal);
+
+				}
 
 			}
-
-		}
 		}
 	}
 	// }
@@ -128,8 +134,8 @@ public class RestructureStepFinder {
 
 			// Where does it lie currently?
 //			String originalComponent = operation.getValue().getComponent().getSignature();
-			
-			//MP 2023
+
+			// MP 2023
 			String originalComponent = this.compMapper.getOperationToComponentO().get(operation.getKey());
 			// check if the goal location of the current operation is mapped to some
 			// component in original?
@@ -166,16 +172,16 @@ public class RestructureStepFinder {
 				cut.setComponentName(originalComponent);
 				cut.setOperationName(operationName);
 				this.numSteps++;
-				//this.transformations.add(cut);
-				//cut.applyTransformation(this.orig);
+				// this.transformations.add(cut);
+				// cut.applyTransformation(this.orig);
 
 				PasteTransformation paste = new PasteTransformation(null);
 				paste.setComponentName(to);
 				paste.setOperationName(operationName);
 				this.numSteps++;
-				//this.transformations.add(paste);
-				//paste.applyTransformation(this.orig);
-				
+				// this.transformations.add(paste);
+				// paste.applyTransformation(this.orig);
+
 				MoveTransformation move = new MoveTransformation(null);
 				move.getSteps().add(cut);
 				move.getSteps().add(paste);
@@ -187,14 +193,14 @@ public class RestructureStepFinder {
 					delete.setComponentName(originalComponent);
 					delete.applyTransformation(this.orig);
 					this.numSteps++;
-					//this.transformations.add(delete);
-					
+					// this.transformations.add(delete);
+
 					MergeTransformation merge = new MergeTransformation(null);
 					merge.add(move);
 					merge.add(delete);
-					this.transformations.remove(this.transformations.size()-1);
+					this.transformations.remove(this.transformations.size() - 1);
 					this.transformations.add(delete);
-					
+
 				}
 
 			}
@@ -205,7 +211,7 @@ public class RestructureStepFinder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param out   operations that are not contained in the goal model and must be
 	 *              removed from original
 	 * @param in    operation that are contained in the goal model and must be added
@@ -231,17 +237,17 @@ public class RestructureStepFinder {
 				cut.setComponentName(origC);
 				cut.setOperationName(op);
 				this.numSteps++;
-				//this.transformations.add(cut);
-				//cut.applyTransformation(this.orig);
+				// this.transformations.add(cut);
+				// cut.applyTransformation(this.orig);
 
 				// Paste into another component
 				PasteTransformation paste = new PasteTransformation(null);
 				paste.setComponentName(originalComponentFromGoal);
 				paste.setOperationName(op);
 				this.numSteps++;
-				//paste.applyTransformation(this.orig);
-				//this.transformations.add(paste);
-				
+				// paste.applyTransformation(this.orig);
+				// this.transformations.add(paste);
+
 				MoveTransformation move = new MoveTransformation(null);
 				move.getSteps().add(cut);
 				move.getSteps().add(paste);
@@ -256,8 +262,8 @@ public class RestructureStepFinder {
 				this.numSteps++;
 				// we use the name as it is specified in goal model
 
-				//this.transformations.add(create);
-				//create.applyTransformation(this.orig);
+				// this.transformations.add(create);
+				// create.applyTransformation(this.orig);
 				this.compMapper.getOriginallToGoal().put(compName, compName);
 				this.compMapper.getGoalToOriginal().put(compName, compName);
 
@@ -267,27 +273,27 @@ public class RestructureStepFinder {
 				cut.setComponentName(origC);
 				cut.setOperationName(op);
 				this.numSteps++;
-			//	this.transformations.add(cut);
-			//	cut.applyTransformation(this.orig);
+				// this.transformations.add(cut);
+				// cut.applyTransformation(this.orig);
 
 				PasteTransformation paste = new PasteTransformation(null);
 				paste.setComponentName(compName);
 				paste.setOperationName(op);
 				this.numSteps++;
-			//	this.transformations.add(paste);
-			//	paste.applyTransformation(this.orig);
-				
+				// this.transformations.add(paste);
+				// paste.applyTransformation(this.orig);
+
 				MoveTransformation move = new MoveTransformation(null);
 				move.getSteps().add(cut);
 				move.getSteps().add(paste);
-			//	move.applyTransformation(this.orig);
-				
+				// move.applyTransformation(this.orig);
+
 				SplitTransformation split = new SplitTransformation(null);
 				split.add(create);
 				split.add(move);
 				split.applyTransformation(this.orig);
 				this.transformations.add(split);
-				
+
 			}
 		}
 		// move in
@@ -300,16 +306,16 @@ public class RestructureStepFinder {
 			cut.setComponentName(compName);
 			cut.setOperationName(op);
 			this.numSteps++;
-			//this.transformations.add(cut);
-			//cut.applyTransformation(this.orig);
+			// this.transformations.add(cut);
+			// cut.applyTransformation(this.orig);
 
 			PasteTransformation paste = new PasteTransformation(null);
 			paste.setOperationName(op);
 			paste.setComponentName(origC);
 			this.numSteps++;
-			//this.transformations.add(paste);
-			//paste.applyTransformation(this.orig);
-			
+			// this.transformations.add(paste);
+			// paste.applyTransformation(this.orig);
+
 			MoveTransformation move = new MoveTransformation(null);
 			move.getSteps().add(cut);
 			move.getSteps().add(paste);
@@ -325,11 +331,11 @@ public class RestructureStepFinder {
 				delete.applyTransformation(this.orig);
 				this.numSteps++;
 				this.transformations.add(delete);
-				
+
 				MergeTransformation merge = new MergeTransformation(null);
 				merge.add(move);
 				merge.add(delete);
-				this.transformations.remove(this.transformations.size()-1);
+				this.transformations.remove(this.transformations.size() - 1);
 				this.transformations.add(merge);
 			}
 

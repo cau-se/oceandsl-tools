@@ -1,20 +1,19 @@
 package org.oceandsl.tools.restructuring.stages.exec.mapper;
 
-import java.util.HashMap;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 
-public class EmptyMapper extends AbstractMapper{
+public class EmptyMapper extends AbstractMapper {
 
-
-	public EmptyMapper(AssemblyModel orig, AssemblyModel goal) {
+	public EmptyMapper(AssemblyModel orig, AssemblyModel goal, String originalModelName, String goalModelName) {
+		super(originalModelName, goalModelName);
 		this.orig = orig;
 		this.goal = goal;
-	//	System.out.println(this.orig != null);
-	//	System.out.println(this.goal != null);
+		// System.out.println(this.orig != null);
+		// System.out.println(this.goal != null);
 		// init mappings
 		populateOperationTocomponentG();
 		populateOperationToComponentO();

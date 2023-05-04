@@ -21,15 +21,15 @@ public class MoveTransformation extends CompositeTransformation{
 			}
 			this.model = model;
 	}
-	
+
 	public void add(AbstractTransformationStep transformation) {
 		this.steps.add(transformation);
 	}
-	
+
 	public CutTransformation getCutTransformation() {
 		return (CutTransformation)this.steps.get(0);
 	}
-	
+
 	public PasteTransformation getPasteTransformation() {
 		return (PasteTransformation)this.steps.get(1);
 	}
