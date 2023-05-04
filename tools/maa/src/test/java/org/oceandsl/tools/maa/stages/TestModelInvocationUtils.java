@@ -22,9 +22,11 @@ import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyPackage;
 import kieker.model.analysismodel.assembly.AssemblyProvidedInterface;
+import kieker.model.analysismodel.assembly.AssemblyRequiredInterface;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedProvidedInterface;
+import kieker.model.analysismodel.deployment.DeployedRequiredInterface;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentFactory;
 import kieker.model.analysismodel.deployment.DeploymentModel;
@@ -37,6 +39,7 @@ import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.ProvidedInterfaceType;
+import kieker.model.analysismodel.type.RequiredInterfaceType;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
@@ -132,11 +135,11 @@ public final class TestModelInvocationUtils {
     private static void createProvidedInterface(final ModelRepository modelRepository, final String componentName,
             final String operationName) {
         final TypeModel typeModel = modelRepository.getModel(TypePackage.Literals.TYPE_MODEL);
-        final AssemblyModel assmeblyModel = modelRepository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
+        final AssemblyModel assemblyModel = modelRepository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
         final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
 
         final ComponentType componentType = typeModel.getComponentTypes().get(componentName);
-        final AssemblyComponent assemblyComponent = assmeblyModel.getComponents().get(componentName + ":1");
+        final AssemblyComponent assemblyComponent = assemblyModel.getComponents().get(componentName + ":1");
         final DeployedComponent deployedComponent = deploymentModel.getContexts()
                 .get(TestModelRepositoryUtils.CONTEXT_A).getComponents().get(componentName + ":1");
 
@@ -189,5 +192,55 @@ public final class TestModelInvocationUtils {
         componentType.getProvidedInterfaceTypes().add(providedInterfaceType);
 
         return providedInterfaceType;
+    }
+
+    public static void addRequiredInterfaces(final ModelRepository modelRepository) {
+        TestModelInvocationUtils.createRquiredInterface(modelRepository, TestModelRepositoryUtils.FQN_COMPONENT_A,
+                TestModelRepositoryUtils.FQN_COMPONENT_C);
+        TestModelInvocationUtils.createRquiredInterface(modelRepository, TestModelRepositoryUtils.FQN_COMPONENT_A,
+                TestModelRepositoryUtils.FQN_COMPONENT_B);
+        TestModelInvocationUtils.createRquiredInterface(modelRepository, TestModelRepositoryUtils.FQN_COMPONENT_B,
+                TestModelRepositoryUtils.FQN_COMPONENT_C);
+
+    }
+
+    private static void createRquiredInterface(final ModelRepository modelRepository,
+            final String requiredComponentName, final String providedComponentName) {
+        final TypeModel typeModel = modelRepository.getModel(TypePackage.Literals.TYPE_MODEL);
+        final AssemblyModel assemblyModel = modelRepository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
+        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
+
+        final ComponentType requiredComponentType = typeModel.getComponentTypes().get(requiredComponentName);
+        final AssemblyComponent requiredAssemblyComponent = assemblyModel.getComponents()
+                .get(requiredComponentName + ":1");
+        final DeployedComponent requiredDeployedComponent = deploymentModel.getContexts()
+                .get(TestModelRepositoryUtils.CONTEXT_A).getComponents().get(requiredComponentName + ":1");
+
+        final ComponentType providedComponentType = typeModel.getComponentTypes().get(providedComponentName);
+        final AssemblyComponent providedAssemblyComponent = assemblyModel.getComponents()
+                .get(providedComponentName + ":1");
+        final DeployedComponent providedDeployedComponent = deploymentModel.getContexts()
+                .get(TestModelRepositoryUtils.CONTEXT_A).getComponents().get(providedComponentName + ":1");
+
+        final ProvidedInterfaceType providedIFaceType = providedComponentType.getProvidedInterfaceTypes().get(0);
+        final RequiredInterfaceType requiredIFaceType = TypeFactory.eINSTANCE.createRequiredInterfaceType();
+        requiredIFaceType.setRequires(providedIFaceType);
+        requiredComponentType.getRequiredInterfaceTypes().add(requiredIFaceType);
+
+        final AssemblyProvidedInterface providedAssemblyIFace = providedAssemblyComponent.getProvidedInterfaces()
+                .get(providedIFaceType.getSignature());
+        final AssemblyRequiredInterface requiredAssemblyIFace = AssemblyFactory.eINSTANCE
+                .createAssemblyRequiredInterface();
+        requiredAssemblyIFace.setRequiredInterfaceType(requiredIFaceType);
+        requiredAssemblyIFace.setRequires(providedAssemblyIFace);
+        requiredAssemblyComponent.getRequiredInterfaces().add(requiredAssemblyIFace);
+
+        final DeployedProvidedInterface providedDeployedIFace = providedDeployedComponent.getProvidedInterfaces()
+                .get(providedIFaceType.getSignature());
+        final DeployedRequiredInterface requiredDeployedIFace = DeploymentFactory.eINSTANCE
+                .createDeployedRequiredInterface();
+        requiredDeployedIFace.setRequiredInterface(requiredAssemblyIFace);
+        requiredDeployedIFace.setRequires(providedDeployedIFace);
+        requiredDeployedComponent.getRequiredInterfaces().add(requiredDeployedIFace);
     }
 }

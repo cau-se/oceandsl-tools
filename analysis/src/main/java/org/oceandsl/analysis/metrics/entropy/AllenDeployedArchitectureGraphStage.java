@@ -16,6 +16,7 @@
 package org.oceandsl.analysis.metrics.entropy;
 
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.google.common.graph.Graph;
 import com.google.common.graph.GraphBuilder;
@@ -112,7 +113,7 @@ public class AllenDeployedArchitectureGraphStage
                             this.getOrCreateNode(graph, target, entry.getValue().getCallee()));
                     break;
                 case ONLY_EDGES_FOR_NODES:
-                    if (source != null && target != null) {
+                    if ((source != null) && (target != null)) {
                         graph.putEdge(source, target);
                     }
                     break;
@@ -137,7 +138,7 @@ public class AllenDeployedArchitectureGraphStage
                             this.getOrCreateNode(graph, target, entry.getValue().getCallee()));
                     break;
                 case ONLY_EDGES_FOR_NODES:
-                    if (source != null && target != null) {
+                    if ((source != null) && (target != null)) {
                         graph.putEdge(source, target);
                     }
                     break;
@@ -162,7 +163,7 @@ public class AllenDeployedArchitectureGraphStage
                             this.getOrCreateStorageNode(graph, target, entry.getValue().getStorage()));
                     break;
                 case ONLY_EDGES_FOR_NODES:
-                    if (source != null && target != null) {
+                    if ((source != null) && (target != null)) {
                         graph.putEdge(source, target);
                     }
                     break;
@@ -198,17 +199,17 @@ public class AllenDeployedArchitectureGraphStage
 
     private Node<DeployedComponent> findOperationNode(final Graph<Node<DeployedComponent>> graph,
             final DeployedOperation operation) {
-        for (final Node<DeployedComponent> node : graph.nodes()) {
-            if (!node.getModule().getOperations().isEmpty()) {
+        final Optional<Node<DeployedComponent>> operationNode = graph.nodes().stream()
+                .filter(node -> ((KiekerNode<DeployedComponent, ?>) node).getMember() instanceof DeployedOperation)
+                .filter(node -> !node.getModule().getOperations().isEmpty())
+                .filter(node -> ((KiekerNode<DeployedComponent, DeployedOperation>) node).getMember().equals(operation))
+                .findFirst();
 
-                final KiekerNode<DeployedComponent, DeployedOperation> kiekerNode = (KiekerNode<DeployedComponent, DeployedOperation>) node;
-                if (kiekerNode.getMember().equals(operation)) {
-                    return kiekerNode;
-                }
-            }
+        if (operationNode.isPresent()) {
+            return operationNode.get();
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     private Node<DeployedComponent> findStorageNode(final Graph<Node<DeployedComponent>> graph,
