@@ -18,10 +18,10 @@ public class RestructureModelSinkStage extends AbstractConsumerStage<Restructure
 
 	@Override
 	protected void execute(RestructureStepFinder element) throws Exception {
-		if (TransformationFactory.areSameModels(element.getGoal(), element.getOrig())) {
+		if (TransformationFactory.areSameModels(element.getGoal(), element.getOriginal())) {
 			OutputModelCreator output = new OutputModelCreator(element);
 			output.createOutputModel();
-			logger.info("Num of steps: {}", (element.getNumSteps()));
+			logger.info("Num of steps: {}", (element.getNumberOfSteps()));
 			WriteModelUtils.writeModelRepository(outputPath, output.getOutputModel());
 		} else {
 			logger.error("Faulty sequence");

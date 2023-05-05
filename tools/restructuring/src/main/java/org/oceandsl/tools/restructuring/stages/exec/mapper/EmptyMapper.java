@@ -6,7 +6,7 @@ import java.util.Set;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 
-public class EmptyMapper extends AbstractMapper {
+public class EmptyMapper extends AbstractComponentMapper {
 
 	public EmptyMapper(AssemblyModel orig, AssemblyModel goal, String originalModelName, String goalModelName) {
 		super(originalModelName, goalModelName);
