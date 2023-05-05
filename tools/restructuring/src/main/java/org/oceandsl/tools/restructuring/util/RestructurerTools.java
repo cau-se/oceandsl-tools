@@ -37,7 +37,7 @@ public class RestructurerTools {
 			result.getComponents().put(prefix + e.getKey(), comp);
 			for (Entry<String, AssemblyOperation> op : e.getValue().getOperations().entrySet()) {
 				AssemblyOperation o = factory.createAssemblyOperation();
-				result.getComponents().get(e.getKey()).getOperations().put(op.getKey(), o);
+				result.getComponents().get("_"+e.getKey()).getOperations().put(op.getKey(), o);
 			}
 		}
 		if (!TransformationFactory.areSameModels(model, result))

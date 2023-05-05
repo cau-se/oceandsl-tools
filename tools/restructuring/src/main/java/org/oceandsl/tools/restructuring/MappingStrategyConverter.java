@@ -8,7 +8,7 @@ public class MappingStrategyConverter implements IStringConverter<EMappingStrate
 
 	@Override
 	public EMappingStrategy convert(String value) {
-		return EMappingStrategy.valueOf(value.toLowerCase(Locale.getDefault()));
+		return EMappingStrategy.valueOf(value.toUpperCase(Locale.getDefault()));
 	}
 
 }
