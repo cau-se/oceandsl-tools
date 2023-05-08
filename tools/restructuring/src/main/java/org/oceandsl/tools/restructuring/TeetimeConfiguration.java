@@ -8,7 +8,8 @@ import org.oceandsl.analysis.architecture.stages.ModelRepositoryReaderStage;
 import org.oceandsl.analysis.architecture.stages.ModelSource;
 import org.oceandsl.analysis.generic.stages.TableCSVSink;
 import org.oceandsl.tools.restructuring.stages.AggregateModelEditDistanceStage;
-import org.oceandsl.tools.restructuring.stages.RestructureModelSinkStage;
+import org.oceandsl.tools.restructuring.stages.GenerateRestructureModelStage;
+import org.oceandsl.tools.restructuring.stages.RestructureModelSink;
 import org.oceandsl.tools.restructuring.stages.RestructurerStage;
 import org.oceandsl.tools.restructuring.stages.TraceRestoratorStage;
 
@@ -26,7 +27,8 @@ public class TeetimeConfiguration extends Configuration {
         final ModelRepositoryReaderStage modelReader = new ModelRepositoryReaderStage();
         final TraceRestoratorStage traceRestorator = new TraceRestoratorStage(parameterConfiguration.getMappingStrat());
         final RestructurerStage restructurer = new RestructurerStage();
-        final RestructureModelSinkStage modelSink = new RestructureModelSinkStage(
+        final GenerateRestructureModelStage generateModelStage = new GenerateRestructureModelStage();
+        final RestructureModelSink modelSink = new RestructureModelSink(
                 parameterConfiguration.getOutputDirectory());
         final AggregateModelEditDistanceStage aggregateStage = new AggregateModelEditDistanceStage();
         final TableCSVSink medSinkStage = new TableCSVSink(parameterConfiguration.getOutputDirectory(), true);
@@ -37,7 +39,8 @@ public class TeetimeConfiguration extends Configuration {
 
         this.connectPorts(traceRestorator.getOutputPort(), restructurer.getInputPort());
 
-        this.connectPorts(restructurer.getStepsOutputPort(), modelSink.getInputPort()); // PlaceHolder
+        this.connectPorts(restructurer.getStepsOutputPort(), generateModelStage.getInputPort());
+        this.connectPorts(generateModelStage.getOutputPort(), modelSink.getInputPort());
 
         this.connectPorts(restructurer.getNumberOfStepsOutputPort(), aggregateStage.getInputPort());
         this.connectPorts(aggregateStage.getOutputPort(), medSinkStage.getInputPort());

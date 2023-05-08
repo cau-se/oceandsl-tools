@@ -3,6 +3,15 @@ package org.oceandsl.tools.restructuring.stages.exec;
 
 import java.util.List;
 
+import org.oceandsl.tools.restructuring.restructuremodel.CreateComponent;
+import org.oceandsl.tools.restructuring.restructuremodel.CutOperation;
+import org.oceandsl.tools.restructuring.restructuremodel.DeleteComponent;
+import org.oceandsl.tools.restructuring.restructuremodel.MergeComponent;
+import org.oceandsl.tools.restructuring.restructuremodel.MoveOperation;
+import org.oceandsl.tools.restructuring.restructuremodel.PasteOperation;
+import org.oceandsl.tools.restructuring.restructuremodel.RestructuremodelFactory;
+import org.oceandsl.tools.restructuring.restructuremodel.SplitComponent;
+import org.oceandsl.tools.restructuring.restructuremodel.TransformationModel;
 import org.oceandsl.tools.restructuring.transformations.AbstractTransformationStep;
 import org.oceandsl.tools.restructuring.transformations.CreateTransformation;
 import org.oceandsl.tools.restructuring.transformations.CutTransformation;
@@ -11,16 +20,6 @@ import org.oceandsl.tools.restructuring.transformations.MergeTransformation;
 import org.oceandsl.tools.restructuring.transformations.MoveTransformation;
 import org.oceandsl.tools.restructuring.transformations.PasteTransformation;
 import org.oceandsl.tools.restructuring.transformations.SplitTransformation;
-
-import restructuremodel.ComponentsTransformation;
-import restructuremodel.CreateComponent;
-import restructuremodel.CutOperation;
-import restructuremodel.DeleteComponent;
-import restructuremodel.MergeComponent;
-import restructuremodel.MoveOperation;
-import restructuremodel.PasteOperation;
-import restructuremodel.RestructuremodelFactory;
-import restructuremodel.SplitComponent;
 
 /**
  *
@@ -34,8 +33,9 @@ public class OutputModelCreator {
     public OutputModelCreator() {
     }
 
-    public ComponentsTransformation createOutputModel(final List<AbstractTransformationStep> steps) {
-        final ComponentsTransformation outputModel = this.factory.createComponentsTransformation();
+    public TransformationModel createOutputModel(final String name, final List<AbstractTransformationStep> steps) {
+        final TransformationModel outputModel = this.factory.createTransformationModel();
+        outputModel.setName(name);
 
         for (final AbstractTransformationStep step : steps) {
             if (step instanceof CreateTransformation) {

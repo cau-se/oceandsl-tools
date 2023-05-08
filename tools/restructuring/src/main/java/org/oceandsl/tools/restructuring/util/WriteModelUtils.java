@@ -17,8 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-
-import restructuremodel.ComponentsTransformation;
+import org.oceandsl.tools.restructuring.restructuremodel.TransformationModel;
 
 /**
  *
@@ -30,7 +29,7 @@ public class WriteModelUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArchitectureModelManagementUtils.class);
 
     public static void writeModelRepository(final Path outputDirectory, final String filename,
-            final ComponentsTransformation model) throws IOException {
+            final TransformationModel model) throws IOException {
 
         final Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
         final Map<String, Object> extensionToFactoryMap = registry.getExtensionToFactoryMap();
@@ -67,6 +66,6 @@ public class WriteModelUtils {
     }
 
     private static File createWriteModelFileHandler(final Path path, final String filename) {
-        return new File(path.toFile().getAbsolutePath() + File.separator + filename);
+        return new File(path.toFile().getAbsolutePath() + File.separator + filename + ".xmi");
     }
 }
