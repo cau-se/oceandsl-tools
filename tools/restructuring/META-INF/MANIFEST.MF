@@ -7,11 +7,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: restructuremodel,
- restructuremodel.impl,
- restructuremodel.util,
- org.oceandsl.tools.restructuring.restructuremodel,
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Export-Package: org.oceandsl.tools.restructuring.restructuremodel,
  org.oceandsl.tools.restructuring.restructuremodel.impl,
  org.oceandsl.tools.restructuring.restructuremodel.util
 Require-Bundle: org.eclipse.core.runtime,
