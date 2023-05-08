@@ -29,7 +29,8 @@ public class TeetimeConfiguration extends Configuration {
 
     public TeetimeConfiguration(final Settings settings) {
         final ModelRepositoryProducerStage readerStage = new ModelRepositoryProducerStage(settings.getInputDirectory());
-        final ReplaceSourceLabelStage replaceSourceLabelStage = new ReplaceSourceLabelStage(settings.getReplacements());
+        final ReplaceSourceLabelStage replaceSourceLabelStage = new ReplaceSourceLabelStage(
+                settings.getExperimentName(), settings.getReplacements());
         final ModelRepositoryWriterStage writerStage = new ModelRepositoryWriterStage(settings.getOutputDirectory());
 
         this.connectPorts(readerStage.getOutputPort(), replaceSourceLabelStage.getInputPort());
