@@ -2,9 +2,9 @@ package org.oceandsl.tools.restructuring;
 
 import kieker.model.analysismodel.assembly.AssemblyModel;
 
+import org.oceandsl.tools.restructuring.mapper.AbstractComponentMapper;
+import org.oceandsl.tools.restructuring.mapper.KuhnMatcherMapper;
 import org.oceandsl.tools.restructuring.stages.exec.RestructureStepFinder;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractComponentMapper;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.KuhnMatcherMapper;
 
 /**
  *

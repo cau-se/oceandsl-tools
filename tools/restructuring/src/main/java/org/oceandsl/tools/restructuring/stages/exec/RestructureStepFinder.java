@@ -10,7 +10,7 @@ import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 
-import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractComponentMapper;
+import org.oceandsl.tools.restructuring.mapper.AbstractComponentMapper;
 import org.oceandsl.tools.restructuring.transformations.AbstractTransformationStep;
 import org.oceandsl.tools.restructuring.transformations.CreateTransformation;
 import org.oceandsl.tools.restructuring.transformations.CutTransformation;

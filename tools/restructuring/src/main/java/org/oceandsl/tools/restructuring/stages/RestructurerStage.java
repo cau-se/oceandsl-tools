@@ -3,8 +3,8 @@ package org.oceandsl.tools.restructuring.stages;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
+import org.oceandsl.tools.restructuring.mapper.AbstractComponentMapper;
 import org.oceandsl.tools.restructuring.stages.exec.RestructureStepFinder;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractComponentMapper;
 
 /**
  *

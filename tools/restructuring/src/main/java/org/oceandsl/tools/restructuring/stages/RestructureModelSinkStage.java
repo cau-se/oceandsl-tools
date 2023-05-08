@@ -9,6 +9,8 @@ import org.oceandsl.tools.restructuring.stages.exec.RestructureStepFinder;
 import org.oceandsl.tools.restructuring.util.TransformationFactory;
 import org.oceandsl.tools.restructuring.util.WriteModelUtils;
 
+import restructuremodel.ComponentsTransformation;
+
 /**
  *
  * @author Serafim Simonov
@@ -24,12 +26,12 @@ public class RestructureModelSinkStage extends AbstractConsumerStage<Restructure
     @Override
     protected void execute(final RestructureStepFinder element) throws Exception {
         if (TransformationFactory.areSameModels(element.getGoal(), element.getOriginal())) {
-            final OutputModelCreator output = new OutputModelCreator(element);
-            output.createOutputModel();
-            this.logger.info("Num of steps: {}", (element.getNumberOfSteps()));
+            final OutputModelCreator output = new OutputModelCreator();
+            final ComponentsTransformation outputModel = output.createOutputModel(element.getSteps());
+
             final String filename = String.format("%s-%s.xmi", element.getComponentMapper().getOriginalModelName(),
                     element.getComponentMapper().getGoalModelName());
-            WriteModelUtils.writeModelRepository(this.outputPath, filename, output.getOutputModel());
+            WriteModelUtils.writeModelRepository(this.outputPath, filename, outputModel);
         } else {
             this.logger.error("Faulty sequence");
         }

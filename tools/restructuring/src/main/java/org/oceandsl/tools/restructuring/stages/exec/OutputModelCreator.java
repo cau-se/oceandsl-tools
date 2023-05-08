@@ -29,39 +29,33 @@ import restructuremodel.SplitComponent;
  */
 public class OutputModelCreator {
 
-    private final RestructureStepFinder stepFinder;
-    private final ComponentsTransformation outputModel;
     RestructuremodelFactory factory = RestructuremodelFactory.eINSTANCE;
 
-    public OutputModelCreator(final RestructureStepFinder stepFinder) {
-        this.stepFinder = stepFinder;
-        this.outputModel = this.factory.createComponentsTransformation();
+    public OutputModelCreator() {
     }
 
-    public ComponentsTransformation getOutputModel() {
-        return this.outputModel;
-    }
+    public ComponentsTransformation createOutputModel(final List<AbstractTransformationStep> steps) {
+        final ComponentsTransformation outputModel = this.factory.createComponentsTransformation();
 
-    public void createOutputModel() {
-        final List<AbstractTransformationStep> transformations = this.stepFinder.getSteps();
-        for (final AbstractTransformationStep step : transformations) {
+        for (final AbstractTransformationStep step : steps) {
             if (step instanceof CreateTransformation) {
-                // System.out.println("dadsadre"+outputModel.getTransformations()!=null);
-                this.outputModel.getTransformations().add(this.createCreateComponent((CreateTransformation) step));
+                outputModel.getTransformations().add(this.createCreateComponent((CreateTransformation) step));
             } else if (step instanceof DeleteTransformation) {
-                this.outputModel.getTransformations().add(this.createDeleteComponent((DeleteTransformation) step));
+                outputModel.getTransformations().add(this.createDeleteComponent((DeleteTransformation) step));
             } else if (step instanceof CutTransformation) {
-                this.outputModel.getTransformations().add(this.createCutOperation((CutTransformation) step));
+                outputModel.getTransformations().add(this.createCutOperation((CutTransformation) step));
             } else if (step instanceof PasteTransformation) {
-                this.outputModel.getTransformations().add(this.createPasteOperation((PasteTransformation) step));
+                outputModel.getTransformations().add(this.createPasteOperation((PasteTransformation) step));
             } else if ((step instanceof MoveTransformation)) {
-                this.outputModel.getTransformations().add(this.createMoveOperation((MoveTransformation) step));
+                outputModel.getTransformations().add(this.createMoveOperation((MoveTransformation) step));
             } else if (step instanceof SplitTransformation) {
-                this.outputModel.getTransformations().add(this.createSplitComponent((SplitTransformation) step));
+                outputModel.getTransformations().add(this.createSplitComponent((SplitTransformation) step));
             } else if (step instanceof MergeTransformation) {
-                this.outputModel.getTransformations().add(this.createMergeComponent((MergeTransformation) step));
+                outputModel.getTransformations().add(this.createMergeComponent((MergeTransformation) step));
             }
         }
+
+        return outputModel;
     }
 
     public CreateComponent createCreateComponent(final CreateTransformation transformation) {

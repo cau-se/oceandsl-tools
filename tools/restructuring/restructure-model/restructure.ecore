@@ -2,9 +2,11 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="restructuremodel" nsURI="http://restructur.net/restructuremodel"
     nsPrefix="restructuremodel">
-  <eClassifiers xsi:type="ecore:EClass" name="ComponentsTransformation">
+  <eClassifiers xsi:type="ecore:EClass" name="TransformationModel">
     <eStructuralFeatures xsi:type="ecore:EReference" name="transformations" lowerBound="1"
         upperBound="-1" eType="#//AbstractTransformationStep" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        iD="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AbstractTransformationStep" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="CreateComponent" eSuperTypes="#//AbstractTransformationStep">

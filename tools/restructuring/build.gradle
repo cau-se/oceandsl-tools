@@ -29,8 +29,18 @@ dependencies {
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
 	// https://mvnrepository.com/artifact/org.jgrapht/jgrapht-core
 	implementation 'org.jgrapht:jgrapht-core:1.5.1'
-
 }
+
+sourceSets {
+	main{
+		java{
+			srcDir 'src/main/java'
+			srcDir 'src/gen/java'
+		}
+	}
+}
+
+
 
 application {
 	mainClassName = 'org.oceandsl.tools.restructuring.RestructuringMain'
