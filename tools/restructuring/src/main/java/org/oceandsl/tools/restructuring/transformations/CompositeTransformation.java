@@ -5,21 +5,23 @@ import java.util.List;
 
 import kieker.model.analysismodel.assembly.AssemblyModel;
 
+/**
+ *
+ * @author Serafim Simonov
+ * @since 1.3.0
+ */
 public abstract class CompositeTransformation extends AbstractTransformationStep {
 
-	protected List<AbstractTransformationStep> steps;
+    protected List<AbstractTransformationStep> steps;
 
-	public CompositeTransformation(AssemblyModel model) {
-		super(model);
-		this.steps = new ArrayList<>();
-		// TODO Auto-generated constructor stub
-	}
-	public List<AbstractTransformationStep> getSteps(){
-		return this.steps;
-	}
+    public CompositeTransformation(final AssemblyModel model) {
+        super(model);
+        this.steps = new ArrayList<>();
+        // TODO Auto-generated constructor stub
+    }
 
-
-
-
+    public List<AbstractTransformationStep> getSteps() {
+        return this.steps;
+    }
 
 }

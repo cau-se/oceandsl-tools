@@ -8,13 +8,18 @@ import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
 import org.oceandsl.tools.restructuring.EMappingStrategy;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractComponentMapper;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.ComponentsMapper;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.EmptyMapper;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.KuhnMatcherMapper;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.RandomMapper;
+import org.oceandsl.tools.restructuring.mapper.AbstractComponentMapper;
+import org.oceandsl.tools.restructuring.mapper.ComponentsMapper;
+import org.oceandsl.tools.restructuring.mapper.EmptyMapper;
+import org.oceandsl.tools.restructuring.mapper.KuhnMatcherMapper;
+import org.oceandsl.tools.restructuring.mapper.RandomMapper;
 import org.oceandsl.tools.restructuring.util.TransformationFactory;
 
+/**
+ *
+ * @author Serafim Simonov
+ * @since 1.3.0
+ */
 public class TraceRestoratorStage extends AbstractConsumerStage<ModelRepository> {
 
     private final EMappingStrategy strat;

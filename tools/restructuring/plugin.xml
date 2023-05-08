@@ -10,7 +10,7 @@
       <!-- @generated restructure -->
       <package
             uri="http://restructur.net/restructuremodel"
-            class="restructuremodel.RestructuremodelPackage"
+            class="org.oceandsl.tools.restructuring.restructuremodel.RestructuremodelPackage"
             genModel="restructure-model/restructure.genmodel"/>
    </extension>
 

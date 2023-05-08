@@ -3,9 +3,14 @@ package org.oceandsl.tools.restructuring.stages;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
+import org.oceandsl.tools.restructuring.mapper.AbstractComponentMapper;
 import org.oceandsl.tools.restructuring.stages.exec.RestructureStepFinder;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractComponentMapper;
 
+/**
+ *
+ * @author Serafim Simonov
+ * @since 1.3.0
+ */
 public class RestructurerStage extends AbstractConsumerStage<AbstractComponentMapper> {
 
     // protected final InputPort<ComponentsMapper> compMapperPort =

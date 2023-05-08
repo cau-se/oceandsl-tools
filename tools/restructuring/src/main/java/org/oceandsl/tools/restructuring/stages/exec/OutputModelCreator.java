@@ -3,6 +3,15 @@ package org.oceandsl.tools.restructuring.stages.exec;
 
 import java.util.List;
 
+import org.oceandsl.tools.restructuring.restructuremodel.CreateComponent;
+import org.oceandsl.tools.restructuring.restructuremodel.CutOperation;
+import org.oceandsl.tools.restructuring.restructuremodel.DeleteComponent;
+import org.oceandsl.tools.restructuring.restructuremodel.MergeComponent;
+import org.oceandsl.tools.restructuring.restructuremodel.MoveOperation;
+import org.oceandsl.tools.restructuring.restructuremodel.PasteOperation;
+import org.oceandsl.tools.restructuring.restructuremodel.RestructuremodelFactory;
+import org.oceandsl.tools.restructuring.restructuremodel.SplitComponent;
+import org.oceandsl.tools.restructuring.restructuremodel.TransformationModel;
 import org.oceandsl.tools.restructuring.transformations.AbstractTransformationStep;
 import org.oceandsl.tools.restructuring.transformations.CreateTransformation;
 import org.oceandsl.tools.restructuring.transformations.CutTransformation;
@@ -12,127 +21,117 @@ import org.oceandsl.tools.restructuring.transformations.MoveTransformation;
 import org.oceandsl.tools.restructuring.transformations.PasteTransformation;
 import org.oceandsl.tools.restructuring.transformations.SplitTransformation;
 
-import restructuremodel.ComponentsTransformation;
-import restructuremodel.CreateComponent;
-import restructuremodel.CutOperation;
-import restructuremodel.DeleteComponent;
-import restructuremodel.MergeComponent;
-import restructuremodel.MoveOperation;
-import restructuremodel.PasteOperation;
-import restructuremodel.RestructuremodelFactory;
-import restructuremodel.SplitComponent;
-
+/**
+ *
+ * @author Serafim Simonov
+ * @since 1.3.0
+ */
 public class OutputModelCreator {
 
-	private RestructureStepFinder stepFinder;
-	private ComponentsTransformation outputModel;
-	RestructuremodelFactory factory = RestructuremodelFactory.eINSTANCE;
+    RestructuremodelFactory factory = RestructuremodelFactory.eINSTANCE;
 
-	public OutputModelCreator(RestructureStepFinder stepFinder) {
-		this.stepFinder = stepFinder;
-		this.outputModel = factory.createComponentsTransformation();
-	}
+    public OutputModelCreator() {
+    }
 
-	public ComponentsTransformation getOutputModel() {
-		return this.outputModel;
-	}
+    public TransformationModel createOutputModel(final String name, final List<AbstractTransformationStep> steps) {
+        final TransformationModel outputModel = this.factory.createTransformationModel();
+        outputModel.setName(name);
 
-	public void createOutputModel() {
-		List<AbstractTransformationStep> transformations = stepFinder.getSteps();
-		for (AbstractTransformationStep step : transformations) {
-			if (step instanceof CreateTransformation) {
-				// System.out.println("dadsadre"+outputModel.getTransformations()!=null);
-				outputModel.getTransformations().add(createCreateComponent((CreateTransformation) step));
-			} else if (step instanceof DeleteTransformation) {
-				outputModel.getTransformations().add(createDeleteComponent((DeleteTransformation) step));
-			} else if (step instanceof CutTransformation) {
-				outputModel.getTransformations().add(createCutOperation((CutTransformation) step));
-			} else if (step instanceof PasteTransformation) {
-				outputModel.getTransformations().add(createPasteOperation((PasteTransformation) step));
-			} else if ((step instanceof MoveTransformation)) {
-				outputModel.getTransformations().add(createMoveOperation((MoveTransformation) step));
-			} else if (step instanceof SplitTransformation) {
-				outputModel.getTransformations().add(createSplitComponent((SplitTransformation) step));
-			} else if (step instanceof MergeTransformation) {
-				outputModel.getTransformations().add(createMergeComponent((MergeTransformation) step));
-			}
-		}
-	}
+        for (final AbstractTransformationStep step : steps) {
+            if (step instanceof CreateTransformation) {
+                outputModel.getTransformations().add(this.createCreateComponent((CreateTransformation) step));
+            } else if (step instanceof DeleteTransformation) {
+                outputModel.getTransformations().add(this.createDeleteComponent((DeleteTransformation) step));
+            } else if (step instanceof CutTransformation) {
+                outputModel.getTransformations().add(this.createCutOperation((CutTransformation) step));
+            } else if (step instanceof PasteTransformation) {
+                outputModel.getTransformations().add(this.createPasteOperation((PasteTransformation) step));
+            } else if ((step instanceof MoveTransformation)) {
+                outputModel.getTransformations().add(this.createMoveOperation((MoveTransformation) step));
+            } else if (step instanceof SplitTransformation) {
+                outputModel.getTransformations().add(this.createSplitComponent((SplitTransformation) step));
+            } else if (step instanceof MergeTransformation) {
+                outputModel.getTransformations().add(this.createMergeComponent((MergeTransformation) step));
+            }
+        }
 
-	public CreateComponent createCreateComponent(CreateTransformation transformation) {
-		CreateComponent result = this.factory.createCreateComponent();
-		result.setComponentName(transformation.getComponentName());
-		return result;
+        return outputModel;
+    }
 
-	}
+    public CreateComponent createCreateComponent(final CreateTransformation transformation) {
+        final CreateComponent result = this.factory.createCreateComponent();
+        result.setComponentName(transformation.getComponentName());
+        return result;
 
-	public DeleteComponent createDeleteComponent(DeleteTransformation transformation) {
-		DeleteComponent result = this.factory.createDeleteComponent();
-		result.setComponentName(transformation.getComponentName());
-		return result;
+    }
 
-	}
+    public DeleteComponent createDeleteComponent(final DeleteTransformation transformation) {
+        final DeleteComponent result = this.factory.createDeleteComponent();
+        result.setComponentName(transformation.getComponentName());
+        return result;
 
-	public CutOperation createCutOperation(CutTransformation transformation) {
-		CutOperation result = this.factory.createCutOperation();
-		result.setComponentName(transformation.getComponentName());
-		result.setOperationName(transformation.getOperationName());
-		return result;
+    }
 
-	}
+    public CutOperation createCutOperation(final CutTransformation transformation) {
+        final CutOperation result = this.factory.createCutOperation();
+        result.setComponentName(transformation.getComponentName());
+        result.setOperationName(transformation.getOperationName());
+        return result;
 
-	public PasteOperation createPasteOperation(PasteTransformation transformation) {
-		PasteOperation result = this.factory.createPasteOperation();
-		result.setComponentName(transformation.getComponentName());
-		result.setOperationName(transformation.getOperationName());
-		return result;
+    }
 
-	}
+    public PasteOperation createPasteOperation(final PasteTransformation transformation) {
+        final PasteOperation result = this.factory.createPasteOperation();
+        result.setComponentName(transformation.getComponentName());
+        result.setOperationName(transformation.getOperationName());
+        return result;
 
-	public MoveOperation createMoveOperation(MoveTransformation transformation) {
-		MoveOperation result = this.factory.createMoveOperation();
-		result.setFrom(transformation.getCutTransformation().getComponentName());
-		result.setTo(transformation.getPasteTransformation().getComponentName());
-		result.setOperationName(transformation.getCutTransformation().getOperationName());
+    }
 
-		CutOperation cut = createCutOperation(transformation.getCutTransformation());
-		PasteOperation paste = createPasteOperation(transformation.getPasteTransformation());
+    public MoveOperation createMoveOperation(final MoveTransformation transformation) {
+        final MoveOperation result = this.factory.createMoveOperation();
+        result.setFrom(transformation.getCutTransformation().getComponentName());
+        result.setTo(transformation.getPasteTransformation().getComponentName());
+        result.setOperationName(transformation.getCutTransformation().getOperationName());
 
-		result.setCutOperation(cut);
-		result.setPasteOperation(paste);
+        final CutOperation cut = this.createCutOperation(transformation.getCutTransformation());
+        final PasteOperation paste = this.createPasteOperation(transformation.getPasteTransformation());
 
-		return result;
-	}
+        result.setCutOperation(cut);
+        result.setPasteOperation(paste);
 
-	public SplitComponent createSplitComponent(SplitTransformation transformation) {
-		SplitComponent result = this.factory.createSplitComponent();
-		result.setNewComponent(transformation.getCreateTransformation().getComponentName());
-		result.setCreateComponent(createCreateComponent(transformation.getCreateTransformation()));
-		MoveTransformation move = (MoveTransformation) transformation.getMoveTransformation().get(0);
-		result.setOldComponent(move.getCutTransformation().getComponentName());
-		for (AbstractTransformationStep mv : transformation.getMoveTransformation()) {
-			MoveTransformation tmp = (MoveTransformation) mv;
-			result.getOperationsToMove().add(tmp.getCutTransformation().getOperationName());
-			result.getMoveOperations().add(createMoveOperation(tmp));
-		}
+        return result;
+    }
 
-		return result;
+    public SplitComponent createSplitComponent(final SplitTransformation transformation) {
+        final SplitComponent result = this.factory.createSplitComponent();
+        result.setNewComponent(transformation.getCreateTransformation().getComponentName());
+        result.setCreateComponent(this.createCreateComponent(transformation.getCreateTransformation()));
+        final MoveTransformation move = (MoveTransformation) transformation.getMoveTransformation().get(0);
+        result.setOldComponent(move.getCutTransformation().getComponentName());
+        for (final AbstractTransformationStep mv : transformation.getMoveTransformation()) {
+            final MoveTransformation tmp = (MoveTransformation) mv;
+            result.getOperationsToMove().add(tmp.getCutTransformation().getOperationName());
+            result.getMoveOperations().add(this.createMoveOperation(tmp));
+        }
 
-	}
+        return result;
 
-	public MergeComponent createMergeComponent(MergeTransformation transformation) {
-		MergeComponent result = this.factory.createMergeComponent();
-		result.setComponentName(transformation.getDeleteTransformation().getComponentName());
-		result.setDeleteTransformation(createDeleteComponent(transformation.getDeleteTransformation()));
-		MoveTransformation move = (MoveTransformation) transformation.getMoveTransformations().get(0);
-		result.setMergeGoalComponent(move.getPasteTransformation().getComponentName());
-		for (AbstractTransformationStep mv : transformation.getMoveTransformations()) {
-			MoveTransformation tmp = (MoveTransformation) mv;
-			result.getOperations().add(tmp.getCutTransformation().getOperationName());
-			result.getOperationToMove().add(createMoveOperation(tmp));
-		}
+    }
 
-		return result;
-	}
+    public MergeComponent createMergeComponent(final MergeTransformation transformation) {
+        final MergeComponent result = this.factory.createMergeComponent();
+        result.setComponentName(transformation.getDeleteTransformation().getComponentName());
+        result.setDeleteTransformation(this.createDeleteComponent(transformation.getDeleteTransformation()));
+        final MoveTransformation move = (MoveTransformation) transformation.getMoveTransformations().get(0);
+        result.setMergeGoalComponent(move.getPasteTransformation().getComponentName());
+        for (final AbstractTransformationStep mv : transformation.getMoveTransformations()) {
+            final MoveTransformation tmp = (MoveTransformation) mv;
+            result.getOperations().add(tmp.getCutTransformation().getOperationName());
+            result.getOperationToMove().add(this.createMoveOperation(tmp));
+        }
+
+        return result;
+    }
 
 }

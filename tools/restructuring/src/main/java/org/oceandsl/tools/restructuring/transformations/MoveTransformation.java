@@ -2,35 +2,38 @@ package org.oceandsl.tools.restructuring.transformations;
 
 import kieker.model.analysismodel.assembly.AssemblyModel;
 
-public class MoveTransformation extends CompositeTransformation{
+/**
+ *
+ * @author Serafim Simonov
+ * @since 1.3.0
+ */
+public class MoveTransformation extends CompositeTransformation {
 
-	public MoveTransformation(AssemblyModel model) {
-		super(model);
-		// TODO Auto-generated constructor stub
-	}
+    public MoveTransformation(final AssemblyModel model) {
+        super(model);
+        // TODO Auto-generated constructor stub
+    }
 
+    @Override
+    public void applyTransformation(final AssemblyModel model) {
 
+        // TODO CHEC IF THE LIST FORMAT IS APPROPRIETE
+        // 1ST OPERATION Split other operation move
+        for (final AbstractTransformationStep t : this.steps) {
+            t.applyTransformation(model);
+        }
+        this.model = model;
+    }
 
-	@Override
-	public void applyTransformation(AssemblyModel model) {
+    public void add(final AbstractTransformationStep transformation) {
+        this.steps.add(transformation);
+    }
 
-			//TODO CHEC IF THE LIST FORMAT IS APPROPRIETE
-			//1ST OPERATION Split other operation move
-			for(AbstractTransformationStep t:this.steps) {
-				t.applyTransformation(model);
-			}
-			this.model = model;
-	}
+    public CutTransformation getCutTransformation() {
+        return (CutTransformation) this.steps.get(0);
+    }
 
-	public void add(AbstractTransformationStep transformation) {
-		this.steps.add(transformation);
-	}
-
-	public CutTransformation getCutTransformation() {
-		return (CutTransformation)this.steps.get(0);
-	}
-
-	public PasteTransformation getPasteTransformation() {
-		return (PasteTransformation)this.steps.get(1);
-	}
+    public PasteTransformation getPasteTransformation() {
+        return (PasteTransformation) this.steps.get(1);
+    }
 }
