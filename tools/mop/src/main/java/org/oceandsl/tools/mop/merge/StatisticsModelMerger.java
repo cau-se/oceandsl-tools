@@ -16,6 +16,7 @@
 package org.oceandsl.tools.mop.merge;
 
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
@@ -58,9 +59,11 @@ public final class StatisticsModelMerger {
                 // add additional statistics if they are missing from the target model
                 final StatisticRecord duplicateStatisticRecord = StatisticsModelCloneUtils
                         .duplicate(mergeStatisticEntry.getValue());
-                final EObject edge = StatisticsModelMerger.findMatchingEdge(executionModel,
+                final Optional<? extends EObject> edgeOptional = StatisticsModelMerger.findMatchingEdge(executionModel,
                         mergeStatisticEntry.getKey());
-                targetModel.getStatistics().put(edge, duplicateStatisticRecord);
+                if (edgeOptional.isPresent()) {
+                    targetModel.getStatistics().put(edgeOptional.get(), duplicateStatisticRecord);
+                }
             } else {
                 // merge statistics
                 StatisticsModelMerger.mergeStatisticRecord(targetStatisticRecord, mergeStatisticEntry.getValue());
@@ -107,11 +110,16 @@ public final class StatisticsModelMerger {
 
     private static StatisticRecord findMatchingStatisticRecord(final ExecutionModel executionModel,
             final EMap<EObject, StatisticRecord> targetStatistics, final EObject key) {
-        final EObject edge = StatisticsModelMerger.findMatchingEdge(executionModel, key);
-        return targetStatistics.get(edge);
+        final Optional<? extends EObject> edgeOptional = StatisticsModelMerger.findMatchingEdge(executionModel, key);
+        if (edgeOptional.isPresent()) {
+            return targetStatistics.get(edgeOptional.get());
+        } else {
+            return null;
+        }
     }
 
-    private static EObject findMatchingEdge(final ExecutionModel executionModel, final EObject object) {
+    private static Optional<? extends EObject> findMatchingEdge(final ExecutionModel executionModel,
+            final EObject object) {
         if (object instanceof Invocation) {
             return StatisticsModelMerger.findMatchingInvocation(executionModel.getInvocations(), (Invocation) object);
         } else if (object instanceof OperationDataflow) {
@@ -123,16 +131,16 @@ public final class StatisticsModelMerger {
         } else {
             StatisticsModelMerger.LOGGER.warn("Edge type {} not supported by statistics merger.",
                     object.getClass().getCanonicalName());
-            return null;
+            return Optional.empty();
         }
     }
 
-    private static EObject findMatchingInvocation(
+    private static Optional<Invocation> findMatchingInvocation(
             final EMap<Tuple<DeployedOperation, DeployedOperation>, Invocation> invocations,
             final Invocation invocation) {
         return invocations.values().stream()
                 .filter(targetInvocation -> StatisticsModelMerger.isIdenticalInvocation(targetInvocation, invocation))
-                .findFirst().get();
+                .findFirst();
     }
 
     private static boolean isIdenticalInvocation(final Invocation left, final Invocation right) {
@@ -140,12 +148,12 @@ public final class StatisticsModelMerger {
                 && StatisticsModelMerger.isIdenticalOperation(left.getCallee(), right.getCallee());
     }
 
-    private static EObject findMatchingOperationDataflow(
+    private static Optional<OperationDataflow> findMatchingOperationDataflow(
             final EMap<Tuple<DeployedOperation, DeployedOperation>, OperationDataflow> operationDataflows,
             final OperationDataflow dataflow) {
         return operationDataflows.values().stream()
                 .filter(targetDataflow -> StatisticsModelMerger.isIdenticalOperationDataflow(targetDataflow, dataflow))
-                .findFirst().get();
+                .findFirst();
     }
 
     private static boolean isIdenticalOperationDataflow(final OperationDataflow targetDataflow,
@@ -155,16 +163,31 @@ public final class StatisticsModelMerger {
                 && StatisticsModelMerger.isIdenticalDirection(targetDataflow.getDirection(), dataflow.getDirection());
     }
 
-    private static EObject findMatchingStorageDataflow(
+    private static Optional<StorageDataflow> findMatchingStorageDataflow(
             final EMap<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> storageDataflows,
             final StorageDataflow dataflow) {
         return storageDataflows.values().stream()
                 .filter(targetDataflow -> StatisticsModelMerger.isIdenticalStorageDataflow(targetDataflow, dataflow))
-                .findFirst().get();
+                .findFirst();
     }
 
     private static boolean isIdenticalStorageDataflow(final StorageDataflow targetDataflow,
             final StorageDataflow dataflow) {
+
+        if (dataflow.getDirection() == null) {
+            System.err.printf("df %s:%s <--> %s:%s\n", dataflow.getCode().getComponent().getSignature(),
+                    dataflow.getCode().getAssemblyOperation().getOperationType().getSignature(),
+                    dataflow.getStorage().getComponent().getSignature(),
+                    dataflow.getStorage().getAssemblyStorage().getStorageType().getName());
+        }
+
+        if (targetDataflow.getDirection() == null) {
+            System.err.printf("td %s:%s <--> %s:%s\n", targetDataflow.getCode().getComponent().getSignature(),
+                    targetDataflow.getCode().getAssemblyOperation().getOperationType().getSignature(),
+                    targetDataflow.getStorage().getComponent().getSignature(),
+                    targetDataflow.getStorage().getAssemblyStorage().getStorageType().getName());
+        }
+
         return StatisticsModelMerger.isIdenticalOperation(targetDataflow.getCode(), dataflow.getCode())
                 && StatisticsModelMerger.isIdenticalStorage(targetDataflow.getStorage(), dataflow.getStorage())
                 && StatisticsModelMerger.isIdenticalDirection(targetDataflow.getDirection(), dataflow.getDirection());
@@ -183,8 +206,23 @@ public final class StatisticsModelMerger {
     private static boolean isIdenticalStorage(final DeployedStorage left, final DeployedStorage right) {
         final StorageType leftStorage = left.getAssemblyStorage().getStorageType();
         final StorageType rightStorage = right.getAssemblyStorage().getStorageType();
+
+        if (leftStorage == null) {
+            LOGGER.error("Left storage: Missing reference to storage type.", left);
+        }
+        if (leftStorage.getName() == null) {
+            LOGGER.error("Left storage type has no name.", left);
+        }
+
+        if (rightStorage == null) {
+            LOGGER.error("Right storage: Missing reference to storage type.", right);
+        }
+        if (rightStorage.getName() == null) {
+            LOGGER.error("Right storage type has no name.", right);
+        }
+
         if (leftStorage.getName().equals(rightStorage.getName())
-                && leftStorage.getType().equals(rightStorage.getType())) {
+                && checkType(leftStorage.getType(), rightStorage.getType())) {
             return left.getComponent().getAssemblyComponent().getSignature()
                     .equals(right.getComponent().getAssemblyComponent().getSignature());
         } else {
@@ -192,7 +230,18 @@ public final class StatisticsModelMerger {
         }
     }
 
+    private static boolean checkType(final String left, final String right) {
+        if (left == null) {
+            return right == null;
+        } else {
+            return left.equals(right);
+        }
+    }
+
     private static boolean isIdenticalDirection(final EDirection left, final EDirection right) {
+        if (left == null) {
+            LOGGER.error("Left direction is not set.");
+        }
         if (left.equals(right)) {
             return true;
         } else {

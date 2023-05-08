@@ -27,6 +27,7 @@ import teetime.framework.OutputPort;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
+import org.oceandsl.analysis.architecture.stages.ModelChangeNameStage;
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.architecture.stages.ModelSink;
 import org.oceandsl.analysis.generic.stages.TableCSVSink;
@@ -51,7 +52,9 @@ public class TeetimeConfiguration extends Configuration {
 
         final Distributor<ModelRepository> distributor = new Distributor<>(new CopyByReferenceStrategy());
 
+        final ModelChangeNameStage modelChangeNameStage = new ModelChangeNameStage(settings.getExperimentName());
         final ModelSink modelSink = new ModelSink(settings.getOutputModelPath());
+
         final ProvidedInterfaceTableTransformation providedInterfaceTableTransformation = new ProvidedInterfaceTableTransformation();
         final TableCSVSink providedInterfaceSink = new TableCSVSink(settings.getOutputModelPath(),
                 "provided-interfaces.csv", true);
@@ -70,7 +73,7 @@ public class TeetimeConfiguration extends Configuration {
             outputPort = generateProvidedInterfacesStage.getOutputPort();
         }
 
-        final boolean mapFiles = settings.getMapFiles() != null && settings.getMapFiles().size() > 0;
+        final boolean mapFiles = (settings.getMapFiles() != null) && (settings.getMapFiles().size() > 0);
         if (mapFiles) {
             try {
                 final GroupComponentsHierarchicallyStage groupComponentHierarchicallyStage = new GroupComponentsHierarchicallyStage(
@@ -85,7 +88,8 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(outputPort, distributor.getInputPort());
 
         if (settings.isComputeInterfaces() || mapFiles) {
-            this.connectPorts(distributor.getNewOutputPort(), modelSink.getInputPort());
+            this.connectPorts(distributor.getNewOutputPort(), modelChangeNameStage.getInputPort());
+            this.connectPorts(modelChangeNameStage.getOutputPort(), modelSink.getInputPort());
             this.connectPorts(distributor.getNewOutputPort(), providedInterfaceTableTransformation.getInputPort());
             this.connectPorts(providedInterfaceTableTransformation.getOutputPort(),
                     providedInterfaceSink.getInputPort());

@@ -63,13 +63,11 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        project.getModules().values().stream().filter(module -> !module.getModuleName().equals(this.defaultModuleName))
-                .forEach(module -> {
-                    module.getCommonBlocks().values()
-                            .forEach(commonBlock -> this.analyzeCommonBlock(module, commonBlock));
-                    module.getOperations().values()
-                            .forEach(operation -> this.analyzeOperation(project, module, operation));
-                });
+        project.getModules().values().stream().forEach(module -> {
+            this.logger.debug("Dataflow analysis for {}", module.getFileName());
+            module.getCommonBlocks().values().forEach(commonBlock -> this.analyzeCommonBlock(module, commonBlock));
+            module.getOperations().values().forEach(operation -> this.analyzeOperation(project, module, operation));
+        });
     }
 
     private void analyzeCommonBlock(final FortranModule module, final CommonBlock commonBlock) {
@@ -208,7 +206,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
         } else if (Predicates.isWhereStatement.test(statement)) {
             this.analyzeWhereStatement(project, module, operation, statement);
         } else if (Predicates.isAllocateStatement.or(Predicates.isC).or(Predicates.isCloseStatement)
-                .or(Predicates.isCommonStatement).or(Predicates.isContinueStatement)
+                .or(Predicates.isProgramStatement).or(Predicates.isCommonStatement).or(Predicates.isContinueStatement)
                 .or(Predicates.isDeallocateStatement).or(Predicates.isDIMStatement).or(Predicates.isElseStatement)
                 .or(Predicates.isEndFileStatement).or(Predicates.isEndStatement).or(Predicates.isExitStatement)
                 .or(Predicates.isFile).or(Predicates.isFormatStatement).or(Predicates.isGotoStatement)
@@ -217,12 +215,12 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
                 .or(Predicates.isOpenStatement).or(Predicates.isOperationStatement).or(Predicates.isParameterStatement)
                 .or(Predicates.isPrintStatement).or(Predicates.isReadStatement).or(Predicates.isReturnStatement)
                 .or(Predicates.isRewindStatement).or(Predicates.isStopStatement).or(Predicates.isTDeclStmt)
-                .or(Predicates.isWriteStatement).test(statement)) {
+                .or(Predicates.isWriteStatement).or(Predicates.isExternalStatement).test(statement)) {
             // ignore
         } else if (statement.getNodeType() == Node.TEXT_NODE) {
             // ignore
         } else {
-            System.err.println("Unknown statement " + statement);
+            System.err.println(this.getClass().getSimpleName() + ": Unknown statement " + statement);
         }
     }
 
@@ -566,7 +564,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
     }
 
     private int computeArgumentIndex(final FortranOperation operation, final int argumentIndex) {
-        if (operation.isVariableArguments() && argumentIndex >= operation.getParameters().size()) {
+        if (operation.isVariableArguments() && (argumentIndex >= operation.getParameters().size())) {
             return operation.getParameters().size() - 1;
         } else {
             return argumentIndex;

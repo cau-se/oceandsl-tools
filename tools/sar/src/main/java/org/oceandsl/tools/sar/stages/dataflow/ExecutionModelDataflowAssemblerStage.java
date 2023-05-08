@@ -72,7 +72,7 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
                 this.addOperationDataflow(sourceOperation, targetOperation, element.getDirection());
             } else if (element.getTarget() instanceof StorageEvent) {
                 final StorageEvent storageEvent = (StorageEvent) element.getTarget();
-                final DeployedStorage targetStorage = callerComponent.getStorages()
+                final DeployedStorage targetStorage = calleeComponent.getStorages()
                         .get(storageEvent.getStorageSignature());
                 this.addOperationStorageDataflow(sourceOperation, targetStorage, element.getDirection());
             } else {
@@ -115,7 +115,6 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
     private void addOperationStorageDataflow(final DeployedOperation operation, final DeployedStorage storage,
             final EDirection direction) {
         final Tuple<DeployedOperation, DeployedStorage> key = ExecutionFactory.eINSTANCE.createTuple();
-
         key.setFirst(operation);
         key.setSecond(storage);
         this.addObjectToSource(key);

@@ -110,6 +110,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
                     project.getDefaultModule().getOperations().put(call.getSecond(), dummyOperation);
                     final Pair<FortranModule, FortranOperation> defaultCallee = new Pair<>(project.getDefaultModule(),
                             dummyOperation);
+                    dummyOperation.setModule(project.getDefaultModule());
                     project.getCalls().add(new Pair<>(caller, defaultCallee));
 
                     try {

@@ -580,7 +580,7 @@
 		<module name="ImportOrder">
 			<property name="option" value="top" />
 			<property name="groups"
-				value="java,javax,junit,com,ch,de,org,kieker,teetime,org.oceandsl" />
+				value="java,javax,junit,com,ch,de,org,lombok,kieker,teetime,org.oceandsl" />
 			<property name="ordered" value="true" />
 			<property name="separated" value="true" />
 			<property name="caseSensitive" value="true" />

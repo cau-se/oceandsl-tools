@@ -20,13 +20,12 @@ import java.util.Map;
 import org.w3c.dom.Node;
 
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CommonBlock implements IDataflowEndpoint, IContainable {
+public class CommonBlock extends MMObject implements IDataflowEndpoint, IContainable {
 
     @Getter
     private final String name;
@@ -36,10 +35,6 @@ public class CommonBlock implements IDataflowEndpoint, IContainable {
 
     @Getter
     private final Node node;
-
-    @Getter
-    @Setter
-    private Object parent;
 
     public CommonBlock(final String name, final Node node) {
         this.name = name;

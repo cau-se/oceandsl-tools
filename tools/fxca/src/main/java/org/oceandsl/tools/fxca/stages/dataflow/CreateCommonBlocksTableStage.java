@@ -31,8 +31,9 @@ public class CreateCommonBlocksTableStage extends AbstractTransformation<CommonB
 
     private static final String COMMON_BLOCKS = "common-blocks";
 
-    private final Table commonBlocksTable = new Table(COMMON_BLOCKS, new StringValueHandler("block-name"),
-            new StringValueHandler("files"), new StringValueHandler("modules"), new StringValueHandler("variables"));
+    private final Table commonBlocksTable = new Table(CreateCommonBlocksTableStage.COMMON_BLOCKS,
+            new StringValueHandler("block-name"), new StringValueHandler("files"), new StringValueHandler("modules"),
+            new StringValueHandler("variables"));
 
     @Override
     protected void execute(final CommonBlockEntry entry) throws Exception {
@@ -40,8 +41,13 @@ public class CreateCommonBlocksTableStage extends AbstractTransformation<CommonB
                 .reduce((list, element) -> list += "," + element).get();
         final String modules = entry.getModules().stream().map(module -> module.getModuleName())
                 .reduce((list, element) -> list += "," + element).get();
-        final String variables = entry.getVariables().stream().reduce((list, element) -> list += "," + element).get();
-        this.commonBlocksTable.addRow(entry.getName(), files, modules, variables);
+        if (entry.getVariables().isEmpty()) {
+            this.logger.error("Internal error: Common block {} without variables.", entry.getName());
+        } else {
+            final String variables = entry.getVariables().stream().reduce((list, element) -> list += "," + element)
+                    .get();
+            this.commonBlocksTable.addRow(entry.getName(), files, modules, variables);
+        }
     }
 
     @Override

@@ -51,6 +51,7 @@ public class TeetimeConfiguration extends Configuration {
             modelOperationStage = new ModelMergeStage(settings.getExperimentName());
             break;
         }
+
         final ModelSink modelSink = new ModelSink(settings.getOutputDirectory());
 
         this.connectPorts(modelSource.getOutputPort(), modelReader.getInputPort());

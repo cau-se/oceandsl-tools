@@ -25,9 +25,9 @@ import java.util.Map;
 public class ContainmentHashMap<K, V extends IContainable> extends HashMap<K, V> {
 
     private static final long serialVersionUID = -599934940656656150L;
-    private final Object parent;
+    private final MMObject parent;
 
-    public ContainmentHashMap(final Object parent) {
+    public ContainmentHashMap(final MMObject parent) {
         this.parent = parent;
     }
 

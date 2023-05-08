@@ -17,8 +17,8 @@ package org.oceandsl.tools.mop.merge;
 
 import java.util.Map.Entry;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import kieker.analysis.architecture.repository.ArchitectureModelUtils;
 import kieker.analysis.architecture.repository.ModelRepository;
@@ -65,19 +65,19 @@ public class ModelRepositoryMergerTest {
 
         final TypeModel typeModel = darRepo.getModel(TypePackage.Literals.TYPE_MODEL);
 
-        Assert.assertEquals("Numer of component types", 3, typeModel.getComponentTypes().size());
+        Assertions.assertEquals(3, typeModel.getComponentTypes().size(), "Numer of component types");
         for (final Entry<String, ComponentType> type : typeModel.getComponentTypes().entrySet()) {
             if (SarModelFactory.SAR_COMPONENT_SIGNATURE.equals(type.getKey())) {
-                Assert.assertEquals(ModelRepositoryMergerTest.NUMBER_OF_OPERATION, 1,
-                        type.getValue().getProvidedOperations().size());
+                Assertions.assertEquals(1, type.getValue().getProvidedOperations().size(),
+                        ModelRepositoryMergerTest.NUMBER_OF_OPERATION);
             } else if (AbstractModelTestFactory.JOINT_COMPONENT_SIGNATURE.equals(type.getKey())) {
-                Assert.assertEquals(ModelRepositoryMergerTest.NUMBER_OF_OPERATION, 2,
-                        type.getValue().getProvidedOperations().size());
+                Assertions.assertEquals(2, type.getValue().getProvidedOperations().size(),
+                        ModelRepositoryMergerTest.NUMBER_OF_OPERATION);
             } else if (DarModelFactory.DAR_COMPONENT_SIGNATURE.equals(type.getKey())) {
-                Assert.assertEquals(ModelRepositoryMergerTest.NUMBER_OF_OPERATION, 1,
-                        type.getValue().getProvidedOperations().size());
+                Assertions.assertEquals(1, type.getValue().getProvidedOperations().size(),
+                        ModelRepositoryMergerTest.NUMBER_OF_OPERATION);
             } else {
-                Assert.fail("Unkown component type " + type.getKey());
+                Assertions.fail("Unkown component type " + type.getKey());
             }
         }
     }
@@ -91,7 +91,7 @@ public class ModelRepositoryMergerTest {
         final TypeModel typeModel = darRepo.getModel(TypePackage.Literals.TYPE_MODEL);
         final AssemblyModel assemblyModel = darRepo.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
 
-        Assert.assertEquals("Numer of component types", 3, assemblyModel.getComponents().size());
+        Assertions.assertEquals(3, assemblyModel.getComponents().size(), "Numer of component types");
         for (final Entry<String, AssemblyComponent> entry : assemblyModel.getComponents().entrySet()) {
             final AssemblyComponent component = entry.getValue();
 
@@ -99,21 +99,24 @@ public class ModelRepositoryMergerTest {
                     .get(component.getComponentType().getSignature());
 
             if (SarModelFactory.SAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
-                Assert.assertEquals("Number of operation", 1, component.getOperations().size());
+                Assertions.assertEquals(1, component.getOperations().size(), "Number of operation");
                 final AssemblyOperation operation = component.getOperations()
                         .get(AbstractModelTestFactory.OP_SIGNATURE);
-                Assert.assertTrue("Operation not found " + AbstractModelTestFactory.OP_SIGNATURE, operation != null);
-                Assert.assertTrue("Wrong operation type", operation.getOperationType() == componentType
-                        .getProvidedOperations().get(AbstractModelTestFactory.OP_SIGNATURE));
+                Assertions.assertTrue(operation != null,
+                        "Operation not found " + AbstractModelTestFactory.OP_SIGNATURE);
+                Assertions.assertTrue(operation.getOperationType() == componentType.getProvidedOperations()
+                        .get(AbstractModelTestFactory.OP_SIGNATURE), "Wrong operation type");
             } else if (AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
-                Assert.assertEquals(ModelRepositoryMergerTest.NUMBER_OF_OPERATION, 2, component.getOperations().size());
+                Assertions.assertEquals(2, component.getOperations().size(),
+                        ModelRepositoryMergerTest.NUMBER_OF_OPERATION);
             } else if (DarModelFactory.DAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
-                Assert.assertEquals(ModelRepositoryMergerTest.NUMBER_OF_OPERATION, 1, component.getOperations().size());
+                Assertions.assertEquals(1, component.getOperations().size(),
+                        ModelRepositoryMergerTest.NUMBER_OF_OPERATION);
             } else {
-                Assert.fail("Unkown assembly component " + entry.getKey());
+                Assertions.fail("Unkown assembly component " + entry.getKey());
             }
 
-            Assert.assertEquals("Wrong component type", component.getComponentType(), componentType);
+            Assertions.assertEquals(component.getComponentType(), componentType, "Wrong component type");
         }
     }
 
@@ -126,13 +129,13 @@ public class ModelRepositoryMergerTest {
         final AssemblyModel assemblyModel = darRepo.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
         final DeploymentModel deploymentModel = darRepo.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
 
-        Assert.assertEquals("Numer of deployment contexts", 1, deploymentModel.getContexts().size());
+        Assertions.assertEquals(1, deploymentModel.getContexts().size(), "Numer of deployment contexts");
         final DeploymentContext context = deploymentModel.getContexts().get(AbstractModelTestFactory.HOSTNAME);
-        Assert.assertTrue("No context", context != null);
+        Assertions.assertTrue(context != null, "No context");
         for (final Entry<String, DeployedComponent> entry : context.getComponents()) {
             final DeployedComponent deployedComponent = entry.getValue();
-            Assert.assertTrue("Deployed component has wrong signature",
-                    deployedComponent.getSignature().equals(entry.getKey()));
+            Assertions.assertTrue(deployedComponent.getSignature().equals(entry.getKey()),
+                    "Deployed component has wrong signature");
             final AssemblyComponent assemblyComponent = assemblyModel.getComponents().get(entry.getKey());
             if (SarModelFactory.SAR_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
                 this.checkDeployedOperation(deployedComponent, assemblyComponent,
@@ -157,7 +160,7 @@ public class ModelRepositoryMergerTest {
 
         final ExecutionModel executionModel = darRepo.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
 
-        Assert.assertEquals("Wrong number of invocations", 6, executionModel.getInvocations().size());
+        Assertions.assertEquals(6, executionModel.getInvocations().size(), "Wrong number of invocations");
     }
 
     @Test
@@ -169,8 +172,8 @@ public class ModelRepositoryMergerTest {
         final ExecutionModel executionModel = darRepo.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
         final StatisticsModel statisticsModel = darRepo.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
 
-        Assert.assertEquals("Wrong number of statistics", executionModel.getInvocations().size(),
-                statisticsModel.getStatistics().size());
+        Assertions.assertEquals(executionModel.getInvocations().size(), statisticsModel.getStatistics().size(),
+                "Wrong number of statistics");
     }
 
     @Test
@@ -185,16 +188,17 @@ public class ModelRepositoryMergerTest {
          * 7 types (comp 3 +op 4), 7 assembly, 7 deployment + 1 deployment context, 3 sar,2 dar, 1
          * joint calls.
          */
-        Assert.assertEquals("Wrong number of elements in total", 7 + 7 + 7 + 1 + 6,
-                sourceModel.getSources().entrySet().size());
+        Assertions.assertEquals(7 + 7 + 7 + 1 + 6, sourceModel.getSources().entrySet().size(),
+                "Wrong number of elements in total");
 
     }
 
     private void checkDeployedOperation(final DeployedComponent deployedComponent,
             final AssemblyComponent assemblyComponent, final String operationSignature) {
         final DeployedOperation deployedOperation = deployedComponent.getOperations().get(operationSignature);
-        Assert.assertTrue("Wrong assembly operation for " + operationSignature,
-                deployedOperation.getAssemblyOperation() == assemblyComponent.getOperations().get(operationSignature));
+        Assertions.assertTrue(
+                deployedOperation.getAssemblyOperation() == assemblyComponent.getOperations().get(operationSignature),
+                "Wrong assembly operation for " + operationSignature);
     }
 
     private ModelRepository createSarModel() {

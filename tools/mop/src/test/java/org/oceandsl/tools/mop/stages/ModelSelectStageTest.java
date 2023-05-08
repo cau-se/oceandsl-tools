@@ -20,9 +20,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import kieker.analysis.architecture.repository.ModelDescriptor;
 import kieker.analysis.architecture.repository.ModelRepository;
@@ -57,7 +57,7 @@ public class ModelSelectStageTest {
 
     private ModelRepository repository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.repository = new ModelRepository("test");
         final TypeModel typeModel = SarModelFactory.createTypeModel();
@@ -93,26 +93,26 @@ public class ModelSelectStageTest {
         StageTester.test(stage).send(this.repository).to(stage.getInputPort()).and().receive(results)
                 .from(stage.getOutputPort()).start();
 
-        Assert.assertEquals("Number of model repositories", 1, results.size());
+        Assertions.assertEquals(1, results.size(), "Number of model repositories");
 
         final DeploymentModel deployment = this.repository.getModel(DeploymentPackage.eINSTANCE.getDeploymentModel());
         final Collection<DeployedComponent> deployedComponents = deployment.getContexts()
                 .get(AbstractModelTestFactory.HOSTNAME).getComponents().values();
-        Assert.assertEquals("Number of deployed components", 1, deployedComponents.size());
-        Assert.assertEquals("Deployed component name", SarModelFactory.SAR_ASSEMBLY_SIGNATURE,
-                deployedComponents.iterator().next().getSignature());
+        Assertions.assertEquals(1, deployedComponents.size(), "Number of deployed components");
+        Assertions.assertEquals(SarModelFactory.SAR_ASSEMBLY_SIGNATURE,
+                deployedComponents.iterator().next().getSignature(), "Deployed component name");
 
         final AssemblyModel assembly = this.repository.getModel(AssemblyPackage.eINSTANCE.getAssemblyModel());
         final Collection<AssemblyComponent> assemblyComponents = assembly.getComponents().values();
-        Assert.assertEquals("Number of assembly components", 1, assemblyComponents.size());
-        Assert.assertEquals("Assembly component name", SarModelFactory.SAR_ASSEMBLY_SIGNATURE,
-                assemblyComponents.iterator().next().getSignature());
+        Assertions.assertEquals(1, assemblyComponents.size(), "Number of assembly components");
+        Assertions.assertEquals(SarModelFactory.SAR_ASSEMBLY_SIGNATURE,
+                assemblyComponents.iterator().next().getSignature(), "Assembly component name");
 
         final TypeModel type = this.repository.getModel(TypePackage.eINSTANCE.getTypeModel());
         final Collection<ComponentType> componentTypes = type.getComponentTypes().values();
-        Assert.assertEquals("Number of component types", 1, componentTypes.size());
-        Assert.assertEquals("Component type name", SarModelFactory.SAR_COMPONENT_SIGNATURE,
-                componentTypes.iterator().next().getSignature());
+        Assertions.assertEquals(1, componentTypes.size(), "Number of component types");
+        Assertions.assertEquals(SarModelFactory.SAR_COMPONENT_SIGNATURE,
+                componentTypes.iterator().next().getSignature(), "Component type name");
     }
 
 }

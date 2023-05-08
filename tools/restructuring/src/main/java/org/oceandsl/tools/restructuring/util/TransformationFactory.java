@@ -1,8 +1,10 @@
 package org.oceandsl.tools.restructuring.util;
 
 import java.util.HashSet;
-import java.util.Map.Entry;
 import java.util.Set;
+
+import kieker.model.analysismodel.assembly.AssemblyComponent;
+import kieker.model.analysismodel.assembly.AssemblyModel;
 
 import org.oceandsl.tools.restructuring.transformations.CreateTransformation;
 import org.oceandsl.tools.restructuring.transformations.CutTransformation;
@@ -12,110 +14,118 @@ import org.oceandsl.tools.restructuring.transformations.MoveTransformation;
 import org.oceandsl.tools.restructuring.transformations.PasteTransformation;
 import org.oceandsl.tools.restructuring.transformations.SplitTransformation;
 
-import kieker.model.analysismodel.assembly.AssemblyComponent;
-import kieker.model.analysismodel.assembly.AssemblyModel;
-
 public class TransformationFactory {
 
-	public static CreateTransformation createCreateTransformation(String componentName, AssemblyModel model) {
+    public static CreateTransformation createCreateTransformation(final String componentName,
+            final AssemblyModel model) {
 
-		CreateTransformation result = new CreateTransformation(model);
-		result.setComponentName(componentName); // For the new component in original
+        final CreateTransformation result = new CreateTransformation(model);
+        result.setComponentName(componentName); // For the new component in original
 
-		return result;
-	}
+        return result;
+    }
 
-	public static DeleteTransformation createDeleteTransformation(String componentName, AssemblyModel model) {
-		DeleteTransformation result = new DeleteTransformation(model);
-		result.setComponentName(componentName);
-		return result;
-	}
+    public static DeleteTransformation createDeleteTransformation(final String componentName,
+            final AssemblyModel model) {
+        final DeleteTransformation result = new DeleteTransformation(model);
+        result.setComponentName(componentName);
+        return result;
+    }
 
-	public static CutTransformation createCutTransformation(String componentName, String operationName,
-			AssemblyModel model) {
+    public static CutTransformation createCutTransformation(final String componentName, final String operationName,
+            final AssemblyModel model) {
 
-		CutTransformation result = new CutTransformation(model);
-		result.setComponentName(componentName); // For the new component in original
-		result.setOperationName(operationName);
+        final CutTransformation result = new CutTransformation(model);
+        result.setComponentName(componentName); // For the new component in original
+        result.setOperationName(operationName);
 
-		return result;
-	}
+        return result;
+    }
 
-	public static PasteTransformation createPasteTransformation(String componentName, String operationName,
-			AssemblyModel model) {
+    public static PasteTransformation createPasteTransformation(final String componentName, final String operationName,
+            final AssemblyModel model) {
 
-		PasteTransformation result = new PasteTransformation(model);
-		result.setComponentName(componentName); // For the new component in original
-		result.setOperationName(operationName);
+        final PasteTransformation result = new PasteTransformation(model);
+        result.setComponentName(componentName); // For the new component in original
+        result.setOperationName(operationName);
 
-		return result;
-	}
+        return result;
+    }
 
-	public static MoveTransformation createMoveTransformation(String fromComponent, String toComponent,
-			String operationName, AssemblyModel model) {
-		CutTransformation from = createCutTransformation(fromComponent, operationName, model);
-		PasteTransformation to = createPasteTransformation(toComponent, operationName, model);
+    public static MoveTransformation createMoveTransformation(final String fromComponent, final String toComponent,
+            final String operationName, final AssemblyModel model) {
+        final CutTransformation from = createCutTransformation(fromComponent, operationName, model);
+        final PasteTransformation to = createPasteTransformation(toComponent, operationName, model);
 
-		MoveTransformation result = new MoveTransformation(model);
-		result.add(from);
-		result.add(to);
+        final MoveTransformation result = new MoveTransformation(model);
+        result.add(from);
+        result.add(to);
 
-		return result;
-	}
+        return result;
+    }
 
-	public static SplitTransformation createSplitTransformation(String componentOld, String componentNew,
-			String operationName, AssemblyModel model) {
+    public static SplitTransformation createSplitTransformation(final String componentOld, final String componentNew,
+            final String operationName, final AssemblyModel model) {
 
-		CreateTransformation newComponent = createCreateTransformation(componentNew, model);
-		MoveTransformation to = createMoveTransformation(componentOld, componentNew, operationName, model);
+        final CreateTransformation newComponent = createCreateTransformation(componentNew, model);
+        final MoveTransformation to = createMoveTransformation(componentOld, componentNew, operationName, model);
 
-		SplitTransformation result = new SplitTransformation(model);
-		result.add(newComponent);
-		result.add(to);
+        final SplitTransformation result = new SplitTransformation(model);
+        result.add(newComponent);
+        result.add(to);
 
-		return result;
-	}
+        return result;
+    }
 
-	public static MergeTransformation createMergeTransformation(String componentOld, String componentNew,
-			String operationName, AssemblyModel model) {
+    public static MergeTransformation createMergeTransformation(final String componentOld, final String componentNew,
+            final String operationName, final AssemblyModel model) {
 
-		DeleteTransformation newComponent = createDeleteTransformation(componentNew, model);
-		MoveTransformation to = createMoveTransformation(componentOld, componentNew, operationName, model);
+        final DeleteTransformation newComponent = createDeleteTransformation(componentNew, model);
+        final MoveTransformation to = createMoveTransformation(componentOld, componentNew, operationName, model);
 
-		MergeTransformation result = new MergeTransformation(model);
-		result.add(newComponent);
-		result.add(to);
+        final MergeTransformation result = new MergeTransformation(model);
+        result.add(newComponent);
+        result.add(to);
 
-		return result;
-	}
+        return result;
+    }
 
-	public static boolean areSameComponents(AssemblyComponent a, AssemblyComponent b) {
-		Set<String> opsA = a.getOperations().keySet();
-		Set<String> opsB = b.getOperations().keySet();
+    public static boolean areSameComponents(final AssemblyComponent a, final AssemblyComponent b) {
+        final Set<String> opsA = a.getOperations().keySet();
+        final Set<String> opsB = b.getOperations().keySet();
 
-		return new HashSet<>(opsA).equals(new HashSet<>(opsB));
+        return new HashSet<>(opsA).equals(new HashSet<>(opsB));
 
-	}
+    }
 
-	public static boolean containsComponent(AssemblyModel model, AssemblyComponent b) {
-		for (Entry<String, AssemblyComponent> e : model.getComponents().entrySet()) {
-			if (areSameComponents(e.getValue(), b)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * Check wether two models are structurally equal.
+     *
+     * @param a
+     *            first model
+     * @param b
+     *            second model
+     * @return returns true if they are structurally equal
+     */
+    public static boolean areSameModels(final AssemblyModel a, final AssemblyModel b) {
+        if (a.getComponents().size() != b.getComponents().size()) {
+            return false;
+        }
+        for (final AssemblyComponent bComponent : b.getComponents().values()) {
+            if (!containsComponent(a, bComponent)) {
+                return false;
+            }
+        }
 
-	public static boolean areSameModels(AssemblyModel a, AssemblyModel b) {
-		if (a.getComponents().size() != b.getComponents().size()) {
-			return false;
-		}
-		for (Entry<String, AssemblyComponent> e : b.getComponents().entrySet()) {
-			if (!containsComponent(a, e.getValue())) {
-				return false;
-			}
-		}
+        return true;
+    }
 
-		return true;
-	}
+    private static boolean containsComponent(final AssemblyModel model, final AssemblyComponent matchingComponent) {
+        for (final AssemblyComponent aComponent : model.getComponents().values()) {
+            if (areSameComponents(aComponent, matchingComponent)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

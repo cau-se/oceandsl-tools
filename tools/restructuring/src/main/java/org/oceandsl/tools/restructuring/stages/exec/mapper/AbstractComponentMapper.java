@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import kieker.model.analysismodel.assembly.AssemblyModel;
 
-public abstract class AbstractMapper {
+public abstract class AbstractComponentMapper {
 
 	private ComponentsMapper compMapper;
 	private String originalModelName;
@@ -20,7 +20,7 @@ public abstract class AbstractMapper {
 	protected HashMap<String, String> goalToOriginal = new HashMap<String, String>();
 	protected HashMap<String, String> originallToGoal = new HashMap<String, String>();
 
-	public AbstractMapper(String originalModelName, String goalModelName) {
+	public AbstractComponentMapper(String originalModelName, String goalModelName) {
 		this.originalModelName = originalModelName;
 		this.goalModelName = goalModelName;
 	}
@@ -65,7 +65,7 @@ public abstract class AbstractMapper {
 		this.goalToOriginal = goalToOriginal;
 	}
 
-	public HashMap<String, String> getOriginallToGoal() {
+	public HashMap<String, String> getOriginalToGoal() {
 		return originallToGoal;
 	}
 
@@ -73,7 +73,7 @@ public abstract class AbstractMapper {
 		this.originallToGoal = originallToGoal;
 	}
 
-	public AssemblyModel getOrig() {
+	public AssemblyModel getOriginal() {
 		return this.orig;
 
 	}

@@ -25,8 +25,10 @@ import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
+import kieker.model.analysismodel.assembly.AssemblyProvidedInterface;
 import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeployedProvidedInterface;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentFactory;
 import kieker.model.analysismodel.deployment.DeploymentModel;
@@ -104,8 +106,44 @@ public final class TestModelRepositoryUtils {
                     TestModelRepositoryUtils.createDeploymentComponent(entry.getKey(), entry.getValue()));
         }
 
+        // deploymentContext.getComponents().values().forEach(component -> {
+        // for (final AssemblyRequiredInterface requiredIFace : component.getAssemblyComponent()
+        // .getRequiredInterfaces()) {
+        // component.getRequiredInterfaces().add(TestModelRepositoryUtils
+        // .createDeployedRequiredInterface(deploymentContext.getComponents().values(),
+        // requiredIFace));
+        // }
+        // });
+
         return deploymentContext;
     }
+
+    // private static DeployedRequiredInterface createDeployedRequiredInterface(
+    // final Collection<DeployedComponent> components, final AssemblyRequiredInterface
+    // requiredIFace) {
+    // final DeployedRequiredInterface deployedRequiredIFace = DeploymentFactory.eINSTANCE
+    // .createDeployedRequiredInterface();
+    // deployedRequiredIFace.setRequiredInterface(requiredIFace);
+    // deployedRequiredIFace.setRequires(
+    // TestModelRepositoryUtils.findDeployedProvidedInterface(components,
+    // requiredIFace.getRequires()));
+    // return deployedRequiredIFace;
+    // }
+
+    // private static DeployedProvidedInterface findDeployedProvidedInterface(
+    // final Collection<DeployedComponent> components, final AssemblyProvidedInterface requires) {
+    // for (final DeployedComponent component : components) {
+    // if (component.getAssemblyComponent().getProvidedInterfaces().values().contains(requires)) {
+    // for (final DeployedProvidedInterface p : component.getProvidedInterfaces().values()) {
+    // if (p.getProvidedInterface().equals(requires)) {
+    // return p;
+    // }
+    // }
+    // }
+    // }
+    //
+    // return null;
+    // }
 
     private static DeployedComponent createDeploymentComponent(final String signature,
             final AssemblyComponent assemblyComponent) {
@@ -118,7 +156,23 @@ public final class TestModelRepositoryUtils {
                     TestModelRepositoryUtils.createDeployedOperation(entry.getValue()));
         }
 
+        for (final Entry<String, AssemblyProvidedInterface> entry : assemblyComponent.getProvidedInterfaces()
+                .entrySet()) {
+            deployedComponent.getProvidedInterfaces().put(entry.getKey(),
+                    TestModelRepositoryUtils.createDeployedProvidedInterface(entry.getValue()));
+        }
+
         return deployedComponent;
+    }
+
+    private static DeployedProvidedInterface createDeployedProvidedInterface(
+            final AssemblyProvidedInterface assemblyProvidedInterface) {
+        final DeployedProvidedInterface deployedProvidedIFace = DeploymentFactory.eINSTANCE
+                .createDeployedProvidedInterface();
+
+        deployedProvidedIFace.setProvidedInterface(assemblyProvidedInterface);
+
+        return deployedProvidedIFace;
     }
 
     private static DeployedOperation createDeployedOperation(final AssemblyOperation assemblyOperation) {
@@ -130,15 +184,67 @@ public final class TestModelRepositoryUtils {
     private static AssemblyModel createAssemblyModel(final TypeModel typeModel) {
         final AssemblyModel assemblyModel = AssemblyFactory.eINSTANCE.createAssemblyModel();
 
-        assemblyModel.getComponents().put(TestModelRepositoryUtils.FQN_COMPONENT_A + ":1", TestModelRepositoryUtils
-                .createAssemblyComponent(typeModel, TestModelRepositoryUtils.FQN_COMPONENT_A, ":1"));
-        assemblyModel.getComponents().put(TestModelRepositoryUtils.FQN_COMPONENT_B + ":1", TestModelRepositoryUtils
-                .createAssemblyComponent(typeModel, TestModelRepositoryUtils.FQN_COMPONENT_B, ":1"));
-        assemblyModel.getComponents().put(TestModelRepositoryUtils.FQN_COMPONENT_C + ":1", TestModelRepositoryUtils
-                .createAssemblyComponent(typeModel, TestModelRepositoryUtils.FQN_COMPONENT_C, ":1"));
+        final AssemblyComponent componentA1 = TestModelRepositoryUtils.createAssemblyComponent(typeModel,
+                TestModelRepositoryUtils.FQN_COMPONENT_A, ":1");
+        final AssemblyComponent componentB1 = TestModelRepositoryUtils.createAssemblyComponent(typeModel,
+                TestModelRepositoryUtils.FQN_COMPONENT_B, ":1");
+        final AssemblyComponent componentC1 = TestModelRepositoryUtils.createAssemblyComponent(typeModel,
+                TestModelRepositoryUtils.FQN_COMPONENT_C, ":1");
+
+        assemblyModel.getComponents().put(componentA1.getSignature(), componentA1);
+        assemblyModel.getComponents().put(componentB1.getSignature(), componentB1);
+        assemblyModel.getComponents().put(componentC1.getSignature(), componentC1);
+
+        // final AssemblyProvidedInterface providedIFaceB =
+        // TestModelRepositoryUtils.createProvidedInterface(componentB1,
+        // TestModelRepositoryUtils.PACKAGE_NAME, "b");
+        // componentB1.getProvidedInterfaces().put(providedIFaceB.getProvidedInterfaceType().getSignature(),
+        // providedIFaceB);
+        // final AssemblyProvidedInterface providedIFaceC =
+        // TestModelRepositoryUtils.createProvidedInterface(componentC1,
+        // TestModelRepositoryUtils.PACKAGE_NAME, "c");
+        // componentC1.getProvidedInterfaces().put(providedIFaceC.getProvidedInterfaceType().getSignature(),
+        // providedIFaceC);
+        //
+        // componentA1.getRequiredInterfaces()
+        // .add(TestModelRepositoryUtils.createRequiredInterface(componentA1, providedIFaceB));
+        // componentA1.getRequiredInterfaces()
+        // .add(TestModelRepositoryUtils.createRequiredInterface(componentA1, providedIFaceC));
+        // componentB1.getRequiredInterfaces()
+        // .add(TestModelRepositoryUtils.createRequiredInterface(componentB1, providedIFaceC));
 
         return assemblyModel;
     }
+
+    // private static AssemblyRequiredInterface createRequiredInterface(final AssemblyComponent
+    // assemblyComponent,
+    // final AssemblyProvidedInterface providedIFace) {
+    // final RequiredInterfaceType requiredType =
+    // assemblyComponent.getComponentType().getRequiredInterfaceTypes()
+    // .stream().filter(iface ->
+    // iface.getRequires().equals(providedIFace.getProvidedInterfaceType()))
+    // .findFirst().get();
+    //
+    // final AssemblyRequiredInterface requiredIFace =
+    // AssemblyFactory.eINSTANCE.createAssemblyRequiredInterface();
+    // requiredIFace.setRequiredInterfaceType(requiredType);
+    // requiredIFace.setRequires(providedIFace);
+    // return requiredIFace;
+    // }
+    //
+    // private static AssemblyProvidedInterface createProvidedInterface(final AssemblyComponent
+    // component,
+    // final String packageName, final String name) {
+    // final AssemblyProvidedInterface providedInterface =
+    // AssemblyFactory.eINSTANCE.createAssemblyProvidedInterface();
+    //
+    // final ProvidedInterfaceType ifaceType =
+    // component.getComponentType().getProvidedInterfaceTypes().stream()
+    // .filter(i -> i.getSignature().equals(packageName + "." + name)).findFirst().get();
+    // providedInterface.setProvidedInterfaceType(ifaceType);
+    //
+    // return providedInterface;
+    // }
 
     private static AssemblyComponent createAssemblyComponent(final TypeModel typeModel, final String typeName,
             final String instanceName) {
@@ -163,15 +269,57 @@ public final class TestModelRepositoryUtils {
     private static TypeModel createTypeModel() {
         final TypeModel typeModel = TypeFactory.eINSTANCE.createTypeModel();
 
-        typeModel.getComponentTypes().put(TestModelRepositoryUtils.FQN_COMPONENT_A, TestModelRepositoryUtils
-                .createComponent(TestModelRepositoryUtils.COMPONENT_A, TestModelRepositoryUtils.createAOperations()));
-        typeModel.getComponentTypes().put(TestModelRepositoryUtils.FQN_COMPONENT_B, TestModelRepositoryUtils
-                .createComponent(TestModelRepositoryUtils.COMPONENT_B, TestModelRepositoryUtils.createBOperations()));
-        typeModel.getComponentTypes().put(TestModelRepositoryUtils.FQN_COMPONENT_C, TestModelRepositoryUtils
-                .createComponent(TestModelRepositoryUtils.COMPONENT_C, TestModelRepositoryUtils.createCOperations()));
+        final ComponentType componentTypeA = TestModelRepositoryUtils
+                .createComponent(TestModelRepositoryUtils.COMPONENT_A, TestModelRepositoryUtils.createAOperations());
+        final ComponentType componentTypeB = TestModelRepositoryUtils
+                .createComponent(TestModelRepositoryUtils.COMPONENT_B, TestModelRepositoryUtils.createBOperations());
+        final ComponentType componentTypeC = TestModelRepositoryUtils
+                .createComponent(TestModelRepositoryUtils.COMPONENT_C, TestModelRepositoryUtils.createCOperations());
+
+        typeModel.getComponentTypes().put(TestModelRepositoryUtils.FQN_COMPONENT_A, componentTypeA);
+        typeModel.getComponentTypes().put(TestModelRepositoryUtils.FQN_COMPONENT_B, componentTypeB);
+        typeModel.getComponentTypes().put(TestModelRepositoryUtils.FQN_COMPONENT_C, componentTypeC);
+
+        // final ProvidedInterfaceType providedIFaceB = TestModelRepositoryUtils
+        // .createProvidedInterfaceType(TestModelRepositoryUtils.PACKAGE_NAME, "b");
+        // providedIFaceB.getProvidedOperationTypes().put(TestModelRepositoryUtils.OP_B_NAME_SIGNATURE,
+        // componentTypeC.getProvidedOperations().get(TestModelRepositoryUtils.OP_B_NAME_SIGNATURE));
+        // componentTypeB.getProvidedInterfaceTypes().add(providedIFaceB);
+        //
+        // final ProvidedInterfaceType providedIFaceC = TestModelRepositoryUtils
+        // .createProvidedInterfaceType(TestModelRepositoryUtils.PACKAGE_NAME, "c");
+        // providedIFaceC.getProvidedOperationTypes().put(TestModelRepositoryUtils.OP_C_NAME_SIGNATURE,
+        // componentTypeC.getProvidedOperations().get(TestModelRepositoryUtils.OP_C_NAME_SIGNATURE));
+        // componentTypeC.getProvidedInterfaceTypes().add(providedIFaceC);
+        //
+        // componentTypeA.getRequiredInterfaceTypes()
+        // .add(TestModelRepositoryUtils.createRequiredInterface(providedIFaceB));
+        // componentTypeA.getRequiredInterfaceTypes()
+        // .add(TestModelRepositoryUtils.createRequiredInterface(providedIFaceC));
+        // componentTypeB.getRequiredInterfaceTypes()
+        // .add(TestModelRepositoryUtils.createRequiredInterface(providedIFaceC));
 
         return typeModel;
     }
+
+    // private static RequiredInterfaceType createRequiredInterface(final ProvidedInterfaceType
+    // providedIFace) {
+    // final RequiredInterfaceType requiredIFaceType =
+    // TypeFactory.eINSTANCE.createRequiredInterfaceType();
+    // requiredIFaceType.setRequires(providedIFace);
+    // return requiredIFaceType;
+    // }
+    //
+    // private static ProvidedInterfaceType createProvidedInterfaceType(final String packageName,
+    // final String name) {
+    // final ProvidedInterfaceType providedIFace =
+    // TypeFactory.eINSTANCE.createProvidedInterfaceType();
+    // providedIFace.setName(name);
+    // providedIFace.setPackage(packageName);
+    // providedIFace.setSignature(packageName + "." + name);
+    //
+    // return providedIFace;
+    // }
 
     private static List<OperationType> createAOperations() {
         final List<OperationType> operationTypes = new ArrayList<>();

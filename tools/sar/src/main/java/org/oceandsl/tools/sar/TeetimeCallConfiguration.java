@@ -43,11 +43,8 @@ import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypePackage;
 
 import teetime.framework.Configuration;
-import teetime.framework.OutputPort;
 
 import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
-import org.oceandsl.analysis.code.stages.CallerCalleeFixPathStage;
-import org.oceandsl.analysis.code.stages.CallerCalleeMakeLowerCaseStage;
 import org.oceandsl.analysis.code.stages.CsvReaderStage;
 import org.oceandsl.analysis.code.stages.data.CallerCallee;
 import org.oceandsl.analysis.code.stages.data.CallerCalleeFactory;
@@ -72,17 +69,10 @@ public class TeetimeCallConfiguration extends Configuration {
     public TeetimeCallConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
             throws IOException, ValueConversionErrorException {
         super();
-        OutputPort<CallerCallee> readerPort;
+        final Path inputCallPath = settings.getInputFile().resolve(StaticArchitectureRecoveryMain.CALLTABLE_FILENAME);
 
-        logger.info("Processing static call log");
-
-        readerPort = this.createReaderStage(settings.getOperationCallInputFile(), settings.getCallSplitSymbol());
-
-        readerPort = this.createCallerCalleeFixPath(readerPort, settings.getFunctionNameFiles(),
-                settings.getCallSplitSymbol(), settings.getMissingFunctionsFile());
-
-        final CallerCalleeMakeLowerCaseStage csvMakeLowerCaseStage = new CallerCalleeMakeLowerCaseStage(
-                settings.isCaseInsensitive());
+        final CsvReaderStage<CallerCallee> readCallsCsvStage = new CsvReaderStage<>(inputCallPath,
+                settings.getSplitSymbol(), true, new CallerCalleeFactory());
 
         final CleanupComponentSignatureStage cleanupComponentSignatureStage = new CleanupComponentSignatureStage(
                 this.createProcessors(settings.getModuleModes(), settings, logger));
@@ -122,8 +112,7 @@ public class TeetimeCallConfiguration extends Configuration {
                 repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
 
         /** connecting ports. */
-        this.connectPorts(readerPort, csvMakeLowerCaseStage.getInputPort());
-        this.connectPorts(csvMakeLowerCaseStage.getOutputPort(), cleanupComponentSignatureStage.getInputPort());
+        this.connectPorts(readCallsCsvStage.getOutputPort(), cleanupComponentSignatureStage.getInputPort());
         this.connectPorts(cleanupComponentSignatureStage.getOutputPort(), operationAndCallStage.getInputPort());
         if (errorMessageSink != null) {
             this.connectPorts(cleanupComponentSignatureStage.getErrorMessageOutputPort(),
@@ -167,49 +156,24 @@ public class TeetimeCallConfiguration extends Configuration {
 
     private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger, final Settings settings) {
         logger.info("Module based component definition");
-        return new ModuleBasedSignatureProcessor(settings.isCaseInsensitive());
+        return new ModuleBasedSignatureProcessor(false);
     }
 
     private AbstractSignatureProcessor createFileBasedProcessor(final Logger logger,
             final Settings parameterConfiguration) {
         logger.info("File based component definition");
-        return new FileBasedSignatureProcessor(parameterConfiguration.isCaseInsensitive());
+        return new FileBasedSignatureProcessor(false);
     }
 
     private AbstractSignatureProcessor createMapBasedProcessor(final Logger logger, final Settings settings)
             throws IOException {
         if (settings.getComponentMapFiles() != null) {
             logger.info("Map based component definition");
-            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), settings.isCaseInsensitive(),
-                    settings.getCallSplitSymbol());
+            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), false, settings.getSplitSymbol());
         } else {
             logger.error("Missing map files for component identification.");
             return null;
         }
-    }
-
-    private OutputPort<CallerCallee> createCallerCalleeFixPath(final OutputPort<CallerCallee> readerPort,
-            final List<Path> functionNameFiles, final String namesSplitSymbol, final Path missingFunctionsFile)
-            throws IOException {
-        if ((functionNameFiles != null) && !functionNameFiles.isEmpty()) {
-            final CallerCalleeFixPathStage fixPathStage = new CallerCalleeFixPathStage(functionNameFiles,
-                    namesSplitSymbol);
-            if (missingFunctionsFile != null) {
-                final StringFileWriterSink missingFunctionsListSink = new StringFileWriterSink(missingFunctionsFile);
-                this.connectPorts(fixPathStage.getMissingOperationOutputPort(),
-                        missingFunctionsListSink.getInputPort());
-            }
-            this.connectPorts(readerPort, fixPathStage.getInputPort());
-            return fixPathStage.getOutputPort();
-        }
-        return readerPort;
-    }
-
-    private OutputPort<CallerCallee> createReaderStage(final Path operationCallInputFile, final String callSplitSymbol)
-            throws IOException {
-        final CsvReaderStage<CallerCallee> readCsvStage = new CsvReaderStage<>(operationCallInputFile, callSplitSymbol,
-                true, new CallerCalleeFactory());
-        return readCsvStage.getOutputPort();
     }
 
     private IComponentSignatureExtractor createComponentSignatureExtractor(final Settings settings) {

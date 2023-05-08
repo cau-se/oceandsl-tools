@@ -10,7 +10,7 @@ import java.util.Set;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 
-public class ComponentsMapper extends AbstractMapper {
+public class ComponentsMapper extends AbstractComponentMapper {
 
 	private ComponentsMapper compMapper;
 	private AssemblyModel orig;
@@ -85,7 +85,7 @@ public class ComponentsMapper extends AbstractMapper {
 	}
 
 	@Override
-	public HashMap<String, String> getOriginallToGoal() {
+	public HashMap<String, String> getOriginalToGoal() {
 		return originallToGoal;
 	}
 
@@ -95,7 +95,7 @@ public class ComponentsMapper extends AbstractMapper {
 	}
 
 	@Override
-	public AssemblyModel getOrig() {
+	public AssemblyModel getOriginal() {
 		return this.orig;
 
 	}

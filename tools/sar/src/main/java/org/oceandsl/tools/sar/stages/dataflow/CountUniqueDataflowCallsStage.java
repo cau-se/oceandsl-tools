@@ -52,10 +52,11 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
 
     public static final Function<DataflowEvent, EObject> createForDataflow(final ExecutionModel executionModel) {
         return dataflow -> { // NOCS
-            final StorageDataflow result = CountUniqueDataflowCallsStage.getStorageDataflow(executionModel,
-                    CountUniqueDataflowCallsStage.getStorageKeyTuple(dataflow, executionModel));
-
-            if (result == null) {
+            final Tuple<DeployedOperation, DeployedStorage> storageTupleKey = CountUniqueDataflowCallsStage
+                    .getStorageKeyTuple(dataflow, executionModel);
+            if (storageTupleKey != null) {
+                return CountUniqueDataflowCallsStage.getStorageDataflow(executionModel, storageTupleKey);
+            } else {
                 final OperationDataflow resultOperation = CountUniqueDataflowCallsStage.getOperationDataflow(
                         executionModel, CountUniqueDataflowCallsStage.getOperationKeyTuple(dataflow, executionModel));
 
@@ -67,8 +68,6 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
                 } else {
                     return resultOperation;
                 }
-            } else {
-                return result;
             }
         };
     }
@@ -82,16 +81,15 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
             if ((dataflow.getSource() instanceof OperationEvent) && (dataflow.getTarget() instanceof StorageEvent)) {
                 final OperationEvent operationEvent = (OperationEvent) dataflow.getSource();
                 final StorageEvent storageEvent = (StorageEvent) dataflow.getTarget();
-                if (key.getFirst().getAssemblyOperation().getOperationType().getSignature()
-                        .equals(operationEvent.getOperationSignature())
-                        && key.getFirst().getComponent().getSignature().equals(operationEvent.getComponentSignature())
+                if (key.getFirst().getComponent().getSignature().equals(operationEvent.getComponentSignature())
+                        && key.getFirst().getAssemblyOperation().getOperationType().getSignature()
+                                .equals(operationEvent.getOperationSignature())
+                        && key.getSecond().getComponent().getSignature().equals(storageEvent.getComponentSignature())
                         && key.getSecond().getAssemblyStorage().getStorageType().getName()
-                                .equals(storageEvent.getStorageSignature())
-                        && key.getSecond().getComponent().getSignature().equals(storageEvent.getComponentSignature())) {
+                                .equals(storageEvent.getStorageSignature())) {
                     return key;
                 }
-            } else if ((dataflow.getSource() instanceof StorageEvent)
-                    && (dataflow.getTarget() instanceof OperationEvent)) {
+            } else if (dataflow.getSource() instanceof StorageEvent && dataflow.getTarget() instanceof OperationEvent) {
                 final OperationEvent operationEvent = (OperationEvent) dataflow.getTarget();
                 final StorageEvent storageEvent = (StorageEvent) dataflow.getSource();
                 if (key.getFirst().getAssemblyOperation().getOperationType().getSignature()
@@ -113,7 +111,7 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
                 .getOperationDataflows().entrySet()) {
             final Tuple<DeployedOperation, DeployedOperation> key = entry.getKey();
 
-            if ((dataflow.getSource() instanceof OperationEvent) && (dataflow.getTarget() instanceof OperationEvent)) {
+            if (dataflow.getSource() instanceof OperationEvent && dataflow.getTarget() instanceof OperationEvent) {
                 final OperationEvent sourceOperationEvent = (OperationEvent) dataflow.getSource();
                 final OperationEvent targetOperationEvent = (OperationEvent) dataflow.getTarget();
                 if (key.getFirst().getAssemblyOperation().getOperationType().getSignature()

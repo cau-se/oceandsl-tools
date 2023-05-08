@@ -16,7 +16,7 @@ import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 
-public class KuhnMatcherMapper extends AbstractMapper {
+public class KuhnMatcherMapper extends AbstractComponentMapper {
 	private ComponentsMapper compMapper;
 	private final static String GOAL = "20_";
 	private AssemblyModel orig;
@@ -177,7 +177,7 @@ public class KuhnMatcherMapper extends AbstractMapper {
 	}
 
 	@Override
-	public HashMap<String, String> getOriginallToGoal() {
+	public HashMap<String, String> getOriginalToGoal() {
 		return originallToGoal;
 	}
 
@@ -187,7 +187,7 @@ public class KuhnMatcherMapper extends AbstractMapper {
 	}
 
 	@Override
-	public AssemblyModel getOrig() {
+	public AssemblyModel getOriginal() {
 		return this.orig;
 
 	}

@@ -37,7 +37,7 @@ public class Predicates {
     public static Predicate<Node> isFunctionStatement = NodeUtils.hasName("function-stmt");
     public static Predicate<Node> isEntryStatement = NodeUtils.hasName("entry-stmt");
     public static Predicate<Node> isOperationStatement = Predicates.isSubroutineStatement
-            .or(Predicates.isFunctionStatement).or(Predicates.isEntryStatement).or(Predicates.isProgramStatement);
+            .or(Predicates.isFunctionStatement).or(Predicates.isEntryStatement);
 
     public static Predicate<Node> isEndSubroutineStatement = NodeUtils.hasName("end-subroutine-stmt");
     public static Predicate<Node> isEndFunctionStatement = NodeUtils.hasName("end-function-stmt");
@@ -198,4 +198,5 @@ public class Predicates {
             .or(Predicates.isDoStatement).or(Predicates.isDoLabelStatement).or(Predicates.isReadStatement)
             .or(Predicates.isWriteStatement).or(Predicates.isWhereStatement).or(Predicates.isCloseStatement)
             .or(Predicates.isOpenStatement).or(Predicates.isSaveStatement);
+    public static Predicate<Node> isExternalStatement = NodeUtils.hasName("external-stmt");
 }

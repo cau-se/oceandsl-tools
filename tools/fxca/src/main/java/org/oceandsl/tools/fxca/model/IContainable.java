@@ -22,7 +22,7 @@ package org.oceandsl.tools.fxca.model;
  */
 public interface IContainable {
 
-    void setParent(Object container);
+    void setParent(MMObject container);
 
-    Object getParent();
+    MMObject getParent();
 }

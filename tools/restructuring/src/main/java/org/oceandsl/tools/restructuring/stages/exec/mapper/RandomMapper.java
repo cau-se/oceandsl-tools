@@ -10,7 +10,7 @@ import java.util.Set;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 
-public class RandomMapper extends AbstractMapper {
+public class RandomMapper extends AbstractComponentMapper {
 
 	/**
 	 * Cosntructor is used to
@@ -73,7 +73,7 @@ public class RandomMapper extends AbstractMapper {
 	}
 
 	@Override
-	public HashMap<String, String> getOriginallToGoal() {
+	public HashMap<String, String> getOriginalToGoal() {
 		return originallToGoal;
 	}
 
@@ -83,7 +83,7 @@ public class RandomMapper extends AbstractMapper {
 	}
 
 	@Override
-	public AssemblyModel getOrig() {
+	public AssemblyModel getOriginal() {
 		return this.orig;
 
 	}

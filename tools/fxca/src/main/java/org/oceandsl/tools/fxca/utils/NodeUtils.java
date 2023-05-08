@@ -48,13 +48,11 @@ public class NodeUtils {
     /** methods. */
 
     public static String nameOfCalledFunction(final Node functionCallNode) {
-        return NodeUtils.getSuccessorNode(functionCallNode, "0,0").getTextContent()
-                .toLowerCase(Locale.getDefault());
+        return NodeUtils.getSuccessorNode(functionCallNode, "0,0").getTextContent().toLowerCase(Locale.getDefault());
     }
 
     public static String nameOfCalledOperation(final Node operationCallNode) {
-        return NodeUtils.getSuccessorNode(operationCallNode, "1").getTextContent()
-                .toLowerCase(Locale.getDefault());
+        return NodeUtils.getSuccessorNode(operationCallNode, "1").getTextContent().toLowerCase(Locale.getDefault());
     }
 
     public static Predicate<Node> hasName(final String name) {
@@ -151,6 +149,15 @@ public class NodeUtils {
         return null;
     }
 
+    public static List<Node> findAllSiblingsDescendants(final Node node, final Predicate<Node> select,
+            final Predicate<Node> terminate, final boolean includeSiblings) {
+        final List<Node> siblings = NodeUtils.findAllSiblings(node, o -> true, terminate);
+        final List<Node> nodes = new ArrayList<>();
+        siblings.forEach(sibling -> nodes.addAll(NodeUtils.allDescendents(sibling, select, includeSiblings)));
+
+        return nodes;
+    }
+
     public static List<Node> findAllSiblings(final Node firstNode, final Predicate<Node> select,
             final Predicate<Node> terminate) {
         final List<Node> nodes = new ArrayList<>();
@@ -195,8 +202,7 @@ public class NodeUtils {
             final Predicate<Node> condition, final boolean includeSelf,
             final List<Pair<Predicate<Node>, Predicate<Node>>> paranthesesTypes) {
 
-        final List<Node> result = NodeUtils.findAll(parent, nextNode, condition, includeSelf,
-                paranthesesTypes, 1);
+        final List<Node> result = NodeUtils.findAll(parent, nextNode, condition, includeSelf, paranthesesTypes, 1);
 
         return result.isEmpty() ? null : result.get(0);
     }
@@ -259,8 +265,7 @@ public class NodeUtils {
 
     private static Node firstLeftSibling(final Node parent, final Predicate<Node> condition, final boolean includeSelf,
             final List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes) {
-        return NodeUtils.findFirst(parent, node -> node.getPreviousSibling(), condition, includeSelf,
-                paranthesisTypes);
+        return NodeUtils.findFirst(parent, node -> node.getPreviousSibling(), condition, includeSelf, paranthesisTypes);
     }
 
     private static Node firstAncestor(final Node parent, final Predicate<Node> condition, final boolean includeSelf) {
@@ -317,8 +322,7 @@ public class NodeUtils {
 
     public static List<Pair<String, String>> findSubroutineCalls(final Node node)
             throws ParserConfigurationException, SAXException, IOException {
-        return NodeUtils.findOperationCalls(node,
-                Predicates.isCallStatement.and(Predicates.isLocalAccess.negate()),
+        return NodeUtils.findOperationCalls(node, Predicates.isCallStatement.and(Predicates.isLocalAccess.negate()),
                 subroutineCall -> NodeUtils.nameOfCalledOperation(subroutineCall));
     }
 
@@ -357,8 +361,7 @@ public class NodeUtils {
     private static Node findContainingStatement(final Node parent, final Predicate<Node> condition,
             final List<Pair<Predicate<Node>, Predicate<Node>>> paranthesisTypes) {
 
-        final Predicate<Node> hasSuchANodeAsLeftSibling = node -> NodeUtils.hasLeftSibling(node, condition,
-                false);
+        final Predicate<Node> hasSuchANodeAsLeftSibling = node -> NodeUtils.hasLeftSibling(node, condition, false);
         final Node siblingOfSuchNode = NodeUtils.firstAncestor(parent, hasSuchANodeAsLeftSibling,
                 !condition.test(parent));
 

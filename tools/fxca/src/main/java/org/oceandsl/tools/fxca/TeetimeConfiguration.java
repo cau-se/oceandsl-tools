@@ -15,6 +15,14 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import teetime.framework.Configuration;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
@@ -22,6 +30,9 @@ import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 import org.oceandsl.analysis.generic.stages.DirectoryProducer;
 import org.oceandsl.analysis.generic.stages.DirectoryScannerStage;
 import org.oceandsl.analysis.generic.stages.TableCSVSink;
+import org.oceandsl.tools.fxca.model.FortranModule;
+import org.oceandsl.tools.fxca.model.FortranOperation;
+import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.stages.ProcessModuleStructureStage;
 import org.oceandsl.tools.fxca.stages.ReadDomStage;
@@ -32,8 +43,8 @@ import org.oceandsl.tools.fxca.stages.dataflow.AggregateCommonBlocksStage;
 import org.oceandsl.tools.fxca.stages.dataflow.AggregateDataflowStage;
 import org.oceandsl.tools.fxca.stages.dataflow.ComputeDirectionalityOfParametersStage;
 import org.oceandsl.tools.fxca.stages.dataflow.CreateCallerCalleeDataflowTableStage;
+import org.oceandsl.tools.fxca.stages.dataflow.CreateCommonBlockDataflowTableStage;
 import org.oceandsl.tools.fxca.stages.dataflow.CreateCommonBlocksTableStage;
-import org.oceandsl.tools.fxca.stages.dataflow.CreateCommonblockDataflowTableStage;
 import org.oceandsl.tools.fxca.stages.dataflow.DataFlowAnalysisStage;
 import org.oceandsl.tools.fxca.utils.PatternUriProcessor;
 
@@ -68,7 +79,7 @@ public class TeetimeConfiguration extends Configuration {
         final ReadDomStage readDomStage = new ReadDomStage();
 
         final ProcessModuleStructureStage processModuleStructureStage = new ProcessModuleStructureStage(uriProcessor,
-                BuiltInFunctionsUtils.createOperations(), settings.getDefaultComponent());
+                this.createModules(settings.getLibraryFunctionsPaths()), settings.getDefaultComponent());
         final ProcessOperationCallStage processOperationCallStage = new ProcessOperationCallStage();
 
         final ComputeDirectionalityOfParametersStage computeDirectionalityOfParametersStage = new ComputeDirectionalityOfParametersStage();
@@ -86,7 +97,7 @@ public class TeetimeConfiguration extends Configuration {
 
         /** tables. */
         final CreateCallerCalleeDataflowTableStage callerCalleeDataflowTableStage = new CreateCallerCalleeDataflowTableStage();
-        final CreateCommonblockDataflowTableStage commonBlockDataflowTableStage = new CreateCommonblockDataflowTableStage();
+        final CreateCommonBlockDataflowTableStage commonBlockDataflowTableStage = new CreateCommonBlockDataflowTableStage();
         final CreateCommonBlocksTableStage commonBlocksTableStage = new CreateCommonBlocksTableStage();
 
         /** output stages. */
@@ -111,10 +122,9 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(processModuleStructureStage.getOutputPort(), processOperationCallStage.getInputPort());
 
         this.connectPorts(processOperationCallStage.getOutputPort(), projectDistributor.getInputPort());
+        this.connectPorts(processOperationCallStage.getNotFoundOutputPort(), notFoundSink.getInputPort());
 
         this.connectPorts(projectDistributor.getNewOutputPort(), computeDirectionalityOfParametersStage.getInputPort());
-
-        this.connectPorts(processOperationCallStage.getNotFoundOutputPort(), notFoundSink.getInputPort());
 
         this.connectPorts(projectDistributor.getNewOutputPort(), callTableStage.getInputPort());
         this.connectPorts(callTableStage.getOutputPort(), callTableSink.getInputPort());
@@ -136,5 +146,86 @@ public class TeetimeConfiguration extends Configuration {
         this.connectPorts(commonBlocksTableStage.getOutputPort(), commonBlocksTableSink.getInputPort());
         this.connectPorts(callerCalleeDataflowTableStage.getOutputPort(), callerCalleeDataflowTableSink.getInputPort());
         this.connectPorts(commonBlockDataflowTableStage.getOutputPort(), commonBlockDataflowTableSink.getInputPort());
+    }
+
+    private List<FortranModule> createModules(final List<Path> libraryFunctionsPaths) {
+        final List<FortranModule> modules = new ArrayList<>();
+        libraryFunctionsPaths.forEach(path -> this.createModules(path, modules));
+
+        return modules;
+    }
+
+    private void createModules(final Path path, final List<FortranModule> modules) {
+        try (final BufferedReader reader = Files.newBufferedReader(path)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                final String[] values = this.processLine(line);
+                final Optional<FortranModule> moduleOptional = modules.stream()
+                        .filter(m -> m.getModuleName().equals(values[0])).findFirst();
+                FortranModule module;
+                if (moduleOptional.isEmpty()) {
+                    module = new FortranModule(values[0], values[0], false, null);
+                    modules.add(module);
+                } else {
+                    module = moduleOptional.get();
+                }
+                this.createEntry(module, values[1], values[2], values[3]);
+            }
+        } catch (final IOException e) {
+            System.err.println(">> cannot read " + path.toString()); // TODO improve with logger
+        }
+    }
+
+    private String[] processLine(final String line) {
+        final List<String> result = new ArrayList<>();
+        int mode = 0;
+        int marker = 0;
+        for (int i = 0; i < line.length(); i++) {
+            final char ch = line.charAt(i);
+            if (mode == 0) {
+                if (ch == '"') {
+                    mode = 1;
+                    marker = i + 1;
+                } else {
+                    mode = 2;
+                    marker = i;
+                }
+            } else if (mode == 1) {
+                if (ch == '"') {
+                    result.add(line.substring(marker, i));
+                    mode = 3;
+                }
+            } else if (mode == 2) {
+                if (ch == ',') {
+                    result.add(line.substring(marker, i));
+                    mode = 0;
+                }
+            } else if (mode == 3) {
+                if (ch == ',') {
+                    mode = 0;
+                }
+            }
+        }
+        result.add(line.substring(marker, line.length()));
+        return result.toArray(new String[result.size()]);
+    }
+
+    private void createEntry(final FortranModule module, final String name, final String sizeString,
+            final String modeString) {
+        final int size = Integer.parseInt(sizeString);
+        FortranOperation operation;
+        if ("fixed".equals(modeString)) {
+            operation = new FortranOperation(name, null, true);
+        } else if ("variable".equals(modeString)) {
+            operation = new FortranOperation(name, null, true, true);
+        } else {
+            operation = new FortranOperation(name, null, true);
+        }
+        for (int i = 0; i < size; i++) {
+            final FortranParameter parameter = new FortranParameter("p" + i, i);
+            operation.getParameters().put(parameter.getName(), parameter);
+        }
+        module.getOperations().put(name, operation);
+        operation.setModule(module);
     }
 }

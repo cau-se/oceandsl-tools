@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  *
@@ -27,54 +26,13 @@ import lombok.Setter;
  * @since 1.3.0
  *
  */
-public class FortranVariable implements IContainable, IDataflowEndpoint {
-
-    @Getter
-    String name;
-
-    @Getter
-    @Setter
-    String type;
-
-    @Getter
-    @Setter
-    EDirection direction;
-
-    @Getter
-    @Setter
-    Object parent;
+public class FortranVariable extends DataflowObject implements IContainable, IDataflowEndpoint {
 
     @Getter
     Set<IDataflowEndpoint> sources = new HashSet<>();
 
     public FortranVariable(final String name) {
-        this.direction = EDirection.NONE;
-        this.name = name;
-    }
-
-    public void addDirection(final EDirection value) {
-        switch (this.direction) {
-        case NONE:
-            this.direction = value;
-            break;
-        case READ:
-            if (value == EDirection.WRITE || value == EDirection.BOTH) {
-                this.direction = EDirection.BOTH;
-            } else {
-                this.direction = EDirection.READ;
-            }
-            break;
-        case WRITE:
-            if (value == EDirection.READ || value == EDirection.BOTH) {
-                this.direction = EDirection.BOTH;
-            } else {
-                this.direction = EDirection.WRITE;
-            }
-            break;
-        case BOTH:
-            this.direction = EDirection.BOTH;
-            break;
-        }
+        super(name);
     }
 
 }

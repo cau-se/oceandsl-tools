@@ -55,6 +55,17 @@ public class TableCSVSink extends AbstractConsumerStage<Table> {
         };
     }
 
+    public TableCSVSink(final Path filePath, final boolean header) {
+        this.header = header;
+        this.filePathFunction = new Function<>() {
+
+            @Override
+            public Path apply(final String name) {
+                return filePath.resolve(String.format("%s.csv", name));
+            }
+        };
+    }
+
     public TableCSVSink(final Path filePath, final String filename) {
         this(filePath, filename, false);
     }
@@ -75,7 +86,7 @@ public class TableCSVSink extends AbstractConsumerStage<Table> {
         final IValueHandler<?>[] valueHandlers = table.getValueHandlers();
         for (int i = 0; i < valueHandlers.length; i++) {
             outputStream.write(valueHandlers[i].getLabel());
-            if (i < (valueHandlers.length - 1)) {
+            if (i < valueHandlers.length - 1) {
                 outputStream.write(";");
             } else {
                 outputStream.write("\n");
@@ -88,7 +99,7 @@ public class TableCSVSink extends AbstractConsumerStage<Table> {
         for (final Object[] row : table.getRows()) {
             for (int i = 0; i < row.length; i++) {
                 outputStream.write(table.getValueHandler(i).convertToString(row[i]));
-                if (i < (row.length - 1)) {
+                if (i < row.length - 1) {
                     outputStream.write(";");
                 } else {
                     outputStream.write("\n");

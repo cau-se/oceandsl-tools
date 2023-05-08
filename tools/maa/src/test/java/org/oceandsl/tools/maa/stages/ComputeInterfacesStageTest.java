@@ -17,9 +17,8 @@ package org.oceandsl.tools.maa.stages;
 
 import java.util.Collection;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
@@ -41,7 +40,6 @@ import teetime.framework.test.StageTester;
  */
 public class ComputeInterfacesStageTest {
 
-    @Ignore
     @Test
     public void noProvidedInterface() {
         final ModelRepository modelRepository = TestModelRepositoryUtils.createThreeComponentModel();
@@ -58,20 +56,18 @@ public class ComputeInterfacesStageTest {
             final DeployedComponent componentC = context.getComponents()
                     .get(TestModelRepositoryUtils.FQN_COMPONENT_C + ":1");
 
-            this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_A, componentA, new String[] {}, 1);
-            this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_B, componentB,
-                    new String[] { TestModelRepositoryUtils.OP_B_NAME_SIGNATURE }, 1);
-            this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_C, componentC,
-                    new String[] { TestModelRepositoryUtils.OP_C_NAME_SIGNATURE }, 0);
+            this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_A, componentA, new String[] {}, 0);
+            this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_B, componentB, new String[] {}, 0);
+            this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_C, componentC, new String[] {}, 0);
         }
     }
 
     private void assertInterfaces(final String label, final DeployedComponent deployedComponent,
             final String[] providedSignatures, final int requiredCount) {
-        Assert.assertEquals(label + " provided deployed interface", providedSignatures.length,
-                deployedComponent.getProvidedInterfaces().size());
-        Assert.assertEquals(label + " required deployed interface", requiredCount,
-                deployedComponent.getRequiredInterfaces().size());
+        Assertions.assertEquals(providedSignatures.length, deployedComponent.getProvidedInterfaces().size(),
+                label + " provided deployed interface");
+        Assertions.assertEquals(requiredCount, deployedComponent.getRequiredInterfaces().size(),
+                label + " required deployed interface");
 
         final Collection<DeployedProvidedInterface> providedInterfaces = deployedComponent.getProvidedInterfaces()
                 .values();
@@ -81,8 +77,8 @@ public class ComputeInterfacesStageTest {
             for (final String signature : providedSignatures) {
                 if (!deployedProvidedInterface[0].getProvidedInterface().getProvidedInterfaceType()
                         .getProvidedOperationTypes().containsKey(signature)) {
-                    Assert.fail(String.format("%s: deployed operation %s missing from interface %s", label, signature,
-                            deployedProvidedInterface[0].getProvidedInterface().getProvidedInterfaceType()
+                    Assertions.fail(String.format("%s: deployed operation %s missing from interface %s", label,
+                            signature, deployedProvidedInterface[0].getProvidedInterface().getProvidedInterfaceType()
                                     .getSignature()));
                 }
             }
@@ -93,10 +89,10 @@ public class ComputeInterfacesStageTest {
 
     private void assertInterfaces(final String label, final AssemblyComponent assemblyComponent,
             final String[] providedSignatures, final int requiredCount) {
-        Assert.assertEquals(label + " provided assembly interface", providedSignatures.length,
-                assemblyComponent.getProvidedInterfaces().size());
-        Assert.assertEquals(label + " required assembly interface", requiredCount,
-                assemblyComponent.getRequiredInterfaces().size());
+        Assertions.assertEquals(providedSignatures.length, assemblyComponent.getProvidedInterfaces().size(),
+                label + " provided assembly interface");
+        Assertions.assertEquals(requiredCount, assemblyComponent.getRequiredInterfaces().size(),
+                label + " required assembly interface");
 
         final Collection<AssemblyProvidedInterface> assemblyProvidedInterfaces = assemblyComponent
                 .getProvidedInterfaces().values();
@@ -106,8 +102,8 @@ public class ComputeInterfacesStageTest {
             for (final String signature : providedSignatures) {
                 if (!assemblyProvidedInterface[0].getProvidedInterfaceType().getProvidedOperationTypes()
                         .containsKey(signature)) {
-                    Assert.fail(String.format("%s: assembly operation %s missing from interface %s", label, signature,
-                            assemblyProvidedInterface[0].getProvidedInterfaceType().getSignature()));
+                    Assertions.fail(String.format("%s: assembly operation %s missing from interface %s", label,
+                            signature, assemblyProvidedInterface[0].getProvidedInterfaceType().getSignature()));
                 }
             }
         }
@@ -117,24 +113,23 @@ public class ComputeInterfacesStageTest {
 
     private void assertInterfaces(final String label, final ComponentType componentType,
             final String[] providedSignatures, final int requiredCount) {
-        Assert.assertEquals(label + " provided assembly interface", providedSignatures.length,
-                componentType.getProvidedInterfaceTypes().size());
-        Assert.assertEquals(label + " required assembly interface", requiredCount,
-                componentType.getRequiredInterfaceTypes().size());
+        Assertions.assertEquals(providedSignatures.length, componentType.getProvidedInterfaceTypes().size(),
+                label + " provided assembly interface");
+        Assertions.assertEquals(requiredCount, componentType.getRequiredInterfaceTypes().size(),
+                label + " required assembly interface");
 
         if (componentType.getProvidedInterfaceTypes().size() == 1) {
             final ProvidedInterfaceType providedInterfaceType = componentType.getProvidedInterfaceTypes().get(0);
 
             for (final String signature : providedSignatures) {
                 if (!providedInterfaceType.getProvidedOperationTypes().containsKey(signature)) {
-                    Assert.fail(String.format("%s: operation type %s missing from interface %s", label, signature,
+                    Assertions.fail(String.format("%s: operation type %s missing from interface %s", label, signature,
                             providedInterfaceType.getSignature()));
                 }
             }
         }
     }
 
-    @Ignore
     @Test
     public void noRequiredInterface() {
         final ModelRepository modelRepository = TestModelRepositoryUtils.createThreeComponentModel();
@@ -152,7 +147,33 @@ public class ComputeInterfacesStageTest {
             final DeployedComponent componentC = context.getComponents()
                     .get(TestModelRepositoryUtils.FQN_COMPONENT_C + ":1");
 
-            this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_A, componentA, new String[] {}, 1);
+            this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_A, componentA, new String[] {}, 0);
+            this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_B, componentB,
+                    new String[] { TestModelRepositoryUtils.OP_B_NAME_SIGNATURE }, 0);
+            this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_C, componentC,
+                    new String[] { TestModelRepositoryUtils.OP_C_NAME_SIGNATURE }, 0);
+        }
+    }
+
+    @Test
+    public void completeModelInterface() {
+        final ModelRepository modelRepository = TestModelRepositoryUtils.createThreeComponentModel();
+        TestModelInvocationUtils.addProvidedInterfaces(modelRepository);
+        TestModelInvocationUtils.addRequiredInterfaces(modelRepository);
+        TestModelInvocationUtils.addInvocations(modelRepository);
+
+        final CollectConnectionsStage stage = new CollectConnectionsStage();
+        StageTester.test(stage).send(modelRepository).to(stage.getInputPort()).start();
+        final DeploymentModel deploymentModel = modelRepository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
+        for (final DeploymentContext context : deploymentModel.getContexts().values()) {
+            final DeployedComponent componentA = context.getComponents()
+                    .get(TestModelRepositoryUtils.FQN_COMPONENT_A + ":1");
+            final DeployedComponent componentB = context.getComponents()
+                    .get(TestModelRepositoryUtils.FQN_COMPONENT_B + ":1");
+            final DeployedComponent componentC = context.getComponents()
+                    .get(TestModelRepositoryUtils.FQN_COMPONENT_C + ":1");
+
+            this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_A, componentA, new String[] {}, 2);
             this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_B, componentB,
                     new String[] { TestModelRepositoryUtils.OP_B_NAME_SIGNATURE }, 1);
             this.assertInterfaces(TestModelRepositoryUtils.COMPONENT_C, componentC,

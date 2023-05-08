@@ -22,6 +22,7 @@ import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyStorage;
 import kieker.model.analysismodel.source.SourceModel;
+import kieker.model.analysismodel.type.StorageType;
 import kieker.model.analysismodel.type.TypeModel;
 
 import org.oceandsl.analysis.code.stages.IStorageEventAssembler;
@@ -95,8 +96,11 @@ public class StorageAssemblyModelAssembler extends AbstractModelAssembler implem
         AssemblyStorage assemblyStorage = assemblyComponent.getStorages().get(storageSignature);
         if (assemblyStorage == null) {
             assemblyStorage = AssemblyFactory.eINSTANCE.createAssemblyStorage();
-            assemblyStorage
-                    .setStorageType(assemblyComponent.getComponentType().getProvidedStorages().get(storageSignature));
+            final StorageType storageType = assemblyComponent.getComponentType().getProvidedStorages()
+                    .get(storageSignature);
+            assemblyStorage.setStorageType(storageType);
+            assemblyComponent.getStorages().put(storageSignature, assemblyStorage);
+            this.updateSourceModel(assemblyStorage);
         }
 
         return assemblyStorage;
