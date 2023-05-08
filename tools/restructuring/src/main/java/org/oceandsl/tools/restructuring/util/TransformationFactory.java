@@ -14,6 +14,11 @@ import org.oceandsl.tools.restructuring.transformations.MoveTransformation;
 import org.oceandsl.tools.restructuring.transformations.PasteTransformation;
 import org.oceandsl.tools.restructuring.transformations.SplitTransformation;
 
+/**
+ *
+ * @author Serafim Simonov
+ * @since 1.3.0
+ */
 public class TransformationFactory {
 
     public static CreateTransformation createCreateTransformation(final String componentName,
@@ -54,8 +59,10 @@ public class TransformationFactory {
 
     public static MoveTransformation createMoveTransformation(final String fromComponent, final String toComponent,
             final String operationName, final AssemblyModel model) {
-        final CutTransformation from = createCutTransformation(fromComponent, operationName, model);
-        final PasteTransformation to = createPasteTransformation(toComponent, operationName, model);
+        final CutTransformation from = TransformationFactory.createCutTransformation(fromComponent, operationName,
+                model);
+        final PasteTransformation to = TransformationFactory.createPasteTransformation(toComponent, operationName,
+                model);
 
         final MoveTransformation result = new MoveTransformation(model);
         result.add(from);
@@ -67,8 +74,9 @@ public class TransformationFactory {
     public static SplitTransformation createSplitTransformation(final String componentOld, final String componentNew,
             final String operationName, final AssemblyModel model) {
 
-        final CreateTransformation newComponent = createCreateTransformation(componentNew, model);
-        final MoveTransformation to = createMoveTransformation(componentOld, componentNew, operationName, model);
+        final CreateTransformation newComponent = TransformationFactory.createCreateTransformation(componentNew, model);
+        final MoveTransformation to = TransformationFactory.createMoveTransformation(componentOld, componentNew,
+                operationName, model);
 
         final SplitTransformation result = new SplitTransformation(model);
         result.add(newComponent);
@@ -80,8 +88,9 @@ public class TransformationFactory {
     public static MergeTransformation createMergeTransformation(final String componentOld, final String componentNew,
             final String operationName, final AssemblyModel model) {
 
-        final DeleteTransformation newComponent = createDeleteTransformation(componentNew, model);
-        final MoveTransformation to = createMoveTransformation(componentOld, componentNew, operationName, model);
+        final DeleteTransformation newComponent = TransformationFactory.createDeleteTransformation(componentNew, model);
+        final MoveTransformation to = TransformationFactory.createMoveTransformation(componentOld, componentNew,
+                operationName, model);
 
         final MergeTransformation result = new MergeTransformation(model);
         result.add(newComponent);
@@ -112,7 +121,7 @@ public class TransformationFactory {
             return false;
         }
         for (final AssemblyComponent bComponent : b.getComponents().values()) {
-            if (!containsComponent(a, bComponent)) {
+            if (!TransformationFactory.containsComponent(a, bComponent)) {
                 return false;
             }
         }
@@ -122,7 +131,7 @@ public class TransformationFactory {
 
     private static boolean containsComponent(final AssemblyModel model, final AssemblyComponent matchingComponent) {
         for (final AssemblyComponent aComponent : model.getComponents().values()) {
-            if (areSameComponents(aComponent, matchingComponent)) {
+            if (TransformationFactory.areSameComponents(aComponent, matchingComponent)) {
                 return true;
             }
         }

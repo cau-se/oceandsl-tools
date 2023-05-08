@@ -4,82 +4,86 @@ import java.util.HashMap;
 
 import kieker.model.analysismodel.assembly.AssemblyModel;
 
+/**
+ *
+ * @author Serafim Simonov
+ * @since 1.3.0
+ */
 public abstract class AbstractComponentMapper {
 
-	private ComponentsMapper compMapper;
-	private String originalModelName;
-	private String goalModelName;
+    private final String originalModelName;
+    private final String goalModelName;
 
-	protected AssemblyModel orig;
-	protected AssemblyModel goal;
+    protected AssemblyModel original;
+    protected AssemblyModel goal;
 
-	protected HashMap<String, String> operationToComponentO = new HashMap<String, String>();
-	protected HashMap<String, String> operationToComponentG = new HashMap<String, String>();
+    protected HashMap<String, String> operationToComponentO = new HashMap<>();
+    protected HashMap<String, String> operationToComponentG = new HashMap<>();
 
-	protected HashMap<String, HashMap<String, Integer>> traceModell = new HashMap<String, HashMap<String, Integer>>();
-	protected HashMap<String, String> goalToOriginal = new HashMap<String, String>();
-	protected HashMap<String, String> originallToGoal = new HashMap<String, String>();
+    protected HashMap<String, HashMap<String, Integer>> traceModell = new HashMap<>();
+    protected HashMap<String, String> goalToOriginal = new HashMap<>();
+    protected HashMap<String, String> originallToGoal = new HashMap<>();
 
-	public AbstractComponentMapper(String originalModelName, String goalModelName) {
-		this.originalModelName = originalModelName;
-		this.goalModelName = goalModelName;
-	}
+    public AbstractComponentMapper(final String originalModelName, final String goalModelName) {
+        this.originalModelName = originalModelName;
+        this.goalModelName = goalModelName;
+    }
 
-	public String getGoalModelName() {
-		return goalModelName;
-	}
+    public String getGoalModelName() {
+        return this.goalModelName;
+    }
 
-	public String getOriginalModelName() {
-		return originalModelName;
-	}
+    public String getOriginalModelName() {
+        return this.originalModelName;
+    }
 
-	public HashMap<String, String> getOperationToComponentO() {
-		return operationToComponentO;
-	}
+    public HashMap<String, String> getOperationToComponentO() {
+        return this.operationToComponentO;
+    }
 
-	public void setOperationToComponentO(HashMap<String, String> operationToComponentO) {
-		this.operationToComponentO = operationToComponentO;
-	}
+    public void setOperationToComponentO(final HashMap<String, String> operationToComponentO) {
+        this.operationToComponentO = operationToComponentO;
+    }
 
-	public HashMap<String, String> getOperationToComponentG() {
-		return operationToComponentG;
-	}
+    public HashMap<String, String> getOperationToComponentG() {
+        return this.operationToComponentG;
+    }
 
-	public void setOperationToComponentG(HashMap<String, String> operationToComponentG) {
-		this.operationToComponentG = operationToComponentG;
-	}
+    public void setOperationToComponentG(final HashMap<String, String> operationToComponentG) {
+        this.operationToComponentG = operationToComponentG;
+    }
 
-	public HashMap<String, HashMap<String, Integer>> getTraceModell() {
-		return traceModell;
-	}
+    public HashMap<String, HashMap<String, Integer>> getTraceModell() {
+        return this.traceModell;
+    }
 
-	public void setTraceModell(HashMap<String, HashMap<String, Integer>> traceModell) {
-		this.traceModell = traceModell;
-	}
+    public void setTraceModell(final HashMap<String, HashMap<String, Integer>> traceModell) {
+        this.traceModell = traceModell;
+    }
 
-	public HashMap<String, String> getGoalToOriginal() {
-		return goalToOriginal;
-	}
+    public HashMap<String, String> getGoalToOriginal() {
+        return this.goalToOriginal;
+    }
 
-	public void setGoalToOriginal(HashMap<String, String> goalToOriginal) {
-		this.goalToOriginal = goalToOriginal;
-	}
+    public void setGoalToOriginal(final HashMap<String, String> goalToOriginal) {
+        this.goalToOriginal = goalToOriginal;
+    }
 
-	public HashMap<String, String> getOriginalToGoal() {
-		return originallToGoal;
-	}
+    public HashMap<String, String> getOriginalToGoal() {
+        return this.originallToGoal;
+    }
 
-	public void setOriginallToGoal(HashMap<String, String> originallToGoal) {
-		this.originallToGoal = originallToGoal;
-	}
+    public void setOriginalToGoal(final HashMap<String, String> originallToGoal) {
+        this.originallToGoal = originallToGoal;
+    }
 
-	public AssemblyModel getOriginal() {
-		return this.orig;
+    public AssemblyModel getOriginal() {
+        return this.original;
 
-	}
+    }
 
-	public AssemblyModel getGoal() {
-		return this.goal;
+    public AssemblyModel getGoal() {
+        return this.goal;
 
-	}
+    }
 }

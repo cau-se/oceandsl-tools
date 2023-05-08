@@ -15,12 +15,10 @@ import org.oceandsl.tools.restructuring.stages.TraceRestoratorStage;
 /**
  * Pipe and Filter configuration for the architecture creation tool.
  *
- * @author Reiner Jung
- * @since 1.0
+ * @author Serafim Simonov
+ * @since 1.3.0
  */
 public class TeetimeConfiguration extends Configuration {
-
-    private static final String MED_RESULT_FILE_NAME = "med-result-file.csv";
 
     public TeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
 

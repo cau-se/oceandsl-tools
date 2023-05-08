@@ -1,29 +1,34 @@
 package org.oceandsl.tools.restructuring;
 
+import kieker.model.analysismodel.assembly.AssemblyModel;
+
 import org.oceandsl.tools.restructuring.stages.exec.RestructureStepFinder;
 import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractComponentMapper;
 import org.oceandsl.tools.restructuring.stages.exec.mapper.KuhnMatcherMapper;
 
-import kieker.model.analysismodel.assembly.AssemblyModel;
-
+/**
+ *
+ * @author Serafim Simonov
+ * @since 1.3.0
+ */
 public class LightTraceRestorator {
 
-	private AssemblyModel original;
-	private AssemblyModel goal;
+    private final AssemblyModel original;
+    private final AssemblyModel goal;
 
-	public LightTraceRestorator(AssemblyModel original, AssemblyModel goal) {
-		this.original = original;
-		this.goal = goal;
-	}
+    public LightTraceRestorator(final AssemblyModel original, final AssemblyModel goal) {
+        this.original = original;
+        this.goal = goal;
+    }
 
-	public int getNumSteps() {
-		// TODO find better names
-		AbstractComponentMapper mapper = new KuhnMatcherMapper(original, goal, "original", "goal");
+    public int getNumSteps() {
+        // TODO find better names
+        final AbstractComponentMapper mapper = new KuhnMatcherMapper(this.original, this.goal, "original", "goal");
 
-		RestructureStepFinder stepfinder = new RestructureStepFinder(mapper);
-		stepfinder.findTransformation();
+        final RestructureStepFinder stepfinder = new RestructureStepFinder(mapper);
+        stepfinder.findTransformation();
 
-		return stepfinder.getNumberOfSteps();
-	}
+        return stepfinder.getNumberOfSteps();
+    }
 
 }

@@ -9,8 +9,8 @@ import com.beust.jcommander.converters.PathConverter;
 /**
  * All settings including command line parameters for the analysis.
  *
- * @author Reiner Jung
- * @since 1.1
+ * @author Serafim Simonov
+ * @since 1.3.0
  */
 public class Settings { // NOPMD data class
 
@@ -24,8 +24,9 @@ public class Settings { // NOPMD data class
 
     @Parameter(names = { "-e", "--experiment" }, required = true, description = "Experiment name")
     private String experimentName;
-    
-    @Parameter(names = { "-s", "--strategy" }, required = true, converter =MappingStrategyConverter.class , description = "Strategy identifier")
+
+    @Parameter(names = { "-s",
+            "--strategy" }, required = true, converter = MappingStrategyConverter.class, description = "Strategy identifier")
     private EMappingStrategy mappingStrat;
 
     public List<Path> getInputModelPaths() {
@@ -39,9 +40,9 @@ public class Settings { // NOPMD data class
     public String getExperimentName() {
         return this.experimentName;
     }
-    
+
     public EMappingStrategy getMappingStrat() {
-    	return this.mappingStrat;
+        return this.mappingStrat;
     }
 
 }

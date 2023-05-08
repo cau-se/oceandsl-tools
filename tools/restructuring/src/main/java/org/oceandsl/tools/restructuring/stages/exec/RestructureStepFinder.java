@@ -11,7 +11,6 @@ import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 
 import org.oceandsl.tools.restructuring.stages.exec.mapper.AbstractComponentMapper;
-import org.oceandsl.tools.restructuring.stages.exec.mapper.ComponentsMapper;
 import org.oceandsl.tools.restructuring.transformations.AbstractTransformationStep;
 import org.oceandsl.tools.restructuring.transformations.CreateTransformation;
 import org.oceandsl.tools.restructuring.transformations.CutTransformation;
@@ -22,6 +21,11 @@ import org.oceandsl.tools.restructuring.transformations.PasteTransformation;
 import org.oceandsl.tools.restructuring.transformations.SplitTransformation;
 import org.oceandsl.tools.restructuring.util.TransformationFactory;
 
+/**
+ *
+ * @author Serafim Simonov
+ * @since 1.3.0
+ */
 public class RestructureStepFinder {
 
     private final AbstractComponentMapper componentMapper;
@@ -31,38 +35,14 @@ public class RestructureStepFinder {
 
     private final List<AbstractTransformationStep> transformations = new ArrayList<>();
 
-    /**
-     * Cosntructor is used to
-     *
-     * @param original
-     * @param goal
-     * @param componentMapper
-     */
-    private RestructureStepFinder(final AssemblyModel original, final AssemblyModel goal,
-            final String originalModelName, final String goalModelName) {
-        this.original = original;
-        this.goal = goal;
-        this.componentMapper = new ComponentsMapper(this.original, this.goal, originalModelName, goalModelName);
-    }
-
-    public RestructureStepFinder(final AssemblyModel original, final AssemblyModel goal,
-            final ComponentsMapper componentMapper) {
-        this.componentMapper = componentMapper;
-        this.original = original;
-        this.goal = goal;
-    }
-
     public RestructureStepFinder(final AbstractComponentMapper componentMapper) {
         this.componentMapper = componentMapper;
         this.original = componentMapper.getOriginal();
         this.goal = componentMapper.getGoal();
     }
 
-    public RestructureStepFinder(final AbstractComponentMapper componentMapper, final String originalModelName,
-            final String goalModelName) {
-        this.componentMapper = componentMapper;
-        this.original = componentMapper.getOriginal();
-        this.goal = componentMapper.getGoal();
+    public AbstractComponentMapper getComponentMapper() {
+        return this.componentMapper;
     }
 
     public List<AbstractTransformationStep> getSteps() {
@@ -89,9 +69,8 @@ public class RestructureStepFinder {
         // stepfinder:"+this.compMapper.getOriginallToGoal().size());
         final EMap<String, AssemblyComponent> originalComponents = this.original.getComponents();
         while (!TransformationFactory.areSameModels(this.goal, this.original)) {
-            for (int i = 0; i < originalComponents.size(); i++) {
+            for (final Entry<String, AssemblyComponent> entry : originalComponents) {
 
-                final Entry<String, AssemblyComponent> entry = originalComponents.get(i);
                 final String originalComponentName = entry.getKey();
                 final String goalComponentName = this.componentMapper.getOriginalToGoal().get(originalComponentName);
 
@@ -134,7 +113,7 @@ public class RestructureStepFinder {
             final String goalComponent = this.componentMapper.getOperationToComponentG().get(operationName);
 
             // Where does it lie currently?
-//			String originalComponent = operation.getValue().getComponent().getSignature();
+            // String originalComponent = operation.getValue().getComponent().getSignature();
 
             // MP 2023
             final String originalComponent = this.componentMapper.getOperationToComponentO().get(operation.getKey());
@@ -329,7 +308,7 @@ public class RestructureStepFinder {
             // If after moving the operation its old componet becomes empty,
             // and this component is not mapped to some component, we can assume,
             // that we must merge. Thus delete it
-            if (this.original.getComponents().get(compName).getOperations().size() == 0
+            if ((this.original.getComponents().get(compName).getOperations().size() == 0)
                     && !this.componentMapper.getOriginalToGoal().containsKey(compName)) {
                 final DeleteTransformation delete = new DeleteTransformation(null);
                 delete.setComponentName(compName);
@@ -373,5 +352,4 @@ public class RestructureStepFinder {
         }
         return result;
     }
-
 }

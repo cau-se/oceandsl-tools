@@ -15,6 +15,11 @@ import org.oceandsl.tools.restructuring.stages.exec.mapper.KuhnMatcherMapper;
 import org.oceandsl.tools.restructuring.stages.exec.mapper.RandomMapper;
 import org.oceandsl.tools.restructuring.util.TransformationFactory;
 
+/**
+ *
+ * @author Serafim Simonov
+ * @since 1.3.0
+ */
 public class TraceRestoratorStage extends AbstractConsumerStage<ModelRepository> {
 
     private final EMappingStrategy strat;
