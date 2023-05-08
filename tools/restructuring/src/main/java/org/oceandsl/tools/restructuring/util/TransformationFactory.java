@@ -108,7 +108,6 @@ public class TransformationFactory {
      * @return returns true if they are structurally equal
      */
     public static boolean areSameModels(final AssemblyModel a, final AssemblyModel b) {
-        System.err.printf("areSameModels %d = %d", a.getComponents().size(), b.getComponents().size());
         if (a.getComponents().size() != b.getComponents().size()) {
             return false;
         }
