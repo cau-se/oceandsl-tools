@@ -57,6 +57,10 @@ public class Settings {
             "--replacements" }, required = true, variableArity = true, converter = ReplacementConverter.class, description = "Replacement for labels s1,...,sn:t1,...,tm")
     private List<Replacement> replacements;
 
+    @Parameter(names = { "-e",
+            "--experiment" }, required = false, description = "Set experiment name of the model repository.")
+    private String experimentName;
+
     public Path getOutputDirectory() {
         return this.outputDirectory;
     }
@@ -67,5 +71,9 @@ public class Settings {
 
     public List<Replacement> getReplacements() {
         return this.replacements;
+    }
+
+    public String getExperimentName() {
+        return this.experimentName;
     }
 }
