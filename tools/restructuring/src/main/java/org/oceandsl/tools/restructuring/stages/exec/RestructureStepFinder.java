@@ -93,9 +93,11 @@ public class RestructureStepFinder {
                     // Operation that are in goal component but not in the original component
                     final List<String> in = this.getOperationToAdd(entry.getValue(), goalAssemblyComponent);
                     this.transformModel(out, in, entry.getKey(), this.goal);
+                    break;
                 } else {
                     // Mapping could not be found
                     this.nonMappedComponentTransformation(entry.getValue(), this.original, this.goal);
+                    break;
                 }
             }
         }

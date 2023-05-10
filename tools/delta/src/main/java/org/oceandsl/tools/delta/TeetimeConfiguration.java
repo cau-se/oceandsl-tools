@@ -1,12 +1,19 @@
 package org.oceandsl.tools.delta;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import teetime.framework.Configuration;
+import teetime.stage.basic.distributor.Distributor;
+import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
 import org.oceandsl.analysis.generic.stages.TableCSVSink;
+import org.oceandsl.analysis.generic.stages.YamlSink;
 import org.oceandsl.tools.delta.stages.CompileRestructureTableStage;
+import org.oceandsl.tools.delta.stages.CompileRestructureYamlStage;
 import org.oceandsl.tools.delta.stages.ResturctureModelReader;
+import org.oceandsl.tools.delta.stages.data.YamlRestructureModel;
+import org.oceandsl.tools.restructuring.restructuremodel.TransformationModel;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -20,12 +27,25 @@ public class TeetimeConfiguration extends Configuration {
 
         final ResturctureModelReader reader = new ResturctureModelReader(settings.getInputPath());
 
-        final CompileRestructureTableStage processor = new CompileRestructureTableStage(
-                settings.getOutputPath().getFileName().toString());
+        final Distributor<TransformationModel> distributor = new Distributor<>(new CopyByReferenceStrategy());
 
-        final TableCSVSink sink = new TableCSVSink(settings.getOutputPath().getParent(), true);
+        final String name = settings.getOutputPath().getFileName().toString();
 
-        this.connectPorts(reader.getOutputPort(), processor.getInputPort());
-        this.connectPorts(processor.getOutputPort(), sink.getInputPort());
+        final CompileRestructureTableStage csvProcessor = new CompileRestructureTableStage(name);
+
+        final CompileRestructureYamlStage yamlProcessor = new CompileRestructureYamlStage();
+
+        final TableCSVSink csvSink = new TableCSVSink(settings.getOutputPath().getParent(), true);
+
+        final Path outputPath = settings.getOutputPath().getParent().resolve(name + ".yaml");
+        final YamlSink<YamlRestructureModel> yamlSink = new YamlSink<>(outputPath);
+
+        this.connectPorts(reader.getOutputPort(), distributor.getInputPort());
+
+        this.connectPorts(distributor.getNewOutputPort(), csvProcessor.getInputPort());
+        this.connectPorts(csvProcessor.getOutputPort(), csvSink.getInputPort());
+
+        this.connectPorts(distributor.getNewOutputPort(), yamlProcessor.getInputPort());
+        this.connectPorts(yamlProcessor.getOutputPort(), yamlSink.getInputPort());
     }
 }

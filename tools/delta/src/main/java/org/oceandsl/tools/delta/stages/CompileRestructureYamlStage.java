@@ -5,27 +5,22 @@ import java.util.Map;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
-import org.oceandsl.analysis.code.stages.data.Table;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.tools.delta.stages.data.YamlComponent;
+import org.oceandsl.tools.delta.stages.data.YamlOperation;
+import org.oceandsl.tools.delta.stages.data.YamlRestructureModel;
 import org.oceandsl.tools.restructuring.restructuremodel.CutOperation;
 import org.oceandsl.tools.restructuring.restructuremodel.MoveOperation;
 import org.oceandsl.tools.restructuring.restructuremodel.PasteOperation;
 import org.oceandsl.tools.restructuring.restructuremodel.TransformationModel;
 
-public class CompileRestructureTableStage extends AbstractTransformation<TransformationModel, Table> {
+public class CompileRestructureYamlStage extends AbstractTransformation<TransformationModel, YamlRestructureModel> {
 
-    private final Table table;
     private final Map<String, CutOperation> rememberCutOperation = new HashMap<>();
 
-    public CompileRestructureTableStage(final String name) {
-        this.table = new Table(name, new StringValueHandler("source-component"),
-                new StringValueHandler("target-component"), new StringValueHandler("element"));
-    }
-
     @Override
-    protected void execute(final TransformationModel element) throws Exception {
-        element.getTransformations().forEach(action -> {
+    protected void execute(final TransformationModel model) throws Exception {
+        final YamlRestructureModel yamlModel = new YamlRestructureModel(model.getName());
+        model.getTransformations().forEach(action -> {
             if (action instanceof CutOperation) {
                 final CutOperation cut = (CutOperation) action;
                 this.rememberCutOperation.put(cut.getOperationName(), cut);
@@ -33,20 +28,18 @@ public class CompileRestructureTableStage extends AbstractTransformation<Transfo
                 final MoveOperation move = (MoveOperation) action;
                 final CutOperation cut = move.getCutOperation();
                 final PasteOperation paste = move.getPasteOperation();
-                try {
-                    this.table.addRow(cut.getComponentName(), paste.getComponentName(), cut.getOperationName());
-                } catch (final ValueConversionErrorException e) {
-                    this.logger.error("Value conversion failed: {}", e.getLocalizedMessage());
-                }
+
+                final YamlComponent component = this.findOrCreateComponent(yamlModel, paste.getComponentName());
+                component.getOperations().put(cut.getOperationName(),
+                        new YamlOperation(cut.getOperationName(), cut.getComponentName()));
             } else if (action instanceof PasteOperation) {
                 final PasteOperation paste = (PasteOperation) action;
                 if (this.rememberCutOperation.containsKey(paste.getOperationName())) {
                     final CutOperation cut = this.rememberCutOperation.get(paste.getOperationName());
-                    try {
-                        this.table.addRow(cut.getComponentName(), paste.getComponentName(), cut.getOperationName());
-                    } catch (final ValueConversionErrorException e) {
-                        this.logger.error("Value conversion failed: {}", e.getLocalizedMessage());
-                    }
+
+                    final YamlComponent component = this.findOrCreateComponent(yamlModel, paste.getComponentName());
+                    component.getOperations().put(cut.getOperationName(),
+                            new YamlOperation(cut.getOperationName(), cut.getComponentName()));
                 } else {
                     this.logger.error("Have paste without cut. {} {}", paste.getComponentName(),
                             paste.getOperationName());
@@ -55,7 +48,17 @@ public class CompileRestructureTableStage extends AbstractTransformation<Transfo
                 this.logger.debug("Got a {}", action.getClass());
             }
         });
-        this.outputPort.send(this.table);
+        this.outputPort.send(yamlModel);
+    }
+
+    private YamlComponent findOrCreateComponent(final YamlRestructureModel yamlModel, final String componentName) {
+        if (yamlModel.getComponents().containsKey(componentName)) {
+            return yamlModel.getComponents().get(componentName);
+        } else {
+            final YamlComponent component = new YamlComponent(componentName);
+            yamlModel.getComponents().put(componentName, component);
+            return component;
+        }
     }
 
 }

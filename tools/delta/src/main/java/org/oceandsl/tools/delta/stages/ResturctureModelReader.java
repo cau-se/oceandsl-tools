@@ -55,6 +55,7 @@ public class ResturctureModelReader extends AbstractProducerStage<Transformation
         }
 
         this.outputPort.send((TransformationModel) resource.getContents().get(0));
+        this.workCompleted();
     }
 
 }
