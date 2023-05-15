@@ -54,7 +54,8 @@ public class CheckSourceMissingLabelStage extends AbstractTransformation<ModelRe
                             .eAllContents(),
                     modelConfig.getValue());
         }
-        this.logger.info("Number of missing source labels {}", errors); // NOPMD
+        this.logger.info("Number of missing source labels {}", errors);
+
         this.outputPort.send(repository);
     }
 
@@ -72,7 +73,7 @@ public class CheckSourceMissingLabelStage extends AbstractTransformation<ModelRe
 
     private long checkForSourcesForAllModelElements(final String modelName, final SourceModel model,
             final TreeIterator<EObject> treeIterator, final List<Class<? extends EObject>> ignoreList) {
-        System.out.printf("Source model entries %d\n", model.getSources().size()); // NOPMD
+        this.logger.info("Source model entries {}", model.getSources().size());
         long errorCount = 0;
         long objectCount = 0;
         while (treeIterator.hasNext()) {
@@ -81,16 +82,16 @@ public class CheckSourceMissingLabelStage extends AbstractTransformation<ModelRe
                 if (!this.isOnIgnoreList(ignoreList, object)) { // NOPMD
                     objectCount++;
                     if (model.getSources().get(object) == null) {
-                        System.out.println("Missing source reference for"); // NOPMD
+                        this.logger.info("Missing source reference for"); // NOPMD
                         RepositoryUtils.print(object, "  ");
-                        System.out.println("----"); // NOPMD
+                        this.logger.info("----");
                         errorCount++;
                     }
                 }
             }
         }
 
-        System.out.printf("Objects in model %s %d\n", modelName, objectCount); // NOPMD
+        this.logger.info("Objects in model {} {}", modelName, objectCount);
         return errorCount;
     }
 
