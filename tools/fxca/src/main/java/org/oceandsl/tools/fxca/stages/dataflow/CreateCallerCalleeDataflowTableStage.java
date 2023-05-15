@@ -29,12 +29,12 @@ import org.oceandsl.tools.fxca.stages.dataflow.data.CallerCalleeDataflow;
  */
 public class CreateCallerCalleeDataflowTableStage extends AbstractTransformation<CallerCalleeDataflow, Table> {
 
-    private static final String SOURCE_PATH = "callerfilename";
-    private static final String SOURCE_MODULE = "callermodule";
-    private static final String SOURCE_OPERATION = "callerfunction";
-    private static final String TARGET_PATH = "calleefilename";
-    private static final String TARGET_MODULE = "calleemodule";
-    private static final String TARGET_OPERATION = "calleefunction";
+    private static final String SOURCE_PATH = "caller-apth";
+    private static final String SOURCE_MODULE = "caller-module";
+    private static final String SOURCE_OPERATION = "caller-operation";
+    private static final String TARGET_PATH = "callee-path";
+    private static final String TARGET_MODULE = "callee-module";
+    private static final String TARGET_OPERATION = "callee-operation";
     private static final String DIRECTION = "direction";
 
     private final Table callsTable;

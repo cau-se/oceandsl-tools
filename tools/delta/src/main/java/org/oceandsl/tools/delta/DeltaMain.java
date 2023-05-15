@@ -1,5 +1,7 @@
+package org.oceandsl.tools.delta;
+
 /***************************************************************************
- * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.cmi;
 
-import java.nio.file.Files;
+import java.io.IOException;
 import java.nio.file.Path;
 
 import com.beust.jcommander.JCommander;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kieker.common.configuration.Configuration;
@@ -28,46 +28,35 @@ import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
 
 /**
- * Architecture analysis main class.
  *
- * @author Reiner Jung
- * @since 1.1
+ * @author Serafim Simonov
+ * @since 1.3.0
  */
-public class CheckModelIntegrityMain extends AbstractService<TeetimeConfiguration, Settings> {
-
-    /** logger for all tools. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass().getCanonicalName()); // NOPMD
+public class DeltaMain extends AbstractService<TeetimeConfiguration, Settings> {
 
     public static void main(final String[] args) {
-        final CheckModelIntegrityMain main = new CheckModelIntegrityMain();
+        final DeltaMain main = new DeltaMain();
         try {
-            final int exitCode = main.run("relabel source information", "relabel", args, new Settings());
+            final int exitCode = main.run("output delta of restructuring", "delta", args, new Settings());
             System.exit(exitCode);
         } catch (final IllegalArgumentException e) {
-            LoggerFactory.getLogger(CheckModelIntegrityMain.class).error("Configuration error: {}",
-                    e.getLocalizedMessage());
+            LoggerFactory.getLogger(DeltaMain.class).error("Configuration error: {}", e.getLocalizedMessage());
             System.exit(1);
         }
     }
 
     @Override
-    protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (!Files.isDirectory(this.settings.getInputDirectory())) {
-            this.logger.error("Input path {} is not a directory", this.settings.getInputDirectory());
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
-        return new TeetimeConfiguration(this.settings);
+        try {
+            return new TeetimeConfiguration(this.settings);
+        } catch (final IOException e) {
+            throw new ConfigurationException(e);
+        }
     }
 
     @Override
     protected Path getConfigurationPath() {
-        // we do not use a configuration file
+        // TODO Auto-generated method stub
         return null;
     }
 
@@ -77,8 +66,13 @@ public class CheckModelIntegrityMain extends AbstractService<TeetimeConfiguratio
     }
 
     @Override
-    protected void shutdownService() {
-        // nothing to do here
+    protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
+
+        return true;
     }
 
+    @Override
+    protected void shutdownService() {
+        // No special operation necessary.
+    }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.relabel;
+package org.oceandsl.tools.cmi;
 
 /***************************************************************************
  * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
@@ -49,31 +49,20 @@ public class Settings {
             "--input" }, required = true, converter = PathConverter.class, description = "Directory for the input model")
     private Path inputDirectory;
 
-    @Parameter(names = { "-o",
-            "--output" }, required = true, converter = PathConverter.class, description = "Directory for the modified model")
-    private Path outputDirectory;
-
-    @Parameter(names = { "-r",
-            "--replacements" }, required = true, variableArity = true, converter = ReplacementConverter.class, description = "Replacement for labels s1,...,sn:t1,...,tm")
-    private List<Replacement> replacements;
-
-    @Parameter(names = { "-e",
-            "--experiment" }, required = false, description = "Set experiment name of the model repository.")
-    private String experimentName;
-
-    public Path getOutputDirectory() {
-        return this.outputDirectory;
-    }
+    @Parameter(names = { "-c",
+            "--checks" }, variableArity = true, required = false, converter = CheckConverter.class, validateWith = CheckValidator.class, description = "Select the model checks to be applied")
+    private List<ECheck> checks;
 
     public Path getInputDirectory() {
         return this.inputDirectory;
     }
 
-    public List<Replacement> getReplacements() {
-        return this.replacements;
+    public List<ECheck> getChecks() {
+        return this.checks;
     }
 
-    public String getExperimentName() {
-        return this.experimentName;
+    public void setChecks(final List<ECheck> checks) {
+        this.checks = checks;
     }
+
 }

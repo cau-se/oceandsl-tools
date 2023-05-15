@@ -35,17 +35,27 @@ import teetime.stage.basic.AbstractFilter;
 public class ReplaceSourceLabelStage extends AbstractFilter<ModelRepository> {
 
     private final List<Replacement> replacements;
+    private final String repositoryName;
 
-    public ReplaceSourceLabelStage(final List<Replacement> replacements) {
+    public ReplaceSourceLabelStage(final String repositoryName, final List<Replacement> replacements) {
         this.replacements = replacements;
+        this.repositoryName = repositoryName;
     }
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        final SourceModel sourceModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
+        final ModelRepository newRepository;
+        if (this.repositoryName != null) {
+            newRepository = new ModelRepository(this.repositoryName);
+            repository.getModels().entrySet()
+                    .forEach(entry -> newRepository.getModels().put(entry.getKey(), entry.getValue()));
+        } else {
+            newRepository = repository;
+        }
+        final SourceModel sourceModel = newRepository.getModel(SourcePackage.Literals.SOURCE_MODEL);
         for (final Replacement replacement : this.replacements) {
             if ("".equals(replacement.getSources().get(0))) {
-                this.annotateAllModels(repository, sourceModel, replacement);
+                this.annotateAllModels(newRepository, sourceModel, replacement);
             } else {
                 this.processModel(sourceModel, replacement);
             }

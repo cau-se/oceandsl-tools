@@ -52,7 +52,7 @@ public class WriteModelUtils {
             final String filename, final T model) {
         WriteModelUtils.LOGGER.info("Saving model {}", filename);
 
-        final File modelFile = WriteModelUtils.createWriteModelFileHandler(outputDirectory, filename);
+        final File modelFile = outputDirectory.resolve(filename + ".xmi").toAbsolutePath().toFile();
 
         final Resource resource = resourceSet.createResource(URI.createFileURI(modelFile.getAbsolutePath()));
         resource.getContents().add(model);
@@ -63,9 +63,5 @@ public class WriteModelUtils {
             WriteModelUtils.LOGGER.error("Cannot write {} model to storage. Cause: {}", modelFile.getAbsoluteFile(),
                     e.getLocalizedMessage());
         }
-    }
-
-    private static File createWriteModelFileHandler(final Path path, final String filename) {
-        return new File(path.toFile().getAbsolutePath() + File.separator + filename + ".xmi");
     }
 }

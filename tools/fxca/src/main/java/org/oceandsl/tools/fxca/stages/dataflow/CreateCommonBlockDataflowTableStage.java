@@ -28,10 +28,10 @@ import org.oceandsl.analysis.code.stages.data.Table;
  */
 public class CreateCommonBlockDataflowTableStage extends AbstractTransformation<CommonBlockArgumentDataflow, Table> {
 
-    private static final String COMMON_BLOCK = "commonblock";
-    private static final String PATH = "filename";
+    private static final String COMMON_BLOCK = "common-block";
+    private static final String PATH = "path";
     private static final String MODULE = "module";
-    private static final String OPERATION = "function";
+    private static final String OPERATION = "operation";
     private static final String DIRECTION = "direction";
 
     private final Table callsTable;

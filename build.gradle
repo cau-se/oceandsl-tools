@@ -45,7 +45,7 @@ subprojects {
 
 	dependencies {
 		implementation 'net.kieker-monitoring:kieker:2.0.0-SNAPSHOT'
-		implementation 'net.sourceforge.teetime:teetime:3.1-SNAPSHOT'
+		implementation 'de.cau.cs.se.teetime:teetime:3.1.1-SNAPSHOT'
 		implementation 'com.beust:jcommander:1.78'
 		implementation 'ch.qos.logback:logback-classic:1.1.7'
 		implementation 'org.slf4j:slf4j-api:1.7.32'
@@ -53,6 +53,7 @@ subprojects {
 		// Use JUnit test framework
 		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
 		testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+		testImplementation 'de.cau.cs.se.teetime:teetime:3.1.1-SNAPSHOT:test'
 	}
 
 	sourceCompatibility = '11'

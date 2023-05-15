@@ -32,7 +32,7 @@ public class CreateCommonBlocksTableStage extends AbstractTransformation<CommonB
     private static final String COMMON_BLOCKS = "common-blocks";
 
     private final Table commonBlocksTable = new Table(CreateCommonBlocksTableStage.COMMON_BLOCKS,
-            new StringValueHandler("block-name"), new StringValueHandler("files"), new StringValueHandler("modules"),
+            new StringValueHandler("common-block"), new StringValueHandler("files"), new StringValueHandler("modules"),
             new StringValueHandler("variables"));
 
     @Override
