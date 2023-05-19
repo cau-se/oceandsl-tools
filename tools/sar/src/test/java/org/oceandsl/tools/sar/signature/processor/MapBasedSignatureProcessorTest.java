@@ -29,6 +29,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+/**
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 class MapBasedSignatureProcessorTest {
 
     private static final String OPERATION = "doSomething()";
@@ -39,7 +44,7 @@ class MapBasedSignatureProcessorTest {
     private static File file;
 
     @BeforeAll
-    public static void createTempfile() throws IOException {
+    static void createTempfile() throws IOException {
         MapBasedSignatureProcessorTest.file = File.createTempFile("MapBasedSignatureProcessor", "");
         final BufferedWriter writer = Files.newBufferedWriter(MapBasedSignatureProcessorTest.file.toPath());
         writer.write(String.format("%s;%s;%s\n", MapBasedSignatureProcessorTest.COMPONENT,
@@ -50,12 +55,12 @@ class MapBasedSignatureProcessorTest {
     }
 
     @AfterAll
-    public static void removeTempfile() {
+    static void removeTempfile() {
         MapBasedSignatureProcessorTest.file.delete();
     }
 
     @Test
-    public void testCaseSensitive() throws IOException { // NOPMD Assertions
+    void testCaseSensitive() throws IOException { // NOPMD Assertions
         final MapBasedSignatureProcessor processor = new MapBasedSignatureProcessor(
                 MapBasedSignatureProcessorTest.FILE_LIST, false, ";");
         final boolean result = processor.processSignatures(MapBasedSignatureProcessorTest.PATH,
@@ -69,7 +74,7 @@ class MapBasedSignatureProcessorTest {
     }
 
     @Test
-    public void testCaseInsensitive() throws IOException { // NOPMD Assertions
+    void testCaseInsensitive() throws IOException { // NOPMD Assertions
         final MapBasedSignatureProcessor processor = new MapBasedSignatureProcessor(
                 MapBasedSignatureProcessorTest.FILE_LIST, true, ";");
         final boolean result = processor.processSignatures(MapBasedSignatureProcessorTest.PATH,

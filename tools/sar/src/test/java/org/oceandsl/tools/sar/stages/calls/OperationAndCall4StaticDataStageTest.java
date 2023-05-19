@@ -33,7 +33,7 @@ import org.oceandsl.analysis.code.stages.data.CallerCallee;
  * @author Reiner Jung
  * @since 1.3
  */
-public class OperationAndCall4StaticDataStageTest {
+class OperationAndCall4StaticDataStageTest {
 
     private static final String HOSTNAME = "test";
     private static final String SOURCE_PATH = "source/path";
@@ -44,7 +44,7 @@ public class OperationAndCall4StaticDataStageTest {
     private static final String CALLEE = "callee()";
 
     @Test
-    public void testExecuteCallerCallee() {
+    void testExecuteCallerCallee() {
         final OperationAndCall4StaticDataStage stage = new OperationAndCall4StaticDataStage(
                 OperationAndCall4StaticDataStageTest.HOSTNAME);
 

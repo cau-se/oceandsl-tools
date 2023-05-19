@@ -29,6 +29,11 @@ import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeFactory;
 import kieker.model.analysismodel.type.TypeModel;
 
+/**
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 class StorageAssemblyModelAssemblerTest {
 
     private static final String SOURCE_LABEL = "test";
@@ -38,7 +43,7 @@ class StorageAssemblyModelAssemblerTest {
     private static final String STORAGE_TYPE = "integer";
 
     @Test
-    public void test() {
+    void test() {
         final TypeModel typeModel = TypeFactory.eINSTANCE.createTypeModel();
         final AssemblyModel assemblyModel = AssemblyFactory.eINSTANCE.createAssemblyModel();
         final SourceModel sourceModel = SourceFactory.eINSTANCE.createSourceModel();
