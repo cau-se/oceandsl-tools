@@ -129,9 +129,9 @@ public class StorageDeploymentModelAssembler extends AbstractModelAssembler impl
         DeployedStorage deployedStorage = deployedComponent.getStorages().get(storageSignature);
         if (deployedStorage == null) {
             deployedStorage = DeploymentFactory.eINSTANCE.createDeployedStorage();
-            final AssemblyStorage assmeblyStorage = deployedComponent.getAssemblyComponent().getStorages()
+            final AssemblyStorage assemblyStorage = deployedComponent.getAssemblyComponent().getStorages()
                     .get(storageSignature);
-            deployedStorage.setAssemblyStorage(assmeblyStorage);
+            deployedStorage.setAssemblyStorage(assemblyStorage);
             deployedComponent.getStorages().put(storageSignature, deployedStorage);
             this.deploymentModel.getContexts().get(0).getValue().getComponents().put(deployedComponent.getSignature(),
                     deployedComponent);

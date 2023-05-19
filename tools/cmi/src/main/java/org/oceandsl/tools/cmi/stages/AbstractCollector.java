@@ -15,22 +15,22 @@
  ***************************************************************************/
 package org.oceandsl.tools.cmi.stages;
 
-import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.statistics.StatisticsModel;
-import kieker.model.analysismodel.statistics.StatisticsPackage;
+import teetime.framework.OutputPort;
+import teetime.stage.basic.AbstractTransformation;
 
-public class CheckStatisticModelStage extends AbstractCollector<ModelRepository> {
+/**
+ *
+ * @param <T>
+ *            i/o datatype
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
+public abstract class AbstractCollector<T> extends AbstractTransformation<T, T> {
 
-    @Override
-    protected void execute(final ModelRepository repository) throws Exception {
-        final Report report = new Report("Statistics model");
+    protected OutputPort<Report> reportOutputPort = this.createOutputPort(Report.class);
 
-        final StatisticsModel model = repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
-
-        GenericCheckUtils.checkReferences(StatisticsPackage.Literals.STATISTICS_MODEL, model.eAllContents(), report);
-
-        this.outputPort.send(repository);
-        this.reportOutputPort.send(report);
+    public OutputPort<Report> getReportOutputPort() {
+        return this.reportOutputPort;
     }
 
 }

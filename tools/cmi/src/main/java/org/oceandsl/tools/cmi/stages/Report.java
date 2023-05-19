@@ -15,22 +15,28 @@
  ***************************************************************************/
 package org.oceandsl.tools.cmi.stages;
 
-import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.statistics.StatisticsModel;
-import kieker.model.analysismodel.statistics.StatisticsPackage;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CheckStatisticModelStage extends AbstractCollector<ModelRepository> {
+public class Report {
 
-    @Override
-    protected void execute(final ModelRepository repository) throws Exception {
-        final Report report = new Report("Statistics model");
+    private final String name;
+    private final List<String> messages = new ArrayList<>();
 
-        final StatisticsModel model = repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
+    public Report(final String name) {
+        this.name = name;
+    }
 
-        GenericCheckUtils.checkReferences(StatisticsPackage.Literals.STATISTICS_MODEL, model.eAllContents(), report);
+    public void addMessage(final String format, final Object... values) {
+        this.messages.add(String.format(format, values));
+    }
 
-        this.outputPort.send(repository);
-        this.reportOutputPort.send(report);
+    public String getName() {
+        return this.name;
+    }
+
+    public List<String> getMessages() {
+        return this.messages;
     }
 
 }

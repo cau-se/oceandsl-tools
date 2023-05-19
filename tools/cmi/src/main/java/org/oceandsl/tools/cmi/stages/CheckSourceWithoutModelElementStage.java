@@ -33,44 +33,44 @@ import kieker.model.analysismodel.source.SourceModel;
 import kieker.model.analysismodel.source.SourcePackage;
 import kieker.model.analysismodel.type.TypePackage;
 
-import teetime.stage.basic.AbstractTransformation;
+import org.oceandsl.tools.cmi.RepositoryUtils;
 
-import org.oceandsl.analysis.architecture.RepositoryUtils;
-
-public class CheckSourceWithoutModelElementStage extends AbstractTransformation<ModelRepository, ModelRepository> {
+public class CheckSourceWithoutModelElementStage extends AbstractCollector<ModelRepository> {
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        this.logger.info("Check source labels without model element");
+        final Report report = new Report("source model");
 
         final SourceModel sourceModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
 
-        final long errors = this.checkForSourcesWithoutModelElements(sourceModel, repository);
-        this.logger.info("Number of missing references to sources {}", errors); // NOPMD
+        this.checkForSourcesWithoutModelElements(sourceModel, repository, report);
 
         this.outputPort.send(repository);
+        this.reportOutputPort.send(report);
     }
 
-    private long checkForSourcesWithoutModelElements(final SourceModel sourceModel, final ModelRepository repository) {
+    private void checkForSourcesWithoutModelElements(final SourceModel sourceModel, final ModelRepository repository,
+            final Report report) {
         long errors = 0;
         for (final EObject element : sourceModel.getSources().keySet()) {
             element.eCrossReferences();
-            if (!this.existsObjectForSource(element, repository)) {
+            if (!this.existsObjectForSource(element, repository, report)) {
                 errors++;
             }
         }
 
-        return errors;
+        report.addMessage("Number of missing references to sources %s", errors);
     }
 
-    private boolean existsObjectForSource(final EObject element, final ModelRepository repository) {
+    private boolean existsObjectForSource(final EObject element, final ModelRepository repository,
+            final Report report) {
         for (final EClass modelRootClass : this.configureModels().keySet()) {
             final EObject model = repository.getModel(modelRootClass);
             if (this.modelContains(model, element)) {
                 return true;
             }
         }
-        System.out.printf("Object %s not found.\n", RepositoryUtils.getName(element)); // NOPMD
+        report.addMessage("Object %s not found.", RepositoryUtils.getName(element));
         return false;
     }
 

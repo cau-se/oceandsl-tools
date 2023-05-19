@@ -33,59 +33,56 @@ import kieker.model.analysismodel.execution.OperationDataflow;
 import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
 
-import teetime.stage.basic.AbstractTransformation;
+import org.oceandsl.tools.cmi.RepositoryUtils;
 
-import org.oceandsl.analysis.architecture.RepositoryUtils;
-
-public class CheckExecutionModelStage extends AbstractTransformation<ModelRepository, ModelRepository> {
+public class CheckExecutionModelStage extends AbstractCollector<ModelRepository> {
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        this.logger.info("Check execution model");
+        final Report report = new Report("execution model");
 
         final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
 
-        final long missingSignatures = GenericCheckUtils.missingSignature(executionModel.eAllContents(), this.logger);
-        this.logger.info("Missing signatures in execution model {}", missingSignatures);
-        final long missingReferences = GenericCheckUtils.checkReferences(ExecutionPackage.Literals.EXECUTION_MODEL,
-                executionModel.eAllContents());
-        this.logger.info("Missing references in execution model {}", missingReferences);
+        GenericCheckUtils.missingSignature(executionModel.eAllContents(), report);
+        GenericCheckUtils.checkReferences(ExecutionPackage.Literals.EXECUTION_MODEL, executionModel.eAllContents(),
+                report);
 
-        this.checkExecutionInvocationIntegrity(executionModel);
-        this.checkExecutionStorageDataflowIntegrity(executionModel);
-        this.checkExecutionOperationDataflowIntegrity(executionModel);
-        this.checkForDuplicateInvocations(executionModel);
+        this.checkExecutionInvocationIntegrity(executionModel, report);
+        this.checkExecutionStorageDataflowIntegrity(executionModel, report);
+        this.checkExecutionOperationDataflowIntegrity(executionModel, report);
+        this.checkForDuplicateInvocations(executionModel, report);
 
         this.outputPort.send(repository);
+        this.reportOutputPort.send(report);
     }
 
-    private void checkExecutionInvocationIntegrity(final ExecutionModel model) {
+    private void checkExecutionInvocationIntegrity(final ExecutionModel model, final Report report) {
         long errors = 0;
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> entry : model.getInvocations()) {
             final Tuple<DeployedOperation, DeployedOperation> tuple = entry.getKey();
             final Invocation invocation = entry.getValue();
             if (tuple.getFirst() != invocation.getCaller()) {
-                this.logger.info("Caller does not match lookup key {} ++ {}", RepositoryUtils.getName(tuple.getFirst()),
-                        RepositoryUtils.getName(invocation.getCaller()));
+                report.addMessage("Caller does not match lookup key %s ++ %s",
+                        RepositoryUtils.getName(tuple.getFirst()), RepositoryUtils.getName(invocation.getCaller()));
 
                 errors++;
             }
             if (tuple.getSecond() != invocation.getCallee()) {
-                this.logger.info("Callee does not match lookup key {} ++ {}",
+                report.addMessage("Callee does not match lookup key %s ++ %s",
                         RepositoryUtils.getName(tuple.getSecond()), RepositoryUtils.getName(invocation.getCallee()));
 
                 final DeployedComponent keyComponent = tuple.getSecond().getComponent();
                 final DeployedComponent targetComponent = invocation.getCallee().getComponent();
                 if (keyComponent != targetComponent) { // NOPMD objects must not be identical
-                    this.logger.info("Callee component does not match lookup key component {} ++ {}",
+                    report.addMessage("Callee component does not match lookup key component %s ++ %s",
                             RepositoryUtils.getName(keyComponent), RepositoryUtils.getName(targetComponent));
                     final DeploymentContext keyContext = keyComponent.getContext();
                     final DeploymentContext targetContext = targetComponent.getContext();
                     if (keyContext != targetContext) { // NOPMD objects must not be identical
-                        this.logger.info("Callee context does not match lookup key context {} ++ {}",
+                        report.addMessage("Callee context does not match lookup key context %s ++ %s",
                                 RepositoryUtils.getName(keyContext), RepositoryUtils.getName(targetContext));
                         if (keyContext.eContainer() != targetContext.eContainer()) {
-                            this.logger.info("Duplicate deployment models: {} ++ {}", keyContext.eResource().getURI(),
+                            report.addMessage("Duplicate deployment models: %s ++ %s", keyContext.eResource().getURI(),
                                     targetContext.eResource().getURI());
                         }
                     }
@@ -94,55 +91,55 @@ public class CheckExecutionModelStage extends AbstractTransformation<ModelReposi
                 errors++;
             }
         }
-        this.logger.info("Number of errors in execution model invocations {}", errors); // NOPMD
+        report.addMessage("Number of errors in execution model invocations %s", errors);
     }
 
-    private void checkExecutionOperationDataflowIntegrity(final ExecutionModel model) {
+    private void checkExecutionOperationDataflowIntegrity(final ExecutionModel model, final Report report) {
         long errors = 0;
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, OperationDataflow> entry : model
                 .getOperationDataflows()) {
             final Tuple<DeployedOperation, DeployedOperation> tuple = entry.getKey();
             final OperationDataflow operationDataflow = entry.getValue();
             if (tuple.getFirst() != operationDataflow.getCaller()) {
-                this.logger.info("Caller does not match {}:{}", // NOPMD
+                report.addMessage("Caller does not match %s:%s", // NOPMD
                         RepositoryUtils.getName(operationDataflow.getCaller().getComponent()),
                         RepositoryUtils.getName(operationDataflow.getCaller()));
                 errors++;
             }
             if (tuple.getSecond() != operationDataflow.getCallee()) {
-                this.logger.info("Storage does not match {}:{}",
+                report.addMessage("Storage does not match %s:%s",
                         RepositoryUtils.getName(operationDataflow.getCallee().getComponent()),
                         RepositoryUtils.getName(operationDataflow.getCallee()));
                 errors++;
             }
         }
-        this.logger.info("Number of errors in execution model operation dataflows {}", errors); // NOPMD
+        report.addMessage("Number of errors in execution model operation dataflows %s", errors); // NOPMD
     }
 
-    private void checkExecutionStorageDataflowIntegrity(final ExecutionModel model) {
+    private void checkExecutionStorageDataflowIntegrity(final ExecutionModel model, final Report report) {
         long errors = 0;
         for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> entry : model
                 .getStorageDataflows()) {
             final Tuple<DeployedOperation, DeployedStorage> tuple = entry.getKey();
             final StorageDataflow storageDataflow = entry.getValue();
             if (tuple.getFirst() != storageDataflow.getCode()) {
-                this.logger.info("Caller does not match {}:{}\n", // NOPMD
+                report.addMessage("Caller does not match %s:%s", // NOPMD
                         RepositoryUtils.getName(storageDataflow.getCode().getComponent()),
                         RepositoryUtils.getName(storageDataflow.getCode()));
                 errors++;
             }
             if (tuple.getSecond() != storageDataflow.getStorage()) {
-                this.logger.info("Storage does not match {}:{}\n",
+                report.addMessage("Storage does not match %s:%s",
                         RepositoryUtils.getName(storageDataflow.getStorage().getComponent()),
                         RepositoryUtils.getName(storageDataflow.getStorage()));
                 errors++;
             }
         }
-        this.logger.info("Number of errors in execution model storage dataflows {}", errors);
+        report.addMessage("Number of errors in execution model storage dataflows %s", errors);
     }
 
-    private void checkForDuplicateInvocations(final ExecutionModel model) {
-        this.logger.info("Check for duplicate invocations based on DeployedOperation");
+    private void checkForDuplicateInvocations(final ExecutionModel model, final Report report) {
+        report.addMessage("Check for duplicate invocations based on DeployedOperation");
         final Map<DeployedOperation, Map<DeployedOperation, Invocation>> map = new HashMap<>();
         for (final Invocation invocation : model.getInvocations().values()) {
             Map<DeployedOperation, Invocation> targetMap = map.get(invocation.getCaller());
@@ -150,13 +147,13 @@ public class CheckExecutionModelStage extends AbstractTransformation<ModelReposi
                 targetMap = new HashMap<>();
                 targetMap.put(invocation.getCallee(), invocation);
             } else if (targetMap.get(invocation.getCallee()) != null) {
-                this.logger.info("Found duplicate {} -> {}",
+                report.addMessage("Found duplicate %s -> %s",
                         invocation.getCaller().getAssemblyOperation().getOperationType().getName(),
                         invocation.getCallee().getAssemblyOperation().getOperationType().getName());
             }
         }
 
-        this.logger.info("Check for duplicate invocations based on DeployedOperation names");
+        report.addMessage("Check for duplicate invocations based on DeployedOperation names");
         final List<String> l = new ArrayList<>();
         for (final Invocation invocation : model.getInvocations().values()) {
             final String m = String.format("%s:%s:%s -> %s:%s:%s",
@@ -169,7 +166,7 @@ public class CheckExecutionModelStage extends AbstractTransformation<ModelReposi
             boolean g = false;
             for (final String x : l) {
                 if (x.equals(m)) {
-                    this.logger.info("Found duplicate {}", m); // NOPMD
+                    report.addMessage("Found duplicate %s", m); // NOPMD
                     g = true;
                 }
             }

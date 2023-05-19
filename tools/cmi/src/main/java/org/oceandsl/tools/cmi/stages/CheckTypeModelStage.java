@@ -20,34 +20,30 @@ import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
 
-import teetime.stage.basic.AbstractTransformation;
-
-public class CheckTypeModelStage extends AbstractTransformation<ModelRepository, ModelRepository> {
+public class CheckTypeModelStage extends AbstractCollector<ModelRepository> {
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        this.logger.info("Check type model");
+        final Report report = new Report("type model");
         final TypeModel model = repository.getModel(TypePackage.Literals.TYPE_MODEL);
 
         model.getComponentTypes().entrySet().forEach(entry -> {
             final String name = entry.getKey();
             final ComponentType value = entry.getValue();
             if (value.getSignature() == null) {
-                this.logger.error("Component type signature is null for {}", name);
+                report.addMessage("Component type signature is null for %s", name);
             } else if (value.getSignature().isEmpty()) {
-                this.logger.error("Component type signature is empty for {}", name);
+                report.addMessage("Component type signature is empty for %s", name);
             } else if (!value.getSignature().equals(name)) {
-                this.logger.error("Component type key {} and signature {} differ", name, value.getSignature());
+                report.addMessage("Component type key %s and signature %s differ", name, value.getSignature());
             }
         });
 
-        final long missingSignatures = GenericCheckUtils.missingSignature(model.eAllContents(), this.logger);
-        this.logger.info("Missing signatures in type model {}", missingSignatures);
-        final long missingReferences = GenericCheckUtils.checkReferences(TypePackage.Literals.TYPE_MODEL,
-                model.eAllContents());
-        this.logger.info("Missing references in type model {}", missingReferences);
+        GenericCheckUtils.missingSignature(model.eAllContents(), report);
+        GenericCheckUtils.checkReferences(TypePackage.Literals.TYPE_MODEL, model.eAllContents(), report);
 
         this.outputPort.send(repository);
+        this.reportOutputPort.send(report);
     }
 
 }
