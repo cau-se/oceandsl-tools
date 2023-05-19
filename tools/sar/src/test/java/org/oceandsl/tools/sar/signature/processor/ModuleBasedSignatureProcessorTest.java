@@ -20,6 +20,11 @@ import java.util.Locale;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+/**
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 class ModuleBasedSignatureProcessorTest {
 
     private static final String OPERATION = "doSomething()";
@@ -28,7 +33,7 @@ class ModuleBasedSignatureProcessorTest {
     private static final String PATH = "a/b/" + ModuleBasedSignatureProcessorTest.SPECIAL_FILE_NAME;
 
     @Test
-    public void testCaseSensitive() { // NOPMD Assertions
+    void testCaseSensitive() { // NOPMD Assertions
         final ModuleBasedSignatureProcessor processor = new ModuleBasedSignatureProcessor(false);
         final boolean result = processor.processSignatures(ModuleBasedSignatureProcessorTest.PATH,
                 ModuleBasedSignatureProcessorTest.COMPONENT, ModuleBasedSignatureProcessorTest.OPERATION);
@@ -41,7 +46,7 @@ class ModuleBasedSignatureProcessorTest {
     }
 
     @Test
-    public void testCaseInsensitive() { // NOPMD Assertions
+    void testCaseInsensitive() { // NOPMD Assertions
         final ModuleBasedSignatureProcessor processor = new ModuleBasedSignatureProcessor(true);
         final boolean result = processor.processSignatures(ModuleBasedSignatureProcessorTest.PATH,
                 ModuleBasedSignatureProcessorTest.COMPONENT, ModuleBasedSignatureProcessorTest.OPERATION);

@@ -19,6 +19,12 @@ import kieker.model.analysismodel.type.StorageType;
 
 import org.oceandsl.analysis.code.stages.IStorageSignatureExtractor;
 
+/**
+ * Dummy signature extractor for storage signatures.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 public class SimpleStorageSignatureExtractor implements IStorageSignatureExtractor {
 
     @Override

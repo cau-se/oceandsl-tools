@@ -19,8 +19,10 @@ import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtrac
 import kieker.model.analysismodel.type.ComponentType;
 
 /**
- * @author reiner
+ * Simple signature extractor used in test cases.
  *
+ * @author Reiner Jung
+ * @since 1.3.0
  */
 public class SimpleComponentSignatureExtractor implements IComponentSignatureExtractor {
 
