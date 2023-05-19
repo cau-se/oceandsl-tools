@@ -15,23 +15,21 @@
  ***************************************************************************/
 package org.oceandsl.tools.cmi.stages;
 
-import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.assembly.AssemblyModel;
-import kieker.model.analysismodel.assembly.AssemblyPackage;
+import teetime.framework.AbstractConsumerStage;
 
-public class CheckAssemblyModelStage extends AbstractCollector<ModelRepository> {
+/**
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
+public class PrintReportStage extends AbstractConsumerStage<Report> {
 
     @Override
-    protected void execute(final ModelRepository repository) throws Exception {
-        final Report report = new Report("assembly model");
-
-        final AssemblyModel assemblyModel = repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
-
-        GenericCheckUtils.missingSignature(assemblyModel.eAllContents(), report);
-        GenericCheckUtils.checkReferences(AssemblyPackage.Literals.ASSEMBLY_MODEL, assemblyModel.eAllContents(),
-                report);
-        this.outputPort.send(repository);
-        this.reportOutputPort.send(report);
+    protected void execute(final Report report) throws Exception {
+        System.out.println("+++++++++++++++++++");
+        System.out.println(report.getName());
+        System.out.println("+++++++++++++++++++");
+        report.getMessages().forEach(message -> System.out.println(message));
+        System.out.println();
     }
 
 }

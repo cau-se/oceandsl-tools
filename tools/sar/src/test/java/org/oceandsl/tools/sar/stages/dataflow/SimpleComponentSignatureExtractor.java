@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.cmi.stages;
+package org.oceandsl.tools.sar.stages.dataflow;
 
-import kieker.analysis.architecture.repository.ModelRepository;
-import kieker.model.analysismodel.statistics.StatisticsModel;
-import kieker.model.analysismodel.statistics.StatisticsPackage;
+import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
+import kieker.model.analysismodel.type.ComponentType;
 
-public class CheckStatisticModelStage extends AbstractCollector<ModelRepository> {
+/**
+ * @author reiner
+ *
+ */
+public class SimpleComponentSignatureExtractor implements IComponentSignatureExtractor {
 
     @Override
-    protected void execute(final ModelRepository repository) throws Exception {
-        final Report report = new Report("Statistics model");
-
-        final StatisticsModel model = repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
-
-        GenericCheckUtils.checkReferences(StatisticsPackage.Literals.STATISTICS_MODEL, model.eAllContents(), report);
-
-        this.outputPort.send(repository);
-        this.reportOutputPort.send(report);
+    public void extract(final ComponentType componentType) {
+        final String signature = componentType.getSignature();
+        componentType.setName(signature.substring(signature.lastIndexOf('.')));
+        componentType.setPackage(signature.substring(0, signature.lastIndexOf('.')));
     }
-
 }

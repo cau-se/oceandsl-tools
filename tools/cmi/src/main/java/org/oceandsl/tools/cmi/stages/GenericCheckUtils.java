@@ -20,17 +20,16 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.slf4j.Logger;
 
-import org.oceandsl.analysis.architecture.RepositoryUtils;
+import org.oceandsl.tools.cmi.RepositoryUtils;
 
 public final class GenericCheckUtils {
 
     private GenericCheckUtils() {
     }
 
-    public static long checkReferences(final EClass modelClass, final TreeIterator<EObject> iterator) {
-        System.out.printf("Model %s\n", modelClass.getName()); // NOPMD
+    public static void checkReferences(final EClass modelClass, final TreeIterator<EObject> iterator,
+            final Report report) {
         long errorCount = 0;
         while (iterator.hasNext()) {
             final EObject object = iterator.next();
@@ -38,18 +37,18 @@ public final class GenericCheckUtils {
             for (final EReference reference : clazz.getEAllReferences()) {
                 final Object referencedObject = object.eGet(reference, true);
                 if (referencedObject == null) {
-                    System.out.printf("Missing referenced object: %s:%s -> %s:%s\n", // NOPMD
-                            object.getClass().getSimpleName(), RepositoryUtils.getName(object),
-                            reference.getEType().getName(), reference.getName());
+                    report.addMessage("Model %s Missing referenced object: %s -> %s:%s", // NOPMD
+                            modelClass.getName(), RepositoryUtils.getName(object), reference.getEType().getName(),
+                            reference.getName());
                     errorCount++;
 
                 }
             }
         }
-        return errorCount;
+        report.addMessage("Missing references in %s %s", report.getName(), errorCount);
     }
 
-    public static long missingSignature(final TreeIterator<EObject> iterator, final Logger logger) {
+    public static void missingSignature(final TreeIterator<EObject> iterator, final Report report) {
         long errorCount = 0;
         while (iterator.hasNext()) {
             final EObject object = iterator.next();
@@ -58,14 +57,14 @@ public final class GenericCheckUtils {
                 if ("signature".equals(attribute.getName())) {
                     final Object value = object.eGet(attribute);
                     if (value == null) {
-                        logger.info("Object {} of type {} has signature attribute, but no value", // NOPMD
+                        report.addMessage("Object {} of type {} has signature attribute, but no value", // NOPMD
                                 print(object), clazz.getName());
                         errorCount++;
                     }
                 }
             }
         }
-        return errorCount;
+        report.addMessage("Missing signatures in %s %s", report.getName(), errorCount);
     }
 
     private static String print(final EObject object) {

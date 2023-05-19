@@ -21,24 +21,21 @@ import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.deployment.DeploymentPackage;
 
-import teetime.stage.basic.AbstractTransformation;
-
-public class CheckDeploymentModelStage extends AbstractTransformation<ModelRepository, ModelRepository> {
+public class CheckDeploymentModelStage extends AbstractCollector<ModelRepository> {
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        this.logger.info("Check deployment model");
+        final Report report = new Report("deployment model");
 
         final DeploymentModel deploymentModel = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
         this.checkForDuplicateDeployedOperations(deploymentModel);
 
-        final long missingSignatures = GenericCheckUtils.missingSignature(deploymentModel.eAllContents(), this.logger);
-        this.logger.info("Missing signatures in deployment model {}", missingSignatures);
-        final long missingReferences = GenericCheckUtils.checkReferences(DeploymentPackage.Literals.DEPLOYMENT_MODEL,
-                deploymentModel.eAllContents());
-        this.logger.info("Missing references in deployment model {}", missingReferences);
+        GenericCheckUtils.missingSignature(deploymentModel.eAllContents(), report);
+        GenericCheckUtils.checkReferences(DeploymentPackage.Literals.DEPLOYMENT_MODEL, deploymentModel.eAllContents(),
+                report);
 
         this.outputPort.send(repository);
+        this.reportOutputPort.send(report);
     }
 
     private void checkForDuplicateDeployedOperations(final DeploymentModel model) {

@@ -35,15 +35,13 @@ import kieker.model.analysismodel.source.SourceModel;
 import kieker.model.analysismodel.source.SourcePackage;
 import kieker.model.analysismodel.type.TypePackage;
 
-import teetime.stage.basic.AbstractTransformation;
+import org.oceandsl.tools.cmi.RepositoryUtils;
 
-import org.oceandsl.analysis.architecture.RepositoryUtils;
-
-public class CheckSourceMissingLabelStage extends AbstractTransformation<ModelRepository, ModelRepository> {
+public class CheckSourceMissingLabelStage extends AbstractCollector<ModelRepository> {
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
-        this.logger.info("Check whether source labels are missing for model elements");
+        final Report report = new Report("source model");
 
         final SourceModel sourceModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
 
@@ -52,11 +50,12 @@ public class CheckSourceMissingLabelStage extends AbstractTransformation<ModelRe
             errors += this.checkForSourcesForAllModelElements(modelConfig.getKey().getInstanceTypeName(), sourceModel,
                     repository.getModel(repository.getModelDescriptor(modelConfig.getKey()).getRootClass())
                             .eAllContents(),
-                    modelConfig.getValue());
+                    modelConfig.getValue(), report);
         }
-        this.logger.info("Number of missing source labels {}", errors);
+        report.addMessage("Number of missing source labels %s", errors);
 
         this.outputPort.send(repository);
+        this.reportOutputPort.send(report);
     }
 
     private Map<EClass, List<Class<? extends EObject>>> configureModels() {
@@ -72,8 +71,9 @@ public class CheckSourceMissingLabelStage extends AbstractTransformation<ModelRe
     }
 
     private long checkForSourcesForAllModelElements(final String modelName, final SourceModel model,
-            final TreeIterator<EObject> treeIterator, final List<Class<? extends EObject>> ignoreList) {
-        this.logger.info("Source model entries {}", model.getSources().size());
+            final TreeIterator<EObject> treeIterator, final List<Class<? extends EObject>> ignoreList,
+            final Report report) {
+        report.addMessage("Source model entries %s", model.getSources().size());
         long errorCount = 0;
         long objectCount = 0;
         while (treeIterator.hasNext()) {
@@ -82,16 +82,16 @@ public class CheckSourceMissingLabelStage extends AbstractTransformation<ModelRe
                 if (!this.isOnIgnoreList(ignoreList, object)) { // NOPMD
                     objectCount++;
                     if (model.getSources().get(object) == null) {
-                        this.logger.info("Missing source reference for"); // NOPMD
-                        RepositoryUtils.print(object, "  ");
-                        this.logger.info("----");
+                        report.addMessage("Missing source reference for"); // NOPMD
+                        RepositoryUtils.print(report, object, "  ");
+                        report.addMessage("----");
                         errorCount++;
                     }
                 }
             }
         }
 
-        this.logger.info("Objects in model {} {}", modelName, objectCount);
+        report.addMessage("Objects in model %s %s", modelName, objectCount);
         return errorCount;
     }
 

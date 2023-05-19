@@ -18,6 +18,8 @@ package org.oceandsl.tools.mvis.stages.metrics;
 import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.EMap;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.dependency.PropertyConstants;
@@ -33,7 +35,6 @@ import kieker.model.analysismodel.statistics.StatisticsPackage;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.architecture.RepositoryUtils;
 import org.oceandsl.analysis.code.stages.data.LongValueHandler;
 import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
@@ -58,8 +59,8 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
             final Invocation value = invocationEntry.getValue();
             if (value == null) {
                 this.logger.error("Broken invocation entry. {} -> {}",
-                        RepositoryUtils.getName(invocationEntry.getKey().getFirst()),
-                        RepositoryUtils.getName(invocationEntry.getKey().getSecond()));
+                        this.getName(invocationEntry.getKey().getFirst()),
+                        this.getName(invocationEntry.getKey().getSecond()));
             }
             final StatisticRecord statistics = this.findStatistics(statisticsModel.getStatistics(), value);
             if (statistics != null) {
@@ -71,8 +72,8 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
                         value.getCallee().getAssemblyOperation().getOperationType().getSignature(), data);
             } else {
                 this.logger.warn("Missing statistics for invocation {} -> {}",
-                        RepositoryUtils.getName(invocationEntry.getValue().getCaller()),
-                        RepositoryUtils.getName(invocationEntry.getValue().getCallee()));
+                        this.getName(invocationEntry.getValue().getCaller()),
+                        this.getName(invocationEntry.getValue().getCallee()));
             }
         }
 
@@ -98,5 +99,24 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
             }
         }
         return null;
+    }
+
+    public Object getName(final EObject result) {
+        if (result instanceof DeployedOperation) {
+            final DeployedOperation operation = (DeployedOperation) result;
+            return String.format("%s::%s::[%s]%s", this.getName(operation.getComponent().getContext()),
+                    this.getName(operation.getComponent()), result.getClass().getSimpleName(),
+                    this.getName(operation.getAssemblyOperation().getOperationType()));
+
+        }
+        final EClass clazz = result.eClass();
+        for (final EAttribute attribute : clazz.getEAllAttributes()) {
+            if ("signature".equals(attribute.getName())) {
+                return "signature " + result.eGet(attribute);
+            } else if ("name".equals(attribute.getName())) {
+                return "name " + result.eGet(attribute);
+            }
+        }
+        return result.toString();
     }
 }
