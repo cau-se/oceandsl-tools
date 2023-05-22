@@ -39,7 +39,7 @@ import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
 /**
  *
  * @author Reiner Jung
- * @since 1.1
+ * @since 1.1.0
  */
 public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<DataflowEvent> {
 
@@ -62,7 +62,8 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
 
                 if (resultOperation == null) {
                     final Logger logger = LoggerFactory.getLogger(CountUniqueCallsStage.class);
-                    logger.error("Fatal error: call not does not exist {}:{}", dataflow.getSource().toString(),
+                    logger.error("Fatal error: call not does not exist {}:{}", dataflow.getSource().toString(), // NOPMD
+                                                                                                                // GuardLogStatement
                             dataflow.getTarget().toString());
                     return null;
                 } else {
@@ -89,7 +90,8 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
                                 .equals(storageEvent.getStorageSignature())) {
                     return key;
                 }
-            } else if (dataflow.getSource() instanceof StorageEvent && dataflow.getTarget() instanceof OperationEvent) {
+            } else if ((dataflow.getSource() instanceof StorageEvent)
+                    && (dataflow.getTarget() instanceof OperationEvent)) {
                 final OperationEvent operationEvent = (OperationEvent) dataflow.getTarget();
                 final StorageEvent storageEvent = (StorageEvent) dataflow.getSource();
                 if (key.getFirst().getAssemblyOperation().getOperationType().getSignature()
@@ -111,7 +113,7 @@ public class CountUniqueDataflowCallsStage extends StatisticsDecoratorStage<Data
                 .getOperationDataflows().entrySet()) {
             final Tuple<DeployedOperation, DeployedOperation> key = entry.getKey();
 
-            if (dataflow.getSource() instanceof OperationEvent && dataflow.getTarget() instanceof OperationEvent) {
+            if ((dataflow.getSource() instanceof OperationEvent) && (dataflow.getTarget() instanceof OperationEvent)) {
                 final OperationEvent sourceOperationEvent = (OperationEvent) dataflow.getSource();
                 final OperationEvent targetOperationEvent = (OperationEvent) dataflow.getTarget();
                 if (key.getFirst().getAssemblyOperation().getOperationType().getSignature()

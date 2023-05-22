@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.cmi;
 
+import java.util.Locale;
+
 import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.ParameterException;
 
@@ -27,7 +29,7 @@ public class CheckValidator implements IParameterValidator {
     @Override
     public void validate(final String name, final String value) throws ParameterException {
         try {
-            ECheck.valueOf(value);
+            ECheck.valueOf(value.toUpperCase(Locale.getDefault()));
         } catch (final IllegalArgumentException ex) {
             throw new ParameterException(
                     String.format("Error: %s is not a valid value for parameter %s  ", value, name));

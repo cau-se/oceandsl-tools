@@ -133,8 +133,8 @@ public class StorageDeploymentModelAssembler extends AbstractModelAssembler impl
                     .get(storageSignature);
             deployedStorage.setAssemblyStorage(assemblyStorage);
             deployedComponent.getStorages().put(storageSignature, deployedStorage);
-            this.deploymentModel.getContexts().get(0).getValue().getComponents().put(deployedComponent.getSignature(),
-                    deployedComponent);
+            this.deploymentModel.getContexts().get(event.getHostname()).getComponents()
+                    .put(deployedComponent.getSignature(), deployedComponent);
             this.updateSourceModel(deployedStorage);
         }
         return deployedStorage;

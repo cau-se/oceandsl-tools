@@ -18,7 +18,7 @@ package org.oceandsl.tools.sar.stages.calls;
 import java.time.Duration;
 
 import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import kieker.analysis.architecture.recovery.events.CallEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
@@ -61,8 +61,9 @@ class OperationAndCall4StaticDataStageTest {
 
         StageTester.test(stage).and().send(callerCallee).to(stage.getInputPort()).start();
 
-        MatcherAssert.assertThat(stage.getOperationOutputPort(), StageTester.produces(firstOp, secondOp));
-        MatcherAssert.assertThat(stage.getCallOutputPort(), StageTester.produces(call));
+        MatcherAssert.assertThat("must produce two specific operation", stage.getOperationOutputPort(),
+                StageTester.produces(firstOp, secondOp));
+        MatcherAssert.assertThat("must produce one call", stage.getCallOutputPort(), StageTester.produces(call));
     }
 
 }
