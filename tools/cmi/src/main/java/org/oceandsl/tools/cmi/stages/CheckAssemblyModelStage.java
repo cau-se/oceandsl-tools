@@ -28,6 +28,9 @@ public class CheckAssemblyModelStage extends AbstractCollector<ModelRepository> 
         final AssemblyModel assemblyModel = repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
 
         GenericCheckUtils.missingSignature(assemblyModel.eAllContents(), report);
+        GenericCheckUtils.missingName(assemblyModel.eAllContents(), report);
+        GenericCheckUtils.missingPackage(assemblyModel.eAllContents(), report);
+
         GenericCheckUtils.checkReferences(AssemblyPackage.Literals.ASSEMBLY_MODEL, assemblyModel.eAllContents(),
                 report);
         this.outputPort.send(repository);

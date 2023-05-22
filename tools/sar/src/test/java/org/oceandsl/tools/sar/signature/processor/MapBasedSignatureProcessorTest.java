@@ -42,20 +42,23 @@ class MapBasedSignatureProcessorTest {
     private static final String PATH = "a/b/" + MapBasedSignatureProcessorTest.SPECIAL_FILE_NAME;
     private static final List<Path> FILE_LIST = new ArrayList<>();
     private static File file;
+    private static BufferedWriter writer;
 
     @BeforeAll
     static void createTempfile() throws IOException {
         MapBasedSignatureProcessorTest.file = File.createTempFile("MapBasedSignatureProcessor", "");
-        final BufferedWriter writer = Files.newBufferedWriter(MapBasedSignatureProcessorTest.file.toPath());
-        writer.write(String.format("%s;%s;%s\n", MapBasedSignatureProcessorTest.COMPONENT,
-                MapBasedSignatureProcessorTest.SPECIAL_FILE_NAME, MapBasedSignatureProcessorTest.OPERATION));
-        writer.close();
+        MapBasedSignatureProcessorTest.writer = Files.newBufferedWriter(MapBasedSignatureProcessorTest.file.toPath());
+        MapBasedSignatureProcessorTest.writer
+                .write(String.format("%s;%s;%s\n", MapBasedSignatureProcessorTest.COMPONENT,
+                        MapBasedSignatureProcessorTest.SPECIAL_FILE_NAME, MapBasedSignatureProcessorTest.OPERATION));
+        MapBasedSignatureProcessorTest.writer.close();
 
         MapBasedSignatureProcessorTest.FILE_LIST.add(MapBasedSignatureProcessorTest.file.toPath());
     }
 
     @AfterAll
-    static void removeTempfile() {
+    static void removeTempfile() throws IOException {
+        MapBasedSignatureProcessorTest.writer.close();
         MapBasedSignatureProcessorTest.file.delete();
     }
 

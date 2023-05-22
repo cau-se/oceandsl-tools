@@ -26,6 +26,12 @@ import kieker.model.analysismodel.type.ComponentType;
  */
 public class SimpleComponentSignatureExtractor implements IComponentSignatureExtractor {
 
+    /**
+     * Extract component name and fully qualified package name from the component signature.
+     *
+     * @param componentType
+     *            component type with a signature.
+     */
     @Override
     public void extract(final ComponentType componentType) {
         final String signature = componentType.getSignature();

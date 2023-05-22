@@ -15,8 +15,14 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages.dataflow;
 
-import org.junit.jupiter.api.Assertions;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
+
+import kieker.analysis.architecture.recovery.events.StorageEvent;
+
+import teetime.framework.test.StageTester;
+
+import org.oceandsl.analysis.code.stages.IStorageEventAssembler;
 
 /**
  *
@@ -25,9 +31,30 @@ import org.junit.jupiter.api.Test;
  */
 class StorageEventModelAssemblerStageTest {
 
+    private static final String HOST_NAME = "host";
+    private static final String COMPONENT_NAME = "component";
+    private static final String STORAGE_NAME = "storage";
+    private static final String STORAGE_TYPE = "type";
+
     @Test
     void test() {
-        Assertions.fail("Not yet implemented");
+        final StorageEventModelAssemblerStage stage = new StorageEventModelAssemblerStage(new IStorageEventAssembler() {
+
+            @Override
+            public void addStorage(final StorageEvent event) {
+                // nothing to be done here
+            }
+        });
+
+        final StorageEvent storageEvent = new StorageEvent(StorageEventModelAssemblerStageTest.HOST_NAME,
+                StorageEventModelAssemblerStageTest.COMPONENT_NAME, StorageEventModelAssemblerStageTest.STORAGE_NAME,
+                StorageEventModelAssemblerStageTest.STORAGE_TYPE);
+
+        StageTester.test(stage).and().send(storageEvent, storageEvent).to(stage.getInputPort()).start();
+
+        MatcherAssert.assertThat("Must produce 2 storage events", stage.getOutputPort(),
+                StageTester.produces(storageEvent, storageEvent));
+
     }
 
 }

@@ -49,22 +49,35 @@ public final class GenericCheckUtils {
     }
 
     public static void missingSignature(final TreeIterator<EObject> iterator, final Report report) {
+        GenericCheckUtils.missingAttribute(iterator, "signature", report);
+    }
+
+    public static void missingName(final TreeIterator<EObject> iterator, final Report report) {
+        GenericCheckUtils.missingAttribute(iterator, "name", report);
+    }
+
+    public static void missingPackage(final TreeIterator<EObject> iterator, final Report report) {
+        GenericCheckUtils.missingAttribute(iterator, "package", report);
+    }
+
+    private static void missingAttribute(final TreeIterator<EObject> iterator, final String attributeName,
+            final Report report) {
         long errorCount = 0;
         while (iterator.hasNext()) {
             final EObject object = iterator.next();
             final EClass clazz = object.eClass();
             for (final EAttribute attribute : clazz.getEAllAttributes()) {
-                if ("signature".equals(attribute.getName())) {
+                if (attributeName.equals(attribute.getName())) {
                     final Object value = object.eGet(attribute);
                     if (value == null) {
-                        report.addMessage("Object {} of type {} has signature attribute, but no value", // NOPMD
-                                print(object), clazz.getName());
+                        report.addMessage("Object %s of type %s has %s attribute, but no value", // NOPMD
+                                attributeName, GenericCheckUtils.print(object), clazz.getName());
                         errorCount++;
                     }
                 }
             }
         }
-        report.addMessage("Missing signatures in %s %s", report.getName(), errorCount);
+        report.addMessage("Missing %s in %s %s", attributeName, report.getName(), errorCount);
     }
 
     private static String print(final EObject object) {

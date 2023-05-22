@@ -41,47 +41,88 @@ import kieker.model.analysismodel.type.TypeModel;
 class StorageDeploymentModelAssemblerTest {
 
     private static final String SOURCE_LABEL = "test";
-    private static final String HOSTNAME = "host";
+    private static final String HOSTNAME_1 = "host1";
+    private static final String HOSTNAME_2 = "host2";
     private static final String COMPONENT_SIGNATUE = "test.component";
     private static final String STORAGE_SIGNATURE = "data";
     private static final String STORAGE_TYPE = "integer";
 
     @Test
     void test() {
+        // setup model
         final TypeModel typeModel = TypeFactory.eINSTANCE.createTypeModel();
         final AssemblyModel assemblyModel = AssemblyFactory.eINSTANCE.createAssemblyModel();
         final DeploymentModel deploymentModel = DeploymentFactory.eINSTANCE.createDeploymentModel();
         final SourceModel sourceModel = SourceFactory.eINSTANCE.createSourceModel();
 
+        // setup model assembler
         final StorageTypeModelAssembler typeAssembler = new StorageTypeModelAssembler(typeModel, sourceModel,
-                SOURCE_LABEL, new SimpleComponentSignatureExtractor(), new SimpleStorageSignatureExtractor());
+                StorageDeploymentModelAssemblerTest.SOURCE_LABEL, new SimpleComponentSignatureExtractor(),
+                new SimpleStorageSignatureExtractor());
         final StorageAssemblyModelAssembler assemblyAssembler = new StorageAssemblyModelAssembler(typeModel,
-                assemblyModel, sourceModel, SOURCE_LABEL);
+                assemblyModel, sourceModel, StorageDeploymentModelAssemblerTest.SOURCE_LABEL);
         final StorageDeploymentModelAssembler deploymentAssembler = new StorageDeploymentModelAssembler(assemblyModel,
-                deploymentModel, sourceModel, SOURCE_LABEL);
+                deploymentModel, sourceModel, StorageDeploymentModelAssemblerTest.SOURCE_LABEL);
 
-        final StorageEvent storageEvent = new StorageEvent(HOSTNAME, COMPONENT_SIGNATUE, STORAGE_SIGNATURE,
-                STORAGE_TYPE);
+        // send events
+        this.processStorageEvent(typeAssembler, assemblyAssembler, deploymentAssembler,
+                StorageDeploymentModelAssemblerTest.HOSTNAME_1);
+        this.processStorageEvent(typeAssembler, assemblyAssembler, deploymentAssembler,
+                StorageDeploymentModelAssemblerTest.HOSTNAME_2);
 
+        // get elements from models
+        final ComponentType componentType = typeModel.getComponentTypes()
+                .get(StorageDeploymentModelAssemblerTest.COMPONENT_SIGNATUE);
+        final AssemblyComponent assemblyComponent = assemblyModel.getComponents()
+                .get(StorageDeploymentModelAssemblerTest.COMPONENT_SIGNATUE);
+
+        final DeploymentContext context1 = deploymentModel.getContexts()
+                .get(StorageDeploymentModelAssemblerTest.HOSTNAME_1);
+        final DeployedComponent deployedComponent1 = context1.getComponents()
+                .get(StorageDeploymentModelAssemblerTest.COMPONENT_SIGNATUE);
+
+        final DeploymentContext context2 = deploymentModel.getContexts()
+                .get(StorageDeploymentModelAssemblerTest.HOSTNAME_2);
+        final DeployedComponent deployedComponent2 = context2.getComponents()
+                .get(StorageDeploymentModelAssemblerTest.COMPONENT_SIGNATUE);
+
+        // assertions
+        Assertions.assertNotNull(deployedComponent1);
+        Assertions.assertNotNull(deployedComponent2);
+
+        Assertions.assertEquals(StorageDeploymentModelAssemblerTest.COMPONENT_SIGNATUE,
+                assemblyComponent.getSignature());
+        Assertions.assertEquals(componentType, assemblyComponent.getComponentType());
+
+        Assertions.assertEquals(context1, deployedComponent1.getContext());
+        Assertions.assertEquals(context2, deployedComponent2.getContext());
+
+        this.checkStorage(assemblyComponent, deployedComponent1);
+        this.checkStorage(assemblyComponent, deployedComponent2);
+    }
+
+    private void checkStorage(final AssemblyComponent assemblyComponent, final DeployedComponent deployedComponent) {
+        final DeployedStorage storage2 = deployedComponent.getStorages()
+                .get(StorageDeploymentModelAssemblerTest.STORAGE_SIGNATURE);
+        Assertions.assertNotNull(storage2);
+        Assertions.assertNotNull(storage2.getAssemblyStorage());
+        Assertions.assertNotNull(storage2.getAssemblyStorage().getStorageType());
+        Assertions.assertEquals(storage2.getAssemblyStorage(),
+                assemblyComponent.getStorages().get(StorageDeploymentModelAssemblerTest.STORAGE_SIGNATURE));
+        Assertions.assertEquals(StorageDeploymentModelAssemblerTest.STORAGE_SIGNATURE,
+                storage2.getAssemblyStorage().getStorageType().getName());
+    }
+
+    private void processStorageEvent(final StorageTypeModelAssembler typeAssembler,
+            final StorageAssemblyModelAssembler assemblyAssembler,
+            final StorageDeploymentModelAssembler deploymentAssembler, final String hostname) {
+        final StorageEvent storageEvent = new StorageEvent(hostname,
+                StorageDeploymentModelAssemblerTest.COMPONENT_SIGNATUE,
+                StorageDeploymentModelAssemblerTest.STORAGE_SIGNATURE,
+                StorageDeploymentModelAssemblerTest.STORAGE_TYPE);
         typeAssembler.addStorage(storageEvent);
         assemblyAssembler.addStorage(storageEvent);
         deploymentAssembler.addStorage(storageEvent);
-
-        final ComponentType componentType = typeModel.getComponentTypes().get(COMPONENT_SIGNATUE);
-        final AssemblyComponent assemblyComponent = assemblyModel.getComponents().get(COMPONENT_SIGNATUE);
-        final DeploymentContext context = deploymentModel.getContexts().get(HOSTNAME);
-        final DeployedComponent deployedComponent = context.getComponents().get(COMPONENT_SIGNATUE);
-
-        Assertions.assertNotNull(deployedComponent);
-        Assertions.assertEquals(COMPONENT_SIGNATUE, assemblyComponent.getSignature());
-        Assertions.assertEquals(componentType, assemblyComponent.getComponentType());
-
-        final DeployedStorage storage = deployedComponent.getStorages().get(STORAGE_SIGNATURE);
-        Assertions.assertNotNull(storage);
-        Assertions.assertNotNull(storage.getAssemblyStorage());
-        Assertions.assertNotNull(storage.getAssemblyStorage().getStorageType());
-        Assertions.assertEquals(storage.getAssemblyStorage(), assemblyComponent.getStorages().get(STORAGE_SIGNATURE));
-        Assertions.assertEquals(STORAGE_SIGNATURE, storage.getAssemblyStorage().getStorageType().getName());
     }
 
 }

@@ -27,8 +27,12 @@ import org.oceandsl.analysis.code.stages.IStorageSignatureExtractor;
  */
 public class SimpleStorageSignatureExtractor implements IStorageSignatureExtractor {
 
+    /**
+     * Dummy function used in tests to support the {@link IStorageSignatureExtractor} interface.
+     */
     @Override
     public void extract(final StorageType storageType) {
+        // nothing to be done here, as this is used testing {@link StorageTypeModelAssembler}
     }
 
 }

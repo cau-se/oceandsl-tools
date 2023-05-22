@@ -27,6 +27,12 @@ import kieker.model.analysismodel.type.TypeModel;
 
 import org.oceandsl.analysis.code.stages.IStorageEventAssembler;
 
+/**
+ * Assembler for dataflow between operations and storages.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 public class StorageAssemblyModelAssembler extends AbstractModelAssembler implements IStorageEventAssembler {
 
     private final AssemblyModel assemblyModel;
