@@ -18,6 +18,8 @@ package org.oceandsl.tools.sar;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 
@@ -35,6 +37,12 @@ import teetime.framework.Configuration;
 import org.oceandsl.analysis.code.stages.CsvReaderStage;
 import org.oceandsl.analysis.code.stages.IStorageSignatureExtractor;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
+import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.ModuleBasedSignatureProcessor;
+import org.oceandsl.tools.sar.stages.dataflow.CleanupStorageComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.dataflow.StorageAssemblyModelAssembler;
 import org.oceandsl.tools.sar.stages.dataflow.StorageDeploymentModelAssembler;
 import org.oceandsl.tools.sar.stages.dataflow.StorageEventModelAssemblerStage;
@@ -57,6 +65,9 @@ public class TeetimeStorageConfiguration extends Configuration {
         final CsvReaderStage<Storage> storagesReader = new CsvReaderStage<>(storagePath, settings.getSplitSymbol(),
                 true, new StorageFactory());
 
+        final CleanupStorageComponentSignatureStage cleanupComponentSignatureStage = new CleanupStorageComponentSignatureStage(
+                this.createProcessors(settings.getModuleModes(), settings, logger));
+
         final StorageToStorageEventStage storageToStorageEventStage = new StorageToStorageEventStage(
                 settings.getHostname());
 
@@ -75,7 +86,8 @@ public class TeetimeStorageConfiguration extends Configuration {
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
 
         /** connecting ports. */
-        this.connectPorts(storagesReader.getOutputPort(), storageToStorageEventStage.getInputPort());
+        this.connectPorts(storagesReader.getOutputPort(), cleanupComponentSignatureStage.getInputPort());
+        this.connectPorts(cleanupComponentSignatureStage.getOutputPort(), storageToStorageEventStage.getInputPort());
         this.connectPorts(storageToStorageEventStage.getOutputPort(), storageTypeModelAssemblerStage.getInputPort());
 
         this.connectPorts(storageTypeModelAssemblerStage.getOutputPort(),
@@ -83,6 +95,54 @@ public class TeetimeStorageConfiguration extends Configuration {
         this.connectPorts(storageAssemblyModelAssemblerStage.getOutputPort(),
                 storageDeploymentModelAssemblerStage.getInputPort());
 
+    }
+
+    private List<AbstractSignatureProcessor> createProcessors(final List<EModuleMode> modes, final Settings settings,
+            final Logger logger) throws IOException {
+        final List<AbstractSignatureProcessor> processors = new ArrayList<>();
+
+        for (final EModuleMode mode : modes) {
+            switch (mode) {
+            case MAP_MODE:
+                processors.add(this.createMapBasedProcessor(logger, settings));
+                break;
+            case MODULE_MODE:
+                processors.add(this.createModuleBasedProcessor(logger, settings));
+                break;
+            case JAVA_CLASS_MODE:
+                break;
+            case PYTHON_CLASS_MODE:
+                break;
+            case FILE_MODE:
+            default:
+                processors.add(this.createFileBasedProcessor(logger, settings));
+                break;
+            }
+        }
+
+        return processors;
+    }
+
+    private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger, final Settings settings) {
+        logger.info("Module based component definition");
+        return new ModuleBasedSignatureProcessor(false);
+    }
+
+    private AbstractSignatureProcessor createFileBasedProcessor(final Logger logger,
+            final Settings parameterConfiguration) {
+        logger.info("File based component definition");
+        return new FileBasedSignatureProcessor(false);
+    }
+
+    private AbstractSignatureProcessor createMapBasedProcessor(final Logger logger, final Settings settings)
+            throws IOException {
+        if (settings.getComponentMapFiles() != null) {
+            logger.info("Map based component definition");
+            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), false, settings.getSplitSymbol());
+        } else {
+            logger.error("Missing map files for component identification.");
+            return null;
+        }
     }
 
     private IComponentSignatureExtractor createComponentSignatureExtractor(final Settings settings) {
