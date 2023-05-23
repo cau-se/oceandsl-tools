@@ -50,6 +50,7 @@ import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.ModuleBasedSignatureProcessor;
+import org.oceandsl.tools.sar.stages.dataflow.CleanupDataflowComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.dataflow.CountUniqueDataflowCallsStage;
 import org.oceandsl.tools.sar.stages.dataflow.ElementAndDataflow4StaticDataStage;
 import org.oceandsl.tools.sar.stages.dataflow.ExecutionModelDataflowAssemblerStage;
@@ -79,6 +80,9 @@ public class TeetimeDataflowConfiguration extends Configuration {
                 settings.getHostname(), repository.getModel(TypePackage.Literals.TYPE_MODEL));
         elementAndDataflow4StaticDataStage.declareActive();
 
+        final CleanupDataflowComponentSignatureStage cleanupComponentSignatureStage = new CleanupDataflowComponentSignatureStage(
+                this.createProcessors(settings.getModuleModes(), settings, logger));
+
         final DataflowConstraintStage dataflowConstraintStage = new DataflowConstraintStage();
 
         /** -- operation -- */
@@ -105,7 +109,8 @@ public class TeetimeDataflowConfiguration extends Configuration {
                 repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
 
         /** connecting ports. */
-        this.connectPorts(callerCalleeDataflowReader.getOutputPort(),
+        this.connectPorts(callerCalleeDataflowReader.getOutputPort(), cleanupComponentSignatureStage.getInputPort());
+        this.connectPorts(cleanupComponentSignatureStage.getOutputPort(),
                 elementAndDataflow4StaticDataStage.getCallerCalleeDataflowInputPort());
         this.connectPorts(storageOperationDataflowReader.getOutputPort(),
                 elementAndDataflow4StaticDataStage.getStorageOperationDataflowInputPort());

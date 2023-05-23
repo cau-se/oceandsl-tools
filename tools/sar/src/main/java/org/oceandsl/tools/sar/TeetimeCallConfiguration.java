@@ -86,6 +86,7 @@ public class TeetimeCallConfiguration extends Configuration {
 
         final OperationAndCall4StaticDataStage operationAndCallStage = new OperationAndCall4StaticDataStage(
                 settings.getHostname());
+
         /** -- call based modeling -- */
         final OperationEventModelAssemblerStage typeModelAssemblerStage = new OperationEventModelAssemblerStage(
                 new TypeModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
