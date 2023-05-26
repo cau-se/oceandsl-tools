@@ -41,7 +41,7 @@ public class Settings { // NOPMD dataclass - required to contain settings
 
     @Parameter(names = { "-sc",
             "--separation-character" }, required = false, description = "Separation character for CSV files, default is comma (,)")
-    private String splitSymbol;
+    private Character splitSymbol;
 
     @Parameter(names = { "-g",
             "--input-mode" }, required = true, converter = InputModeConverter.class, validateWith = InputModeValidator.class, description = "Input mode to be used for static analysis")
@@ -81,9 +81,9 @@ public class Settings { // NOPMD dataclass - required to contain settings
         return this.inputFile;
     }
 
-    public String getSplitSymbol() {
+    public char getSplitSymbol() {
         if (this.splitSymbol == null) {
-            return ",";
+            return ',';
         } else {
             return this.splitSymbol;
         }

@@ -17,16 +17,15 @@ package org.oceandsl.tools.fxca.stages.dataflow;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
- * Create the call table for a fortran project.
  *
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CreateCommonBlockDataflowTableStage extends AbstractTransformation<CommonBlockArgumentDataflow, Table> {
+public class CreateCommonBlockDataflowTableStage
+        extends AbstractTransformation<CommonBlockArgumentDataflow, Table<CommonBlockArgumentDataflow>> {
 
     private static final String COMMON_BLOCK = "common-block";
     private static final String PATH = "path";
@@ -34,22 +33,17 @@ public class CreateCommonBlockDataflowTableStage extends AbstractTransformation<
     private static final String OPERATION = "operation";
     private static final String DIRECTION = "direction";
 
-    private final Table callsTable;
+    private final Table<CommonBlockArgumentDataflow> callsTable;
 
     public CreateCommonBlockDataflowTableStage() {
-        this.callsTable = new Table("dataflow-cb",
-                new StringValueHandler(CreateCommonBlockDataflowTableStage.COMMON_BLOCK),
-                new StringValueHandler(CreateCommonBlockDataflowTableStage.PATH),
-                new StringValueHandler(CreateCommonBlockDataflowTableStage.MODULE),
-                new StringValueHandler(CreateCommonBlockDataflowTableStage.OPERATION),
-                new StringValueHandler(CreateCommonBlockDataflowTableStage.DIRECTION));
+        this.callsTable = new Table<>("dataflow-cb", CreateCommonBlockDataflowTableStage.COMMON_BLOCK,
+                CreateCommonBlockDataflowTableStage.PATH, CreateCommonBlockDataflowTableStage.MODULE,
+                CreateCommonBlockDataflowTableStage.OPERATION, CreateCommonBlockDataflowTableStage.DIRECTION);
     }
 
     @Override
     protected void execute(final CommonBlockArgumentDataflow commonBlockDataflow) throws Exception {
-        this.callsTable.addRow(commonBlockDataflow.getCommonBlockName(), commonBlockDataflow.getFileName(),
-                commonBlockDataflow.getModuleName(), commonBlockDataflow.getOperationName(),
-                commonBlockDataflow.getDirection().name());
+        this.callsTable.getRows().add(commonBlockDataflow);
     }
 
     @Override

@@ -18,48 +18,41 @@ package org.oceandsl.analysis.code.stages.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.csveed.api.Header;
+import org.csveed.row.HeaderImpl;
+import org.csveed.row.LineWithInfo;
+
 /**
  * @author Reiner Jung
  * @since 1.1
  */
-public class Table {
+public class Table<T> {
 
-    private final IValueHandler<?>[] valueHandlers;
-    private final List<Object[]> rows = new ArrayList<>();
     private final String name;
+    private final List<T> rows = new ArrayList<>();
+    private final Header header;
 
-    public Table(final String name, final IValueHandler<?>... valueHandlers) { // NOPMD
-                                                                               // ArrayIsStoredDirectly
-        this.valueHandlers = valueHandlers;
+    public Table(final String name, final String... columnLabels) {
         this.name = name;
+
+        final LineWithInfo line = new LineWithInfo();
+        for (final String label : columnLabels) {
+            line.addCell(label);
+        }
+
+        this.header = new HeaderImpl(line);
     }
 
-    public void addRow(final Object... values) throws ValueConversionErrorException {
-        if (values.length != this.valueHandlers.length) {
-            throw new ValueConversionErrorException(String.format("Row must have %d values, but %d values found.",
-                    this.valueHandlers.length, values.length));
-        }
-        final Object[] rowValues = new Object[this.valueHandlers.length];
-        for (int i = 0; i < values.length; i++) {
-            rowValues[i] = this.valueHandlers[i].checkValue(values[i]);
-        }
-        this.rows.add(rowValues);
-    }
-
-    public List<Object[]> getRows() {
+    public List<T> getRows() {
         return this.rows;
-    }
-
-    public IValueHandler<?> getValueHandler(final int column) {
-        return this.valueHandlers[column];
-    }
-
-    public IValueHandler<?>[] getValueHandlers() {
-        return this.valueHandlers; // NOPMD exposing internal state necessary
     }
 
     public String getName() {
         return this.name;
+    }
+
+    public Header getHeader() {
+        return this.header;
     }
 
 }

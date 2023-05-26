@@ -23,7 +23,13 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
+import kieker.analysis.architecture.recovery.ModelAssemblerStage;
+import kieker.analysis.architecture.recovery.assembler.StorageAssemblyModelAssembler;
+import kieker.analysis.architecture.recovery.assembler.StorageDeploymentModelAssembler;
+import kieker.analysis.architecture.recovery.assembler.StorageTypeModelAssembler;
+import kieker.analysis.architecture.recovery.events.StorageEvent;
 import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
+import kieker.analysis.architecture.recovery.signature.IStorageSignatureExtractor;
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyPackage;
 import kieker.model.analysismodel.deployment.DeploymentPackage;
@@ -35,7 +41,6 @@ import kieker.model.analysismodel.type.TypePackage;
 import teetime.framework.Configuration;
 
 import org.oceandsl.analysis.code.stages.CsvReaderStage;
-import org.oceandsl.analysis.code.stages.IStorageSignatureExtractor;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.EModuleMode;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
@@ -43,11 +48,7 @@ import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.ModuleBasedSignatureProcessor;
 import org.oceandsl.tools.sar.stages.dataflow.CleanupStorageComponentSignatureStage;
-import org.oceandsl.tools.sar.stages.dataflow.StorageAssemblyModelAssembler;
-import org.oceandsl.tools.sar.stages.dataflow.StorageDeploymentModelAssembler;
-import org.oceandsl.tools.sar.stages.dataflow.StorageEventModelAssemblerStage;
 import org.oceandsl.tools.sar.stages.dataflow.StorageToStorageEventStage;
-import org.oceandsl.tools.sar.stages.dataflow.StorageTypeModelAssembler;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -62,8 +63,8 @@ public class TeetimeStorageConfiguration extends Configuration {
 
         final Path storagePath = settings.getInputFile().resolve(StaticArchitectureRecoveryMain.STORAGE_FILENAME);
 
-        final CsvReaderStage<Storage> storagesReader = new CsvReaderStage<>(storagePath, settings.getSplitSymbol(),
-                true, new StorageFactory());
+        final CsvReaderStage<Storage> storagesReader = new CsvReaderStage<>(storagePath, settings.getSplitSymbol(), '"',
+                '\\', true);
 
         final CleanupStorageComponentSignatureStage cleanupComponentSignatureStage = new CleanupStorageComponentSignatureStage(
                 this.createProcessors(settings.getModuleModes(), settings, logger));
@@ -72,15 +73,15 @@ public class TeetimeStorageConfiguration extends Configuration {
                 settings.getHostname());
 
         /** -- storage -- */
-        final StorageEventModelAssemblerStage storageTypeModelAssemblerStage = new StorageEventModelAssemblerStage(
+        final ModelAssemblerStage<StorageEvent> storageTypeModelAssemblerStage = new ModelAssemblerStage<>(
                 new StorageTypeModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel(),
                         this.createComponentSignatureExtractor(settings), this.createStorageSignatureExtractor()));
-        final StorageEventModelAssemblerStage storageAssemblyModelAssemblerStage = new StorageEventModelAssemblerStage(
+        final ModelAssemblerStage<StorageEvent> storageAssemblyModelAssemblerStage = new ModelAssemblerStage<>(
                 new StorageAssemblyModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
                         repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
-        final StorageEventModelAssemblerStage storageDeploymentModelAssemblerStage = new StorageEventModelAssemblerStage(
+        final ModelAssemblerStage<StorageEvent> storageDeploymentModelAssemblerStage = new ModelAssemblerStage<>(
                 new StorageDeploymentModelAssembler(repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
                         repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
@@ -107,7 +108,7 @@ public class TeetimeStorageConfiguration extends Configuration {
                 processors.add(this.createMapBasedProcessor(logger, settings));
                 break;
             case MODULE_MODE:
-                processors.add(this.createModuleBasedProcessor(logger, settings));
+                processors.add(this.createModuleBasedProcessor(logger));
                 break;
             case JAVA_CLASS_MODE:
                 break;
@@ -115,7 +116,7 @@ public class TeetimeStorageConfiguration extends Configuration {
                 break;
             case FILE_MODE:
             default:
-                processors.add(this.createFileBasedProcessor(logger, settings));
+                processors.add(this.createFileBasedProcessor(logger));
                 break;
             }
         }
@@ -123,13 +124,12 @@ public class TeetimeStorageConfiguration extends Configuration {
         return processors;
     }
 
-    private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger, final Settings settings) {
+    private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger) {
         logger.info("Module based component definition");
         return new ModuleBasedSignatureProcessor(false);
     }
 
-    private AbstractSignatureProcessor createFileBasedProcessor(final Logger logger,
-            final Settings parameterConfiguration) {
+    private AbstractSignatureProcessor createFileBasedProcessor(final Logger logger) {
         logger.info("File based component definition");
         return new FileBasedSignatureProcessor(false);
     }
@@ -138,7 +138,8 @@ public class TeetimeStorageConfiguration extends Configuration {
             throws IOException {
         if (settings.getComponentMapFiles() != null) {
             logger.info("Map based component definition");
-            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), false, settings.getSplitSymbol());
+            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), false,
+                    String.valueOf(settings.getSplitSymbol()));
         } else {
             logger.error("Missing map files for component identification.");
             return null;

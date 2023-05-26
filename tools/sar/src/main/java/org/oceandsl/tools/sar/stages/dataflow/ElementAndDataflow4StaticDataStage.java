@@ -18,6 +18,7 @@ package org.oceandsl.tools.sar.stages.dataflow;
 import java.time.Duration;
 import java.util.Optional;
 
+import kieker.analysis.architecture.recovery.events.DataflowEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
 import kieker.analysis.architecture.recovery.events.StorageEvent;
 import kieker.model.analysismodel.type.ComponentType;

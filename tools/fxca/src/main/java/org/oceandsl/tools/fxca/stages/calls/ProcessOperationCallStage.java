@@ -29,9 +29,7 @@ import org.xml.sax.SAXException;
 import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractFilter;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranProject;
@@ -46,16 +44,15 @@ import org.oceandsl.tools.fxca.utils.Pair;
  */
 public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
 
-    private final OutputPort<Table> notFoundOutputPort = this.createOutputPort(Table.class);
+    private final OutputPort<Table<NotFoundEntry>> notFoundOutputPort = this.createOutputPort();
 
     public ProcessOperationCallStage() {
     }
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        final Table notFoundTable = new Table("not-found", new StringValueHandler("caller-path"),
-                new StringValueHandler("caller-module"), new StringValueHandler("caller-operation"),
-                new StringValueHandler("callee-operation"));
+        final Table<NotFoundEntry> notFoundTable = new Table<>("not-found", "caller-path", "caller-module",
+                "caller-operation", "callee-operation");
 
         project.getModules().values().stream().filter(module -> module != project.getDefaultModule())
                 .forEach(module -> {
@@ -69,7 +66,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
     }
 
     private void processSubroutines(final FortranProject project, final FortranModule module, final Element element,
-            final Table notFoundTable) {
+            final Table<NotFoundEntry> notFoundTable) {
         try {
             final List<Pair<String, String>> calls = NodeUtils.findSubroutineCalls(element);
             this.processCalls(project, module, calls, notFoundTable);
@@ -80,7 +77,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
     }
 
     private void processFunctions(final FortranProject project, final FortranModule module, final Element element,
-            final Table notFoundTable) {
+            final Table<NotFoundEntry> notFoundTable) {
         try {
             final List<Pair<String, String>> calls = NodeUtils.findFunctionCalls(element);
             this.processCalls(project, module, calls, notFoundTable);
@@ -92,7 +89,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
     }
 
     private void processCalls(final FortranProject project, final FortranModule module,
-            final List<Pair<String, String>> calls, final Table notFoundTable) {
+            final List<Pair<String, String>> calls, final Table<NotFoundEntry> notFoundTable) {
         calls.forEach(call -> {
             final Pair<FortranModule, FortranOperation> caller = this.findOperation(project.getModules().values(),
                     call.getFirst());
@@ -113,12 +110,9 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
                     dummyOperation.setModule(project.getDefaultModule());
                     project.getCalls().add(new Pair<>(caller, defaultCallee));
 
-                    try {
-                        notFoundTable.addRow(caller.first.getFileName(), caller.first.getModuleName(), caller.second,
-                                call.second);
-                    } catch (final ValueConversionErrorException e) {
-                        this.logger.error("Cannot add row to callee not found table: {}", e.getLocalizedMessage());
-                    }
+                    notFoundTable.getRows().add(new NotFoundEntry(caller.first.getFileName(),
+                            caller.first.getModuleName(), caller.second.getName(), call.second));
+
                     this.logger.info("Callee not found for {}::{} -> {}", caller.getFirst().getFileName(),
                             caller.getSecond(), call.getSecond());
                 }
@@ -137,7 +131,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
                 block -> block.getVariables().keySet().contains(variableName.toLowerCase(Locale.getDefault())));
     }
 
-    public OutputPort<Table> getNotFoundOutputPort() {
+    public OutputPort<Table<NotFoundEntry>> getNotFoundOutputPort() {
         return this.notFoundOutputPort;
     }
 

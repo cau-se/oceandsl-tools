@@ -53,17 +53,17 @@ public class CleanupStorageComponentSignatureStage extends AbstractFilter<Storag
         final Set<String> modules = new HashSet<>();
 
         for (int i = 0; i < paths.size(); i++) {
-            entry.component = CleanupStorageComponentSignatureStage.UNKNOWN;
-            entry.element = CleanupStorageComponentSignatureStage.UNKNOWN;
+            entry.component = UNKNOWN;
+            entry.element = UNKNOWN;
             for (final AbstractSignatureProcessor processor : this.processors) {
                 if (!processor.processSignatures(paths.get(i), componentSignatures.get(i), storageSignature)) {
                     this.errorMessageOutputPort.send(processor.getErrorMessage());
                 }
-                if (entry.component.equals(CleanupStorageComponentSignatureStage.UNKNOWN)) {
+                if (UNKNOWN.equals(entry.component)) {
                     entry.component = processor.getComponentSignature();
                 }
                 // TODO this might be obsolete
-                if (entry.element.equals(CleanupStorageComponentSignatureStage.UNKNOWN)) {
+                if (UNKNOWN.equals(entry.element)) {
                     entry.element = processor.getElementSignature();
                 }
             }

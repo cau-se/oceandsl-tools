@@ -35,24 +35,21 @@ import kieker.model.analysismodel.statistics.StatisticsPackage;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.LongValueHandler;
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
  * @author Reiner Jung
  * @since 1.1
  */
-public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, Table> {
+public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, Table<NumberOfCallsEntry>> {
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
         final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
         final StatisticsModel statisticsModel = repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
 
-        final Table result = new Table(repository.getName(), new StringValueHandler("source-file"),
-                new StringValueHandler("source-function"), new StringValueHandler("target-file"),
-                new StringValueHandler("target-function"), new LongValueHandler("calls"));
+        final Table<NumberOfCallsEntry> result = new Table<>(repository.getName(), "source-file", "source-function",
+                "target-file", "target-function", "calls");
 
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> invocationEntry : executionModel
                 .getInvocations().entrySet()) {
@@ -66,10 +63,11 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
             if (statistics != null) {
                 final Long data = (Long) statistics.getProperties().get(PropertyConstants.CALLS);
 
-                result.addRow(value.getCaller().getAssemblyOperation().getComponent().getComponentType().getSignature(),
+                result.getRows().add(new NumberOfCallsEntry(
+                        value.getCaller().getAssemblyOperation().getComponent().getComponentType().getSignature(),
                         value.getCaller().getAssemblyOperation().getOperationType().getSignature(),
                         value.getCallee().getAssemblyOperation().getComponent().getComponentType().getSignature(),
-                        value.getCallee().getAssemblyOperation().getOperationType().getSignature(), data);
+                        value.getCallee().getAssemblyOperation().getOperationType().getSignature(), data));
             } else {
                 this.logger.warn("Missing statistics for invocation {} -> {}",
                         this.getName(invocationEntry.getValue().getCaller()),

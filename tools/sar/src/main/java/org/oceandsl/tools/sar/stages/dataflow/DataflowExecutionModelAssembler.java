@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages.dataflow;
 
+import org.slf4j.Logger;
+
+import kieker.analysis.architecture.recovery.assembler.AbstractModelAssembler;
+import kieker.analysis.architecture.recovery.events.DataflowEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
 import kieker.analysis.architecture.recovery.events.StorageEvent;
 import kieker.model.analysismodel.deployment.DeployedComponent;
@@ -31,74 +35,70 @@ import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.source.SourceModel;
 
 /**
- * Create execution model dataflow entries.
- *
  * @author Reiner Jung
- * @author Yannick Illmann
- * @since 1.3.0
+ * @since 2.0.0
  */
-public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemblerStage<DataflowEvent, DataflowEvent> {
+public class DataflowExecutionModelAssembler extends AbstractModelAssembler<DataflowEvent> {
 
     private final ExecutionModel executionModel;
     private final DeploymentModel deploymentModel;
+    private final Logger logger;
 
-    public ExecutionModelDataflowAssemblerStage(final ExecutionModel executionModel,
-            final DeploymentModel deploymentModel, final SourceModel sourceModel, final String sourceLabel) {
+    public DataflowExecutionModelAssembler(final ExecutionModel executionModel, final DeploymentModel deploymentModel,
+            final SourceModel sourceModel, final String sourceLabel, final Logger logger) {
         super(sourceModel, sourceLabel);
         this.executionModel = executionModel;
         this.deploymentModel = deploymentModel;
+        this.logger = logger;
     }
 
     @Override
-    protected void execute(final DataflowEvent element) throws Exception {
-        final DeploymentContext sourceContext = this.deploymentModel.getContexts()
-                .get(element.getSource().getHostname());
+    public void assemble(final DataflowEvent event) {
+        final DeploymentContext sourceContext = this.deploymentModel.getContexts().get(event.getSource().getHostname());
         final DeployedComponent callerComponent = sourceContext.getComponents()
-                .get(element.getSource().getComponentSignature());
+                .get(event.getSource().getComponentSignature());
 
-        final DeploymentContext targetContext = this.deploymentModel.getContexts()
-                .get(element.getTarget().getHostname());
+        final DeploymentContext targetContext = this.deploymentModel.getContexts().get(event.getTarget().getHostname());
         final DeployedComponent calleeComponent = targetContext.getComponents()
-                .get(element.getTarget().getComponentSignature());
+                .get(event.getTarget().getComponentSignature());
 
-        if (element.getSource() instanceof OperationEvent) {
-            final OperationEvent sourceOperationEvent = (OperationEvent) element.getSource();
+        if (event.getSource() instanceof OperationEvent) {
+            final OperationEvent sourceOperationEvent = (OperationEvent) event.getSource();
             final DeployedOperation sourceOperation = callerComponent.getOperations()
                     .get(sourceOperationEvent.getOperationSignature());
-            if (element.getTarget() instanceof OperationEvent) {
-                final OperationEvent targetOperationEvent = (OperationEvent) element.getTarget();
+            if (event.getTarget() instanceof OperationEvent) {
+                final OperationEvent targetOperationEvent = (OperationEvent) event.getTarget();
                 final DeployedOperation targetOperation = calleeComponent.getOperations()
                         .get(targetOperationEvent.getOperationSignature());
-                this.addOperationDataflow(sourceOperation, targetOperation, element.getDirection());
-            } else if (element.getTarget() instanceof StorageEvent) {
-                final StorageEvent storageEvent = (StorageEvent) element.getTarget();
+                this.addOperationDataflow(sourceOperation, targetOperation, event.getDirection());
+            } else if (event.getTarget() instanceof StorageEvent) {
+                final StorageEvent storageEvent = (StorageEvent) event.getTarget();
                 final DeployedStorage targetStorage = calleeComponent.getStorages()
                         .get(storageEvent.getStorageSignature());
-                this.addOperationStorageDataflow(sourceOperation, targetStorage, element.getDirection());
+                this.addOperationStorageDataflow(sourceOperation, targetStorage, event.getDirection());
             } else {
                 this.logger.error("Unsupported dataflow target type {}",
-                        element.getTarget().getClass().getCanonicalName());
+                        event.getTarget().getClass().getCanonicalName());
             }
-        } else if (element.getSource() instanceof StorageEvent) {
-            final StorageEvent storageEvent = (StorageEvent) element.getSource();
+        } else if (event.getSource() instanceof StorageEvent) {
+            final StorageEvent storageEvent = (StorageEvent) event.getSource();
             final DeployedStorage sourceStorage = callerComponent.getStorages().get(storageEvent.getStorageSignature());
-            if (element.getTarget() instanceof OperationEvent) {
-                final OperationEvent targetOperationEvent = (OperationEvent) element.getTarget();
+            if (event.getTarget() instanceof OperationEvent) {
+                final OperationEvent targetOperationEvent = (OperationEvent) event.getTarget();
                 final DeployedOperation targetOperation = calleeComponent.getOperations()
                         .get(targetOperationEvent.getOperationSignature());
-                this.addOperationStorageDataflow(targetOperation, sourceStorage, this.invert(element.getDirection()));
-            } else if (element.getTarget() instanceof StorageEvent) {
-                this.logger.error("Storage to storage dataflow is not allowed {} -> {}", element.getSource().toString(),
-                        element.getTarget().toString());
+                this.addOperationStorageDataflow(targetOperation, sourceStorage, this.invert(event.getDirection()));
+            } else if (event.getTarget() instanceof StorageEvent) {
+                this.logger.error("Storage to storage dataflow is not allowed {} -> {}", event.getSource().toString(),
+                        event.getTarget().toString());
             } else {
                 this.logger.error("Unsupported dataflow target type {}",
-                        element.getTarget().getClass().getCanonicalName());
+                        event.getTarget().getClass().getCanonicalName());
             }
         } else {
-            this.logger.error("Unsupported dataflow source type {}", element.getTarget().getClass().getCanonicalName());
+            this.logger.error("Unsupported dataflow source type {}", event.getTarget().getClass().getCanonicalName());
         }
 
-        this.outputPort.send(element);
     }
 
     private void addOperationDataflow(final DeployedOperation sourceOperation, final DeployedOperation targetOperation,
@@ -107,7 +107,7 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
 
         key.setFirst(sourceOperation);
         key.setSecond(targetOperation);
-        this.addObjectToSource(key);
+        this.updateSourceModel(key);
 
         this.createOperationDataflow(key, sourceOperation, targetOperation, direction);
     }
@@ -117,7 +117,7 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
         final Tuple<DeployedOperation, DeployedStorage> key = ExecutionFactory.eINSTANCE.createTuple();
         key.setFirst(operation);
         key.setSecond(storage);
-        this.addObjectToSource(key);
+        this.updateSourceModel(key);
 
         this.createStorageDataflow(key, operation, storage, direction);
     }
@@ -142,7 +142,7 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
         storageDataflow.setDirection(direction);
 
         this.executionModel.getStorageDataflows().put(key, storageDataflow);
-        this.addObjectToSource(storageDataflow);
+        this.updateSourceModel(key);
     }
 
     /**
@@ -165,7 +165,7 @@ public class ExecutionModelDataflowAssemblerStage extends AbstractDataflowAssemb
         operationDataflow.setDirection(direction);
 
         this.executionModel.getOperationDataflows().put(key, operationDataflow);
-        this.addObjectToSource(operationDataflow);
+        this.updateSourceModel(key);
     }
 
     private EDirection invert(final EDirection direction) {

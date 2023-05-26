@@ -17,12 +17,11 @@ package org.oceandsl.tools.fxca.stages.dataflow;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranProject;
+import org.oceandsl.tools.fxca.stages.calls.CallEntry;
 import org.oceandsl.tools.fxca.utils.Pair;
 
 /**
@@ -31,7 +30,7 @@ import org.oceandsl.tools.fxca.utils.Pair;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CreateFileContentsTableStage extends AbstractTransformation<FortranProject, Table> {
+public class CreateFileContentsTableStage extends AbstractTransformation<FortranProject, Table<CallEntry>> {
 
     // TODO does not create file content table
 
@@ -44,12 +43,10 @@ public class CreateFileContentsTableStage extends AbstractTransformation<Fortran
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        final Table callsTable = new Table("calls", new StringValueHandler(CreateFileContentsTableStage.SOURCE_PATH),
-                new StringValueHandler(CreateFileContentsTableStage.SOURCE_MODULE),
-                new StringValueHandler(CreateFileContentsTableStage.SOURCE_OPERATION),
-                new StringValueHandler(CreateFileContentsTableStage.TARGET_PATH),
-                new StringValueHandler(CreateFileContentsTableStage.TARGET_MODULE),
-                new StringValueHandler(CreateFileContentsTableStage.TARGET_OPERATION));
+        final Table<CallEntry> callsTable = new Table<>("calls", CreateFileContentsTableStage.SOURCE_PATH,
+                CreateFileContentsTableStage.SOURCE_MODULE, CreateFileContentsTableStage.SOURCE_OPERATION,
+                CreateFileContentsTableStage.TARGET_PATH, CreateFileContentsTableStage.TARGET_MODULE,
+                CreateFileContentsTableStage.TARGET_OPERATION);
 
         project.getCalls().forEach(call -> {
             final Pair<FortranModule, FortranOperation> callerPair = call.getFirst();
@@ -59,12 +56,8 @@ public class CreateFileContentsTableStage extends AbstractTransformation<Fortran
                 final Operation caller = this.composeOperation(callerPair);
                 if (calleePair != null) {
                     final Operation callee = this.composeOperation(calleePair);
-                    try {
-                        callsTable.addRow(caller.path, caller.moduleName, caller.operation, callee.path,
-                                callee.moduleName, callee.operation);
-                    } catch (final ValueConversionErrorException e) {
-                        this.logger.error("Error writing calls to table: {}", e.getLocalizedMessage());
-                    }
+                    callsTable.getRows().add(new CallEntry(caller.path, caller.moduleName, caller.operation,
+                            callee.path, callee.moduleName, callee.operation));
                 } else {
                     this.logger.warn("Caller {} {} {} has no callee ", caller.path, caller.moduleName,
                             caller.operation);

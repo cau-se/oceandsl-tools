@@ -28,9 +28,6 @@ import kieker.model.analysismodel.execution.Invocation;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.IntegerValueHandler;
-import org.oceandsl.analysis.code.stages.data.LongValueHandler;
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
@@ -46,18 +43,19 @@ public class ComponentStatisticsStage extends AbstractTransformation<ModelReposi
     protected void execute(final ModelRepository element) throws Exception {
         final AssemblyModel assemblyModel = element.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
         final ExecutionModel executionModel = element.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
-        final Table table = new Table("component-statistics", new StringValueHandler("component"),
-                new IntegerValueHandler("operations"), new LongValueHandler("provided"),
-                new LongValueHandler("required"));
+        final Table<ComponentStatistics> table = new Table<>("component-statistics", "component", "operations",
+                "provided", "required");
 
         int i = 0;
         for (final AssemblyComponent component : assemblyModel.getComponents().values()) {
-            table.addRow(String.format("%s::%d", component.getComponentType().getSignature(), i++),
-                    component.getOperations().size(),
-                    this.countAllProvidedOperations(component, component.getOperations().values(),
-                            executionModel.getInvocations().values()),
-                    this.countAllRequiredOperations(component, component.getOperations().values(),
-                            executionModel.getInvocations().values()));
+            table.getRows()
+                    .add(new ComponentStatistics(
+                            String.format("%s::%d", component.getComponentType().getSignature(), i++),
+                            component.getOperations().size(),
+                            this.countAllProvidedOperations(component, component.getOperations().values(),
+                                    executionModel.getInvocations().values()),
+                            this.countAllRequiredOperations(component, component.getOperations().values(),
+                                    executionModel.getInvocations().values())));
         }
         this.outputPort.send(table);
     }
@@ -72,7 +70,7 @@ public class ComponentStatisticsStage extends AbstractTransformation<ModelReposi
             final Collection<Invocation> invocations) {
         return invocations.stream()
                 .anyMatch(invocation -> invocation.getCallee().getAssemblyOperation().equals(operation)
-                        && (invocation.getCaller().getComponent().getAssemblyComponent() != component));
+                        && invocation.getCaller().getComponent().getAssemblyComponent() != component);
     }
 
     private Long countAllRequiredOperations(final AssemblyComponent component,
@@ -84,7 +82,7 @@ public class ComponentStatisticsStage extends AbstractTransformation<ModelReposi
             final Collection<Invocation> invocations) {
         return invocations.stream()
                 .anyMatch(invocation -> invocation.getCaller().getAssemblyOperation().equals(operation)
-                        && (invocation.getCallee().getComponent().getAssemblyComponent() != component));
+                        && invocation.getCallee().getComponent().getAssemblyComponent() != component);
     }
 
 }

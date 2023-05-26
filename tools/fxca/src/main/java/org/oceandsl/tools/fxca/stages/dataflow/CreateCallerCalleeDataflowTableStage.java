@@ -17,7 +17,6 @@ package org.oceandsl.tools.fxca.stages.dataflow;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
 import org.oceandsl.tools.fxca.stages.dataflow.data.CallerCalleeDataflow;
 
@@ -27,7 +26,8 @@ import org.oceandsl.tools.fxca.stages.dataflow.data.CallerCalleeDataflow;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CreateCallerCalleeDataflowTableStage extends AbstractTransformation<CallerCalleeDataflow, Table> {
+public class CreateCallerCalleeDataflowTableStage
+        extends AbstractTransformation<CallerCalleeDataflow, Table<DataflowEntry>> {
 
     private static final String SOURCE_PATH = "caller-apth";
     private static final String SOURCE_MODULE = "caller-module";
@@ -37,25 +37,23 @@ public class CreateCallerCalleeDataflowTableStage extends AbstractTransformation
     private static final String TARGET_OPERATION = "callee-operation";
     private static final String DIRECTION = "direction";
 
-    private final Table callsTable;
+    private final Table<DataflowEntry> callsTable;
 
     public CreateCallerCalleeDataflowTableStage() {
-        this.callsTable = new Table("dataflow-cc",
-                new StringValueHandler(CreateCallerCalleeDataflowTableStage.SOURCE_PATH),
-                new StringValueHandler(CreateCallerCalleeDataflowTableStage.SOURCE_MODULE),
-                new StringValueHandler(CreateCallerCalleeDataflowTableStage.SOURCE_OPERATION),
-                new StringValueHandler(CreateCallerCalleeDataflowTableStage.TARGET_PATH),
-                new StringValueHandler(CreateCallerCalleeDataflowTableStage.TARGET_MODULE),
-                new StringValueHandler(CreateCallerCalleeDataflowTableStage.TARGET_OPERATION),
-                new StringValueHandler(CreateCallerCalleeDataflowTableStage.DIRECTION));
+        this.callsTable = new Table<>("dataflow-cc", CreateCallerCalleeDataflowTableStage.SOURCE_PATH,
+                CreateCallerCalleeDataflowTableStage.SOURCE_MODULE,
+                CreateCallerCalleeDataflowTableStage.SOURCE_OPERATION, CreateCallerCalleeDataflowTableStage.TARGET_PATH,
+                CreateCallerCalleeDataflowTableStage.TARGET_MODULE,
+                CreateCallerCalleeDataflowTableStage.TARGET_OPERATION, CreateCallerCalleeDataflowTableStage.DIRECTION);
     }
 
     @Override
     protected void execute(final CallerCalleeDataflow callerCalleeDataflow) throws Exception {
-        this.callsTable.addRow(callerCalleeDataflow.getSourceFileName(), callerCalleeDataflow.getSourceModuleName(),
-                callerCalleeDataflow.getSourceOperationName(), callerCalleeDataflow.getTargetFileName(),
-                callerCalleeDataflow.getTargetModuleName(), callerCalleeDataflow.getTargetOperatioName(),
-                callerCalleeDataflow.getDirection().name());
+        this.callsTable.getRows()
+                .add(new DataflowEntry(callerCalleeDataflow.getSourceFileName(),
+                        callerCalleeDataflow.getSourceModuleName(), callerCalleeDataflow.getSourceOperationName(),
+                        callerCalleeDataflow.getTargetFileName(), callerCalleeDataflow.getTargetModuleName(),
+                        callerCalleeDataflow.getTargetOperatioName(), callerCalleeDataflow.getDirection().name()));
     }
 
     @Override
