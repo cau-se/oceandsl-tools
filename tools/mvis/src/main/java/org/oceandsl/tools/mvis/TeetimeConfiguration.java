@@ -37,7 +37,6 @@ import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.stages.TableCsvSink;
 import org.oceandsl.analysis.metrics.entropy.AllenDeployedArchitectureGraphStage;
 import org.oceandsl.analysis.metrics.entropy.ComputeAllenComplexityMetrics;
@@ -67,7 +66,7 @@ public class TeetimeConfiguration extends Configuration {
     private static final String DISTINCT_OPERATION_DEGREE_CSV = "distinct-operation-degree.csv";
     private static final String DISTINCT_MODULE_DEGREE_CSV = "distinct-module-degree.csv";
 
-    public TeetimeConfiguration(final Settings settings) throws IOException, ValueConversionErrorException {
+    public TeetimeConfiguration(final Settings settings) throws IOException {
 
         final ModelRepositoryProducerStage readerStage = new ModelRepositoryProducerStage(settings.getInputDirectory());
 
