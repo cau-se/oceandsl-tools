@@ -70,7 +70,7 @@ public class ComponentStatisticsStage
             final Collection<Invocation> invocations) {
         return invocations.stream()
                 .anyMatch(invocation -> invocation.getCallee().getAssemblyOperation().equals(operation)
-                        && (invocation.getCaller().getComponent().getAssemblyComponent() != component));
+                        && invocation.getCaller().getComponent().getAssemblyComponent() != component);
     }
 
     private Long countAllRequiredOperations(final AssemblyComponent component,
@@ -82,7 +82,7 @@ public class ComponentStatisticsStage
             final Collection<Invocation> invocations) {
         return invocations.stream()
                 .anyMatch(invocation -> invocation.getCaller().getAssemblyOperation().equals(operation)
-                        && (invocation.getCallee().getComponent().getAssemblyComponent() != component));
+                        && invocation.getCallee().getComponent().getAssemblyComponent() != component);
     }
 
 }

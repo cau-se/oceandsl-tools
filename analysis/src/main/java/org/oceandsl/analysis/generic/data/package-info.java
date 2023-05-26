@@ -14,3 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 package org.oceandsl.analysis.generic.data;
+
+import org.oceandsl.analysis.code.stages.data.ICsvRecordFactory;
+
+/**
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
+public class StorageFactory implements ICsvRecordFactory<Storage> {
+
+    @Override
+    public Storage createRecord(final String[] headerLabels, final String[] values) {
+        final Storage storage = new Storage(values[0]);
+        for (final String file : values[1].split(",")) {
+            storage.getFiles().add(file);
+        }
+        for (final String module : values[2].split(",")) {
+            storage.getModules().add(module);
+        }
+        for (final String variable : values[3].split(",")) {
+            storage.getVariables().add(variable);
+        }
+        return storage;
+    }
+
+}
