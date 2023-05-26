@@ -28,7 +28,6 @@ import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
 
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.graph.EGraphGenerationMode;
 
 /**
@@ -55,7 +54,7 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
             return new TeetimeConfiguration(this.settings);
-        } catch (final IOException | ValueConversionErrorException e) {
+        } catch (final IOException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
         }

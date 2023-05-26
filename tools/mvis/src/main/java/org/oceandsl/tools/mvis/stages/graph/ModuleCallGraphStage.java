@@ -49,6 +49,12 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
     private final IGraphElementSelector selector;
     private final EGraphGenerationMode graphGeneratioMode;
 
+    /**
+     * @param selector
+     *            graph element selector
+     * @param graphGeneratioMode
+     *            mode of adding additional edges/nodes
+     */
     public ModuleCallGraphStage(final IGraphElementSelector selector, final EGraphGenerationMode graphGeneratioMode) {
         this.selector = selector;
         this.graphGeneratioMode = graphGeneratioMode;
@@ -79,26 +85,36 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
             }
             switch (this.graphGeneratioMode) {
             case ONLY_EDGES_FOR_NODES:
-                if (sourceSelected && targetSelected && this.selector.edgeIsSelected(invocation)) {
-                    this.addEdge(graph, invocation.getCaller().getComponent(), invocation.getCallee().getComponent(),
-                            EDirection.READ);
-                }
+                this.processInvocationsOnlyEdgesForNodes(graph, sourceSelected, targetSelected, invocation);
                 break;
             case ADD_NODES_FOR_EDGES:
-                if (this.selector.edgeIsSelected(invocation)) {
-                    if (!sourceSelected) {
-                        this.addVertexIfAbsent(graph, invocation.getCaller().getComponent());
-                    }
-                    if (!targetSelected) {
-                        this.addVertexIfAbsent(graph, invocation.getCallee().getComponent());
-                    }
-                    this.addEdge(graph, invocation.getCaller().getComponent(), invocation.getCallee().getComponent(),
-                            EDirection.READ);
-                }
+                this.processInvocationsAddNodesForEdges(graph, sourceSelected, targetSelected, invocation);
                 break;
             default:
                 throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
             }
+        }
+    }
+
+    private void processInvocationsOnlyEdgesForNodes(final IGraph<INode, IEdge> graph, final boolean sourceSelected,
+            final boolean targetSelected, final Invocation invocation) {
+        if (sourceSelected && targetSelected && this.selector.edgeIsSelected(invocation)) {
+            this.addEdge(graph, invocation.getCaller().getComponent(), invocation.getCallee().getComponent(),
+                    EDirection.READ);
+        }
+    }
+
+    private void processInvocationsAddNodesForEdges(final IGraph<INode, IEdge> graph, final boolean sourceSelected,
+            final boolean targetSelected, final Invocation invocation) {
+        if (this.selector.edgeIsSelected(invocation)) {
+            if (!sourceSelected) {
+                this.addVertexIfAbsent(graph, invocation.getCaller().getComponent());
+            }
+            if (!targetSelected) {
+                this.addVertexIfAbsent(graph, invocation.getCallee().getComponent());
+            }
+            this.addEdge(graph, invocation.getCaller().getComponent(), invocation.getCallee().getComponent(),
+                    EDirection.READ);
         }
     }
 
@@ -115,26 +131,37 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
             }
             switch (this.graphGeneratioMode) {
             case ONLY_EDGES_FOR_NODES:
-                if (sourceSelected && targetSelected && this.selector.edgeIsSelected(operationDataflow)) {
-                    this.addEdge(graph, operationDataflow.getCaller().getComponent(),
-                            operationDataflow.getCallee().getComponent(), operationDataflow.getDirection());
-                }
+                this.processOperationDataflowOnlyEdgesForNodes(graph, sourceSelected, targetSelected,
+                        operationDataflow);
                 break;
             case ADD_NODES_FOR_EDGES:
-                if (this.selector.edgeIsSelected(operationDataflow)) {
-                    if (!sourceSelected) {
-                        this.addVertexIfAbsent(graph, operationDataflow.getCaller().getComponent());
-                    }
-                    if (!targetSelected) {
-                        this.addVertexIfAbsent(graph, operationDataflow.getCallee().getComponent());
-                    }
-                    this.addEdge(graph, operationDataflow.getCaller().getComponent(),
-                            operationDataflow.getCallee().getComponent(), operationDataflow.getDirection());
-                }
+                this.processOperationDataflowAddNodesForEdges(graph, sourceSelected, targetSelected, operationDataflow);
                 break;
             default:
                 throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
             }
+        }
+    }
+
+    private void processOperationDataflowOnlyEdgesForNodes(final IGraph<INode, IEdge> graph,
+            final boolean sourceSelected, final boolean targetSelected, final OperationDataflow operationDataflow) {
+        if (sourceSelected && targetSelected && this.selector.edgeIsSelected(operationDataflow)) {
+            this.addEdge(graph, operationDataflow.getCaller().getComponent(),
+                    operationDataflow.getCallee().getComponent(), operationDataflow.getDirection());
+        }
+    }
+
+    private void processOperationDataflowAddNodesForEdges(final IGraph<INode, IEdge> graph,
+            final boolean sourceSelected, final boolean targetSelected, final OperationDataflow operationDataflow) {
+        if (this.selector.edgeIsSelected(operationDataflow)) {
+            if (!sourceSelected) {
+                this.addVertexIfAbsent(graph, operationDataflow.getCaller().getComponent());
+            }
+            if (!targetSelected) {
+                this.addVertexIfAbsent(graph, operationDataflow.getCallee().getComponent());
+            }
+            this.addEdge(graph, operationDataflow.getCaller().getComponent(),
+                    operationDataflow.getCallee().getComponent(), operationDataflow.getDirection());
         }
     }
 
@@ -150,26 +177,36 @@ public class ModuleCallGraphStage extends AbstractTransformation<ModelRepository
             }
             switch (this.graphGeneratioMode) {
             case ONLY_EDGES_FOR_NODES:
-                if (sourceSelected && targetSelected && this.selector.edgeIsSelected(storageDataflow)) {
-                    this.addEdge(graph, storageDataflow.getCode().getComponent(),
-                            storageDataflow.getStorage().getComponent(), storageDataflow.getDirection());
-                }
+                this.processStorageDataflowOnlyEdgesForNodes(graph, sourceSelected, targetSelected, storageDataflow);
                 break;
             case ADD_NODES_FOR_EDGES:
-                if (this.selector.edgeIsSelected(storageDataflow)) {
-                    if (!sourceSelected) {
-                        this.addVertexIfAbsent(graph, storageDataflow.getCode().getComponent());
-                    }
-                    if (!targetSelected) {
-                        this.addVertexIfAbsent(graph, storageDataflow.getStorage().getComponent());
-                    }
-                    this.addEdge(graph, storageDataflow.getCode().getComponent(),
-                            storageDataflow.getStorage().getComponent(), storageDataflow.getDirection());
-                }
+                this.processStorageDataflowAddNodesForEdges(graph, sourceSelected, targetSelected, storageDataflow);
                 break;
             default:
                 throw new InternalError("Illegal graph generation mode " + this.graphGeneratioMode.name());
             }
+        }
+    }
+
+    private void processStorageDataflowOnlyEdgesForNodes(final IGraph<INode, IEdge> graph, final boolean sourceSelected,
+            final boolean targetSelected, final StorageDataflow storageDataflow) {
+        if (sourceSelected && targetSelected && this.selector.edgeIsSelected(storageDataflow)) {
+            this.addEdge(graph, storageDataflow.getCode().getComponent(), storageDataflow.getStorage().getComponent(),
+                    storageDataflow.getDirection());
+        }
+    }
+
+    private void processStorageDataflowAddNodesForEdges(final IGraph<INode, IEdge> graph, final boolean sourceSelected,
+            final boolean targetSelected, final StorageDataflow storageDataflow) {
+        if (this.selector.edgeIsSelected(storageDataflow)) {
+            if (!sourceSelected) {
+                this.addVertexIfAbsent(graph, storageDataflow.getCode().getComponent());
+            }
+            if (!targetSelected) {
+                this.addVertexIfAbsent(graph, storageDataflow.getStorage().getComponent());
+            }
+            this.addEdge(graph, storageDataflow.getCode().getComponent(), storageDataflow.getStorage().getComponent(),
+                    storageDataflow.getDirection());
         }
     }
 
