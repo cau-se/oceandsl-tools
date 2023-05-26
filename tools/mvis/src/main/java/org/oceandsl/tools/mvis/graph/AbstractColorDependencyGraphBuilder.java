@@ -18,7 +18,6 @@ package org.oceandsl.tools.mvis.graph;
 import java.time.temporal.ChronoUnit;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 
 import kieker.analysis.architecture.dependency.AbstractDependencyGraphBuilder;
@@ -158,7 +157,8 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
                 : this.addVertexForEntry(); // NOCS (declarative)
         final INode targetVertex = this.addVertex(operationDataflow.getCallee());
 
-        final EMap<EObject, StatisticRecord> statisticsMap = this.statisticsModel.getStatistics();
+        // final EMap<EObject, StatisticRecord> statisticsMap =
+        // this.statisticsModel.getStatistics();
         /*
          * final Statistics statistics = statisticsMap.get(operationDataflow); final
          * EMap<EPredefinedUnits, StatisticRecord> recordMap = statistics.getStatistics(); final
@@ -184,5 +184,5 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
         }
     }
 
-    protected abstract INode addStorageVertex(final DeployedStorage deployedStorage);
+    protected abstract INode addStorageVertex(final DeployedStorage deployedStorage); // NOPMD
 }
