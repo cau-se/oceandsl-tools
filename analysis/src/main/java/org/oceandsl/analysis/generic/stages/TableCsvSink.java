@@ -28,7 +28,6 @@ import org.csveed.api.CsvClientImpl;
 import teetime.framework.AbstractConsumerStage;
 
 import org.oceandsl.analysis.code.stages.data.Table;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * Save tables with a specific row type as a csv files based on a path function.
@@ -76,7 +75,7 @@ public class TableCsvSink<T> extends AbstractConsumerStage<Table<T>> {
     }
 
     @Override
-    protected void execute(final Table<T> table) throws IOException, ValueConversionErrorException {
+    protected void execute(final Table<T> table) throws IOException {
         try (BufferedWriter outputStream = Files.newBufferedWriter(this.filePathFunction.apply(table.getName()),
                 StandardCharsets.UTF_8)) {
             final CsvClient<T> csvClient = new CsvClientImpl<>(outputStream);

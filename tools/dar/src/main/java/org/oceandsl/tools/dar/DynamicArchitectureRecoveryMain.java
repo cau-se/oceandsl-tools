@@ -31,7 +31,6 @@ import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
 
 import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.EModuleMode;
 
 /**
@@ -63,7 +62,7 @@ public class DynamicArchitectureRecoveryMain extends AbstractService<TeetimeConf
                     this.createRepositoryName(this.settings.getExperimentName(), this.settings.getModuleModes()));
 
             return new TeetimeConfiguration(this.logger, this.settings, this.repository);
-        } catch (final IOException | ValueConversionErrorException e) {
+        } catch (final IOException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
         }

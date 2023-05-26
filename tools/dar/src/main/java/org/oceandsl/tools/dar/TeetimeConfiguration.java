@@ -54,7 +54,6 @@ import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 import teetime.stage.basic.merger.Merger;
 
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.EModuleMode;
 import org.oceandsl.analysis.generic.stages.CountEventsStage;
 import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
@@ -78,7 +77,7 @@ import org.oceandsl.tools.dar.stages.OperationExecutionTraceConverterStage;
 public class TeetimeConfiguration extends Configuration {
 
     public TeetimeConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
-            throws IOException, ValueConversionErrorException {
+            throws IOException {
 
         final OutputPort<? extends IMonitoringRecord> readerPort;
 

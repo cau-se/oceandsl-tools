@@ -27,7 +27,6 @@ import kieker.common.configuration.Configuration;
 import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
 
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.aul.stages.NullNetworkCreator;
 
 /**
@@ -54,7 +53,7 @@ public class AllenUpperLimitMain extends AbstractService<TeetimeConfiguration, S
     protected TeetimeConfiguration createTeetimeConfiguration() throws ConfigurationException {
         try {
             return new TeetimeConfiguration(this.settings);
-        } catch (final IOException | ValueConversionErrorException e) {
+        } catch (final IOException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
         }
@@ -73,7 +72,7 @@ public class AllenUpperLimitMain extends AbstractService<TeetimeConfiguration, S
 
     @Override
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if ((this.settings.getInputDirectory() == null) && (this.settings.getNodes() == null)) {
+        if (this.settings.getInputDirectory() == null && this.settings.getNodes() == null) {
             this.logger.error("Must specify either a model or the number of nodes for an generated model.");
             return false;
         }

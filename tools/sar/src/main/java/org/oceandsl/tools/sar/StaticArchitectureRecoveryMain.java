@@ -32,7 +32,6 @@ import teetime.framework.Configuration;
 import teetime.framework.Execution;
 
 import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * Architecture analysis main class.
@@ -153,7 +152,7 @@ public class StaticArchitectureRecoveryMain {
     private TeetimeCallConfiguration createTeetimeCallConfiguration() throws ConfigurationException {
         try {
             return new TeetimeCallConfiguration(this.logger, this.settings, this.repository);
-        } catch (final IOException | ValueConversionErrorException e) {
+        } catch (final IOException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
         }
@@ -162,7 +161,7 @@ public class StaticArchitectureRecoveryMain {
     private TeetimeStorageConfiguration createTeetimeStorageConfiguration() throws ConfigurationException {
         try {
             return new TeetimeStorageConfiguration(this.logger, this.settings, this.repository);
-        } catch (final IOException | ValueConversionErrorException e) {
+        } catch (final IOException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
         }
@@ -171,7 +170,7 @@ public class StaticArchitectureRecoveryMain {
     private TeetimeDataflowConfiguration createTeetimeDataflowConfiguration() throws ConfigurationException {
         try {
             return new TeetimeDataflowConfiguration(this.logger, this.settings, this.repository);
-        } catch (final IOException | ValueConversionErrorException e) {
+        } catch (final IOException e) {
             this.logger.error("Error reading files. Cause: {}", e.getLocalizedMessage());
             throw new ConfigurationException(e);
         }

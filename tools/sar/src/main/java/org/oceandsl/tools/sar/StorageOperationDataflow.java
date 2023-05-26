@@ -20,15 +20,13 @@ import lombok.Setter;
 
 import kieker.model.analysismodel.execution.EDirection;
 
-import org.oceandsl.analysis.code.stages.data.ICsvRecord;
-
 /**
  * Storage operation dataflow record.
  *
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class StorageOperationDataflow implements ICsvRecord {
+public class StorageOperationDataflow {
 
     @Getter
     private final String commonBlockName;
