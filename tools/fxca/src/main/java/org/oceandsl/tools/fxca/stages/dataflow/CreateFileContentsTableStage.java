@@ -22,7 +22,6 @@ import org.oceandsl.analysis.generic.Table;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranProject;
-import org.oceandsl.tools.fxca.stages.calls.CallEntry;
 import org.oceandsl.tools.fxca.utils.Pair;
 
 /**
