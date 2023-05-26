@@ -20,14 +20,14 @@ import java.util.List;
 import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractFilter;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 
 /**
  * @author Reiner Jung
  * @since 1.1
  */
-public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee> {
+public class CleanupComponentSignatureStage extends AbstractFilter<CallerCalleeEntry> {
 
     private static final String UNKNOWN = "<unknown>";
 
@@ -40,12 +40,12 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee>
     }
 
     @Override
-    protected void execute(final CallerCallee event) throws Exception {
+    protected void execute(final CallerCalleeEntry event) throws Exception {
         final FullyQualifiedOperation caller = this.executeOperation(event.getSourcePath(), event.getSourceModule(),
                 event.getCaller());
         final FullyQualifiedOperation callee = this.executeOperation(event.getTargetPath(), event.getTargetModule(),
                 event.getCallee());
-        final CallerCallee newEvent = new CallerCallee(event.getSourcePath(), caller.component, caller.operation,
+        final CallerCalleeEntry newEvent = new CallerCalleeEntry(event.getSourcePath(), caller.component, caller.operation,
                 event.getTargetPath(), callee.component, callee.operation);
         this.outputPort.send(newEvent);
     }

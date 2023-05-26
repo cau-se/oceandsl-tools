@@ -17,7 +17,8 @@ package org.oceandsl.tools.fxca.stages.dataflow;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.code.stages.data.DataflowEntry;
+import org.oceandsl.analysis.generic.Table;
 import org.oceandsl.tools.fxca.stages.dataflow.data.CallerCalleeDataflow;
 
 /**
@@ -53,7 +54,7 @@ public class CreateCallerCalleeDataflowTableStage
                 .add(new DataflowEntry(callerCalleeDataflow.getSourceFileName(),
                         callerCalleeDataflow.getSourceModuleName(), callerCalleeDataflow.getSourceOperationName(),
                         callerCalleeDataflow.getTargetFileName(), callerCalleeDataflow.getTargetModuleName(),
-                        callerCalleeDataflow.getTargetOperatioName(), callerCalleeDataflow.getDirection().name()));
+                        callerCalleeDataflow.getTargetOperatioName(), callerCalleeDataflow.getDirection()));
     }
 
     @Override

@@ -22,6 +22,8 @@ import java.util.Set;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
 
+import org.oceandsl.analysis.generic.validators.PathIsDirectoryValidator;
+import org.oceandsl.analysis.generic.validators.PathIsModelDirectoryValidator;
 import org.oceandsl.analysis.graph.EGraphGenerationMode;
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 
@@ -33,8 +35,9 @@ import org.oceandsl.analysis.graph.IGraphElementSelector;
  */
 public class Settings { // NOPMD
 
-    @Parameter(names = { "-i",
-            "--input" }, required = true, converter = PathConverter.class, description = "Input model directory")
+    @Parameter(names = { "-i", "--input" }, required = true, converter = PathConverter.class, validateWith = {
+            PathIsDirectoryValidator.class,
+            PathIsModelDirectoryValidator.class }, description = "Input model directory")
     private Path inputDirectory;
 
     @Parameter(names = { "-o",

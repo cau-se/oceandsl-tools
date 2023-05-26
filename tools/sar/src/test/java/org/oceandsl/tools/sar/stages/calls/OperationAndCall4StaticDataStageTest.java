@@ -25,7 +25,7 @@ import kieker.analysis.architecture.recovery.events.OperationEvent;
 
 import teetime.framework.test.StageTester;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 
 /**
  * Testing operation and call data stage..
@@ -48,7 +48,7 @@ class OperationAndCall4StaticDataStageTest {
         final OperationAndCall4StaticDataStage stage = new OperationAndCall4StaticDataStage(
                 OperationAndCall4StaticDataStageTest.HOSTNAME);
 
-        final CallerCallee callerCallee = new CallerCallee(OperationAndCall4StaticDataStageTest.SOURCE_PATH,
+        final CallerCalleeEntry callerCallee = new CallerCalleeEntry(OperationAndCall4StaticDataStageTest.SOURCE_PATH,
                 OperationAndCall4StaticDataStageTest.SOURCE_MODULE, OperationAndCall4StaticDataStageTest.CALLER,
                 OperationAndCall4StaticDataStageTest.TARGET_PATH, OperationAndCall4StaticDataStageTest.TARGET_MODULE,
                 OperationAndCall4StaticDataStageTest.CALLEE);

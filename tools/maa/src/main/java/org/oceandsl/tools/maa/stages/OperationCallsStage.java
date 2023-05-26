@@ -24,7 +24,7 @@ import kieker.model.analysismodel.execution.ExecutionPackage;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.generic.Table;
 
 /**
  * @author Reiner Jung

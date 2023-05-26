@@ -17,7 +17,8 @@ package org.oceandsl.tools.fxca.stages.calls;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
+import org.oceandsl.analysis.generic.Table;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranProject;
@@ -29,7 +30,7 @@ import org.oceandsl.tools.fxca.utils.Pair;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CreateCallTableStage extends AbstractTransformation<FortranProject, Table<CallEntry>> {
+public class CreateCallTableStage extends AbstractTransformation<FortranProject, Table<CallerCalleeEntry>> {
 
     private static final String SOURCE_PATH = "caller-path";
     private static final String SOURCE_MODULE = "caller-module";
@@ -40,7 +41,7 @@ public class CreateCallTableStage extends AbstractTransformation<FortranProject,
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        final Table<CallEntry> callsTable = new Table<>("calls", CreateCallTableStage.SOURCE_PATH,
+        final Table<CallerCalleeEntry> callsTable = new Table<>("calls", CreateCallTableStage.SOURCE_PATH,
                 CreateCallTableStage.SOURCE_MODULE, CreateCallTableStage.SOURCE_OPERATION,
                 CreateCallTableStage.TARGET_PATH, CreateCallTableStage.TARGET_MODULE,
                 CreateCallTableStage.TARGET_OPERATION);
@@ -53,8 +54,8 @@ public class CreateCallTableStage extends AbstractTransformation<FortranProject,
                 final Operation caller = this.composeOperation(callerPair);
                 if (calleePair != null) {
                     final Operation callee = this.composeOperation(calleePair);
-                    callsTable.getRows().add(new CallEntry(caller.path, caller.moduleName, caller.operation, callee.path,
-                            callee.moduleName, callee.operation));
+                    callsTable.getRows().add(new CallerCalleeEntry(caller.path, caller.moduleName, caller.operation,
+                            callee.path, callee.moduleName, callee.operation));
                 } else {
                     this.logger.warn("Caller {} {} {} has no callee ", caller.path, caller.moduleName,
                             caller.operation);

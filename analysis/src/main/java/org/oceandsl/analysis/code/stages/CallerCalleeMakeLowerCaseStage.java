@@ -19,7 +19,7 @@ import java.util.Locale;
 
 import teetime.stage.basic.AbstractFilter;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 
 /**
  * Make names all lower case when case insensitive is requested.
@@ -28,7 +28,7 @@ import org.oceandsl.analysis.code.stages.data.CallerCallee;
  * @since 1.0
  *
  */
-public class CallerCalleeMakeLowerCaseStage extends AbstractFilter<CallerCallee> {
+public class CallerCalleeMakeLowerCaseStage extends AbstractFilter<CallerCalleeEntry> {
 
     private final boolean caseInsensitive;
 
@@ -37,8 +37,8 @@ public class CallerCalleeMakeLowerCaseStage extends AbstractFilter<CallerCallee>
     }
 
     @Override
-    protected void execute(final CallerCallee element) throws Exception {
-        final CallerCallee result = new CallerCallee(this.convertToLowerCase(element.getSourcePath()),
+    protected void execute(final CallerCalleeEntry element) throws Exception {
+        final CallerCalleeEntry result = new CallerCalleeEntry(this.convertToLowerCase(element.getSourcePath()),
                 this.convertToLowerCase(element.getSourceModule()), this.convertToLowerCase(element.getCaller()),
                 this.convertToLowerCase(element.getTargetPath()), this.convertToLowerCase(element.getTargetModule()),
                 this.convertToLowerCase(element.getCallee()));

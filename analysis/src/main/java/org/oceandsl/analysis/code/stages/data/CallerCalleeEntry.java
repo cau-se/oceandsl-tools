@@ -20,7 +20,7 @@ package org.oceandsl.analysis.code.stages.data;
  * @since 1.0
  *
  */
-public class CallerCallee {
+public class CallerCalleeEntry {
 
     private String sourcePath;
     private String targetPath;
@@ -29,7 +29,7 @@ public class CallerCallee {
     private final String caller;
     private final String callee;
 
-    public CallerCallee(final String sourcePath, final String sourceModule, final String caller,
+    public CallerCalleeEntry(final String sourcePath, final String sourceModule, final String caller,
             final String targetPath, final String targetModule, final String callee) {
         this.sourcePath = sourcePath;
         this.targetPath = targetPath;
@@ -73,8 +73,8 @@ public class CallerCallee {
 
     @Override
     public boolean equals(final Object object) {
-        if (object instanceof CallerCallee) {
-            final CallerCallee other = (CallerCallee) object;
+        if (object instanceof CallerCalleeEntry) {
+            final CallerCalleeEntry other = (CallerCalleeEntry) object;
             return this.checkString(this.sourcePath, other.getSourcePath())
                     && this.checkString(this.sourceModule, other.getSourceModule())
                     && this.checkString(this.caller, other.getCaller())
