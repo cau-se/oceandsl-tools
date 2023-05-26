@@ -31,11 +31,11 @@ import teetime.framework.AbstractProducerStage;
  * @author Reiner Jung
  * @since 1.1
  */
-public class CSVFunctionMapperStage extends AbstractProducerStage<Map<String, String>> {
+public class CsvFunctionMapperStage extends AbstractProducerStage<Map<String, String>> {
 
     private final List<Path> paths;
 
-    public CSVFunctionMapperStage(final List<Path> paths) {
+    public CsvFunctionMapperStage(final List<Path> paths) {
         this.paths = paths;
     }
 

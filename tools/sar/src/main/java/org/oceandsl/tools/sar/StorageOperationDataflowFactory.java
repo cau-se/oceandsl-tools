@@ -19,6 +19,12 @@ import kieker.model.analysismodel.execution.EDirection;
 
 import org.oceandsl.analysis.code.stages.data.ICsvRecordFactory;
 
+/**
+ * CsvReader factory
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 public class StorageOperationDataflowFactory implements ICsvRecordFactory<StorageOperationDataflow> {
 
     @Override

@@ -17,6 +17,10 @@ package org.oceandsl.tools.sar;
 
 import org.oceandsl.analysis.code.stages.data.ICsvRecordFactory;
 
+/**
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 public class StorageFactory implements ICsvRecordFactory<Storage> {
 
     @Override

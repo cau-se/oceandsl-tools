@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kieker.analysis.architecture.dependency.PropertyConstants;
-import kieker.analysis.architecture.recovery.events.OperationCallDurationEvent;
+import kieker.analysis.architecture.recovery.events.DeployedOperationCallEvent;
 import kieker.analysis.statistics.StatisticsDecoratorStage;
 import kieker.analysis.statistics.calculating.CountCalculator;
 import kieker.model.analysismodel.deployment.DeployedOperation;
@@ -39,14 +39,22 @@ import kieker.model.analysismodel.statistics.StatisticsModel;
  * @author Reiner Jung
  * @since 1.0
  */
-public class CountUniqueCallsStage extends StatisticsDecoratorStage<OperationCallDurationEvent> {
+public class CountUniqueCallsStage extends StatisticsDecoratorStage<DeployedOperationCallEvent> {
 
+    /**
+     * Count unique calls.
+     *
+     * @param statisticsModel
+     *            statistics model for the statistics
+     * @param executionModel
+     *            model containing the calls
+     */
     public CountUniqueCallsStage(final StatisticsModel statisticsModel, final ExecutionModel executionModel) {
         super(statisticsModel, new CountCalculator<>(PropertyConstants.CALLS),
                 CountUniqueCallsStage.createForInvocation(executionModel));
     }
 
-    public static final Function<OperationCallDurationEvent, EObject> createForInvocation(
+    private static Function<DeployedOperationCallEvent, EObject> createForInvocation(
             final ExecutionModel executionModel) {
         return operationCall -> {
             final Invocation result = CountUniqueCallsStage.getValue(executionModel, operationCall.getOperationCall());

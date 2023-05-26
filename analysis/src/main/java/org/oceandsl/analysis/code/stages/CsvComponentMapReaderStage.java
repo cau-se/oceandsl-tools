@@ -23,7 +23,6 @@ import java.util.Locale;
 
 import teetime.framework.AbstractProducerStage;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
@@ -34,7 +33,7 @@ import org.oceandsl.analysis.code.stages.data.Table;
  * @author Reiner Jung
  * @since 1.0
  */
-public class CsvComponentMapReaderStage extends AbstractProducerStage<Table> {
+public class CsvComponentMapReaderStage extends AbstractProducerStage<Table<ComponentMapEntry>> {
 
     private final BufferedReader reader;
     private final String seperator;
@@ -57,14 +56,13 @@ public class CsvComponentMapReaderStage extends AbstractProducerStage<Table> {
 
     @Override
     protected void execute() throws Exception {
-        final Table resultTable = new Table("Component-Map", new StringValueHandler("Component"),
-                new StringValueHandler("File"), new StringValueHandler("Function"));
+        final Table<ComponentMapEntry> resultTable = new Table<>("Component-Map", "component", "file", "function");
         String line;
         while ((line = this.reader.readLine()) != null) {
             final String[] values = line.split(this.seperator);
             if (values.length == 3) {
-                resultTable.addRow(values[0].trim(), values[1].trim().toLowerCase(Locale.ROOT),
-                        values[2].trim().toLowerCase(Locale.ROOT));
+                resultTable.getRows().add(new ComponentMapEntry(values[0].trim(),
+                        values[1].trim().toLowerCase(Locale.ROOT), values[2].trim().toLowerCase(Locale.ROOT)));
             } else {
                 this.logger.error("Entry incomplete '{}'", line.trim());
             }

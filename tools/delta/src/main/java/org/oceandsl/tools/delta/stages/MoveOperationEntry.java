@@ -13,26 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar.stages.dataflow;
+package org.oceandsl.tools.delta.stages;
 
-import kieker.model.analysismodel.type.StorageType;
-
-import org.oceandsl.analysis.code.stages.IStorageSignatureExtractor;
+import lombok.Getter;
 
 /**
- * Dummy signature extractor for storage signatures.
+ * @author reiner
  *
- * @author Reiner Jung
- * @since 1.3.0
  */
-public class SimpleStorageSignatureExtractor implements IStorageSignatureExtractor {
+public class MoveOperationEntry {
 
-    /**
-     * Dummy function used in tests to support the {@link IStorageSignatureExtractor} interface.
-     */
-    @Override
-    public void extract(final StorageType storageType) {
-        // nothing to be done here, as this is used testing {@link StorageTypeModelAssembler}
+    @Getter
+    private final String sourceComponentName;
+
+    @Getter
+    private final String targetComponentName;
+
+    @Getter
+    private final String operationName;
+
+    public MoveOperationEntry(final String sourceComponentName, final String targetComponentName, final String operationName) {
+        this.sourceComponentName = sourceComponentName;
+        this.targetComponentName = targetComponentName;
+        this.operationName = operationName;
     }
 
 }

@@ -17,9 +17,7 @@ package org.oceandsl.tools.fxca.stages.calls;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranProject;
@@ -31,7 +29,7 @@ import org.oceandsl.tools.fxca.utils.Pair;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CreateCallTableStage extends AbstractTransformation<FortranProject, Table> {
+public class CreateCallTableStage extends AbstractTransformation<FortranProject, Table<CallEntry>> {
 
     private static final String SOURCE_PATH = "caller-path";
     private static final String SOURCE_MODULE = "caller-module";
@@ -42,12 +40,10 @@ public class CreateCallTableStage extends AbstractTransformation<FortranProject,
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        final Table callsTable = new Table("calls", new StringValueHandler(CreateCallTableStage.SOURCE_PATH),
-                new StringValueHandler(CreateCallTableStage.SOURCE_MODULE),
-                new StringValueHandler(CreateCallTableStage.SOURCE_OPERATION),
-                new StringValueHandler(CreateCallTableStage.TARGET_PATH),
-                new StringValueHandler(CreateCallTableStage.TARGET_MODULE),
-                new StringValueHandler(CreateCallTableStage.TARGET_OPERATION));
+        final Table<CallEntry> callsTable = new Table<>("calls", CreateCallTableStage.SOURCE_PATH,
+                CreateCallTableStage.SOURCE_MODULE, CreateCallTableStage.SOURCE_OPERATION,
+                CreateCallTableStage.TARGET_PATH, CreateCallTableStage.TARGET_MODULE,
+                CreateCallTableStage.TARGET_OPERATION);
 
         project.getCalls().forEach(call -> {
             final Pair<FortranModule, FortranOperation> callerPair = call.getFirst();
@@ -57,12 +53,8 @@ public class CreateCallTableStage extends AbstractTransformation<FortranProject,
                 final Operation caller = this.composeOperation(callerPair);
                 if (calleePair != null) {
                     final Operation callee = this.composeOperation(calleePair);
-                    try {
-                        callsTable.addRow(caller.path, caller.moduleName, caller.operation, callee.path,
-                                callee.moduleName, callee.operation);
-                    } catch (final ValueConversionErrorException e) {
-                        this.logger.error("Error writing calls to table: {}", e.getLocalizedMessage());
-                    }
+                    callsTable.getRows().add(new CallEntry(caller.path, caller.moduleName, caller.operation, callee.path,
+                            callee.moduleName, callee.operation));
                 } else {
                     this.logger.warn("Caller {} {} {} has no callee ", caller.path, caller.moduleName,
                             caller.operation);

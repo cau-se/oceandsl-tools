@@ -24,10 +24,7 @@ import kieker.model.analysismodel.execution.ExecutionPackage;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.IntegerValueHandler;
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
  * @author Reiner Jung
@@ -38,9 +35,8 @@ public class OperationCallsStage extends AbstractTransformation<ModelRepository,
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
-        final Table result = new Table("operation-calls", new StringValueHandler("caller-component"),
-                new StringValueHandler("caller-operation"), new StringValueHandler("callee-component"),
-                new StringValueHandler("callee-operation"), new IntegerValueHandler("calls"));
+        final Table<CallEntry> result = new Table<>("operation-calls", "caller-component", "caller-operation",
+                "callee-component", "callee-operation", "calls");
 
         final ExecutionModel executionModel = element.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
 
@@ -48,13 +44,9 @@ public class OperationCallsStage extends AbstractTransformation<ModelRepository,
             final DeployedOperation caller = invocation.getCaller();
             final DeployedOperation callee = invocation.getCallee();
             final Integer numOfCalls = 0;
-            try {
-                result.addRow(this.getComponentName(caller),
-                        caller.getAssemblyOperation().getOperationType().getSignature(), this.getComponentName(callee),
-                        callee.getAssemblyOperation().getOperationType().getSignature(), numOfCalls);
-            } catch (final ValueConversionErrorException e) {
-                this.logger.error("Value conversion failed.", e);
-            }
+            result.getRows().add(new CallEntry(this.getComponentName(caller),
+                    caller.getAssemblyOperation().getOperationType().getSignature(), this.getComponentName(callee),
+                    callee.getAssemblyOperation().getOperationType().getSignature(), numOfCalls));
         });
 
         this.outputPort.send(result);

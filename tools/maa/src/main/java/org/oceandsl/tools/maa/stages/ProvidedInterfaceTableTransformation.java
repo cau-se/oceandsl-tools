@@ -32,7 +32,6 @@ import kieker.model.analysismodel.type.TypePackage;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
@@ -41,13 +40,13 @@ import org.oceandsl.analysis.code.stages.data.Table;
  * @author Reiner Jung
  * @since 1.2
  */
-public class ProvidedInterfaceTableTransformation extends AbstractTransformation<ModelRepository, Table> {
+public class ProvidedInterfaceTableTransformation
+        extends AbstractTransformation<ModelRepository, Table<ProvidedInterfaceEntry>> {
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
-        final Table table = new Table("interfaces", new StringValueHandler("component-type"),
-                new StringValueHandler("provided-interface"), new StringValueHandler("operation"),
-                new StringValueHandler("caller-component-types"));
+        final Table<ProvidedInterfaceEntry> table = new Table<>("interfaces", "component-type", "provided-interface",
+                "operation", "caller-component-types");
         final TypeModel typeModel = element.getModel(TypePackage.Literals.TYPE_MODEL);
         final Map<ProvidedInterfaceType, Set<RequiredInterfaceType>> providedToRequiredMap = this
                 .createLookupProvidedInterfaceType(typeModel.getComponentTypes().values());
@@ -59,8 +58,8 @@ public class ProvidedInterfaceTableTransformation extends AbstractTransformation
                         .collect(Collectors.joining(","));
 
                 for (final OperationType operation : providedInterfaceType.getProvidedOperationTypes().values()) {
-                    table.addRow(componentType.getSignature(), providedInterfaceType.getSignature(),
-                            operation.getSignature(), requiredString);
+                    table.getRows().add(new ProvidedInterfaceEntry(componentType.getSignature(),
+                            providedInterfaceType.getSignature(), operation.getSignature(), requiredString));
                 }
             }
         }

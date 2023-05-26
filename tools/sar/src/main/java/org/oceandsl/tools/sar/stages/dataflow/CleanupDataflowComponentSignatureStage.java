@@ -52,16 +52,16 @@ public class CleanupDataflowComponentSignatureStage extends AbstractFilter<Calle
 
     private Entry executeEntry(final String path, final String componentSignature, final String operationSignature) {
         final Entry entry = new Entry();
-        entry.component = CleanupDataflowComponentSignatureStage.UNKNOWN;
-        entry.element = CleanupDataflowComponentSignatureStage.UNKNOWN;
+        entry.component = UNKNOWN;
+        entry.element = UNKNOWN;
         for (final AbstractSignatureProcessor processor : this.processors) {
             if (!processor.processSignatures(path, componentSignature, operationSignature)) {
                 this.errorMessageOutputPort.send(processor.getErrorMessage());
             }
-            if (entry.component.equals(CleanupDataflowComponentSignatureStage.UNKNOWN)) {
+            if (UNKNOWN.equals(entry.component)) {
                 entry.component = processor.getComponentSignature();
             }
-            if (entry.element.equals(CleanupDataflowComponentSignatureStage.UNKNOWN)) {
+            if (UNKNOWN.equals(entry.element)) {
                 entry.element = processor.getElementSignature();
             }
         }

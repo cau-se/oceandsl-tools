@@ -21,8 +21,6 @@ import kieker.analysis.generic.graph.INode;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.LongValueHandler;
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
 
 /**
@@ -32,16 +30,17 @@ import org.oceandsl.analysis.code.stages.data.Table;
  * @author Reiner Jung
  * @since 1.1
  */
-public class ModuleNodeCountCouplingStage extends AbstractTransformation<IGraph<INode, IEdge>, Table> {
+public class ModuleNodeCountCouplingStage
+        extends AbstractTransformation<IGraph<INode, IEdge>, Table<ModuleNodeCountCouplingEntry>> {
 
     @Override
     protected void execute(final IGraph<INode, IEdge> graph) throws Exception {
-        final Table result = new Table(graph.getLabel(), new StringValueHandler("module"),
-                new LongValueHandler("in-edges"), new LongValueHandler("out-edges"));
+        final Table<ModuleNodeCountCouplingEntry> result = new Table<>(graph.getLabel(), "module", "in-edges",
+                "out-edges");
 
         for (final INode vertex : graph.getGraph().nodes()) {
-            result.addRow(this.getFilepath(vertex.getId()), graph.getGraph().inDegree(vertex),
-                    graph.getGraph().outDegree(vertex));
+            result.getRows().add(new ModuleNodeCountCouplingEntry(this.getFilepath(vertex.getId()),
+                    graph.getGraph().inDegree(vertex), graph.getGraph().outDegree(vertex)));
 
         }
 

@@ -17,9 +17,7 @@ package org.oceandsl.tools.fxca.stages.calls;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.fxca.model.FortranProject;
 
 /**
@@ -30,20 +28,15 @@ import org.oceandsl.tools.fxca.model.FortranProject;
  *
  * @since 1.3.0
  */
-public class CreateOperationTableStage extends AbstractTransformation<FortranProject, Table> {
+public class CreateOperationTableStage extends AbstractTransformation<FortranProject, Table<FileOperationEntry>> {
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        final Table callsTable = new Table("operation", new StringValueHandler("file"),
-                new StringValueHandler("operation"));
+        final Table<FileOperationEntry> callsTable = new Table<>("operation", "file", "operation");
         project.getModules().values().forEach(module -> {
             final String path = module.getFileName();
             module.getOperations().values().forEach(operation -> {
-                try {
-                    callsTable.addRow(path, operation.getName());
-                } catch (final ValueConversionErrorException e) {
-                    this.logger.error("Error writing values to operation table: {}", e.getLocalizedMessage());
-                }
+                callsTable.getRows().add(new FileOperationEntry(path, operation.getName()));
             });
         });
 

@@ -47,10 +47,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
     private final OutputPort<CommonBlockEntry> commonBlockOutputPort = this.createOutputPort(CommonBlockEntry.class);
     private final OutputPort<IDataflowEntry> dataflowOutputPort = this.createOutputPort(IDataflowEntry.class);
 
-    private final String defaultModuleName;
-
-    public DataFlowAnalysisStage(final String defaultModuleName) {
-        this.defaultModuleName = defaultModuleName;
+    public DataFlowAnalysisStage() {
     }
 
     public OutputPort<CommonBlockEntry> getCommonBlockOutputPort() {
@@ -564,7 +561,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
     }
 
     private int computeArgumentIndex(final FortranOperation operation, final int argumentIndex) {
-        if (operation.isVariableArguments() && (argumentIndex >= operation.getParameters().size())) {
+        if (operation.isVariableArguments() && argumentIndex >= operation.getParameters().size()) {
             return operation.getParameters().size() - 1;
         } else {
             return argumentIndex;

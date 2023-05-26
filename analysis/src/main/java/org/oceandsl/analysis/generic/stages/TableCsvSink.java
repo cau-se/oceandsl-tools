@@ -22,29 +22,34 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Function;
 
+import org.csveed.api.CsvClient;
+import org.csveed.api.CsvClientImpl;
+
 import teetime.framework.AbstractConsumerStage;
 
-import org.oceandsl.analysis.code.stages.data.IValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 
 /**
- * Save a table as a csv file.
+ * Save tables with a specific row type as a csv files based on a path function.
+ *
+ * @param <T>
+ *            row type
  *
  * @author Reiner Jung
  * @since 1.1
  */
-public class TableCSVSink extends AbstractConsumerStage<Table> {
+public class TableCsvSink<T> extends AbstractConsumerStage<Table<T>> {
 
     private final Function<String, Path> filePathFunction;
     private final boolean header;
 
-    public TableCSVSink(final Function<String, Path> filePathFunction, final boolean header) {
+    public TableCsvSink(final Function<String, Path> filePathFunction, final boolean header) {
         this.header = header;
         this.filePathFunction = filePathFunction;
     }
 
-    public TableCSVSink(final Path filePath, final String filename, final boolean header) {
+    public TableCsvSink(final Path filePath, final String filename, final boolean header) {
         this.header = header;
         this.filePathFunction = new Function<>() {
 
@@ -55,7 +60,7 @@ public class TableCSVSink extends AbstractConsumerStage<Table> {
         };
     }
 
-    public TableCSVSink(final Path filePath, final boolean header) {
+    public TableCsvSink(final Path filePath, final boolean header) {
         this.header = header;
         this.filePathFunction = new Function<>() {
 
@@ -66,45 +71,20 @@ public class TableCSVSink extends AbstractConsumerStage<Table> {
         };
     }
 
-    public TableCSVSink(final Path filePath, final String filename) {
+    public TableCsvSink(final Path filePath, final String filename) {
         this(filePath, filename, false);
     }
 
     @Override
-    protected void execute(final Table table) throws IOException, ValueConversionErrorException {
+    protected void execute(final Table<T> table) throws IOException, ValueConversionErrorException {
         try (BufferedWriter outputStream = Files.newBufferedWriter(this.filePathFunction.apply(table.getName()),
                 StandardCharsets.UTF_8)) {
+            final CsvClient<T> csvClient = new CsvClientImpl<>(outputStream);
             if (this.header) {
-                this.printHeader(outputStream, table);
+                csvClient.writeHeader(table.getHeader());
             }
-
-            this.printRows(outputStream, table);
-        }
-    }
-
-    private void printHeader(final BufferedWriter outputStream, final Table table) throws IOException {
-        final IValueHandler<?>[] valueHandlers = table.getValueHandlers();
-        for (int i = 0; i < valueHandlers.length; i++) {
-            outputStream.write(valueHandlers[i].getLabel());
-            if (i < valueHandlers.length - 1) {
-                outputStream.write(";");
-            } else {
-                outputStream.write("\n");
-            }
-        }
-    }
-
-    private void printRows(final BufferedWriter outputStream, final Table table)
-            throws IOException, ValueConversionErrorException {
-        for (final Object[] row : table.getRows()) {
-            for (int i = 0; i < row.length; i++) {
-                outputStream.write(table.getValueHandler(i).convertToString(row[i]));
-                if (i < row.length - 1) {
-                    outputStream.write(";");
-                } else {
-                    outputStream.write("\n");
-                }
-            }
+            csvClient.writeBeans(table.getRows());
+            csvClient.isFinished();
         }
     }
 }
