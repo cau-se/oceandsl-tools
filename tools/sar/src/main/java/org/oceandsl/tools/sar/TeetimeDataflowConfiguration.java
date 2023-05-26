@@ -44,7 +44,6 @@ import kieker.model.analysismodel.type.TypePackage;
 import teetime.framework.Configuration;
 
 import org.oceandsl.analysis.code.stages.CsvReaderStage;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.EModuleMode;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
@@ -64,7 +63,7 @@ import org.oceandsl.tools.sar.stages.dataflow.ElementAndDataflow4StaticDataStage
 public class TeetimeDataflowConfiguration extends Configuration {
 
     public TeetimeDataflowConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
-            throws IOException, ValueConversionErrorException {
+            throws IOException {
 
         final Path callerCalleeDataflowPath = settings.getInputFile()
                 .resolve(StaticArchitectureRecoveryMain.CALLER_CALLEE_DATAFLOW_FILENAME);

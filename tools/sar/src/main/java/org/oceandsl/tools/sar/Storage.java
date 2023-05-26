@@ -20,14 +20,12 @@ import java.util.List;
 
 import lombok.Getter;
 
-import org.oceandsl.analysis.code.stages.data.ICsvRecord;
-
 /**
  * @author Reiner Jung
  * @since 1.3.0
  *
  */
-public class Storage implements ICsvRecord {
+public class Storage {
 
     @Getter
     private final String name;

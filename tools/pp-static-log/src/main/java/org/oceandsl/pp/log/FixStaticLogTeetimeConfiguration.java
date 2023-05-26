@@ -37,7 +37,7 @@ public class FixStaticLogTeetimeConfiguration extends Configuration {
                 parameterConfiguration.getMapPaths());
         final CorrectCallsStage correctCallsStage = new CorrectCallsStage();
         correctCallsStage.declareActive();
-        final CSVWriterStage writeCsvStage = new CSVWriterStage(parameterConfiguration.getOutputFile().toPath());
+        final CsvWriterStage writeCsvStage = new CsvWriterStage(parameterConfiguration.getOutputFile().toPath());
 
         this.connectPorts(readCsvStage.getOutputPort(), correctCallsStage.getInputPort());
         this.connectPorts(functionMapperStage.getOutputPort(), correctCallsStage.getMapInputPort());
