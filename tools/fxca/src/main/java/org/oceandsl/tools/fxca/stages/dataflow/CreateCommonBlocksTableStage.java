@@ -17,7 +17,6 @@ package org.oceandsl.tools.fxca.stages.dataflow;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
 import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockEntry;
 
@@ -27,13 +26,12 @@ import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockEntry;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CreateCommonBlocksTableStage extends AbstractTransformation<CommonBlockEntry, Table> {
+public class CreateCommonBlocksTableStage extends AbstractTransformation<CommonBlockEntry, Table<GlobalDataEntry>> {
 
     private static final String COMMON_BLOCKS = "common-blocks";
 
-    private final Table commonBlocksTable = new Table(CreateCommonBlocksTableStage.COMMON_BLOCKS,
-            new StringValueHandler("common-block"), new StringValueHandler("files"), new StringValueHandler("modules"),
-            new StringValueHandler("variables"));
+    private final Table<GlobalDataEntry> commonBlocksTable = new Table<>(CreateCommonBlocksTableStage.COMMON_BLOCKS,
+            "common-block", "files", "modules", "variables");
 
     @Override
     protected void execute(final CommonBlockEntry entry) throws Exception {
@@ -46,7 +44,7 @@ public class CreateCommonBlocksTableStage extends AbstractTransformation<CommonB
         } else {
             final String variables = entry.getVariables().stream().reduce((list, element) -> list += "," + element)
                     .get();
-            this.commonBlocksTable.addRow(entry.getName(), files, modules, variables);
+            this.commonBlocksTable.getRows().add(new GlobalDataEntry(entry.getName(), files, modules, variables));
         }
     }
 

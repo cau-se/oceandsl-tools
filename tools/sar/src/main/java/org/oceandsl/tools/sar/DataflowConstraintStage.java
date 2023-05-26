@@ -23,13 +23,12 @@ import java.util.Map;
 import java.util.Set;
 
 import kieker.analysis.architecture.recovery.events.AbstractElementEvent;
+import kieker.analysis.architecture.recovery.events.DataflowEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
 
 import teetime.framework.AbstractStage;
 import teetime.framework.InputPort;
 import teetime.framework.OutputPort;
-
-import org.oceandsl.tools.sar.stages.dataflow.DataflowEvent;
 
 /**
  * This stage holds {@link DataflowEvent}s back until the corresponding {@link OperationEvent}s have

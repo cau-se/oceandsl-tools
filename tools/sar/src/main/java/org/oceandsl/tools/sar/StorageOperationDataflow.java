@@ -20,9 +20,13 @@ import lombok.Setter;
 
 import kieker.model.analysismodel.execution.EDirection;
 
-import org.oceandsl.analysis.code.stages.data.ICsvRecord;
-
-public class StorageOperationDataflow implements ICsvRecord {
+/**
+ * Storage operation dataflow record.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
+public class StorageOperationDataflow {
 
     @Getter
     private final String commonBlockName;
@@ -38,7 +42,7 @@ public class StorageOperationDataflow implements ICsvRecord {
 
     @Getter
     @Setter
-    private EDirection direction;
+    private EDirection direction; // NOPMD lombok
 
     public StorageOperationDataflow(final String commonBlockName, final String fileName, final String moduleName,
             final String operationName, final EDirection direction) {

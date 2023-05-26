@@ -23,13 +23,14 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
-import kieker.analysis.architecture.recovery.AssemblyModelAssembler;
 import kieker.analysis.architecture.recovery.CallEvent2OperationCallStage;
-import kieker.analysis.architecture.recovery.DeploymentModelAssembler;
-import kieker.analysis.architecture.recovery.ExecutionModelAssembler;
-import kieker.analysis.architecture.recovery.OperationCallModelAssemblerStage;
-import kieker.analysis.architecture.recovery.OperationEventModelAssemblerStage;
-import kieker.analysis.architecture.recovery.TypeModelAssembler;
+import kieker.analysis.architecture.recovery.ModelAssemblerStage;
+import kieker.analysis.architecture.recovery.assembler.InvocationExecutionModelAssembler;
+import kieker.analysis.architecture.recovery.assembler.OperationAssemblyModelAssembler;
+import kieker.analysis.architecture.recovery.assembler.OperationDeploymentModelAssembler;
+import kieker.analysis.architecture.recovery.assembler.OperationTypeModelAssembler;
+import kieker.analysis.architecture.recovery.events.DeployedOperationCallEvent;
+import kieker.analysis.architecture.recovery.events.OperationEvent;
 import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
 import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;
 import kieker.analysis.architecture.repository.ModelRepository;
@@ -47,8 +48,6 @@ import teetime.framework.Configuration;
 import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
 import org.oceandsl.analysis.code.stages.CsvReaderStage;
 import org.oceandsl.analysis.code.stages.data.CallerCallee;
-import org.oceandsl.analysis.code.stages.data.CallerCalleeFactory;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.EModuleMode;
 import org.oceandsl.analysis.generic.stages.StringFileWriterSink;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
@@ -67,12 +66,12 @@ import org.oceandsl.tools.sar.stages.calls.OperationAndCall4StaticDataStage;
 public class TeetimeCallConfiguration extends Configuration {
 
     public TeetimeCallConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
-            throws IOException, ValueConversionErrorException {
+            throws IOException {
         super();
         final Path inputCallPath = settings.getInputFile().resolve(StaticArchitectureRecoveryMain.CALLTABLE_FILENAME);
 
         final CsvReaderStage<CallerCallee> readCallsCsvStage = new CsvReaderStage<>(inputCallPath,
-                settings.getSplitSymbol(), true, new CallerCalleeFactory());
+                settings.getSplitSymbol(), '"', '\\', true);
 
         final CleanupComponentSignatureStage cleanupComponentSignatureStage = new CleanupComponentSignatureStage(
                 this.createProcessors(settings.getModuleModes(), settings, logger));
@@ -86,25 +85,26 @@ public class TeetimeCallConfiguration extends Configuration {
 
         final OperationAndCall4StaticDataStage operationAndCallStage = new OperationAndCall4StaticDataStage(
                 settings.getHostname());
+
         /** -- call based modeling -- */
-        final OperationEventModelAssemblerStage typeModelAssemblerStage = new OperationEventModelAssemblerStage(
-                new TypeModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
+        final ModelAssemblerStage<OperationEvent> typeModelAssemblerStage = new ModelAssemblerStage<>(
+                new OperationTypeModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel(),
                         this.createComponentSignatureExtractor(settings), this.createOperationSignatureExtractor()));
-        final OperationEventModelAssemblerStage assemblyModelAssemblerStage = new OperationEventModelAssemblerStage(
-                new AssemblyModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
+        final ModelAssemblerStage<OperationEvent> assemblyModelAssemblerStage = new ModelAssemblerStage<>(
+                new OperationAssemblyModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
                         repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
-        final OperationEventModelAssemblerStage deploymentModelAssemblerStage = new OperationEventModelAssemblerStage(
-                new DeploymentModelAssembler(repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
+        final ModelAssemblerStage<OperationEvent> deploymentModelAssemblerStage = new ModelAssemblerStage<>(
+                new OperationDeploymentModelAssembler(repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
                         repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
 
         final CallEvent2OperationCallStage callEvent2OperationCallStage = new CallEvent2OperationCallStage(
                 repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL));
 
-        final OperationCallModelAssemblerStage executionModelGenerationStage = new OperationCallModelAssemblerStage(
-                new ExecutionModelAssembler(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),
+        final ModelAssemblerStage<DeployedOperationCallEvent> executionModelGenerationStage = new ModelAssemblerStage<>(
+                new InvocationExecutionModelAssembler(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
 
         final CountUniqueCallsStage countUniqueCalls = new CountUniqueCallsStage(
@@ -138,7 +138,7 @@ public class TeetimeCallConfiguration extends Configuration {
                 processors.add(this.createMapBasedProcessor(logger, settings));
                 break;
             case MODULE_MODE:
-                processors.add(this.createModuleBasedProcessor(logger, settings));
+                processors.add(this.createModuleBasedProcessor(logger));
                 break;
             case JAVA_CLASS_MODE:
                 break;
@@ -146,7 +146,7 @@ public class TeetimeCallConfiguration extends Configuration {
                 break;
             case FILE_MODE:
             default:
-                processors.add(this.createFileBasedProcessor(logger, settings));
+                processors.add(this.createFileBasedProcessor(logger));
                 break;
             }
         }
@@ -154,13 +154,12 @@ public class TeetimeCallConfiguration extends Configuration {
         return processors;
     }
 
-    private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger, final Settings settings) {
+    private AbstractSignatureProcessor createModuleBasedProcessor(final Logger logger) {
         logger.info("Module based component definition");
         return new ModuleBasedSignatureProcessor(false);
     }
 
-    private AbstractSignatureProcessor createFileBasedProcessor(final Logger logger,
-            final Settings parameterConfiguration) {
+    private AbstractSignatureProcessor createFileBasedProcessor(final Logger logger) {
         logger.info("File based component definition");
         return new FileBasedSignatureProcessor(false);
     }
@@ -169,7 +168,8 @@ public class TeetimeCallConfiguration extends Configuration {
             throws IOException {
         if (settings.getComponentMapFiles() != null) {
             logger.info("Map based component definition");
-            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), false, settings.getSplitSymbol());
+            return new MapBasedSignatureProcessor(settings.getComponentMapFiles(), false,
+                    String.valueOf(settings.getSplitSymbol()));
         } else {
             logger.error("Missing map files for component identification.");
             return null;

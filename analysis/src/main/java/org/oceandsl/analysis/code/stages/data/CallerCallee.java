@@ -20,7 +20,7 @@ package org.oceandsl.analysis.code.stages.data;
  * @since 1.0
  *
  */
-public class CallerCallee implements ICsvRecord {
+public class CallerCallee {
 
     private String sourcePath;
     private String targetPath;

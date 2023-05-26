@@ -13,25 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar;
+package org.oceandsl.tools.delta.stages;
 
-import org.oceandsl.analysis.code.stages.data.ICsvRecordFactory;
+import lombok.Getter;
 
-public class StorageFactory implements ICsvRecordFactory<Storage> {
+/**
+ * @author reiner
+ *
+ */
+public class MoveOperationEntry {
 
-    @Override
-    public Storage createRecord(final String[] headerLabels, final String[] values) {
-        final Storage storage = new Storage(values[0]);
-        for (final String file : values[1].split(",")) {
-            storage.getFiles().add(file);
-        }
-        for (final String module : values[2].split(",")) {
-            storage.getModules().add(module);
-        }
-        for (final String variable : values[3].split(",")) {
-            storage.getVariables().add(variable);
-        }
-        return storage;
+    @Getter
+    private final String sourceComponentName;
+
+    @Getter
+    private final String targetComponentName;
+
+    @Getter
+    private final String operationName;
+
+    public MoveOperationEntry(final String sourceComponentName, final String targetComponentName, final String operationName) {
+        this.sourceComponentName = sourceComponentName;
+        this.targetComponentName = targetComponentName;
+        this.operationName = operationName;
     }
 
 }

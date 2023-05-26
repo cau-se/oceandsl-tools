@@ -15,6 +15,8 @@ dependencies {
 	implementation 'net.kieker-monitoring:kieker:2.0.0-SNAPSHOT'
 
 	implementation 'org.yaml:snakeyaml:2.0'
+	implementation 'org.csveed:csveed:0.7.4'
+
 }
 
 java {

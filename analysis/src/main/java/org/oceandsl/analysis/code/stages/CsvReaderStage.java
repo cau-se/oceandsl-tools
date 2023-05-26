@@ -20,10 +20,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import teetime.framework.AbstractProducerStage;
+import org.csveed.api.CsvClient;
+import org.csveed.api.CsvClientImpl;
 
-import org.oceandsl.analysis.code.stages.data.ICsvRecord;
-import org.oceandsl.analysis.code.stages.data.ICsvRecordFactory;
+import teetime.framework.AbstractProducerStage;
 
 /**
  * Reader for CSV files.
@@ -35,70 +35,44 @@ import org.oceandsl.analysis.code.stages.data.ICsvRecordFactory;
  * @since 1.0
  *
  */
-public class CsvReaderStage<T extends ICsvRecord> extends AbstractProducerStage<T> {
+public class CsvReaderStage<T> extends AbstractProducerStage<T> {
 
+    private final CsvClient<T> csvClient;
     private final BufferedReader reader;
-    private final String splitSymbol;
-    private final boolean header;
-    private final ICsvRecordFactory<T> recordFactory;
 
     /**
      * Read a single CSV file.
      *
      * @param path
      *            file path
-     * @param splitSymbol
-     *            string containing the split symbol
+     * @param separator
+     *            string containing the separator symbol for cells
+     * @param quoteSymbol
+     *            quote symbol used for cells
+     * @param escapeSymbol
+     *            escape character
      * @param header
      *            indicate how to interpret the first line in the CSV file, set to true to indicate
      *            that the first line contains the header information
-     * @param recordFactory
-     *            factory for record values
      * @throws IOException
      *             when a stream could not be opened.
      */
-    public CsvReaderStage(final Path path, final String splitSymbol, final boolean header,
-            final ICsvRecordFactory<T> recordFactory) throws IOException {
+    public CsvReaderStage(final Path path, final char separator, final char quoteSymbol, final char escapeSymbol,
+            final boolean header) throws IOException {
         this.reader = Files.newBufferedReader(path);
-        this.splitSymbol = splitSymbol;
-        this.header = header;
-        this.recordFactory = recordFactory;
+        this.csvClient = new CsvClientImpl<>(this.reader);
+        this.csvClient.setQuote(quoteSymbol);
+        this.csvClient.setSeparator(separator);
+        this.csvClient.setEscape(escapeSymbol);
+        this.csvClient.setUseHeader(header);
     }
 
     @Override
     protected void execute() throws Exception {
-        final String[] headerLabels;
-        if (this.header) {
-            headerLabels = this.reader.readLine().split(this.splitSymbol);
-            for (int i = 0; i < headerLabels.length; i++) {
-                headerLabels[i] = headerLabels[i].trim();
-            }
-        } else {
-            final String[] values = this.reader.readLine().split(this.splitSymbol);
-            headerLabels = new String[values.length];
-            for (int i = 0; i < values.length; i++) {
-                headerLabels[i] = "column " + i;
-            }
+        while (!this.csvClient.isFinished()) {
+            this.outputPort.send(this.csvClient.readBean());
         }
 
-        String line;
-        while ((line = this.reader.readLine()) != null) {
-            final String[] values = line.split(this.splitSymbol);
-            for (int i = 0; i < values.length; i++) {
-                values[i] = values[i].trim();
-                if (values[i].startsWith("\"")) {
-                    values[i] = values[i].substring(1);
-                }
-                if (values[i].endsWith("\"")) {
-                    values[i] = values[i].substring(0, values[i].length() - 1);
-                }
-            }
-            if (values.length == headerLabels.length) {
-                this.outputPort.send(this.recordFactory.createRecord(headerLabels, values));
-            } else {
-                this.logger.error("Line needs at least 3 better 4 values. :{}:", line);
-            }
-        }
         this.reader.close();
         this.workCompleted();
     }

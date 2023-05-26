@@ -5,22 +5,19 @@ import java.util.Map;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.StringValueHandler;
 import org.oceandsl.analysis.code.stages.data.Table;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.tools.restructuring.restructuremodel.CutOperation;
 import org.oceandsl.tools.restructuring.restructuremodel.MoveOperation;
 import org.oceandsl.tools.restructuring.restructuremodel.PasteOperation;
 import org.oceandsl.tools.restructuring.restructuremodel.TransformationModel;
 
-public class CompileRestructureTableStage extends AbstractTransformation<TransformationModel, Table> {
+public class CompileRestructureTableStage extends AbstractTransformation<TransformationModel, Table<MoveOperationEntry>> {
 
-    private final Table table;
+    private final Table<MoveOperationEntry> table;
     private final Map<String, CutOperation> rememberCutOperation = new HashMap<>();
 
     public CompileRestructureTableStage(final String name) {
-        this.table = new Table(name, new StringValueHandler("source-component"),
-                new StringValueHandler("target-component"), new StringValueHandler("element"));
+        this.table = new Table<>(name, "source-component", "target-component", "element");
     }
 
     @Override
@@ -33,20 +30,15 @@ public class CompileRestructureTableStage extends AbstractTransformation<Transfo
                 final MoveOperation move = (MoveOperation) action;
                 final CutOperation cut = move.getCutOperation();
                 final PasteOperation paste = move.getPasteOperation();
-                try {
-                    this.table.addRow(cut.getComponentName(), paste.getComponentName(), cut.getOperationName());
-                } catch (final ValueConversionErrorException e) {
-                    this.logger.error("Value conversion failed: {}", e.getLocalizedMessage());
-                }
+
+                this.table.getRows()
+                        .add(new MoveOperationEntry(cut.getComponentName(), paste.getComponentName(), cut.getOperationName()));
             } else if (action instanceof PasteOperation) {
                 final PasteOperation paste = (PasteOperation) action;
                 if (this.rememberCutOperation.containsKey(paste.getOperationName())) {
                     final CutOperation cut = this.rememberCutOperation.get(paste.getOperationName());
-                    try {
-                        this.table.addRow(cut.getComponentName(), paste.getComponentName(), cut.getOperationName());
-                    } catch (final ValueConversionErrorException e) {
-                        this.logger.error("Value conversion failed: {}", e.getLocalizedMessage());
-                    }
+                    this.table.getRows()
+                            .add(new MoveOperationEntry(cut.getComponentName(), paste.getComponentName(), cut.getOperationName()));
                 } else {
                     this.logger.error("Have paste without cut. {} {}", paste.getComponentName(),
                             paste.getOperationName());

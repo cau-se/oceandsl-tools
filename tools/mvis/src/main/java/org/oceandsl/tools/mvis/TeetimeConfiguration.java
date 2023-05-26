@@ -38,7 +38,7 @@ import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
-import org.oceandsl.analysis.generic.stages.TableCSVSink;
+import org.oceandsl.analysis.generic.stages.TableCsvSink;
 import org.oceandsl.analysis.metrics.entropy.AllenDeployedArchitectureGraphStage;
 import org.oceandsl.analysis.metrics.entropy.ComputeAllenComplexityMetrics;
 import org.oceandsl.analysis.metrics.entropy.KiekerArchitectureModelSystemGraphUtils;
@@ -150,7 +150,7 @@ public class TeetimeConfiguration extends Configuration {
         }
         if (settings.getComputeStatistics().contains(EStatistics.NUM_OF_CALLS)) {
             final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
-            final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputDirectory(), String
+            final TableCsvSink operationCallSink = new TableCsvSink(settings.getOutputDirectory(), String
                     .format("%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.OPERATION_CALLS_CSV));
 
             this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
@@ -168,7 +168,7 @@ public class TeetimeConfiguration extends Configuration {
                     settings.getGraphGenerationMode());
             final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
 
-            final TableCSVSink distinctOperationDegreeSink = new TableCSVSink(settings.getOutputDirectory(),
+            final TableCsvSink distinctOperationDegreeSink = new TableCsvSink(settings.getOutputDirectory(),
                     String.format("%s-%s", settings.getSelector().getFilePrefix(),
                             TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV));
 
@@ -188,7 +188,7 @@ public class TeetimeConfiguration extends Configuration {
                     settings.getGraphGenerationMode());
             final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
 
-            final TableCSVSink distinctModuleDegreeSink = new TableCSVSink(settings.getOutputDirectory(), String.format(
+            final TableCsvSink distinctModuleDegreeSink = new TableCsvSink(settings.getOutputDirectory(), String.format(
                     "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
 
             this.connectPorts(statisticsDistributor.getNewOutputPort(), moduleCallGraphStage.getInputPort());

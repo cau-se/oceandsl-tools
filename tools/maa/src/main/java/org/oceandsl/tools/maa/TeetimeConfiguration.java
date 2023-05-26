@@ -30,7 +30,7 @@ import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 import org.oceandsl.analysis.architecture.stages.ModelChangeNameStage;
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.architecture.stages.ModelSink;
-import org.oceandsl.analysis.generic.stages.TableCSVSink;
+import org.oceandsl.analysis.generic.stages.TableCsvSink;
 import org.oceandsl.tools.maa.stages.CollectConnectionsStage;
 import org.oceandsl.tools.maa.stages.ComponentStatisticsStage;
 import org.oceandsl.tools.maa.stages.FindDistinctCollectionsStage;
@@ -56,7 +56,7 @@ public class TeetimeConfiguration extends Configuration {
         final ModelSink modelSink = new ModelSink(settings.getOutputModelPath());
 
         final ProvidedInterfaceTableTransformation providedInterfaceTableTransformation = new ProvidedInterfaceTableTransformation();
-        final TableCSVSink providedInterfaceSink = new TableCSVSink(settings.getOutputModelPath(),
+        final TableCsvSink providedInterfaceSink = new TableCsvSink(settings.getOutputModelPath(),
                 "provided-interfaces.csv", true);
 
         OutputPort<ModelRepository> outputPort = modelReader.getOutputPort();
@@ -97,7 +97,7 @@ public class TeetimeConfiguration extends Configuration {
 
         if (settings.isOperationCalls()) {
             final OperationCallsStage operationCallsStage = new OperationCallsStage();
-            final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputModelPath(),
+            final TableCsvSink operationCallSink = new TableCsvSink(settings.getOutputModelPath(),
                     "operation-calls.csv", true);
             this.connectPorts(distributor.getNewOutputPort(), operationCallsStage.getInputPort());
             this.connectPorts(operationCallsStage.getOutputPort(), operationCallSink.getInputPort());
@@ -105,7 +105,7 @@ public class TeetimeConfiguration extends Configuration {
 
         if (settings.isComponentStatistics()) {
             final ComponentStatisticsStage componentStatisticsStage = new ComponentStatisticsStage();
-            final TableCSVSink operationCallSink = new TableCSVSink(settings.getOutputModelPath(),
+            final TableCsvSink operationCallSink = new TableCsvSink(settings.getOutputModelPath(),
                     "component-statistics.csv", true);
             this.connectPorts(distributor.getNewOutputPort(), componentStatisticsStage.getInputPort());
             this.connectPorts(componentStatisticsStage.getOutputPort(), operationCallSink.getInputPort());

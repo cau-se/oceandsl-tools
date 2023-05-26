@@ -52,21 +52,21 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCallee>
 
     private FullyQualifiedOperation executeOperation(final String path, final String componentSignature,
             final String operationSignature) {
-        final FullyQualifiedOperation operation = new FullyQualifiedOperation();
-        operation.component = CleanupComponentSignatureStage.UNKNOWN;
-        operation.operation = CleanupComponentSignatureStage.UNKNOWN;
+        final FullyQualifiedOperation entry = new FullyQualifiedOperation();
+        entry.component = CleanupComponentSignatureStage.UNKNOWN;
+        entry.operation = CleanupComponentSignatureStage.UNKNOWN;
         for (final AbstractSignatureProcessor processor : this.processors) {
             if (!processor.processSignatures(path, componentSignature, operationSignature)) {
                 this.errorMessageOutputPort.send(processor.getErrorMessage());
             }
-            if (operation.component.equals(CleanupComponentSignatureStage.UNKNOWN)) {
-                operation.component = processor.getComponentSignature();
+            if (UNKNOWN.equals(entry.component)) {
+                entry.component = processor.getComponentSignature();
             }
-            if (operation.operation.equals(CleanupComponentSignatureStage.UNKNOWN)) {
-                operation.operation = processor.getElementSignature();
+            if (UNKNOWN.equals(entry.operation)) {
+                entry.operation = processor.getElementSignature();
             }
         }
-        return operation;
+        return entry;
     }
 
     public OutputPort<String> getErrorMessageOutputPort() {

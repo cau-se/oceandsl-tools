@@ -6,7 +6,7 @@ import teetime.framework.Configuration;
 
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryReaderStage;
 import org.oceandsl.analysis.architecture.stages.ModelSource;
-import org.oceandsl.analysis.generic.stages.TableCSVSink;
+import org.oceandsl.analysis.generic.stages.TableCsvSink;
 import org.oceandsl.tools.restructuring.stages.AggregateModelEditDistanceStage;
 import org.oceandsl.tools.restructuring.stages.GenerateRestructureModelStage;
 import org.oceandsl.tools.restructuring.stages.RestructureModelSink;
@@ -31,7 +31,7 @@ public class TeetimeConfiguration extends Configuration {
         final RestructureModelSink modelSink = new RestructureModelSink(
                 parameterConfiguration.getOutputDirectory());
         final AggregateModelEditDistanceStage aggregateStage = new AggregateModelEditDistanceStage();
-        final TableCSVSink medSinkStage = new TableCSVSink(parameterConfiguration.getOutputDirectory(), true);
+        final TableCsvSink medSinkStage = new TableCsvSink(parameterConfiguration.getOutputDirectory(), true);
 
         this.connectPorts(modelSource.getOutputPort(), modelReader.getInputPort());
 

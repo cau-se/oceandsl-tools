@@ -30,11 +30,11 @@ import org.oceandsl.analysis.code.stages.data.CallerCallee;
  * @since 1.0
  *
  */
-public class CSVWriterStage extends AbstractConsumerStage<CallerCallee> {
+public class CsvWriterStage extends AbstractConsumerStage<CallerCallee> {
 
     private final BufferedWriter writer;
 
-    public CSVWriterStage(final Path outputPath) throws IOException {
+    public CsvWriterStage(final Path outputPath) throws IOException {
         this.writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);
     }
 

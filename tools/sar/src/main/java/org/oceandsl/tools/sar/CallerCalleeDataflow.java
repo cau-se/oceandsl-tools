@@ -20,14 +20,12 @@ import lombok.Setter;
 
 import kieker.model.analysismodel.execution.EDirection;
 
-import org.oceandsl.analysis.code.stages.data.ICsvRecord;
-
 /**
  * @author Reiner Jung
  * @since 1.3.0
  *
  */
-public class CallerCalleeDataflow implements ICsvRecord {
+public class CallerCalleeDataflow {
 
     @Getter
     private final String sourceFileName;

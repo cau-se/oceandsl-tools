@@ -21,13 +21,14 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
-import kieker.analysis.architecture.recovery.AssemblyModelAssembler;
 import kieker.analysis.architecture.recovery.CallEvent2OperationCallStage;
-import kieker.analysis.architecture.recovery.DeploymentModelAssembler;
-import kieker.analysis.architecture.recovery.ExecutionModelAssembler;
-import kieker.analysis.architecture.recovery.OperationCallModelAssemblerStage;
-import kieker.analysis.architecture.recovery.OperationEventModelAssemblerStage;
-import kieker.analysis.architecture.recovery.TypeModelAssembler;
+import kieker.analysis.architecture.recovery.ModelAssemblerStage;
+import kieker.analysis.architecture.recovery.assembler.InvocationExecutionModelAssembler;
+import kieker.analysis.architecture.recovery.assembler.OperationAssemblyModelAssembler;
+import kieker.analysis.architecture.recovery.assembler.OperationDeploymentModelAssembler;
+import kieker.analysis.architecture.recovery.assembler.OperationTypeModelAssembler;
+import kieker.analysis.architecture.recovery.events.DeployedOperationCallEvent;
+import kieker.analysis.architecture.recovery.events.OperationEvent;
 import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
 import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
 import kieker.analysis.architecture.recovery.signature.IOperationSignatureExtractor;
@@ -53,7 +54,6 @@ import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 import teetime.stage.basic.merger.Merger;
 
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.EModuleMode;
 import org.oceandsl.analysis.generic.stages.CountEventsStage;
 import org.oceandsl.analysis.generic.stages.RewriteBeforeAndAfterEventsStage;
@@ -77,7 +77,7 @@ import org.oceandsl.tools.dar.stages.OperationExecutionTraceConverterStage;
 public class TeetimeConfiguration extends Configuration {
 
     public TeetimeConfiguration(final Logger logger, final Settings settings, final ModelRepository repository)
-            throws IOException, ValueConversionErrorException {
+            throws IOException {
 
         final OutputPort<? extends IMonitoringRecord> readerPort;
 
@@ -119,21 +119,21 @@ public class TeetimeConfiguration extends Configuration {
         final IOperationSignatureExtractor operationSignatureExtractor = this
                 .selectOperationSignaturExtractor(settings.getSignatureExtractor());
 
-        final OperationEventModelAssemblerStage typeModelAssemblerStage = new OperationEventModelAssemblerStage(
-                new TypeModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
+        final ModelAssemblerStage<OperationEvent> typeModelAssemblerStage = new ModelAssemblerStage<>(
+                new OperationTypeModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel(),
                         componentSignatureExtractor, operationSignatureExtractor));
-        final OperationEventModelAssemblerStage assemblyModelAssemblerStage = new OperationEventModelAssemblerStage(
-                new AssemblyModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
+        final ModelAssemblerStage<OperationEvent> assemblyModelAssemblerStage = new ModelAssemblerStage<>(
+                new OperationAssemblyModelAssembler(repository.getModel(TypePackage.Literals.TYPE_MODEL),
                         repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
-        final OperationEventModelAssemblerStage deploymentModelAssemblerStage = new OperationEventModelAssemblerStage(
-                new DeploymentModelAssembler(repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
+        final ModelAssemblerStage<OperationEvent> deploymentModelAssemblerStage = new ModelAssemblerStage<>(
+                new OperationDeploymentModelAssembler(repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL),
                         repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
 
-        final OperationCallModelAssemblerStage executionModelGenerationStage = new OperationCallModelAssemblerStage(
-                new ExecutionModelAssembler(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),
+        final ModelAssemblerStage<DeployedOperationCallEvent> executionModelGenerationStage = new ModelAssemblerStage<>(
+                new InvocationExecutionModelAssembler(repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),
                         repository.getModel(SourcePackage.Literals.SOURCE_MODEL), settings.getSourceLabel()));
 
         final CallStatisticsStage callStatisticsStage = new CallStatisticsStage(

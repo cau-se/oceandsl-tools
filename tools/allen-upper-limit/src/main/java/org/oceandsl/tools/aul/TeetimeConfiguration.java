@@ -29,7 +29,6 @@ import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
 
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
-import org.oceandsl.analysis.code.stages.data.ValueConversionErrorException;
 import org.oceandsl.analysis.generic.stages.NumberGeneratorProducer;
 import org.oceandsl.analysis.graph.selector.AllSelector;
 import org.oceandsl.analysis.metrics.entropy.AllenDeployedMaximalInterconnectedGraphStage;
@@ -45,7 +44,7 @@ import org.oceandsl.tools.aul.stages.CreateArchitectureModularGraphStage;
  * @since 1.0
  */
 public class TeetimeConfiguration extends Configuration {
-    public TeetimeConfiguration(final Settings settings) throws IOException, ValueConversionErrorException {
+    public TeetimeConfiguration(final Settings settings) throws IOException {
 
         final OutputPort<Graph<Node<DeployedComponent>>> graphOutputPort;
 
