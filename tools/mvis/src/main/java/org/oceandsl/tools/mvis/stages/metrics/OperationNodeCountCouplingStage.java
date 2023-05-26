@@ -22,7 +22,7 @@ import kieker.common.exception.ConfigurationException;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.generic.Table;
 
 /**
  * Counts the number of incoming and outgoing edges of each node. Nodes represent functions or

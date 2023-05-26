@@ -3,7 +3,7 @@ package org.oceandsl.tools.fxca.stages.dataflow.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oceandsl.tools.fxca.model.EDirection;
+import org.oceandsl.analysis.code.stages.data.EDirection;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranParameter;

@@ -27,16 +27,16 @@ import java.util.Map;
 import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractFilter;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 
 /**
- * This stage receives an {@link CallerCallee} object and checks whether the file path for caller
+ * This stage receives an {@link CallerCalleeEntry} object and checks whether the file path for caller
  * and callee operation are specified. In case they are missing, the stage sets them based on its
  * operation to file lookup table. In case the operation is not listed, it collects all operations
  * which do not have a file name.
  *
  * <ul>
- * <li>outputPort sends out {@link CallerCallee} objects with all 4 values set.</li>
+ * <li>outputPort sends out {@link CallerCalleeEntry} objects with all 4 values set.</li>
  * <li>missingOperationOutputPort sends out each newly found operation which does not have a
  * associated file path.</li>
  * </ul>
@@ -44,7 +44,7 @@ import org.oceandsl.analysis.code.stages.data.CallerCallee;
  * @author Reiner Jung
  * @since 1.1
  */
-public class CallerCalleeFixPathStage extends AbstractFilter<CallerCallee> {
+public class CallerCalleeFixPathStage extends AbstractFilter<CallerCalleeEntry> {
 
     private final Map<String, String> operationToFileMap = new HashMap<>();
     private final OutputPort<String> missingOperationOutputPort = this.createOutputPort(String.class);
@@ -65,7 +65,7 @@ public class CallerCalleeFixPathStage extends AbstractFilter<CallerCallee> {
     }
 
     @Override
-    protected void execute(final CallerCallee element) throws Exception {
+    protected void execute(final CallerCalleeEntry element) throws Exception {
         if ("".equals(element.getSourcePath())) {
             element.setSourcePath(this.findPath(element.getCaller()));
         }

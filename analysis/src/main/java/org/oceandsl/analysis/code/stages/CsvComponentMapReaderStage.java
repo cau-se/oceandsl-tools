@@ -23,7 +23,7 @@ import java.util.Locale;
 
 import teetime.framework.AbstractProducerStage;
 
-import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.generic.Table;
 
 /**
  * Read a CSV file containing a component map.

@@ -27,7 +27,7 @@ import org.csveed.api.CsvClientImpl;
 
 import teetime.framework.AbstractConsumerStage;
 
-import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.generic.Table;
 
 /**
  * Save tables with a specific row type as a csv files based on a path function.
@@ -79,6 +79,7 @@ public class TableCsvSink<T> extends AbstractConsumerStage<Table<T>> {
         try (BufferedWriter outputStream = Files.newBufferedWriter(this.filePathFunction.apply(table.getName()),
                 StandardCharsets.UTF_8)) {
             final CsvClient<T> csvClient = new CsvClientImpl<>(outputStream);
+            csvClient.setUseHeader(this.header);
             if (this.header) {
                 csvClient.writeHeader(table.getHeader());
             }

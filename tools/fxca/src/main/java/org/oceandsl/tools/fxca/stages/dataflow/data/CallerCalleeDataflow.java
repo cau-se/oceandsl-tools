@@ -15,10 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.stages.dataflow.data;
 
-import org.oceandsl.tools.fxca.model.EDirection;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import org.oceandsl.analysis.code.stages.data.EDirection;
 
 /**
  * @author Reiner Jung

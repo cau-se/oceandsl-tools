@@ -27,6 +27,10 @@ import teetime.framework.Configuration;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
+import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
+import org.oceandsl.analysis.code.stages.data.DataflowEntry;
+import org.oceandsl.analysis.code.stages.data.FileOperationEntry;
+import org.oceandsl.analysis.code.stages.data.NotFoundEntry;
 import org.oceandsl.analysis.generic.stages.DirectoryProducer;
 import org.oceandsl.analysis.generic.stages.DirectoryScannerStage;
 import org.oceandsl.analysis.generic.stages.TableCsvSink;
@@ -36,11 +40,8 @@ import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.stages.ProcessModuleStructureStage;
 import org.oceandsl.tools.fxca.stages.ReadDomStage;
-import org.oceandsl.tools.fxca.stages.calls.CallEntry;
 import org.oceandsl.tools.fxca.stages.calls.CreateCallTableStage;
 import org.oceandsl.tools.fxca.stages.calls.CreateOperationTableStage;
-import org.oceandsl.tools.fxca.stages.calls.FileOperationEntry;
-import org.oceandsl.tools.fxca.stages.calls.NotFoundEntry;
 import org.oceandsl.tools.fxca.stages.calls.ProcessOperationCallStage;
 import org.oceandsl.tools.fxca.stages.dataflow.AggregateCommonBlocksStage;
 import org.oceandsl.tools.fxca.stages.dataflow.AggregateDataflowStage;
@@ -50,7 +51,6 @@ import org.oceandsl.tools.fxca.stages.dataflow.CreateCallerCalleeDataflowTableSt
 import org.oceandsl.tools.fxca.stages.dataflow.CreateCommonBlockDataflowTableStage;
 import org.oceandsl.tools.fxca.stages.dataflow.CreateCommonBlocksTableStage;
 import org.oceandsl.tools.fxca.stages.dataflow.DataFlowAnalysisStage;
-import org.oceandsl.tools.fxca.stages.dataflow.DataflowEntry;
 import org.oceandsl.tools.fxca.stages.dataflow.GlobalDataEntry;
 import org.oceandsl.tools.fxca.utils.PatternUriProcessor;
 
@@ -109,7 +109,7 @@ public class TeetimeConfiguration extends Configuration {
         /** output stages. */
         final TableCsvSink<FileOperationEntry> operationTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.OPERATION_DEFINITIONS), true);
-        final TableCsvSink<CallEntry> callTableSink = new TableCsvSink<>(
+        final TableCsvSink<CallerCalleeEntry> callTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.CALL_TABLE), true);
         final TableCsvSink<NotFoundEntry> notFoundSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.NOT_FOUND), true);

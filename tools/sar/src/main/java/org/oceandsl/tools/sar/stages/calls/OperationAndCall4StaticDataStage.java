@@ -23,7 +23,7 @@ import kieker.analysis.architecture.recovery.events.OperationEvent;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 
 /**
  * Transform @{link CallerCallee}s to @{link OperationEvent}s and @{CallEvent}s on model level. The
@@ -34,7 +34,7 @@ import org.oceandsl.analysis.code.stages.data.CallerCallee;
  * @author Reiner Jung
  * @since 1.1
  */
-public class OperationAndCall4StaticDataStage extends AbstractConsumerStage<CallerCallee> {
+public class OperationAndCall4StaticDataStage extends AbstractConsumerStage<CallerCalleeEntry> {
 
     private final OutputPort<OperationEvent> operationOutputPort = this.createOutputPort(OperationEvent.class);
     private final OutputPort<CallEvent> callOutputPort = this.createOutputPort(CallEvent.class);
@@ -46,7 +46,7 @@ public class OperationAndCall4StaticDataStage extends AbstractConsumerStage<Call
     }
 
     @Override
-    protected void execute(final CallerCallee element) throws Exception {
+    protected void execute(final CallerCalleeEntry element) throws Exception {
         final OperationEvent caller = new OperationEvent(this.hostname, element.getSourceModule(), element.getCaller());
         final OperationEvent callee = new OperationEvent(this.hostname, element.getTargetModule(), element.getCallee());
 
