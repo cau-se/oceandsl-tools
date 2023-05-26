@@ -18,6 +18,8 @@ package org.oceandsl.tools.fxca.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.oceandsl.analysis.code.stages.data.EDirection;
+
 /**
  * @author Reiner Jung
  * @since 1.3.0

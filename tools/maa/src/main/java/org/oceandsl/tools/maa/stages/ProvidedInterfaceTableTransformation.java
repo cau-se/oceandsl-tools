@@ -32,7 +32,7 @@ import kieker.model.analysismodel.type.TypePackage;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.generic.Table;
 
 /**
  * Generate table for interfaces in component type, interface name, operations.

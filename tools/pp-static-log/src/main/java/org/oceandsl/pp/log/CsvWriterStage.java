@@ -23,14 +23,14 @@ import java.nio.file.Path;
 
 import teetime.framework.AbstractConsumerStage;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 
 /**
  * @author Reiner Jung
  * @since 1.0
  *
  */
-public class CsvWriterStage extends AbstractConsumerStage<CallerCallee> {
+public class CsvWriterStage extends AbstractConsumerStage<CallerCalleeEntry> {
 
     private final BufferedWriter writer;
 
@@ -39,7 +39,7 @@ public class CsvWriterStage extends AbstractConsumerStage<CallerCallee> {
     }
 
     @Override
-    protected void execute(final CallerCallee element) throws Exception {
+    protected void execute(final CallerCalleeEntry element) throws Exception {
         final String result = String.format("%s,%s,%s,%s\n", element.getSourcePath(), element.getCaller(),
                 element.getTargetPath(), element.getCallee());
         this.writer.write(result);

@@ -17,7 +17,8 @@ package org.oceandsl.tools.fxca.stages.calls;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.code.stages.data.FileOperationEntry;
+import org.oceandsl.analysis.generic.Table;
 import org.oceandsl.tools.fxca.model.FortranProject;
 
 /**

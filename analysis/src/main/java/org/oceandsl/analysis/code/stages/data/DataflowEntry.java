@@ -13,43 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.fxca.stages.dataflow;
-
-import org.oceandsl.analysis.code.stages.data.EDirection;
-import org.oceandsl.tools.fxca.stages.dataflow.data.IDataflowEntry;
+package org.oceandsl.analysis.code.stages.data;
 
 import lombok.Getter;
-import lombok.Setter;
 
-/**
- * @author Reiner Jung
- * @since 1.3.0
- *
- */
-public class CommonBlockArgumentDataflow implements IDataflowEntry {
+public class DataflowEntry {
 
     @Getter
-    private final String commonBlockName;
-
+    private final String sourcePath;
     @Getter
-    private final String fileName;
-
+    private final String sourceModule;
     @Getter
-    private final String moduleName;
-
+    private final String sourceOperation;
     @Getter
-    private final String operationName;
-
+    private final String targetPath;
     @Getter
-    @Setter
-    private EDirection direction;
+    private final String targetModule;
+    @Getter
+    private final String targetOperation;
+    @Getter
+    private final EDirection direction;
 
-    public CommonBlockArgumentDataflow(final String commonBlockName, final String fileName, final String moduleName,
-            final String operationName, final EDirection direction) {
-        this.commonBlockName = commonBlockName;
-        this.fileName = fileName;
-        this.moduleName = moduleName;
-        this.operationName = operationName;
+    public DataflowEntry(final String sourcePath, final String sourceModule, final String sourceOperation,
+            final String targetPath, final String targetModule, final String targetOperatio,
+            final EDirection direction) {
+        this.sourcePath = sourcePath;
+        this.sourceModule = sourceModule;
+        this.sourceOperation = sourceOperation;
+        this.targetPath = targetPath;
+        this.targetModule = targetModule;
+        this.targetOperation = targetOperatio;
         this.direction = direction;
     }
 

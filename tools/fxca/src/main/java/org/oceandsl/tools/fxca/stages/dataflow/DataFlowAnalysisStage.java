@@ -25,8 +25,8 @@ import org.w3c.dom.Node;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
+import org.oceandsl.analysis.code.stages.data.EDirection;
 import org.oceandsl.tools.fxca.model.CommonBlock;
-import org.oceandsl.tools.fxca.model.EDirection;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranParameter;

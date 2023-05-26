@@ -28,7 +28,7 @@ import kieker.model.analysismodel.execution.Invocation;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.generic.Table;
 
 /**
  * Calculate the size of a component by number of operations, how many of its operations are called

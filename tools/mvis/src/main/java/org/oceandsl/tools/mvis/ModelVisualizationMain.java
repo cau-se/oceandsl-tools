@@ -87,10 +87,7 @@ public class ModelVisualizationMain extends AbstractService<TeetimeConfiguration
             this.logger.error("Output path {} is not directory", this.settings.getOutputDirectory());
             return false;
         }
-        if (!Files.isDirectory(this.settings.getInputDirectory())) {
-            this.logger.error("Input path {} is not directory", this.settings.getInputDirectory());
-            return false;
-        }
+
         return true;
     }
 

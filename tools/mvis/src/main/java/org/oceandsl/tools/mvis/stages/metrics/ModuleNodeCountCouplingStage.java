@@ -21,7 +21,7 @@ import kieker.analysis.generic.graph.INode;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.Table;
+import org.oceandsl.analysis.generic.Table;
 
 /**
  * Counts the incoming and outgoing edges for each node. Where nodes represent modules/components in

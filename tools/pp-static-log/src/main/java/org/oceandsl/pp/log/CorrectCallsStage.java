@@ -23,14 +23,14 @@ import teetime.framework.AbstractStage;
 import teetime.framework.InputPort;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.analysis.code.stages.data.CallerCallee;
+import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 
 /**
  * Read process caller callee events and fills in the callee's file name.
  *
  * <ul>
  * <li>The <b>mapInputPort</b> receives an event containing the function, file name map.
- * <li>The <b>inputPort</b> receives {@link CallerCallee} events.
+ * <li>The <b>inputPort</b> receives {@link CallerCalleeEntry} events.
  * </ul>
  *
  * @author Reiner Jung
@@ -38,13 +38,13 @@ import org.oceandsl.analysis.code.stages.data.CallerCallee;
  */
 public class CorrectCallsStage extends AbstractStage {
 
-    private final InputPort<CallerCallee> inputPort = this.createInputPort(CallerCallee.class);
+    private final InputPort<CallerCalleeEntry> inputPort = this.createInputPort(CallerCalleeEntry.class);
     private final InputPort<Map<String, String>> mapInputPort = this.createInputPort();
-    private final OutputPort<CallerCallee> outputPort = this.createOutputPort(CallerCallee.class);
+    private final OutputPort<CallerCalleeEntry> outputPort = this.createOutputPort(CallerCalleeEntry.class);
 
     private final Map<String, String> functionFileMap = new HashMap<>();
     private final Map<String, String> learnedFileMap = new HashMap<>();
-    private CallerCallee unprocessedInvocation;
+    private CallerCalleeEntry unprocessedInvocation;
 
     @Override
     protected void execute() throws Exception {
@@ -78,7 +78,7 @@ public class CorrectCallsStage extends AbstractStage {
         }
     }
 
-    public InputPort<CallerCallee> getInputPort() {
+    public InputPort<CallerCalleeEntry> getInputPort() {
         return this.inputPort;
     }
 
@@ -86,7 +86,7 @@ public class CorrectCallsStage extends AbstractStage {
         return this.mapInputPort;
     }
 
-    public OutputPort<CallerCallee> getOutputPort() {
+    public OutputPort<CallerCalleeEntry> getOutputPort() {
         return this.outputPort;
     }
 }
