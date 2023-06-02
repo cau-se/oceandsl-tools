@@ -18,7 +18,7 @@ package org.oceandsl.analysis.architecture; // NOPMD excessiveImports
 import java.io.IOException;
 import java.nio.file.Path;
 
-import kieker.analysis.architecture.repository.ArchitectureModelFactory;
+import kieker.analysis.architecture.repository.ArchitectureModelRepositoryFactory;
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.common.exception.ConfigurationException;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
@@ -49,31 +49,34 @@ public final class ArchitectureModelManagementUtils {
 
     public static ModelRepository createModelRepository(final String repositoryName) {
         final ModelRepository repository = new ModelRepository(repositoryName);
-        repository.register(ArchitectureModelFactory.TYPE_MODEL_DESCRIPTOR, TypeFactory.eINSTANCE.createTypeModel());
-        repository.register(ArchitectureModelFactory.ASSEMBLY_MODEL_DESCRIPTOR,
+        repository.register(ArchitectureModelRepositoryFactory.TYPE_MODEL_DESCRIPTOR,
+                TypeFactory.eINSTANCE.createTypeModel());
+        repository.register(ArchitectureModelRepositoryFactory.ASSEMBLY_MODEL_DESCRIPTOR,
                 AssemblyFactory.eINSTANCE.createAssemblyModel());
-        repository.register(ArchitectureModelFactory.DEPLOYMENT_MODEL_DESCRIPTOR,
+        repository.register(ArchitectureModelRepositoryFactory.DEPLOYMENT_MODEL_DESCRIPTOR,
                 DeploymentFactory.eINSTANCE.createDeploymentModel());
-        repository.register(ArchitectureModelFactory.EXECUTION_MODEL_DESCRIPTOR,
+        repository.register(ArchitectureModelRepositoryFactory.EXECUTION_MODEL_DESCRIPTOR,
                 ExecutionFactory.eINSTANCE.createExecutionModel());
-        repository.register(ArchitectureModelFactory.STATISTICS_MODEL_DESCRIPTOR,
+        repository.register(ArchitectureModelRepositoryFactory.STATISTICS_MODEL_DESCRIPTOR,
                 StatisticsFactory.eINSTANCE.createStatisticsModel());
-        repository.register(ArchitectureModelFactory.SOURCE_MODEL_DESCRIPTOR,
+        repository.register(ArchitectureModelRepositoryFactory.SOURCE_MODEL_DESCRIPTOR,
                 SourceFactory.eINSTANCE.createSourceModel());
 
         return repository;
     }
 
     public static ModelRepository loadModelRepository(final Path path) throws ConfigurationException {
-        return ArchitectureModelFactory.readModelRepository(path, ArchitectureModelFactory.TYPE_MODEL_DESCRIPTOR,
-                ArchitectureModelFactory.ASSEMBLY_MODEL_DESCRIPTOR,
-                ArchitectureModelFactory.DEPLOYMENT_MODEL_DESCRIPTOR,
-                ArchitectureModelFactory.EXECUTION_MODEL_DESCRIPTOR,
-                ArchitectureModelFactory.STATISTICS_MODEL_DESCRIPTOR, ArchitectureModelFactory.SOURCE_MODEL_DESCRIPTOR);
+        return ArchitectureModelRepositoryFactory.readModelRepository(path,
+                ArchitectureModelRepositoryFactory.TYPE_MODEL_DESCRIPTOR,
+                ArchitectureModelRepositoryFactory.ASSEMBLY_MODEL_DESCRIPTOR,
+                ArchitectureModelRepositoryFactory.DEPLOYMENT_MODEL_DESCRIPTOR,
+                ArchitectureModelRepositoryFactory.EXECUTION_MODEL_DESCRIPTOR,
+                ArchitectureModelRepositoryFactory.STATISTICS_MODEL_DESCRIPTOR,
+                ArchitectureModelRepositoryFactory.SOURCE_MODEL_DESCRIPTOR);
     }
 
     public static void writeModelRepository(final Path outputDirectory, final ModelRepository repository)
             throws IOException {
-        ArchitectureModelFactory.writeModelRepository(outputDirectory, repository);
+        ArchitectureModelRepositoryFactory.writeModelRepository(outputDirectory, repository);
     }
 }
