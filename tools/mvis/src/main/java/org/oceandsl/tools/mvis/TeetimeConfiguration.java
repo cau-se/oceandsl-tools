@@ -50,9 +50,12 @@ import org.oceandsl.tools.mvis.graph.IColorDependencyGraphBuilderConfiguration;
 import org.oceandsl.tools.mvis.stages.graph.ColorDependencyGraphBuilderConfiguration;
 import org.oceandsl.tools.mvis.stages.graph.ModuleCallGraphStage;
 import org.oceandsl.tools.mvis.stages.graph.OperationCallGraphStage;
+import org.oceandsl.tools.mvis.stages.metrics.ModuleNodeCountCouplingEntry;
 import org.oceandsl.tools.mvis.stages.metrics.ModuleNodeCountCouplingStage;
+import org.oceandsl.tools.mvis.stages.metrics.NumberOfCallsEntry;
 import org.oceandsl.tools.mvis.stages.metrics.NumberOfCallsStage;
 import org.oceandsl.tools.mvis.stages.metrics.OperationNodeCountCouplingStage;
+import org.oceandsl.tools.mvis.stages.metrics.OperationNodeCountEntry;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -149,8 +152,10 @@ public class TeetimeConfiguration extends Configuration {
         }
         if (settings.getComputeStatistics().contains(EStatistics.NUM_OF_CALLS)) {
             final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
-            final TableCsvSink operationCallSink = new TableCsvSink(settings.getOutputDirectory(), String
-                    .format("%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.OPERATION_CALLS_CSV));
+            final TableCsvSink<NumberOfCallsEntry> operationCallSink = new TableCsvSink<>(settings.getOutputDirectory(),
+                    String.format("%s-%s", settings.getSelector().getFilePrefix(),
+                            TeetimeConfiguration.OPERATION_CALLS_CSV),
+                    NumberOfCallsEntry.class);
 
             this.connectPorts(statisticsDistributor.getNewOutputPort(), numberOfCallsStage.getInputPort());
             this.connectPorts(numberOfCallsStage.getOutputPort(), operationCallSink.getInputPort());
@@ -167,9 +172,10 @@ public class TeetimeConfiguration extends Configuration {
                     settings.getGraphGenerationMode());
             final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
 
-            final TableCsvSink distinctOperationDegreeSink = new TableCsvSink(settings.getOutputDirectory(),
-                    String.format("%s-%s", settings.getSelector().getFilePrefix(),
-                            TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV));
+            final TableCsvSink<OperationNodeCountEntry> distinctOperationDegreeSink = new TableCsvSink<>(
+                    settings.getOutputDirectory(), String.format("%s-%s", settings.getSelector().getFilePrefix(),
+                            TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV),
+                    OperationNodeCountEntry.class);
 
             this.connectPorts(statisticsDistributor.getNewOutputPort(), functionCallGraphStage.getInputPort());
             this.connectPorts(functionCallGraphStage.getOutputPort(), functionNodeCouplingStage.getInputPort());
@@ -187,8 +193,10 @@ public class TeetimeConfiguration extends Configuration {
                     settings.getGraphGenerationMode());
             final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
 
-            final TableCsvSink distinctModuleDegreeSink = new TableCsvSink(settings.getOutputDirectory(), String.format(
-                    "%s-%s", settings.getSelector().getFilePrefix(), TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV));
+            final TableCsvSink<ModuleNodeCountCouplingEntry> distinctModuleDegreeSink = new TableCsvSink<>(
+                    settings.getOutputDirectory(), String.format("%s-%s", settings.getSelector().getFilePrefix(),
+                            TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV),
+                    ModuleNodeCountCouplingEntry.class);
 
             this.connectPorts(statisticsDistributor.getNewOutputPort(), moduleCallGraphStage.getInputPort());
             this.connectPorts(moduleCallGraphStage.getOutputPort(), moduleNodeCouplingStage.getInputPort());

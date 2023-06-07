@@ -52,8 +52,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        final Table<NotFoundEntry> notFoundTable = new Table<>("not-found", "caller-path", "caller-module",
-                "caller-operation", "callee-operation");
+        final Table<NotFoundEntry> notFoundTable = new Table<>("not-found");
 
         project.getModules().values().stream().filter(module -> module != project.getDefaultModule())
                 .forEach(module -> {

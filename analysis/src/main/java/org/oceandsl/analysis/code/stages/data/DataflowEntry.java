@@ -15,24 +15,36 @@
  ***************************************************************************/
 package org.oceandsl.analysis.code.stages.data;
 
-import lombok.Getter;
+import org.csveed.annotations.CsvCell;
+
+import kieker.model.analysismodel.execution.EDirection;
 
 public class DataflowEntry {
 
-    @Getter
-    private final String sourcePath;
-    @Getter
-    private final String sourceModule;
-    @Getter
-    private final String sourceOperation;
-    @Getter
-    private final String targetPath;
-    @Getter
-    private final String targetModule;
-    @Getter
-    private final String targetOperation;
-    @Getter
-    private final EDirection direction;
+    @CsvCell(columnIndex = 1, columnName = "source-path")
+    private String sourcePath;
+
+    @CsvCell(columnIndex = 2, columnName = "source-module")
+    private String sourceModule;
+
+    @CsvCell(columnIndex = 3, columnName = "source-operation")
+    private String sourceOperation;
+
+    @CsvCell(columnIndex = 4, columnName = "target-path")
+    private String targetPath;
+
+    @CsvCell(columnIndex = 5, columnName = "target-module")
+    private String targetModule;
+
+    @CsvCell(columnIndex = 6, columnName = "target-operation")
+    private String targetOperation;
+
+    @CsvCell(columnIndex = 7, columnName = "direction")
+    private EDirection direction;
+
+    public DataflowEntry() {
+        // default constructor required by csv library
+    }
 
     public DataflowEntry(final String sourcePath, final String sourceModule, final String sourceOperation,
             final String targetPath, final String targetModule, final String targetOperatio,
@@ -43,6 +55,62 @@ public class DataflowEntry {
         this.targetPath = targetPath;
         this.targetModule = targetModule;
         this.targetOperation = targetOperatio;
+        this.direction = direction;
+    }
+
+    public String getSourcePath() {
+        return this.sourcePath;
+    }
+
+    public void setSourcePath(final String sourcePath) {
+        this.sourcePath = sourcePath;
+    }
+
+    public String getSourceModule() {
+        return this.sourceModule;
+    }
+
+    public void setSourceModule(final String sourceModule) {
+        this.sourceModule = sourceModule;
+    }
+
+    public String getSourceOperation() {
+        return this.sourceOperation;
+    }
+
+    public void setSourceOperation(final String sourceOperation) {
+        this.sourceOperation = sourceOperation;
+    }
+
+    public String getTargetPath() {
+        return this.targetPath;
+    }
+
+    public void setTargetPath(final String targetPath) {
+        this.targetPath = targetPath;
+    }
+
+    public String getTargetModule() {
+        return this.targetModule;
+    }
+
+    public void setTargetModule(final String targetModule) {
+        this.targetModule = targetModule;
+    }
+
+    public String getTargetOperation() {
+        return this.targetOperation;
+    }
+
+    public void setTargetOperation(final String targetOperation) {
+        this.targetOperation = targetOperation;
+    }
+
+    public EDirection getDirection() {
+        return this.direction;
+    }
+
+    public void setDirection(final EDirection direction) {
         this.direction = direction;
     }
 

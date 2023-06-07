@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import kieker.analysis.architecture.recovery.signature.IComponentSignatureExtractor;
 import kieker.model.analysismodel.type.ComponentType;
 
+import org.oceandsl.analysis.code.CodeUtils;
+
 /**
  * Extract component signatures from Python classnames.
  *
@@ -38,9 +40,9 @@ public class PythonComponentSignatureExtractor implements IComponentSignatureExt
             signature = "-- none --";
         }
 
-        if ("<unknown>".equals(signature)) {
+        if (CodeUtils.UNKNOWN_COMPONENT.equals(signature)) {
             componentType.setName(signature);
-            componentType.setPackage("none");
+            componentType.setPackage(CodeUtils.NO_PACKAGE);
         } else {
             final int lastIndex = signature.lastIndexOf('.');
             if (lastIndex < 0) {

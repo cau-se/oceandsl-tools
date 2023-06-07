@@ -31,12 +31,11 @@ import org.oceandsl.analysis.generic.Table;
  * @since 1.4
  *
  */
-public class OperationCallsStage extends AbstractTransformation<ModelRepository, Table> {
+public class OperationCallsStage extends AbstractTransformation<ModelRepository, Table<CallEntry>> {
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
-        final Table<CallEntry> result = new Table<>("operation-calls", "caller-component", "caller-operation",
-                "callee-component", "callee-operation", "calls");
+        final Table<CallEntry> result = new Table<>("operation-calls");
 
         final ExecutionModel executionModel = element.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
 
@@ -44,9 +43,13 @@ public class OperationCallsStage extends AbstractTransformation<ModelRepository,
             final DeployedOperation caller = invocation.getCaller();
             final DeployedOperation callee = invocation.getCallee();
             final Integer numOfCalls = 0;
-            result.getRows().add(new CallEntry(this.getComponentName(caller),
-                    caller.getAssemblyOperation().getOperationType().getSignature(), this.getComponentName(callee),
-                    callee.getAssemblyOperation().getOperationType().getSignature(), numOfCalls));
+
+            final String callerComponent = this.getComponentName(caller);
+            final String callerSignature = caller.getAssemblyOperation().getOperationType().getSignature();
+            final String calleeComponent = this.getComponentName(callee);
+            final String calleeSignature = callee.getAssemblyOperation().getOperationType().getSignature();
+            result.getRows()
+                    .add(new CallEntry(callerComponent, callerSignature, calleeComponent, calleeSignature, numOfCalls));
         });
 
         this.outputPort.send(result);

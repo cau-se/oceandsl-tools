@@ -32,19 +32,9 @@ import org.oceandsl.tools.fxca.utils.Pair;
  */
 public class CreateCallTableStage extends AbstractTransformation<FortranProject, Table<CallerCalleeEntry>> {
 
-    private static final String SOURCE_PATH = "caller-path";
-    private static final String SOURCE_MODULE = "caller-module";
-    private static final String SOURCE_OPERATION = "caller-operation";
-    private static final String TARGET_PATH = "callee-path";
-    private static final String TARGET_MODULE = "callee-module";
-    private static final String TARGET_OPERATION = "callee-operation";
-
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        final Table<CallerCalleeEntry> callsTable = new Table<>("calls", CreateCallTableStage.SOURCE_PATH,
-                CreateCallTableStage.SOURCE_MODULE, CreateCallTableStage.SOURCE_OPERATION,
-                CreateCallTableStage.TARGET_PATH, CreateCallTableStage.TARGET_MODULE,
-                CreateCallTableStage.TARGET_OPERATION);
+        final Table<CallerCalleeEntry> callsTable = new Table<>("calls");
 
         project.getCalls().forEach(call -> {
             final Pair<FortranModule, FortranOperation> callerPair = call.getFirst();

@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar;
+package org.oceandsl.tools.fxca.stages.dataflow.data;
 
 import org.csveed.annotations.CsvCell;
 
 import kieker.model.analysismodel.execution.EDirection;
 
 /**
- * Storage operation dataflow record.
- *
  * @author Reiner Jung
  * @since 1.3.0
+ *
  */
-public class StorageOperationDataflow {
+public class CommonBlockArgumentDataflow implements IDataflowEntry {
 
     @CsvCell(columnIndex = 1, columnName = "common-block")
     private String commonBlockName;
@@ -42,11 +41,7 @@ public class StorageOperationDataflow {
     @CsvCell(columnIndex = 5, columnName = "direction")
     private EDirection direction;
 
-    public StorageOperationDataflow() {
-        // default constructor for csv reader
-    }
-
-    public StorageOperationDataflow(final String commonBlockName, final String fileName, final String moduleName,
+    public CommonBlockArgumentDataflow(final String commonBlockName, final String fileName, final String moduleName,
             final String operationName, final EDirection direction) {
         this.commonBlockName = commonBlockName;
         this.fileName = fileName;

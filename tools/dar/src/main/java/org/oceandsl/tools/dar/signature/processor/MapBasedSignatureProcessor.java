@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
 
+import org.oceandsl.analysis.code.CodeUtils;
 import org.oceandsl.analysis.utils.MapFileReader;
 import org.oceandsl.analysis.utils.StringValueConverter;
 
@@ -56,7 +57,7 @@ public class MapBasedSignatureProcessor extends AbstractSignatureProcessor {
 
     @Override
     public void processSignatures(final String componentSignature, final String operationSignature) {
-        if ("<<no-file>>".equals(componentSignature)) {
+        if (CodeUtils.NO_FILE.equals(componentSignature)) {
             this.componentSignature = componentSignature;
         } else {
             final Path path = Paths.get(componentSignature);

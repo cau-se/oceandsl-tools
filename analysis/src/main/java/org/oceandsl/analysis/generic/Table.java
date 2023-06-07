@@ -18,11 +18,11 @@ package org.oceandsl.analysis.generic;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.csveed.api.Header;
-import org.csveed.row.HeaderImpl;
-import org.csveed.row.LineWithInfo;
-
 /**
+ *
+ * @param <T>
+ *            table row class / bean
+ *
  * @author Reiner Jung
  * @since 1.1
  */
@@ -30,17 +30,9 @@ public class Table<T> {
 
     private final String name;
     private final List<T> rows = new ArrayList<>();
-    private final Header header;
 
-    public Table(final String name, final String... columnLabels) {
+    public Table(final String name) {
         this.name = name;
-
-        final LineWithInfo line = new LineWithInfo();
-        for (final String label : columnLabels) {
-            line.addCell(label);
-        }
-
-        this.header = new HeaderImpl(line);
     }
 
     public List<T> getRows() {
@@ -49,10 +41,6 @@ public class Table<T> {
 
     public String getName() {
         return this.name;
-    }
-
-    public Header getHeader() {
-        return this.header;
     }
 
 }

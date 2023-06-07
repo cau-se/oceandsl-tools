@@ -194,10 +194,13 @@ public final class StatisticsModelMerger {
     }
 
     private static boolean isIdenticalOperation(final DeployedOperation left, final DeployedOperation right) {
-        if (left.getAssemblyOperation().getOperationType().getSignature()
-                .equals(right.getAssemblyOperation().getOperationType().getSignature())) {
-            return left.getComponent().getAssemblyComponent().getSignature()
-                    .equals(right.getComponent().getAssemblyComponent().getSignature());
+        final String leftOperationSignature = left.getAssemblyOperation().getOperationType().getSignature();
+        final String rightOperationSignature = right.getAssemblyOperation().getOperationType().getSignature();
+
+        if (leftOperationSignature.equals(rightOperationSignature)) {
+            final String leftComponentSignature = left.getComponent().getAssemblyComponent().getSignature();
+            final String rightComponentSignature = right.getComponent().getAssemblyComponent().getSignature();
+            return leftComponentSignature.equals(rightComponentSignature);
         } else {
             return false;
         }

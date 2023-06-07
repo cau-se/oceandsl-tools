@@ -20,9 +20,10 @@ import java.util.Optional;
 
 import org.w3c.dom.Node;
 
+import kieker.model.analysismodel.execution.EDirection;
+
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.code.stages.data.EDirection;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranParameter;
@@ -192,7 +193,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         } else { // do statement or do label statement
             final String elementName = NodeUtils.getName(doV);
             FortranVariable loopVariable = this.checkVariable(operation, elementName, EDirection.WRITE);
-            if (!this.checkParameter(operation, elementName) && (loopVariable == null)) {
+            if (!this.checkParameter(operation, elementName) && loopVariable == null) {
                 if (!operation.isImplicit()) {
                     this.logger.error("Unknown value assignee {} after do statement in {}::{}", elementName,
                             module.getFileName(), operation.getName());

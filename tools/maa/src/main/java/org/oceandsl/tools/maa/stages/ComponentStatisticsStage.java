@@ -37,14 +37,13 @@ import org.oceandsl.analysis.generic.Table;
  * @author Reiner Jung
  * @since 1.4
  */
-public class ComponentStatisticsStage extends AbstractTransformation<ModelRepository, Table> {
+public class ComponentStatisticsStage extends AbstractTransformation<ModelRepository, Table<ComponentStatistics>> {
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
         final AssemblyModel assemblyModel = element.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
         final ExecutionModel executionModel = element.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
-        final Table<ComponentStatistics> table = new Table<>("component-statistics", "component", "operations",
-                "provided", "required");
+        final Table<ComponentStatistics> table = new Table<>("component-statistics");
 
         int i = 0;
         for (final AssemblyComponent component : assemblyModel.getComponents().values()) {

@@ -36,8 +36,7 @@ public class OperationNodeCountCouplingStage
 
     @Override
     protected void execute(final IGraph<INode, IEdge> graph) throws Exception {
-        final Table<OperationNodeCountEntry> result = new Table<>(graph.getLabel(), "module", "operation", "in-edges",
-                "out-edges");
+        final Table<OperationNodeCountEntry> result = new Table<>(graph.getLabel());
 
         for (final INode vertex : graph.getGraph().nodes()) {
             result.getRows()

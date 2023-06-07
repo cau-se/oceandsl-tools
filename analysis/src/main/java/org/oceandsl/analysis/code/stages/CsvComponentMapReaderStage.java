@@ -56,7 +56,7 @@ public class CsvComponentMapReaderStage extends AbstractProducerStage<Table<Comp
 
     @Override
     protected void execute() throws Exception {
-        final Table<ComponentMapEntry> resultTable = new Table<>("Component-Map", "component", "file", "function");
+        final Table<ComponentMapEntry> resultTable = new Table<>("Component-Map");
         String line;
         while ((line = this.reader.readLine()) != null) {
             final String[] values = line.split(this.seperator);

@@ -28,7 +28,8 @@ import teetime.framework.AbstractStage;
 import teetime.framework.InputPort;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.tools.sar.CallerCalleeDataflow;
+import org.oceandsl.analysis.code.CodeUtils;
+import org.oceandsl.analysis.code.stages.data.DataflowEntry;
 import org.oceandsl.tools.sar.StorageOperationDataflow;
 
 /**
@@ -42,8 +43,7 @@ import org.oceandsl.tools.sar.StorageOperationDataflow;
  */
 public class ElementAndDataflow4StaticDataStage extends AbstractStage {
 
-    private final InputPort<CallerCalleeDataflow> callerCalleeDataflowInputPort = this
-            .createInputPort(CallerCalleeDataflow.class);
+    private final InputPort<DataflowEntry> callerCalleeDataflowInputPort = this.createInputPort(DataflowEntry.class);
 
     private final InputPort<StorageOperationDataflow> storageOperationDataflowInputPort = this
             .createInputPort(StorageOperationDataflow.class);
@@ -63,15 +63,15 @@ public class ElementAndDataflow4StaticDataStage extends AbstractStage {
 
     @Override
     protected void execute() throws Exception {
-        final CallerCalleeDataflow callerCalleeDataflow = this.callerCalleeDataflowInputPort.receive();
+        final DataflowEntry callerCalleeDataflow = this.callerCalleeDataflowInputPort.receive();
         final StorageOperationDataflow storageOperationDataflow = this.storageOperationDataflowInputPort.receive();
 
         if (callerCalleeDataflow != null) {
-            final OperationEvent source = new OperationEvent(this.hostname, callerCalleeDataflow.getSourceModuleName(),
-                    callerCalleeDataflow.getSourceOperationName());
+            final OperationEvent source = new OperationEvent(this.hostname, callerCalleeDataflow.getSourceModule(),
+                    callerCalleeDataflow.getSourceOperation());
             this.operationOutputPort.send(source);
-            final OperationEvent target = new OperationEvent(this.hostname, callerCalleeDataflow.getTargetModuleName(),
-                    callerCalleeDataflow.getTargetOperatioName());
+            final OperationEvent target = new OperationEvent(this.hostname, callerCalleeDataflow.getTargetModule(),
+                    callerCalleeDataflow.getTargetOperation());
             this.operationOutputPort.send(target);
             final DataflowEvent dataflowEvent = new DataflowEvent(source, target, callerCalleeDataflow.getDirection(),
                     Duration.ZERO);
@@ -99,11 +99,11 @@ public class ElementAndDataflow4StaticDataStage extends AbstractStage {
         if (componentOptional.isPresent()) {
             return componentOptional.get().getSignature();
         } else {
-            return "<unknown>";
+            return CodeUtils.UNKNOWN_COMPONENT;
         }
     }
 
-    public InputPort<CallerCalleeDataflow> getCallerCalleeDataflowInputPort() {
+    public InputPort<DataflowEntry> getCallerCalleeDataflowInputPort() {
         return this.callerCalleeDataflowInputPort;
     }
 

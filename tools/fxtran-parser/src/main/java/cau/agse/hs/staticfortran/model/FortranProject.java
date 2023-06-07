@@ -97,9 +97,9 @@ public class FortranProject implements List<FortranModule> {
                 final String callerFileName = module.getXmlFilePath().toAbsolutePath().getFileName().toString();
                 final String calleeFunctionName = call.second;
                 final FortranModule calleeXML = this.resolveCallee(module, calleeFunctionName, globalModules);
-                final String calleeFileName = (calleeXML == null) ? "<unknown>"
+                final String calleeFileName = (calleeXML == null) ? CodeUtils.UNKOWN;
                         : calleeXML.getXmlFilePath().toAbsolutePath().getFileName().toString();
-                final String calleeModuleName = (calleeXML == null) ? "<unknown>" : calleeXML.getModuleName();
+                final String calleeModuleName = (calleeXML == null) ? CodeUtils.UNKOWN : calleeXML.getModuleName();
                 tableOut.println(callerFileName + ", " + module.getModuleName() + ", " + callerFunctionName + ", "
                         + calleeFileName + ", " + calleeModuleName + ", " + calleeFunctionName);
                 if (calleeXML == null) {

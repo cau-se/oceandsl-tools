@@ -15,13 +15,16 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages.dataflow;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import teetime.framework.OutputPort;
-import teetime.stage.basic.AbstractFilter;
+import teetime.stage.basic.AbstractTransformation;
 
+import org.oceandsl.analysis.code.CodeUtils;
+import org.oceandsl.analysis.code.stages.data.GlobalDataEntry;
 import org.oceandsl.tools.sar.Storage;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 
@@ -29,9 +32,7 @@ import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
  * @author Reiner Jung
  * @since 1.1
  */
-public class CleanupStorageComponentSignatureStage extends AbstractFilter<Storage> {
-
-    private static final String UNKNOWN = "<unknown>";
+public class CleanupStorageComponentSignatureStage extends AbstractTransformation<GlobalDataEntry, Storage> {
 
     private final OutputPort<String> errorMessageOutputPort = this.createOutputPort(String.class);
 
@@ -42,8 +43,13 @@ public class CleanupStorageComponentSignatureStage extends AbstractFilter<Storag
     }
 
     @Override
-    protected void execute(final Storage event) throws Exception {
-        this.outputPort.send(this.executeEntry(event.getFiles(), event.getModules(), event.getName()));
+    protected void execute(final GlobalDataEntry event) throws Exception {
+        this.outputPort.send(
+                this.executeEntry(this.makeList(event.getFiles()), this.makeList(event.getModules()), event.getName()));
+    }
+
+    private List<String> makeList(final String input) {
+        return Arrays.asList(input.split(","));
     }
 
     private Storage executeEntry(final List<String> paths, final List<String> componentSignatures,
@@ -53,17 +59,17 @@ public class CleanupStorageComponentSignatureStage extends AbstractFilter<Storag
         final Set<String> modules = new HashSet<>();
 
         for (int i = 0; i < paths.size(); i++) {
-            entry.component = UNKNOWN;
-            entry.element = UNKNOWN;
+            entry.component = CodeUtils.UNKNOWN_COMPONENT;
+            entry.element = CodeUtils.UNKNOWN_OPERATION;
             for (final AbstractSignatureProcessor processor : this.processors) {
                 if (!processor.processSignatures(paths.get(i), componentSignatures.get(i), storageSignature)) {
                     this.errorMessageOutputPort.send(processor.getErrorMessage());
                 }
-                if (UNKNOWN.equals(entry.component)) {
+                if (CodeUtils.UNKNOWN_COMPONENT.equals(entry.component)) {
                     entry.component = processor.getComponentSignature();
                 }
                 // TODO this might be obsolete
-                if (UNKNOWN.equals(entry.element)) {
+                if (CodeUtils.UNKNOWN_OPERATION.equals(entry.element)) {
                     entry.element = processor.getElementSignature();
                 }
             }

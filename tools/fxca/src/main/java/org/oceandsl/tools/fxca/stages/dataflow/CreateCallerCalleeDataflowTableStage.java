@@ -30,22 +30,10 @@ import org.oceandsl.tools.fxca.stages.dataflow.data.CallerCalleeDataflow;
 public class CreateCallerCalleeDataflowTableStage
         extends AbstractTransformation<CallerCalleeDataflow, Table<DataflowEntry>> {
 
-    private static final String SOURCE_PATH = "caller-apth";
-    private static final String SOURCE_MODULE = "caller-module";
-    private static final String SOURCE_OPERATION = "caller-operation";
-    private static final String TARGET_PATH = "callee-path";
-    private static final String TARGET_MODULE = "callee-module";
-    private static final String TARGET_OPERATION = "callee-operation";
-    private static final String DIRECTION = "direction";
-
     private final Table<DataflowEntry> callsTable;
 
     public CreateCallerCalleeDataflowTableStage() {
-        this.callsTable = new Table<>("dataflow-cc", CreateCallerCalleeDataflowTableStage.SOURCE_PATH,
-                CreateCallerCalleeDataflowTableStage.SOURCE_MODULE,
-                CreateCallerCalleeDataflowTableStage.SOURCE_OPERATION, CreateCallerCalleeDataflowTableStage.TARGET_PATH,
-                CreateCallerCalleeDataflowTableStage.TARGET_MODULE,
-                CreateCallerCalleeDataflowTableStage.TARGET_OPERATION, CreateCallerCalleeDataflowTableStage.DIRECTION);
+        this.callsTable = new Table<>("dataflow-cc");
     }
 
     @Override

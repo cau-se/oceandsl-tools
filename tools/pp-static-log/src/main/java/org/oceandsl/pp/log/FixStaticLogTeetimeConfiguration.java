@@ -31,8 +31,8 @@ import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 public class FixStaticLogTeetimeConfiguration extends Configuration {
 
     public FixStaticLogTeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
-        final CsvReaderStage<CallerCalleeEntry> readCsvStage = new CsvReaderStage<>(parameterConfiguration.getInputPath(),
-                ',', '"', '\\', true);
+        final CsvReaderStage<CallerCalleeEntry> readCsvStage = new CsvReaderStage<>(
+                parameterConfiguration.getInputPath(), ',', '"', '\\', true, CallerCalleeEntry.class);
         final CsvFunctionMapperStage functionMapperStage = new CsvFunctionMapperStage(
                 parameterConfiguration.getMapPaths());
         final CorrectCallsStage correctCallsStage = new CorrectCallsStage();

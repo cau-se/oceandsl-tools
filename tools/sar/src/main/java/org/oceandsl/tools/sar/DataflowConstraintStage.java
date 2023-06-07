@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import kieker.analysis.architecture.recovery.events.AbstractElementEvent;
 import kieker.analysis.architecture.recovery.events.DataflowEvent;
+import kieker.analysis.architecture.recovery.events.GenericElementEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
 
 import teetime.framework.AbstractStage;
@@ -96,7 +96,7 @@ public class DataflowConstraintStage extends AbstractStage {
         }
     }
 
-    private boolean checkEndpoint(final AbstractElementEvent event) {
+    private boolean checkEndpoint(final GenericElementEvent event) {
         if (event instanceof OperationEvent) {
             return this.checkOperationEvent((OperationEvent) event);
         } else {

@@ -33,6 +33,8 @@ import kieker.common.record.flow.trace.operation.BeforeOperationEvent;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
+import org.oceandsl.analysis.code.CodeUtils;
+
 /**
  * Rewrite logging information collected by the kieker-lang-pack-c and resolve function pointer
  * references to actual function calls and files.
@@ -104,7 +106,7 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
                         RewriteBeforeAndAfterEventsStage.this.addressMap.put(address, addrOutput);
                     } else if ("?? ??:0".equals(string)) {
                         RewriteBeforeAndAfterEventsStage.this.addressMap.put(address,
-                                new AddrOutput(address, "<<no-file>>", 0));
+                                new AddrOutput(address, CodeUtils.NO_FILE, 0));
                     } else {
                         RewriteBeforeAndAfterEventsStage.this.logger.error("Cannot process result '{}' for address {}",
                                 string, address);

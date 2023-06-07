@@ -42,14 +42,17 @@ public class TableCsvSink<T> extends AbstractConsumerStage<Table<T>> {
 
     private final Function<String, Path> filePathFunction;
     private final boolean header;
+    private Class<T> clazz;
 
-    public TableCsvSink(final Function<String, Path> filePathFunction, final boolean header) {
+    public TableCsvSink(final Function<String, Path> filePathFunction, final Class<T> clazz, final boolean header) {
         this.header = header;
         this.filePathFunction = filePathFunction;
+        this.clazz = clazz;
     }
 
-    public TableCsvSink(final Path filePath, final String filename, final boolean header) {
+    public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz, final boolean header) {
         this.header = header;
+        this.clazz = clazz;
         this.filePathFunction = new Function<>() {
 
             @Override
@@ -59,8 +62,9 @@ public class TableCsvSink<T> extends AbstractConsumerStage<Table<T>> {
         };
     }
 
-    public TableCsvSink(final Path filePath, final boolean header) {
+    public TableCsvSink(final Path filePath, final Class<T> clazz, final boolean header) {
         this.header = header;
+        this.clazz = clazz;
         this.filePathFunction = new Function<>() {
 
             @Override
@@ -70,21 +74,18 @@ public class TableCsvSink<T> extends AbstractConsumerStage<Table<T>> {
         };
     }
 
-    public TableCsvSink(final Path filePath, final String filename) {
-        this(filePath, filename, false);
+    public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz) {
+        this(filePath, filename, clazz, false);
     }
 
     @Override
     protected void execute(final Table<T> table) throws IOException {
         try (BufferedWriter outputStream = Files.newBufferedWriter(this.filePathFunction.apply(table.getName()),
                 StandardCharsets.UTF_8)) {
-            final CsvClient<T> csvClient = new CsvClientImpl<>(outputStream);
+            final CsvClient<T> csvClient = new CsvClientImpl<>(outputStream, this.clazz);
             csvClient.setUseHeader(this.header);
-            if (this.header) {
-                csvClient.writeHeader(table.getHeader());
-            }
             csvClient.writeBeans(table.getRows());
-            csvClient.isFinished();
+            outputStream.close();
         }
     }
 }

@@ -17,7 +17,7 @@ public class AggregateModelEditDistanceStage
     private final Table<ModelEditDistanceEntry> table;
 
     public AggregateModelEditDistanceStage() {
-        this.table = new Table<>("med-output", "original", "goal", "med");
+        this.table = new Table<>("med-output");
     }
 
     @Override

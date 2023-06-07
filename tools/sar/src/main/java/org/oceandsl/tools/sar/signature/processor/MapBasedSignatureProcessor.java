@@ -26,6 +26,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.oceandsl.analysis.code.CodeUtils;
 import org.oceandsl.analysis.utils.MapFileReader;
 import org.oceandsl.analysis.utils.StringValueConverter;
 
@@ -58,8 +59,8 @@ public class MapBasedSignatureProcessor extends AbstractSignatureProcessor {
             final String elementSignature) {
         this.elementSignature = this.convertToLowerCase(elementSignature);
 
-        if ("<<no-file>>".equals(pathString)) {
-            this.componentSignature = "<unknown>";
+        if (CodeUtils.NO_FILE.equals(pathString)) {
+            this.componentSignature = CodeUtils.UNKNOWN_COMPONENT;
             return true;
         } else {
             final Path path = Paths.get(pathString);

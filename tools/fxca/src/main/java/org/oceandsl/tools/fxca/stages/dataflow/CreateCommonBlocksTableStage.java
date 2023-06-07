@@ -17,6 +17,7 @@ package org.oceandsl.tools.fxca.stages.dataflow;
 
 import teetime.stage.basic.AbstractTransformation;
 
+import org.oceandsl.analysis.code.stages.data.GlobalDataEntry;
 import org.oceandsl.analysis.generic.Table;
 import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockEntry;
 
@@ -30,8 +31,7 @@ public class CreateCommonBlocksTableStage extends AbstractTransformation<CommonB
 
     private static final String COMMON_BLOCKS = "common-blocks";
 
-    private final Table<GlobalDataEntry> commonBlocksTable = new Table<>(CreateCommonBlocksTableStage.COMMON_BLOCKS,
-            "common-block", "files", "modules", "variables");
+    private final Table<GlobalDataEntry> commonBlocksTable = new Table<>(CreateCommonBlocksTableStage.COMMON_BLOCKS);
 
     @Override
     protected void execute(final CommonBlockEntry entry) throws Exception {

@@ -13,33 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.architecture.stages;
+package org.oceandsl.tools.sar;
 
-import kieker.analysis.architecture.repository.ModelRepository;
-
-import teetime.stage.basic.AbstractFilter;
+import com.beust.jcommander.IStringConverter;
 
 /**
- * Allow to change the repository's name.
- *
- * @author Reiner Jung
- * @since 1.3.0
+ * @author reiner
  *
  */
-public class ModelChangeNameStage extends AbstractFilter<ModelRepository> {
-
-    private final String name;
-
-    public ModelChangeNameStage(final String name) {
-        this.name = name;
-    }
+public class CharacterConverter implements IStringConverter<Character> {
 
     @Override
-    protected void execute(final ModelRepository input) throws Exception {
-        final ModelRepository output = new ModelRepository(this.name);
-        input.getModels().entrySet()
-                .forEach(entry -> output.register(input.getModelDescriptor(entry.getKey()), entry.getValue()));
-        this.outputPort.send(output);
+    public Character convert(final String value) {
+        return value.charAt(0);
     }
 
 }

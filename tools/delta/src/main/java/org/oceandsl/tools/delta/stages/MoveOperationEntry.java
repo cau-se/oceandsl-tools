@@ -15,26 +15,52 @@
  ***************************************************************************/
 package org.oceandsl.tools.delta.stages;
 
-import lombok.Getter;
+import org.csveed.annotations.CsvCell;
 
 /**
- * @author reiner
+ * @author Reiner Jung
+ * @since 2.0.0
  *
  */
 public class MoveOperationEntry {
 
-    @Getter
-    private final String sourceComponentName;
+    @CsvCell(columnIndex = 1, columnName = "source-component")
+    private String sourceComponentName;
 
-    @Getter
-    private final String targetComponentName;
+    @CsvCell(columnIndex = 2, columnName = "target-component")
+    private String targetComponentName;
 
-    @Getter
-    private final String operationName;
+    @CsvCell(columnIndex = 3, columnName = "operation")
+    private String operationName;
 
-    public MoveOperationEntry(final String sourceComponentName, final String targetComponentName, final String operationName) {
+    public MoveOperationEntry(final String sourceComponentName, final String targetComponentName,
+            final String operationName) {
         this.sourceComponentName = sourceComponentName;
         this.targetComponentName = targetComponentName;
+        this.operationName = operationName;
+    }
+
+    public String getSourceComponentName() {
+        return this.sourceComponentName;
+    }
+
+    public void setSourceComponentName(final String sourceComponentName) {
+        this.sourceComponentName = sourceComponentName;
+    }
+
+    public String getTargetComponentName() {
+        return this.targetComponentName;
+    }
+
+    public void setTargetComponentName(final String targetComponentName) {
+        this.targetComponentName = targetComponentName;
+    }
+
+    public String getOperationName() {
+        return this.operationName;
+    }
+
+    public void setOperationName(final String operationName) {
         this.operationName = operationName;
     }
 

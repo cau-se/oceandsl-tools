@@ -22,6 +22,7 @@ import java.nio.file.Path;
 
 import org.csveed.api.CsvClient;
 import org.csveed.api.CsvClientImpl;
+import org.csveed.report.CsvException;
 
 import teetime.framework.AbstractProducerStage;
 
@@ -39,6 +40,7 @@ public class CsvReaderStage<T> extends AbstractProducerStage<T> {
 
     private final CsvClient<T> csvClient;
     private final BufferedReader reader;
+    private final Path path;
 
     /**
      * Read a single CSV file.
@@ -54,13 +56,16 @@ public class CsvReaderStage<T> extends AbstractProducerStage<T> {
      * @param header
      *            indicate how to interpret the first line in the CSV file, set to true to indicate
      *            that the first line contains the header information
+     * @param clazz
+     *            bean class
      * @throws IOException
      *             when a stream could not be opened.
      */
     public CsvReaderStage(final Path path, final char separator, final char quoteSymbol, final char escapeSymbol,
-            final boolean header) throws IOException {
+            final boolean header, final Class<T> clazz) throws IOException {
+        this.path = path;
         this.reader = Files.newBufferedReader(path);
-        this.csvClient = new CsvClientImpl<>(this.reader);
+        this.csvClient = new CsvClientImpl<>(this.reader, clazz);
         this.csvClient.setQuote(quoteSymbol);
         this.csvClient.setSeparator(separator);
         this.csvClient.setEscape(escapeSymbol);
@@ -69,11 +74,23 @@ public class CsvReaderStage<T> extends AbstractProducerStage<T> {
 
     @Override
     protected void execute() throws Exception {
-        while (!this.csvClient.isFinished()) {
-            this.outputPort.send(this.csvClient.readBean());
-        }
+        this.csvClient.skipEmptyLines(true);
+        try {
+            while (!this.csvClient.isFinished()) {
+                final T bean = this.csvClient.readBean();
+                if (bean != null) {
+                    this.outputPort.send(bean);
+                } else {
+                    break;
+                }
+            }
 
-        this.reader.close();
+            this.reader.close();
+        } catch (final CsvException e) {
+            this.logger.error("Error reading csv file in line {} path {}", this.csvClient.getCurrentLine(),
+                    this.path.toString());
+            throw e;
+        }
         this.workCompleted();
     }
 

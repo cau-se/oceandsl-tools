@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.stages;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import kieker.analysis.architecture.repository.ModelRepository;
 
 import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
@@ -34,6 +36,7 @@ public class ModelMergeStage extends AbstractModelOperationStage {
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
+        element.getModels().values().forEach(model -> EcoreUtil.resolveAll(model.eResource()));
         this.logger.info("Merging models {}", element.getName());
         ModelRepositoryMergerUtils.perform(this.lastModel, element);
     }

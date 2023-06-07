@@ -22,10 +22,12 @@ import java.util.Set;
 
 import org.w3c.dom.Node;
 
+import kieker.model.analysismodel.execution.EDirection;
+
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.analysis.code.stages.data.EDirection;
+import org.oceandsl.analysis.code.CodeUtils;
 import org.oceandsl.tools.fxca.model.CommonBlock;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
@@ -34,6 +36,7 @@ import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.model.FortranVariable;
 import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
 import org.oceandsl.tools.fxca.stages.dataflow.data.CallerCalleeDataflow;
+import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockArgumentDataflow;
 import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockEntry;
 import org.oceandsl.tools.fxca.stages.dataflow.data.DataflowEndpoint;
 import org.oceandsl.tools.fxca.stages.dataflow.data.IDataflowEntry;
@@ -129,7 +132,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
             } else {
                 return EDirection.NONE;
             }
-        }).reduce(direction, (d, n) -> d.merge(n));
+        }).reduce(direction, (d, n) -> CodeUtils.merge(d, n));
     }
 
     private EDirection computeVariableCommonBlockDirection(final FortranOperation operation,
@@ -139,9 +142,9 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
                 return this.resolveDirection(variable);
             } else {
                 return variable.getSources().stream().map(source -> this.findDirection(source, commonBlock))
-                        .reduce(EDirection.NONE, (d, n) -> d.merge(n));
+                        .reduce(EDirection.NONE, (d, n) -> CodeUtils.merge(d, n));
             }
-        }).reduce(EDirection.NONE, (d, n) -> d.merge(n));
+        }).reduce(EDirection.NONE, (d, n) -> CodeUtils.merge(d, n));
     }
 
     private EDirection findDirection(final IDataflowEndpoint source, final CommonBlock commonBlock) {
@@ -174,7 +177,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
                 } else {
                     return EDirection.NONE;
                 }
-            }).reduce(variable.getDirection(), (o, n) -> o.merge(n));
+            }).reduce(variable.getDirection(), (o, n) -> CodeUtils.merge(o, n));
         } else {
             return variable.getDirection();
         }
@@ -217,7 +220,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
         } else if (statement.getNodeType() == Node.TEXT_NODE) {
             // ignore
         } else {
-            System.err.println(this.getClass().getSimpleName() + ": Unknown statement " + statement);
+            this.logger.error("Error: Unsupported statement by {}: {} ", this.getClass().getSimpleName(), statement);
         }
     }
 
@@ -469,7 +472,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
             // skip
             return null;
         } else {
-            System.err.println("ILLEGAL " + expressionNode);
+            this.logger.error("Unsupported expression part found in dataflow analysis: {}", expressionNode);
             return new DataflowEndpoint(contextModule, contextOperation, null, EDirection.NONE);
         }
     }

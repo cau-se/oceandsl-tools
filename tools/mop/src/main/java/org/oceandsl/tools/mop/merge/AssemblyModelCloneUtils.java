@@ -17,6 +17,8 @@ package org.oceandsl.tools.mop.merge;
 
 import java.util.Map.Entry;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
@@ -41,8 +43,14 @@ public final class AssemblyModelCloneUtils {
         newComponent.setSignature(component.getSignature());
 
         if (component.getComponentType().eIsProxy()) {
-            throw new InternalError(
-                    "Unresolved component type for " + component.getSignature() + " probably broken reference URI");
+            EcoreUtil.resolveAll(component.getComponentType());
+            final ComponentType componentType = typeModel.getComponentTypes().get(component.getSignature());
+            component.setComponentType(componentType);
+            System.err.println("Reconnect " + component.getSignature());
+            if (component.getComponentType().eIsProxy()) {
+                throw new InternalError(
+                        "Unresolved component type for " + component.getSignature() + " probably broken reference URI");
+            }
         }
 
         // TODO the following fails.

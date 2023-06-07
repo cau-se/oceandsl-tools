@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.analysis.code.stages.data;
 
+import org.csveed.annotations.CsvCell;
+
 /**
  * @author Reiner Jung
  * @since 1.0
@@ -22,12 +24,22 @@ package org.oceandsl.analysis.code.stages.data;
  */
 public class CallerCalleeEntry {
 
+    @CsvCell(columnIndex = 1, columnName = "caller-path")
     private String sourcePath;
+    @CsvCell(columnIndex = 2, columnName = "caller-module")
+    private String sourceModule;
+    @CsvCell(columnIndex = 3, columnName = "caller-operation")
+    private String caller;
+    @CsvCell(columnIndex = 4, columnName = "callee-path")
     private String targetPath;
-    private final String sourceModule;
-    private final String targetModule;
-    private final String caller;
-    private final String callee;
+    @CsvCell(columnIndex = 5, columnName = "callee-module")
+    private String targetModule;
+    @CsvCell(columnIndex = 6, columnName = "callee-operation")
+    private String callee;
+
+    public CallerCalleeEntry() {
+        // default constructor required for csv library
+    }
 
     public CallerCalleeEntry(final String sourcePath, final String sourceModule, final String caller,
             final String targetPath, final String targetModule, final String callee) {
@@ -43,8 +55,16 @@ public class CallerCalleeEntry {
         return this.callee;
     }
 
+    public void setCallee(final String callee) {
+        this.callee = callee;
+    }
+
     public String getCaller() {
         return this.caller;
+    }
+
+    public void setCaller(final String caller) {
+        this.caller = caller;
     }
 
     public String getSourcePath() {
@@ -67,8 +87,16 @@ public class CallerCalleeEntry {
         return this.sourceModule;
     }
 
+    public void setSourceModule(final String sourceModule) {
+        this.sourceModule = sourceModule;
+    }
+
     public String getTargetModule() {
         return this.targetModule;
+    }
+
+    public void setTargetModule(final String targetModule) {
+        this.targetModule = targetModule;
     }
 
     @Override

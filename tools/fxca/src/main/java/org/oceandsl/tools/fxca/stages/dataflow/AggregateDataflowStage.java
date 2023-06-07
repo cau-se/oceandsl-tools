@@ -22,7 +22,9 @@ import java.util.Optional;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
+import org.oceandsl.analysis.code.CodeUtils;
 import org.oceandsl.tools.fxca.stages.dataflow.data.CallerCalleeDataflow;
+import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockArgumentDataflow;
 import org.oceandsl.tools.fxca.stages.dataflow.data.IDataflowEntry;
 
 /**
@@ -74,7 +76,8 @@ public class AggregateDataflowStage extends AbstractConsumerStage<IDataflowEntry
                         && cc.getTargetOperatioName().equals(callerCalleeDataflow.getTargetOperatioName()))
                 .findFirst();
         if (ccOptional.isPresent()) {
-            ccOptional.get().setDirection(ccOptional.get().getDirection().merge(callerCalleeDataflow.getDirection()));
+            ccOptional.get().setDirection(
+                    CodeUtils.merge(ccOptional.get().getDirection(), callerCalleeDataflow.getDirection()));
         } else {
             this.callerCalleeDataflows.add(callerCalleeDataflow);
         }
@@ -88,7 +91,8 @@ public class AggregateDataflowStage extends AbstractConsumerStage<IDataflowEntry
                         && cb.getCommonBlockName().equals(commonBlockDataflow.getCommonBlockName()))
                 .findFirst();
         if (cbOptional.isPresent()) {
-            cbOptional.get().setDirection(cbOptional.get().getDirection().merge(commonBlockDataflow.getDirection()));
+            cbOptional.get()
+                    .setDirection(CodeUtils.merge(cbOptional.get().getDirection(), commonBlockDataflow.getDirection()));
         } else {
             this.commonBlockDataflows.add(commonBlockDataflow);
         }

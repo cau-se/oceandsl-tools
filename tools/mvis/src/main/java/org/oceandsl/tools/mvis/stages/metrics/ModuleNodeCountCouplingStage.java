@@ -35,8 +35,7 @@ public class ModuleNodeCountCouplingStage
 
     @Override
     protected void execute(final IGraph<INode, IEdge> graph) throws Exception {
-        final Table<ModuleNodeCountCouplingEntry> result = new Table<>(graph.getLabel(), "module", "in-edges",
-                "out-edges");
+        final Table<ModuleNodeCountCouplingEntry> result = new Table<>(graph.getLabel());
 
         for (final INode vertex : graph.getGraph().nodes()) {
             result.getRows().add(new ModuleNodeCountCouplingEntry(this.getFilepath(vertex.getId()),

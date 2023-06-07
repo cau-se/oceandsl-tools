@@ -45,8 +45,7 @@ public class ProvidedInterfaceTableTransformation
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
-        final Table<ProvidedInterfaceEntry> table = new Table<>("interfaces", "component-type", "provided-interface",
-                "operation", "caller-component-types");
+        final Table<ProvidedInterfaceEntry> table = new Table<>("interfaces");
         final TypeModel typeModel = element.getModel(TypePackage.Literals.TYPE_MODEL);
         final Map<ProvidedInterfaceType, Set<RequiredInterfaceType>> providedToRequiredMap = this
                 .createLookupProvidedInterfaceType(typeModel.getComponentTypes().values());

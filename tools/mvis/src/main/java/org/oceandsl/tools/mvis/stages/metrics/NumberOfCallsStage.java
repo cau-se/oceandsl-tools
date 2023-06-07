@@ -48,8 +48,7 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
         final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
         final StatisticsModel statisticsModel = repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
 
-        final Table<NumberOfCallsEntry> result = new Table<>(repository.getName(), "source-file", "source-function",
-                "target-file", "target-function", "calls");
+        final Table<NumberOfCallsEntry> result = new Table<>(repository.getName());
 
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> invocationEntry : executionModel
                 .getInvocations().entrySet()) {

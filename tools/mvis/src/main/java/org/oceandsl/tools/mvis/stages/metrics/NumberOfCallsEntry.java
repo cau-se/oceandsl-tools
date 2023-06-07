@@ -1,18 +1,18 @@
 package org.oceandsl.tools.mvis.stages.metrics;
 
-import lombok.Getter;
+import org.csveed.annotations.CsvCell;
 
 public class NumberOfCallsEntry {
 
-    @Getter
+    @CsvCell(columnIndex = 1, columnName = "source-path")
     private final String sourceFile;
-    @Getter
+    @CsvCell(columnIndex = 2, columnName = "source-operation")
     private final String sourceFunction;
-    @Getter
+    @CsvCell(columnIndex = 3, columnName = "target-path")
     private final String targetFile;
-    @Getter
+    @CsvCell(columnIndex = 4, columnName = "target-operation")
     private final String targetFunction;
-    @Getter
+    @CsvCell(columnIndex = 5, columnName = "calls")
     private final long calls;
 
     public NumberOfCallsEntry(final String sourceFile, final String sourceFunction, final String targetFile,
@@ -22,6 +22,26 @@ public class NumberOfCallsEntry {
         this.targetFile = targetFile;
         this.targetFunction = targetFunction;
         this.calls = calls;
+    }
+
+    public String getSourceFile() {
+        return this.sourceFile;
+    }
+
+    public String getSourceFunction() {
+        return this.sourceFunction;
+    }
+
+    public String getTargetFile() {
+        return this.targetFile;
+    }
+
+    public String getTargetFunction() {
+        return this.targetFunction;
+    }
+
+    public long getCalls() {
+        return this.calls;
     }
 
 }

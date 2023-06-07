@@ -3,15 +3,16 @@ package org.oceandsl.tools.fxca.stages.dataflow.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.oceandsl.analysis.code.stages.data.EDirection;
+import lombok.Getter;
+import lombok.Setter;
+
+import kieker.model.analysismodel.execution.EDirection;
+
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
 import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranVariable;
 import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
-
-import lombok.Getter;
-import lombok.Setter;
 
 public class DataflowEndpoint implements IDataflowEndpoint {
 
