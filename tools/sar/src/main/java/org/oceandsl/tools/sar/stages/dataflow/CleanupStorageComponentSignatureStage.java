@@ -61,10 +61,12 @@ public class CleanupStorageComponentSignatureStage extends AbstractTransformatio
         for (int i = 0; i < paths.size(); i++) {
             entry.component = CodeUtils.UNKNOWN_COMPONENT;
             entry.element = CodeUtils.UNKNOWN_OPERATION;
+
             for (final AbstractSignatureProcessor processor : this.processors) {
                 if (!processor.processSignatures(paths.get(i), componentSignatures.get(i), storageSignature)) {
                     this.errorMessageOutputPort.send(processor.getErrorMessage());
                 }
+
                 if (CodeUtils.UNKNOWN_COMPONENT.equals(entry.component)) {
                     entry.component = processor.getComponentSignature();
                 }
