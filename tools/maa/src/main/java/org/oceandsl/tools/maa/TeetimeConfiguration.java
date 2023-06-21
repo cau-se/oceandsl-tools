@@ -31,6 +31,7 @@ import org.oceandsl.analysis.architecture.stages.ModelChangeNameStage;
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.architecture.stages.ModelSink;
 import org.oceandsl.analysis.generic.stages.TableCsvSink;
+import org.oceandsl.tools.maa.stages.AbstractMergeInterfaceStage;
 import org.oceandsl.tools.maa.stages.CallEntry;
 import org.oceandsl.tools.maa.stages.CollectConnectionsStage;
 import org.oceandsl.tools.maa.stages.ComponentStatistics;
@@ -41,6 +42,7 @@ import org.oceandsl.tools.maa.stages.GroupComponentsHierarchicallyStage;
 import org.oceandsl.tools.maa.stages.OperationCallsStage;
 import org.oceandsl.tools.maa.stages.ProvidedInterfaceEntry;
 import org.oceandsl.tools.maa.stages.ProvidedInterfaceTableTransformation;
+import org.oceandsl.tools.maa.stages.SimilarMethodSetMergeInterfaceStage;
 
 /**
  * @author Reiner Jung
@@ -67,16 +69,18 @@ public class TeetimeConfiguration extends Configuration {
             final CollectConnectionsStage computeInterfaces = new CollectConnectionsStage();
             final FindDistinctCollectionsStage findDistinctCollectionsStage = new FindDistinctCollectionsStage();
             final GenerateProvidedInterfacesStage generateProvidedInterfacesStage = new GenerateProvidedInterfacesStage();
+            final AbstractMergeInterfaceStage mergeInterfaceStage = new SimilarMethodSetMergeInterfaceStage(1);
 
             this.connectPorts(outputPort, computeInterfaces.getInputPort());
             this.connectPorts(computeInterfaces.getOutputPort(), findDistinctCollectionsStage.getInputPort());
             this.connectPorts(findDistinctCollectionsStage.getOutputPort(),
                     generateProvidedInterfacesStage.getInputPort());
+            this.connectPorts(generateProvidedInterfacesStage.getOutputPort(), mergeInterfaceStage.getInputPort());
 
-            outputPort = generateProvidedInterfacesStage.getOutputPort();
+            outputPort = mergeInterfaceStage.getOutputPort();
         }
 
-        final boolean mapFiles = settings.getMapFiles() != null && settings.getMapFiles().size() > 0;
+        final boolean mapFiles = (settings.getMapFiles() != null) && (settings.getMapFiles().size() > 0);
         if (mapFiles) {
             try {
                 final GroupComponentsHierarchicallyStage groupComponentHierarchicallyStage = new GroupComponentsHierarchicallyStage(
