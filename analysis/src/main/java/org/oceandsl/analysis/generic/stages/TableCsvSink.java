@@ -40,49 +40,66 @@ import org.oceandsl.analysis.generic.Table;
  */
 public class TableCsvSink<T> extends AbstractConsumerStage<Table<T>> {
 
+    public static final char[] LF = { 10 };
+    public static final char[] CRLF = { 13, 10 };
+    public static final char[] CR = { 13 };
+
     private final Function<String, Path> filePathFunction;
     private final boolean header;
     private Class<T> clazz;
+    private char[] newline;
 
-    public TableCsvSink(final Function<String, Path> filePathFunction, final Class<T> clazz, final boolean header) {
+    public TableCsvSink(final Function<String, Path> filePathFunction, final Class<T> clazz, final boolean header,
+            final char[] newline) {
         this.header = header;
         this.filePathFunction = filePathFunction;
         this.clazz = clazz;
+        this.newline = newline;
     }
 
-    public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz, final boolean header) {
-        this.header = header;
-        this.clazz = clazz;
-        this.filePathFunction = new Function<>() {
+    public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz, final boolean header,
+            final char[] newline) {
+        this(new Function<>() {
 
             @Override
             public Path apply(final String name) {
                 return filePath.resolve(String.format("%s-%s", name, filename));
             }
-        };
+        }, clazz, header, newline);
     }
 
-    public TableCsvSink(final Path filePath, final Class<T> clazz, final boolean header) {
-        this.header = header;
-        this.clazz = clazz;
-        this.filePathFunction = new Function<>() {
+    public TableCsvSink(final Path filePath, final Class<T> clazz, final boolean header, final char[] newline) {
+        this(new Function<>() {
 
             @Override
             public Path apply(final String name) {
                 return filePath.resolve(String.format("%s.csv", name));
             }
-        };
+        }, clazz, header, newline);
+    }
+
+    public TableCsvSink(final Function<String, Path> filePathFunction, final Class<T> clazz, final boolean header) {
+        this(filePathFunction, clazz, header, LF);
+    }
+
+    public TableCsvSink(final Path filePath, final Class<T> clazz, final boolean header) {
+        this(filePath, clazz, header, LF);
     }
 
     public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz) {
-        this(filePath, filename, clazz, false);
+        this(filePath, filename, clazz, false, LF);
+    }
+
+    public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz, final boolean header) {
+        this(filePath, filename, clazz, header, LF);
     }
 
     @Override
     protected void execute(final Table<T> table) throws IOException {
-        try (BufferedWriter outputStream = Files.newBufferedWriter(this.filePathFunction.apply(table.getName()),
+        try (final BufferedWriter outputStream = Files.newBufferedWriter(this.filePathFunction.apply(table.getName()),
                 StandardCharsets.UTF_8)) {
             final CsvClient<T> csvClient = new CsvClientImpl<>(outputStream, this.clazz);
+            csvClient.setEndOfLine(this.newline);
             csvClient.setUseHeader(this.header);
             csvClient.writeBeans(table.getRows());
             outputStream.close();
