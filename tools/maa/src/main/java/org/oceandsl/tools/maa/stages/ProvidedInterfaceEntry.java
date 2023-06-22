@@ -20,13 +20,13 @@ import org.csveed.annotations.CsvCell;
 public class ProvidedInterfaceEntry {
 
     @CsvCell(columnIndex = 1, columnName = "component-type")
-    private final String componentType;
+    private String componentType;
     @CsvCell(columnIndex = 2, columnName = "provided-interface")
-    private final String providedInterface;
+    private String providedInterface;
     @CsvCell(columnIndex = 3, columnName = "operation")
-    private final String operation;
+    private String operation;
     @CsvCell(columnIndex = 4, columnName = "caller-component-types")
-    private final String callerComponentTypes;
+    private String callerComponentTypes;
 
     public ProvidedInterfaceEntry(final String componentType, final String providedInterface, final String operation,
             final String callerComponentTypes) {
@@ -40,16 +40,31 @@ public class ProvidedInterfaceEntry {
         return this.componentType;
     }
 
+    public void setComponentType(final String componentType) {
+        this.componentType = componentType;
+    }
+
     public String getProvidedInterface() {
         return this.providedInterface;
+    }
+
+    public void setProvidedInterface(final String providedInterface) {
+        this.providedInterface = providedInterface;
     }
 
     public String getOperation() {
         return this.operation;
     }
 
+    public void setOperation(final String operation) {
+        this.operation = operation;
+    }
+
     public String getCallerComponentTypes() {
         return this.callerComponentTypes;
     }
 
+    public void setCallerComponentTypes(final String callerComponentTypes) {
+        this.callerComponentTypes = callerComponentTypes;
+    }
 }

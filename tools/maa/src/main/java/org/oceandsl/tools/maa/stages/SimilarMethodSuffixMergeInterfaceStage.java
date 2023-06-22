@@ -28,13 +28,14 @@ import java.util.stream.Stream;
 import org.eclipse.emf.common.util.EList;
 
 import kieker.analysis.architecture.repository.ModelRepository;
+import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.ProvidedInterfaceType;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
 
-public class SimilarMethodSetMergeInterfaceStage extends AbstractMergeInterfaceStage {
+public class SimilarMethodSuffixMergeInterfaceStage extends AbstractMergeInterfaceStage {
 
-    private final int methodDistance;
+    private final double methodDistance;
 
     /**
      * Create interface merger.
@@ -42,7 +43,7 @@ public class SimilarMethodSetMergeInterfaceStage extends AbstractMergeInterfaceS
      * @param methodDistance
      *            maximal distance if methods of two interfaces
      */
-    public SimilarMethodSetMergeInterfaceStage(final int methodDistance) {
+    public SimilarMethodSuffixMergeInterfaceStage(final double methodDistance) {
         super();
         this.methodDistance = methodDistance;
     }
@@ -55,15 +56,16 @@ public class SimilarMethodSetMergeInterfaceStage extends AbstractMergeInterfaceS
             final Stream<MethodDistance> distances = componentType.getProvidedInterfaceTypes().stream()
                     .map(iface -> this.computeDistances(iface, componentType.getProvidedInterfaceTypes()))
                     .reduce(new ArrayList<MethodDistance>(), (l, nl) -> this.joinList(l, nl)).stream()
-                    .filter(distance -> distance.distance <= this.methodDistance);
+                    .filter(distance -> distance.distance >= this.methodDistance);
             // group related interfaces
             final Collection<Set<ProvidedInterfaceType>> groupedInterfaces = this.groupInterfaces(distances);
 
             // merge them
-            // groupedInterfaces.forEach(set -> {
-            // System.out.println("------------");
-            // set.forEach(iface -> this.printIface(iface));
-            // });
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++");
+            groupedInterfaces.forEach(set -> {
+                System.out.println("------------");
+                set.forEach(iface -> this.printIface(iface));
+            });
 
             // updated dependent required interfaces
 
@@ -144,29 +146,71 @@ public class SimilarMethodSetMergeInterfaceStage extends AbstractMergeInterfaceS
 
     private MethodDistance computeDistance(final ProvidedInterfaceType firstIface,
             final ProvidedInterfaceType secondIface) {
-        final double da = this.countMatchingMethods(firstIface, secondIface);
+        final double da = this.computeMatchingMethods(firstIface, secondIface);
         // firstIface.getProvidedOperationTypes().size();
-        final double db = this.countMatchingMethods(secondIface, firstIface);
+        final double db = this.computeMatchingMethods(secondIface, firstIface);
         // secondIface.getProvidedOperationTypes().size();
 
-        System.err.printf("distance 1>2 %6.3f 2>1 %6.3f %3d %3d\n", da, db,
-                firstIface.getProvidedOperationTypes().size(), secondIface.getProvidedOperationTypes().size());
+        // System.err.printf("distance 1>2 %6.3f 2>1 %6.3f %3d %3d\n", da, db,
+        // firstIface.getProvidedOperationTypes().size(),
+        // secondIface.getProvidedOperationTypes().size());
 
         final double distance = da + db;
 
         return new MethodDistance(firstIface, secondIface, distance);
     }
 
-    private double countMatchingMethods(final ProvidedInterfaceType firstIface,
+    private double computeMatchingMethods(final ProvidedInterfaceType firstIface,
             final ProvidedInterfaceType secondIface) {
-        return firstIface.getProvidedOperationTypes().values().stream().map(operation -> {
-            secondIface.getProvidedOperationTypes().values().forEach(v -> {
-                if (operation.getSignature().equals(v.getSignature())) {
-                    System.err.println(operation.getSignature() + " " + v.getSignature());
+        final Set<OperationType> assignedOps = new HashSet<>();
+        final double distance = firstIface.getProvidedOperationTypes().values().stream().map(op -> {
+            final Tuple start = new Tuple(op, 0.0);
+            final Tuple minimal = secondIface.getProvidedOperationTypes().values().stream()
+                    .filter(otherOp -> !assignedOps.contains(otherOp))
+                    .map(otherOp -> new Tuple(otherOp, this.nameDistance(op, otherOp))).reduce(start, (l, r) -> {
+                        if (l.distance >= r.distance) {
+                            return l;
+                        } else {
+                            return r;
+                        }
+                    });
+            assignedOps.add(minimal.operationType);
+            return minimal.distance;
+        }).reduce(0.0, (l, r) -> l + r); // / firstIface.getProvidedOperationTypes().size();
+        return distance;
+    }
+
+    private double nameDistance(final OperationType left, final OperationType right) {
+        final String leftName = left.getName();
+        final String rightName = right.getName();
+        final int leftLength = leftName.length();
+        final int rightLength = rightName.length();
+        if (leftName.length() < rightName.length()) {
+            for (int i = 0; i < leftLength; i++) {
+                if (leftName.charAt(leftLength - 1 - i) != rightName.charAt(rightLength - 1 - i)) {
+                    return (double) i / (double) leftLength;
                 }
-            });
-            return secondIface.getProvidedOperationTypes().containsValue(operation);
-        }).filter(element -> element).count();
+            }
+            return 1.0;
+        } else {
+            for (int i = 0; i < rightLength; i++) {
+                if (leftName.charAt(leftLength - 1 - i) != rightName.charAt(rightLength - 1 - i)) {
+                    return (double) i / (double) rightLength;
+                }
+            }
+            return 1.0;
+        }
+    }
+
+    private class Tuple {
+
+        private final OperationType operationType;
+        private final double distance;
+
+        public Tuple(final OperationType operationType, final double distance) {
+            this.operationType = operationType;
+            this.distance = distance;
+        }
     }
 
     private class MethodDistance {

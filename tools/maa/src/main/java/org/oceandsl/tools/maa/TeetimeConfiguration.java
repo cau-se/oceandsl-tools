@@ -42,7 +42,7 @@ import org.oceandsl.tools.maa.stages.GroupComponentsHierarchicallyStage;
 import org.oceandsl.tools.maa.stages.OperationCallsStage;
 import org.oceandsl.tools.maa.stages.ProvidedInterfaceEntry;
 import org.oceandsl.tools.maa.stages.ProvidedInterfaceTableTransformation;
-import org.oceandsl.tools.maa.stages.SimilarMethodSetMergeInterfaceStage;
+import org.oceandsl.tools.maa.stages.SimilarMethodSuffixMergeInterfaceStage;
 
 /**
  * @author Reiner Jung
@@ -69,15 +69,17 @@ public class TeetimeConfiguration extends Configuration {
             final CollectConnectionsStage computeInterfaces = new CollectConnectionsStage();
             final FindDistinctCollectionsStage findDistinctCollectionsStage = new FindDistinctCollectionsStage();
             final GenerateProvidedInterfacesStage generateProvidedInterfacesStage = new GenerateProvidedInterfacesStage();
-            final AbstractMergeInterfaceStage mergeInterfaceStage = new SimilarMethodSetMergeInterfaceStage(1);
+            final AbstractMergeInterfaceStage mergeInterfaceStage = new SimilarMethodSuffixMergeInterfaceStage(0.4);
 
             this.connectPorts(outputPort, computeInterfaces.getInputPort());
             this.connectPorts(computeInterfaces.getOutputPort(), findDistinctCollectionsStage.getInputPort());
             this.connectPorts(findDistinctCollectionsStage.getOutputPort(),
                     generateProvidedInterfacesStage.getInputPort());
-            this.connectPorts(generateProvidedInterfacesStage.getOutputPort(), mergeInterfaceStage.getInputPort());
+            // this.connectPorts(generateProvidedInterfacesStage.getOutputPort(),
+            // mergeInterfaceStage.getInputPort());
 
-            outputPort = mergeInterfaceStage.getOutputPort();
+            // outputPort = mergeInterfaceStage.getOutputPort();
+            outputPort = generateProvidedInterfacesStage.getOutputPort();
         }
 
         final boolean mapFiles = (settings.getMapFiles() != null) && (settings.getMapFiles().size() > 0);
