@@ -5,11 +5,11 @@ import org.csveed.annotations.CsvCell;
 public class ModelEditDistanceEntry {
 
     @CsvCell(columnIndex = 1, columnName = "original-model")
-    private final String originalModelName;
+    private String originalModelName;
     @CsvCell(columnIndex = 2, columnName = "goal-model")
-    private final String goalModelName;
+    private String goalModelName;
     @CsvCell(columnIndex = 3, columnName = "number-of-steps")
-    private final int numberOfSteps;
+    private int numberOfSteps;
 
     public ModelEditDistanceEntry(final String originalModelName, final String goalModelName, final int numberOfSteps) {
         this.originalModelName = originalModelName;
@@ -21,12 +21,24 @@ public class ModelEditDistanceEntry {
         return this.originalModelName;
     }
 
+    public void setOriginalModelName(final String originalModelName) {
+        this.originalModelName = originalModelName;
+    }
+
     public String getGoalModelName() {
         return this.goalModelName;
     }
 
+    public void setGoalModelName(final String goalModelName) {
+        this.goalModelName = goalModelName;
+    }
+
     public int getNumberOfSteps() {
         return this.numberOfSteps;
+    }
+
+    public void setNumberOfSteps(final int numberOfSteps) {
+        this.numberOfSteps = numberOfSteps;
     }
 
 }
