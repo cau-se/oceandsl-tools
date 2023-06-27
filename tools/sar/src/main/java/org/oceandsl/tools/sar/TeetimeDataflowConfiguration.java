@@ -43,7 +43,7 @@ import kieker.model.analysismodel.type.TypePackage;
 
 import teetime.framework.Configuration;
 
-import org.oceandsl.analysis.code.stages.CsvReaderStage;
+import org.oceandsl.analysis.code.stages.CsvReaderProducerStage;
 import org.oceandsl.analysis.code.stages.data.DataflowEntry;
 import org.oceandsl.analysis.generic.EModuleMode;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
@@ -71,9 +71,9 @@ public class TeetimeDataflowConfiguration extends Configuration {
         final Path storageDataflowPath = settings.getInputFile()
                 .resolve(StaticArchitectureRecoveryMain.STORAGE_DATAFLOW_FILENAME);
 
-        final CsvReaderStage<DataflowEntry> callerCalleeDataflowReader = new CsvReaderStage<>(callerCalleeDataflowPath,
+        final CsvReaderProducerStage<DataflowEntry> callerCalleeDataflowReader = new CsvReaderProducerStage<>(callerCalleeDataflowPath,
                 settings.getSplitSymbol(), '"', '\\', true, DataflowEntry.class);
-        final CsvReaderStage<StorageOperationDataflow> storageOperationDataflowReader = new CsvReaderStage<>(
+        final CsvReaderProducerStage<StorageOperationDataflow> storageOperationDataflowReader = new CsvReaderProducerStage<>(
                 storageDataflowPath, settings.getSplitSymbol(), '"', '\\', true, StorageOperationDataflow.class);
 
         final ElementAndDataflow4StaticDataStage elementAndDataflow4StaticDataStage = new ElementAndDataflow4StaticDataStage(

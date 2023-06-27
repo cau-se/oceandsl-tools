@@ -6,6 +6,7 @@ import java.util.Map;
 import teetime.stage.basic.AbstractTransformation;
 
 import org.oceandsl.analysis.generic.Table;
+import org.oceandsl.analysis.generic.data.MoveOperationEntry;
 import org.oceandsl.tools.restructuring.restructuremodel.CutOperation;
 import org.oceandsl.tools.restructuring.restructuremodel.MoveOperation;
 import org.oceandsl.tools.restructuring.restructuremodel.PasteOperation;

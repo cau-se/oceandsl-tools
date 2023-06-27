@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.delta.stages;
+package org.oceandsl.analysis.generic.data;
 
 import org.csveed.annotations.CsvCell;
 
@@ -32,6 +32,10 @@ public class MoveOperationEntry {
 
     @CsvCell(columnIndex = 3, columnName = "operation")
     private String operationName;
+
+    public MoveOperationEntry() {
+        // pojo constructor
+    }
 
     public MoveOperationEntry(final String sourceComponentName, final String targetComponentName,
             final String operationName) {
