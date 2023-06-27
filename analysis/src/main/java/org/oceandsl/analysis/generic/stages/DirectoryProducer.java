@@ -36,7 +36,7 @@ public class DirectoryProducer extends AbstractProducerStage<Path> {
      * @param paths
      *            paths to be converted to files and checked whether they are directories
      */
-    public DirectoryProducer(final Path... paths) {
+    public DirectoryProducer(final Path... paths) { // NOPMD
         this.paths = paths;
     }
 

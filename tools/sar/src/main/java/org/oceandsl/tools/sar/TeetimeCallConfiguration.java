@@ -46,9 +46,9 @@ import kieker.model.analysismodel.type.TypePackage;
 import teetime.framework.Configuration;
 
 import org.oceandsl.analysis.architecture.stages.CountUniqueCallsStage;
-import org.oceandsl.analysis.code.stages.CsvReaderProducerStage;
 import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.analysis.generic.source.CsvRowReaderProducerStage;
 import org.oceandsl.analysis.generic.stages.StringFileWriterSink;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
@@ -70,7 +70,7 @@ public class TeetimeCallConfiguration extends Configuration {
         super();
         final Path inputCallPath = settings.getInputFile().resolve(StaticArchitectureRecoveryMain.CALLTABLE_FILENAME);
 
-        final CsvReaderProducerStage<CallerCalleeEntry> readCallsCsvStage = new CsvReaderProducerStage<>(inputCallPath,
+        final CsvRowReaderProducerStage<CallerCalleeEntry> readCallsCsvStage = new CsvRowReaderProducerStage<>(inputCallPath,
                 settings.getSplitSymbol(), '"', '\\', true, CallerCalleeEntry.class);
 
         final CleanupComponentSignatureStage cleanupComponentSignatureStage = new CleanupComponentSignatureStage(

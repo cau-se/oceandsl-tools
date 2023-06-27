@@ -20,8 +20,10 @@ import java.nio.file.Path;
 import teetime.framework.Configuration;
 import teetime.stage.InitialElementProducer;
 
+import org.oceandsl.analysis.generic.data.MoveOperationEntry;
+import org.oceandsl.analysis.generic.source.CsvTableReaderStage;
+import org.oceandsl.analysis.generic.source.FileNameLabelMapper;
 import org.oceandsl.tools.mktable.stages.CreateLaTeXTable;
-import org.oceandsl.tools.mktable.stages.CsvReaderStage;
 import org.oceandsl.tools.mktable.stages.SortTableStage;
 
 /**
@@ -34,7 +36,8 @@ public class TeetimeConfiguration extends Configuration {
 
     public TeetimeConfiguration(final Settings settings) {
         final InitialElementProducer<Path> pathSource = new InitialElementProducer<>(settings.getInputPaths());
-        final CsvReaderStage csvReaderStage = new CsvReaderStage(';', '"', '\\', true);
+        final CsvTableReaderStage<String, MoveOperationEntry> csvReaderStage = new CsvTableReaderStage<>(';', '"', '\\',
+                true, MoveOperationEntry.class, new FileNameLabelMapper());
         final SortTableStage sortTableStage = new SortTableStage();
         final CreateLaTeXTable createLaTeXTable = new CreateLaTeXTable(settings.getOutputPath());
 

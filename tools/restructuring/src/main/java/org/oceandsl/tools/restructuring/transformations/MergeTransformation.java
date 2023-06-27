@@ -14,13 +14,12 @@ public class MergeTransformation extends CompositeTransformation {
 
     public MergeTransformation(final AssemblyModel model) {
         super(model);
-        // this.steps.add(new DeleteTransformation(model));
         this.steps.addAll(this.steps);
     }
 
     @Override
     public void applyTransformation(final AssemblyModel model) {
-        // TODO CHEC IF THE LIST FORMAT IS APPROPRIETE
+        // TODO CHECK IF THE LIST FORMAT IS APPROPRIETE
         // 1ST OPERATION Split other operation move
         for (final AbstractTransformationStep t : this.steps) {
             t.applyTransformation(model);

@@ -41,7 +41,7 @@ import kieker.model.analysismodel.type.TypeModel;
  * @author Reiner Jung
  * @since 1.2
  */
-public final class TestModelRepositoryUtils {
+public final class TestModelRepositoryUtils { // NOPMD not a test class
 
     public static final String PACKAGE_NAME = "a.generic.package";
 

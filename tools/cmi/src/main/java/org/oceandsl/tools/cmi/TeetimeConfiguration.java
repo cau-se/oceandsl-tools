@@ -74,7 +74,7 @@ public class TeetimeConfiguration extends Configuration {
             outputPort = this.createStatisticsCheck(outputPort, merger);
         }
         if (settings.getChecks().contains(ECheck.SOURCE)) {
-            outputPort = this.createSourceCheck(outputPort, merger);
+            outputPort = this.createSourceCheck(outputPort, merger); // NOPMD
         }
     }
 

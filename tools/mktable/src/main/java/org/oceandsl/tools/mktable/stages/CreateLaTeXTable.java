@@ -25,8 +25,8 @@ import java.util.List;
 
 import teetime.framework.AbstractConsumerStage;
 
+import org.oceandsl.analysis.generic.Table;
 import org.oceandsl.analysis.generic.data.MoveOperationEntry;
-import org.oceandsl.tools.mktable.Table;
 
 /**
  * Generate a LaTeX file for all optimizations.
@@ -53,14 +53,14 @@ public class CreateLaTeXTable extends AbstractConsumerStage<Table<String, MoveOp
 
     @Override
     protected void execute(final Table<String, MoveOperationEntry> optimization) throws Exception {
-        this.logger.info("Processing {} with {} entries\n", optimization.getOrigin(), optimization.getList().size());
-        final List<MoveOperationEntry> list = optimization.getList();
+        this.logger.info("Processing {} with {} entries\n", optimization.getLabel(), optimization.getRows().size());
+        final List<MoveOperationEntry> list = optimization.getRows();
         final List<Integer> leftStops = new ArrayList<>();
         final List<Integer> rightStops = new ArrayList<>();
 
         this.createStops(leftStops, rightStops, list);
 
-        this.printWriter.printf("\\section{%s}\n", optimization.getOrigin());
+        this.printWriter.printf("\\section{%s}\n", optimization.getLabel());
         this.printWriter.println("\\begin{tabular}{|r|c|l|}");
         this.printWriter.println("\\textbf{Source} & \\textbf{Operation} & \\textbf{Target} \\\\ \\hline");
 

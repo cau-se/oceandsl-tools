@@ -40,7 +40,7 @@ import org.oceandsl.tools.fxca.model.FortranParameter;
 import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.model.FortranVariable;
 import org.oceandsl.tools.fxca.utils.IUriProcessor;
-import org.oceandsl.tools.fxca.utils.ListTools;
+import org.oceandsl.tools.fxca.utils.ListUtils;
 import org.oceandsl.tools.fxca.utils.NodeUtils;
 import org.oceandsl.tools.fxca.utils.Predicates;
 
@@ -73,7 +73,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     @Override
     protected void execute(final Document document) throws Exception {
         final Element documentElement = document.getDocumentElement();
-        final Node moduleStatement = ListTools.getUniqueElementIfNonEmpty(
+        final Node moduleStatement = ListUtils.getUniqueElementIfNonEmpty(
                 NodeUtils.allDescendents(documentElement, Predicates.isModuleStatement, true), null);
 
         final boolean namedModule = moduleStatement != null;
@@ -99,7 +99,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
 
     private void computeMainProgram(final FortranModule module, final Element documentElement)
             throws ParserConfigurationException, SAXException, IOException {
-        final Node mainProgramNode = ListTools.getUniqueElementIfNonEmpty(
+        final Node mainProgramNode = ListUtils.getUniqueElementIfNonEmpty(
                 NodeUtils.allDescendents(documentElement, Predicates.isProgramStatement, true), null);
         if (mainProgramNode != null) {
             final FortranOperation operation = new FortranOperation("main", mainProgramNode, false);
@@ -115,7 +115,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     }
 
     private void computeModule(final FortranModule module, final Element documentElement) {
-        final Node moduleNode = ListTools.getUniqueElementIfNonEmpty(
+        final Node moduleNode = ListUtils.getUniqueElementIfNonEmpty(
                 NodeUtils.allDescendents(documentElement, Predicates.isModuleStatement, true), null);
         if (moduleNode != null) {
             this.computeUsedModules(module.getUsedModules(), moduleNode);
@@ -138,7 +138,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                 final FortranOperation operation = this.createFortranOperation(module, operationNode);
                 module.getOperations().put(operation.getName(), operation);
             } catch (ParserConfigurationException | SAXException | IOException e) {
-                e.printStackTrace();
+                this.logger.error("XML parser error {}", e.getLocalizedMessage());
             }
         });
     }
@@ -352,6 +352,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                 if (!operation.getParameters().containsKey(variableName)) {
                     operation.getVariables().put(variableName, this.createVariable(variableName));
                 } else {
+                    // NOPMD currently empty
                     // here you could set the parameter type
                 }
             }
@@ -368,7 +369,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
             try {
                 this.createFortranOperationPartDimensionalVariables(operation, file.getFirstChild());
             } catch (ParserConfigurationException | SAXException | IOException e) {
-                e.printStackTrace();
+                this.logger.error("XML parser error: {}", e.getLocalizedMessage());
             }
         });
     }

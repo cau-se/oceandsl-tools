@@ -2,7 +2,6 @@ package org.oceandsl.tools.restructuring.transformations;
 
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
-import kieker.model.analysismodel.assembly.impl.AssemblyFactoryImpl;
 
 /**
  *
@@ -14,11 +13,9 @@ public class PasteTransformation extends AtomicTransformation {
     private String componentName;
     private String operationName;
     private AssemblyOperation operation;
-    AssemblyFactoryImpl fac = new AssemblyFactoryImpl();
 
     public PasteTransformation(final AssemblyModel model) {
         super(model);
-        // TODO Auto-generated constructor stub
     }
 
     public void setComponentName(final String componentName) {
@@ -44,7 +41,7 @@ public class PasteTransformation extends AtomicTransformation {
     @Override
     public void applyTransformation(final AssemblyModel model) {
         model.getComponents().get(this.componentName).getOperations().put(this.operationName,
-                this.fac.createAssemblyOperation());
+                AbstractTransformationStep.FACTORY.createAssemblyOperation());
         this.model = model;
         // System.out.println("x");
     }

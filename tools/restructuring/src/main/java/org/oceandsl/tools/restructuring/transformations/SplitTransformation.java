@@ -14,7 +14,6 @@ public class SplitTransformation extends CompositeTransformation {
 
     public SplitTransformation(final AssemblyModel model) {
         super(model);
-        // TODO Auto-generated constructor stub
     }
 
     @Override

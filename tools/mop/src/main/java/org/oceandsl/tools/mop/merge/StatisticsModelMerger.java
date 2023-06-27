@@ -102,7 +102,7 @@ public final class StatisticsModelMerger {
         } else if (targetValue instanceof String) {
             return (String) targetValue + (String) value;
         } else {
-            StatisticsModelMerger.LOGGER.warn("Statistic values of type {} cannot be merged.",
+            StatisticsModelMerger.LOGGER.warn("Statistic values of type {} cannot be merged.", // NOPMD
                     targetValue.getClass().getCanonicalName());
             return null;
         }
@@ -129,7 +129,7 @@ public final class StatisticsModelMerger {
             return StatisticsModelMerger.findMatchingStorageDataflow(executionModel.getStorageDataflows(),
                     (StorageDataflow) object);
         } else {
-            StatisticsModelMerger.LOGGER.warn("Edge type {} not supported by statistics merger.",
+            StatisticsModelMerger.LOGGER.warn("Edge type {} not supported by statistics merger.", // NOPMD
                     object.getClass().getCanonicalName());
             return Optional.empty();
         }
@@ -196,21 +196,21 @@ public final class StatisticsModelMerger {
         final StorageType rightStorage = right.getAssemblyStorage().getStorageType();
 
         if (leftStorage == null) {
-            LOGGER.error("Left storage: Missing reference to storage type.", left);
+            StatisticsModelMerger.LOGGER.error("Left storage: Missing reference to storage type. {}", left);
         }
         if (leftStorage.getName() == null) {
-            LOGGER.error("Left storage type has no name.", left);
+            StatisticsModelMerger.LOGGER.error("Left storage type has no name. {}", left);
         }
 
         if (rightStorage == null) {
-            LOGGER.error("Right storage: Missing reference to storage type.", right);
+            StatisticsModelMerger.LOGGER.error("Right storage: Missing reference to storage type. {}", right);
         }
         if (rightStorage.getName() == null) {
-            LOGGER.error("Right storage type has no name.", right);
+            StatisticsModelMerger.LOGGER.error("Right storage type has no name. {}", right);
         }
 
         if (leftStorage.getName().equals(rightStorage.getName())
-                && checkType(leftStorage.getType(), rightStorage.getType())) {
+                && StatisticsModelMerger.checkType(leftStorage.getType(), rightStorage.getType())) {
             return left.getComponent().getAssemblyComponent().getSignature()
                     .equals(right.getComponent().getAssemblyComponent().getSignature());
         } else {
@@ -228,7 +228,7 @@ public final class StatisticsModelMerger {
 
     private static boolean isIdenticalDirection(final EDirection left, final EDirection right) {
         if (left == null) {
-            LOGGER.error("Left direction is not set.");
+            StatisticsModelMerger.LOGGER.error("Left direction is not set.");
         }
         if (left.equals(right)) {
             return true;

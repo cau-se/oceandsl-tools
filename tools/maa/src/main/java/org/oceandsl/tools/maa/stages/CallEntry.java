@@ -17,6 +17,12 @@ package org.oceandsl.tools.maa.stages;
 
 import lombok.Getter;
 
+/**
+ * Call entry.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
 public class CallEntry {
 
     @Getter

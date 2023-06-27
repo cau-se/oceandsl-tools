@@ -21,12 +21,16 @@ import kieker.model.analysismodel.execution.EDirection;
  * @author Reiner Jung
  * @since 2.0.0
  */
-public class CodeUtils {
+public final class CodeUtils {
 
     public static final String UNKNOWN_OPERATION = "++unknown-operation++";
     public static final String UNKNOWN_COMPONENT = "++unknown-component++";
     public static final String NO_FILE = "++no-file++";
     public static final String NO_PACKAGE = "++no-package++";
+
+    private CodeUtils() {
+        // utility class
+    }
 
     // duplicate from AggregateDataflowStage
     public static EDirection merge(final EDirection left, final EDirection right) {

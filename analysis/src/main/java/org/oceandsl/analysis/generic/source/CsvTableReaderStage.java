@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mktable.stages;
+package org.oceandsl.analysis.generic.source;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,23 +26,28 @@ import org.csveed.report.CsvException;
 
 import teetime.stage.basic.AbstractTransformation;
 
-import org.oceandsl.analysis.generic.data.MoveOperationEntry;
-import org.oceandsl.tools.mktable.Table;
+import org.oceandsl.analysis.generic.Table;
 
 /**
- * Reader for CSV files. Modified version. Should be merged
+ * Reader for multiple CSV files. Output them as tables.
  *
+ * @param <R>
+ *            table label type
+ * @param <T>
+ *            ICsvRecord datatype
  *
  * @author Reiner Jung
  * @since 1.0
  *
  */
-public class CsvReaderStage extends AbstractTransformation<Path, Table<String, MoveOperationEntry>> {
+public class CsvTableReaderStage<R, T> extends AbstractTransformation<Path, Table<R, T>> {
 
     private final char separator;
     private final char quoteSymbol;
     private final char escapeSymbol;
     private final boolean header;
+    private final Class<T> clazz;
+    private final IPathLabelMapper<R> mapper;
 
     /**
      * Read a single CSV file.
@@ -56,36 +61,46 @@ public class CsvReaderStage extends AbstractTransformation<Path, Table<String, M
      * @param header
      *            indicate how to interpret the first line in the CSV file, set to true to indicate
      *            that the first line contains the header information
+     * @param clazz
+     *            bean class
+     * @param mapper
+     *            path to label mapper
      * @throws IOException
      *             when a stream could not be opened.
      */
-    public CsvReaderStage(final char separator, final char quoteSymbol, final char escapeSymbol, final boolean header) {
+    public CsvTableReaderStage(final char separator, final char quoteSymbol, final char escapeSymbol,
+            final boolean header, final Class<T> clazz, final IPathLabelMapper<R> mapper) {
         this.separator = separator;
         this.quoteSymbol = quoteSymbol;
         this.escapeSymbol = escapeSymbol;
         this.header = header;
+        this.clazz = clazz;
+        this.mapper = mapper;
     }
 
     @Override
     protected void execute(final Path path) throws Exception {
-        final Table<String, MoveOperationEntry> optimization = new Table<>(path.getFileName().toString());
         try (BufferedReader reader = Files.newBufferedReader(path)) {
-            final CsvClient<MoveOperationEntry> csvClient = new CsvClientImpl<>(reader, MoveOperationEntry.class);
+            final CsvClient<T> csvClient = new CsvClientImpl<>(reader, this.clazz);
             csvClient.setQuote(this.quoteSymbol);
             csvClient.setSeparator(this.separator);
             csvClient.setEscape(this.escapeSymbol);
             csvClient.setUseHeader(this.header);
             csvClient.skipEmptyLines(true);
 
+            final Table<R, T> table = new Table<>(this.mapper.map(path));
+
             try {
                 while (!csvClient.isFinished()) {
-                    final MoveOperationEntry bean = csvClient.readBean();
+                    final T bean = csvClient.readBean();
                     if (bean != null) {
-                        optimization.getList().add(bean);
+                        table.getRows().add(bean);
                     } else {
                         break;
                     }
                 }
+
+                this.outputPort.send(table);
             } catch (final CsvException e) {
                 this.logger.error("Error reading csv file in line {} path {}", csvClient.getCurrentLine(),
                         path.toString());
@@ -93,7 +108,6 @@ public class CsvReaderStage extends AbstractTransformation<Path, Table<String, M
         } catch (final IOException e) {
             this.logger.error("Error reading csv file {}", path.toString());
         }
-        this.outputPort.send(optimization);
     }
 
 }

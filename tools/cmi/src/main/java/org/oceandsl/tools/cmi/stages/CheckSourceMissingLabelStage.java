@@ -37,6 +37,12 @@ import kieker.model.analysismodel.type.TypePackage;
 
 import org.oceandsl.tools.cmi.RepositoryUtils;
 
+/**
+ * Check elements with missing source labels.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
 public class CheckSourceMissingLabelStage extends AbstractCollector<ModelRepository> {
 
     @Override

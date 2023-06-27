@@ -40,7 +40,7 @@ public class PathIsModelDirectoryValidator implements IParameterValidator {
             ArchitectureModelRepositoryFactory.STATISTICS_MODEL_NAME };
 
     @Override
-    public void validate(final String name, final String value) throws ParameterException {
+    public void validate(final String name, final String value) throws ParameterException { // NOPMD
         final File modelDirectory = Paths.get(value).toFile();
         for (final String fileName : this.modelFiles) {
             boolean found = false;

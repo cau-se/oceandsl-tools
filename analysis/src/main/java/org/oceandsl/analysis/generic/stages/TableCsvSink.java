@@ -38,7 +38,7 @@ import org.oceandsl.analysis.generic.Table;
  * @author Reiner Jung
  * @since 1.1
  */
-public class TableCsvSink<T> extends AbstractConsumerStage<Table<T>> {
+public class TableCsvSink<R, T> extends AbstractConsumerStage<Table<R, T>> {
 
     public static final char[] LF = { 10 };
     public static final char[] CRLF = { 13, 10 };
@@ -54,7 +54,7 @@ public class TableCsvSink<T> extends AbstractConsumerStage<Table<T>> {
         this.header = header;
         this.filePathFunction = filePathFunction;
         this.clazz = clazz;
-        this.newline = newline;
+        this.newline = newline; // NOPMD
     }
 
     public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz, final boolean header,
@@ -79,25 +79,25 @@ public class TableCsvSink<T> extends AbstractConsumerStage<Table<T>> {
     }
 
     public TableCsvSink(final Function<String, Path> filePathFunction, final Class<T> clazz, final boolean header) {
-        this(filePathFunction, clazz, header, LF);
+        this(filePathFunction, clazz, header, TableCsvSink.LF);
     }
 
     public TableCsvSink(final Path filePath, final Class<T> clazz, final boolean header) {
-        this(filePath, clazz, header, LF);
+        this(filePath, clazz, header, TableCsvSink.LF);
     }
 
     public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz) {
-        this(filePath, filename, clazz, false, LF);
+        this(filePath, filename, clazz, false, TableCsvSink.LF);
     }
 
     public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz, final boolean header) {
-        this(filePath, filename, clazz, header, LF);
+        this(filePath, filename, clazz, header, TableCsvSink.LF);
     }
 
     @Override
-    protected void execute(final Table<T> table) throws IOException {
-        try (final BufferedWriter outputStream = Files.newBufferedWriter(this.filePathFunction.apply(table.getName()),
-                StandardCharsets.UTF_8)) {
+    protected void execute(final Table<R, T> table) throws IOException {
+        try (final BufferedWriter outputStream = Files
+                .newBufferedWriter(this.filePathFunction.apply(table.getLabel().toString()), StandardCharsets.UTF_8)) {
             final CsvClient<T> csvClient = new CsvClientImpl<>(outputStream, this.clazz);
             csvClient.setEndOfLine(this.newline);
             csvClient.setUseHeader(this.header);

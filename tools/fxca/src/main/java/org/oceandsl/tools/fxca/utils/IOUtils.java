@@ -37,9 +37,13 @@ import org.slf4j.LoggerFactory;
  *
  * @since 1.3.0
  */
-public class IOUtils {
+public final class IOUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
+
+    private IOUtils() {
+        // utility class
+    }
 
     public static PrintStream printStreamPrefixWrapper(final PrintStream printWithPrefix,
             final PrintStream printWithoutPrefix, final String prefix) {
@@ -103,7 +107,7 @@ public class IOUtils {
             final Predicate<Path> directoryFilter, final boolean addEntriesForDirectories,
             final Collection<Path> collectNotMatchingFiles) throws IOException {
 
-        final List<Path> result = ListTools.ofM();
+        final List<Path> result = ListUtils.ofM();
 
         final SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<>() {
 
@@ -124,7 +128,7 @@ public class IOUtils {
 
             @Override
             public FileVisitResult visitFileFailed(final Path filePath, final IOException exc) {
-                IOUtils.LOGGER.warn("could not visit {}: ", filePath.toString(), exc.getClass());
+                IOUtils.LOGGER.warn("could not visit {}: ", filePath.toString(), exc.getClass()); // NOPMD
                 return FileVisitResult.CONTINUE;
             }
 
@@ -144,7 +148,7 @@ public class IOUtils {
                 try {
                     return super.preVisitDirectory(dir, attrs);
                 } catch (final IOException e) {
-                    IOUtils.LOGGER.warn("skipping subdir {} due to I/O exception: {}", dir, e.getLocalizedMessage());
+                    IOUtils.LOGGER.warn("skipping subdir {} due to I/O exception: {}", dir, e.getLocalizedMessage()); // NOPMD
                     return FileVisitResult.SKIP_SUBTREE;
                 }
             }

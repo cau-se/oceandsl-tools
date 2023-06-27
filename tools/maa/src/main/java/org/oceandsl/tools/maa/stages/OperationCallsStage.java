@@ -31,11 +31,11 @@ import org.oceandsl.analysis.generic.Table;
  * @since 1.4
  *
  */
-public class OperationCallsStage extends AbstractTransformation<ModelRepository, Table<CallEntry>> {
+public class OperationCallsStage extends AbstractTransformation<ModelRepository, Table<String, CallEntry>> {
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
-        final Table<CallEntry> result = new Table<>("operation-calls");
+        final Table<String, CallEntry> result = new Table<>("operation-calls");
 
         final ExecutionModel executionModel = element.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
 

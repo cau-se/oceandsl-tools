@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.generic.validators;
+package org.oceandsl.analysis.generic.source;
 
-import java.io.File;
-import java.nio.file.Paths;
-
-import com.beust.jcommander.IParameterValidator;
-import com.beust.jcommander.ParameterException;
+import java.nio.file.Path;
 
 /**
- * Check whether the specified path refers to a directory.
  *
  * @author Reiner Jung
- * @since 1.3.0
+ * @since 2.0.0
+ *
+ * @param <T>
  */
-public class ParentPathIsDirectoryValidator implements IParameterValidator {
+public interface IPathLabelMapper<T> {
 
-    @Override
-    public void validate(final String name, final String value) throws ParameterException {
-        final File file = Paths.get(value).getParent().toFile();
-        if (!file.isDirectory()) {
-            throw new ParameterException(String.format("Parameter %s: path %s is not a directory.", name, value)); // NOPMD
-        }
-    }
+    /**
+     * Map path to label.
+     *
+     * @param path
+     *            input path
+     * @return
+     */
+    T map(Path path);
 
 }

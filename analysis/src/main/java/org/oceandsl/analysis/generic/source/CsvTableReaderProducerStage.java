@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.code.stages;
+package org.oceandsl.analysis.generic.source;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,8 +26,10 @@ import org.csveed.report.CsvException;
 
 import teetime.framework.AbstractProducerStage;
 
+import org.oceandsl.analysis.generic.Table;
+
 /**
- * Reader for CSV files.
+ * Reader for a CSV file. Outputs the whole file as a table.
  *
  * @param <T>
  *            ICsvRecord datatype
@@ -36,11 +38,12 @@ import teetime.framework.AbstractProducerStage;
  * @since 1.0
  *
  */
-public class CsvReaderProducerStage<T> extends AbstractProducerStage<T> {
+public class CsvTableReaderProducerStage<R, T> extends AbstractProducerStage<Table<R, T>> {
 
     private final CsvClient<T> csvClient;
     private final BufferedReader reader;
     private final Path path;
+    private final Table<R, T> table;
 
     /**
      * Read a single CSV file.
@@ -58,11 +61,13 @@ public class CsvReaderProducerStage<T> extends AbstractProducerStage<T> {
      *            that the first line contains the header information
      * @param clazz
      *            bean class
+     * @param label
+     *            table label
      * @throws IOException
      *             when a stream could not be opened.
      */
-    public CsvReaderProducerStage(final Path path, final char separator, final char quoteSymbol, final char escapeSymbol,
-            final boolean header, final Class<T> clazz) throws IOException {
+    public CsvTableReaderProducerStage(final Path path, final char separator, final char quoteSymbol,
+            final char escapeSymbol, final boolean header, final Class<T> clazz, final R label) throws IOException {
         this.path = path;
         this.reader = Files.newBufferedReader(path);
         this.csvClient = new CsvClientImpl<>(this.reader, clazz);
@@ -70,6 +75,34 @@ public class CsvReaderProducerStage<T> extends AbstractProducerStage<T> {
         this.csvClient.setSeparator(separator);
         this.csvClient.setEscape(escapeSymbol);
         this.csvClient.setUseHeader(header);
+        this.table = new Table<>(label);
+    }
+
+    /**
+     * Read a single CSV file.
+     *
+     * @param path
+     *            file path
+     * @param separator
+     *            string containing the separator symbol for cells
+     * @param quoteSymbol
+     *            quote symbol used for cells
+     * @param escapeSymbol
+     *            escape character
+     * @param header
+     *            indicate how to interpret the first line in the CSV file, set to true to indicate
+     *            that the first line contains the header information
+     * @param clazz
+     *            bean class
+     * @param pathLabelMapper
+     *            table label mapper object
+     * @throws IOException
+     *             when a stream could not be opened.
+     */
+    public CsvTableReaderProducerStage(final Path path, final char separator, final char quoteSymbol,
+            final char escapeSymbol, final boolean header, final Class<T> clazz, final IPathLabelMapper<R> mapper)
+            throws IOException {
+        this(path, separator, quoteSymbol, escapeSymbol, header, clazz, mapper.map(path));
     }
 
     @Override
@@ -79,12 +112,13 @@ public class CsvReaderProducerStage<T> extends AbstractProducerStage<T> {
             while (!this.csvClient.isFinished()) {
                 final T bean = this.csvClient.readBean();
                 if (bean != null) {
-                    this.outputPort.send(bean);
+                    this.table.getRows().add(bean);
                 } else {
                     break;
                 }
             }
 
+            this.outputPort.send(this.table);
             this.reader.close();
         } catch (final CsvException e) {
             this.logger.error("Error reading csv file in line {} path {}", this.csvClient.getCurrentLine(),

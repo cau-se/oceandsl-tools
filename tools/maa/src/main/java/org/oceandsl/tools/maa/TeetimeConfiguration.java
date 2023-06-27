@@ -31,7 +31,6 @@ import org.oceandsl.analysis.architecture.stages.ModelChangeNameStage;
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.architecture.stages.ModelSink;
 import org.oceandsl.analysis.generic.stages.TableCsvSink;
-import org.oceandsl.tools.maa.stages.AbstractMergeInterfaceStage;
 import org.oceandsl.tools.maa.stages.CallEntry;
 import org.oceandsl.tools.maa.stages.CollectConnectionsStage;
 import org.oceandsl.tools.maa.stages.ComponentStatistics;
@@ -42,7 +41,6 @@ import org.oceandsl.tools.maa.stages.GroupComponentsHierarchicallyStage;
 import org.oceandsl.tools.maa.stages.OperationCallsStage;
 import org.oceandsl.tools.maa.stages.ProvidedInterfaceEntry;
 import org.oceandsl.tools.maa.stages.ProvidedInterfaceTableTransformation;
-import org.oceandsl.tools.maa.stages.SimilarMethodSuffixMergeInterfaceStage;
 
 /**
  * @author Reiner Jung
@@ -61,7 +59,7 @@ public class TeetimeConfiguration extends Configuration {
         final ModelSink modelSink = new ModelSink(settings.getOutputModelPath());
 
         final ProvidedInterfaceTableTransformation providedInterfaceTableTransformation = new ProvidedInterfaceTableTransformation();
-        final TableCsvSink<ProvidedInterfaceEntry> providedInterfaceSink = new TableCsvSink<>(
+        final TableCsvSink<String, ProvidedInterfaceEntry> providedInterfaceSink = new TableCsvSink<>(
                 settings.getOutputModelPath(), "provided-interfaces.csv", ProvidedInterfaceEntry.class, true);
 
         OutputPort<ModelRepository> outputPort = modelReader.getOutputPort();
@@ -69,7 +67,8 @@ public class TeetimeConfiguration extends Configuration {
             final CollectConnectionsStage computeInterfaces = new CollectConnectionsStage();
             final FindDistinctCollectionsStage findDistinctCollectionsStage = new FindDistinctCollectionsStage();
             final GenerateProvidedInterfacesStage generateProvidedInterfacesStage = new GenerateProvidedInterfacesStage();
-            final AbstractMergeInterfaceStage mergeInterfaceStage = new SimilarMethodSuffixMergeInterfaceStage(0.4);
+            // final AbstractMergeInterfaceStage mergeInterfaceStage = new
+            // SimilarMethodSuffixMergeInterfaceStage(0.4);
 
             this.connectPorts(outputPort, computeInterfaces.getInputPort());
             this.connectPorts(computeInterfaces.getOutputPort(), findDistinctCollectionsStage.getInputPort());
@@ -106,7 +105,7 @@ public class TeetimeConfiguration extends Configuration {
 
         if (settings.isOperationCalls()) {
             final OperationCallsStage operationCallsStage = new OperationCallsStage();
-            final TableCsvSink<CallEntry> operationCallSink = new TableCsvSink<>(settings.getOutputModelPath(),
+            final TableCsvSink<String, CallEntry> operationCallSink = new TableCsvSink<>(settings.getOutputModelPath(),
                     "operation-calls.csv", CallEntry.class, true);
             this.connectPorts(distributor.getNewOutputPort(), operationCallsStage.getInputPort());
             this.connectPorts(operationCallsStage.getOutputPort(), operationCallSink.getInputPort());
@@ -114,7 +113,7 @@ public class TeetimeConfiguration extends Configuration {
 
         if (settings.isComponentStatistics()) {
             final ComponentStatisticsStage componentStatisticsStage = new ComponentStatisticsStage();
-            final TableCsvSink<ComponentStatistics> operationCallSink = new TableCsvSink<>(
+            final TableCsvSink<String, ComponentStatistics> operationCallSink = new TableCsvSink<>(
                     settings.getOutputModelPath(), "component-statistics.csv", ComponentStatistics.class, true);
             this.connectPorts(distributor.getNewOutputPort(), componentStatisticsStage.getInputPort());
             this.connectPorts(componentStatisticsStage.getOutputPort(), operationCallSink.getInputPort());

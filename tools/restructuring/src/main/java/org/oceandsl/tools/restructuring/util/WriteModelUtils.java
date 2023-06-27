@@ -24,9 +24,13 @@ import org.oceandsl.tools.restructuring.restructuremodel.TransformationModel;
  * @author Serafim Simonov
  * @since 1.3.0
  */
-public class WriteModelUtils {
+public final class WriteModelUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArchitectureModelManagementUtils.class);
+
+    private WriteModelUtils() {
+        // ensure utils are not instantiated
+    }
 
     public static void writeModelRepository(final Path outputDirectory, final String filename,
             final TransformationModel model) throws IOException {
@@ -60,7 +64,7 @@ public class WriteModelUtils {
         try {
             resource.save(Collections.EMPTY_MAP);
         } catch (final IOException e) {
-            WriteModelUtils.LOGGER.error("Cannot write {} model to storage. Cause: {}", modelFile.getAbsoluteFile(),
+            WriteModelUtils.LOGGER.error("Cannot write {} model to storage. Cause: {}", modelFile.getAbsoluteFile(), // NOPMD
                     e.getLocalizedMessage());
         }
     }

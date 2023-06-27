@@ -18,10 +18,16 @@ package org.oceandsl.tools.mop;
 import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.ParameterException;
 
+/**
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ *
+ */
 public class OperationValidator implements IParameterValidator {
 
     @Override
-    public void validate(final String name, final String value) throws ParameterException {
+    public void validate(final String name, final String value) throws ParameterException { // NOPMD
         final OperationConverter converter = new OperationConverter();
         converter.convert(value);
     }

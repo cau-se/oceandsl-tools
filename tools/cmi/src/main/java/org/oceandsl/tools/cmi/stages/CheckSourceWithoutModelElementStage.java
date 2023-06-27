@@ -35,6 +35,12 @@ import kieker.model.analysismodel.type.TypePackage;
 
 import org.oceandsl.tools.cmi.RepositoryUtils;
 
+/**
+ * Check source elements.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
 public class CheckSourceWithoutModelElementStage extends AbstractCollector<ModelRepository> {
 
     @Override

@@ -76,9 +76,9 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
             } else if (Predicates.isWhereStatement.test(statement)) {
                 this.checkWhereStatement(operation, statement);
             } else if (Predicates.isCloseStatement.test(statement)) {
-                this.checkCloseStatement(operation, statement);
+                this.checkCloseStatement();
             } else if (Predicates.isOpenStatement.test(statement)) {
-                this.checkOpenStatement(operation, statement);
+                this.checkOpenStatement();
             } else if (Predicates.isDIMStatement.test(statement)) {
                 this.checkDIMStatement(module, operation, statement);
             } else if (Predicates.isEndFileStatement.test(statement)) {
@@ -96,17 +96,17 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                     .or(Predicates.isInquireStatement).or(Predicates.isParameterStatement)
                     .or(Predicates.isCommonStatement).or(Predicates.isExitStatement).or(Predicates.isExternalStatement)
                     .test(statement)) {
-                // ignore
+                // NOPMD ignore
             } else if (statement.getNodeType() == Node.TEXT_NODE) {
-                // ignore text
+                // NOPMD ignore text
             } else {
                 this.logger.debug("In file {}: Unkown statement {}", module.getFileName(), statement);
             }
         });
     }
 
-    private void checkOpenStatement(final FortranOperation operation, final Node sibling) {
-        // no dataflow
+    private void checkOpenStatement() {
+        // currently not considered dataflow
     }
 
     private void checkDIMStatement(final FortranModule module, final FortranOperation operation,
@@ -152,8 +152,8 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         }
     }
 
-    private void checkCloseStatement(final FortranOperation operation, final Node sibling) {
-        // no dataflow
+    private void checkCloseStatement() {
+        // not considered dataflow right now
     }
 
     private void checkAssignment(final FortranOperation operation, final Node assignment) {
@@ -176,7 +176,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
     private void checkAssignmentExpression(final FortranOperation operation, final Node assignment) {
         final Node node = NodeUtils.getAssignmentExpression(assignment);
         if (Predicates.isNamedExpression.test(node)) {
-            // System.err.println(" named expression " + NodeProcessingUtils.getName(node));
+            // NOPMD ignore
         } else if (Predicates.isAssignmentE2.test(node)) {
             this.checkExpression(operation, node, EDirection.READ);
         } else {
@@ -193,7 +193,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         } else { // do statement or do label statement
             final String elementName = NodeUtils.getName(doV);
             FortranVariable loopVariable = this.checkVariable(operation, elementName, EDirection.WRITE);
-            if (!this.checkParameter(operation, elementName) && loopVariable == null) {
+            if (!this.checkParameter(operation, elementName) && (loopVariable == null)) {
                 if (!operation.isImplicit()) {
                     this.logger.error("Unknown value assignee {} after do statement in {}::{}", elementName,
                             module.getFileName(), operation.getName());
@@ -348,9 +348,8 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         if (parameterOptional.isPresent()) {
             return parameterOptional;
         } else {
-            final Optional<FortranParameter> lastOptional = operation.getParameters().values().stream()
+            return operation.getParameters().values().stream()
                     .filter(parameter -> parameter.getPosition() == operation.getParameters().size()).findFirst();
-            return lastOptional;
         }
     }
 
@@ -382,17 +381,17 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                 final String elementName = NodeUtils.getName(expressionElement);
                 this.checkVariable(operation, elementName, direction);
                 this.checkParameter(operation, elementName);
-                this.checkFunction(operation, expressionElement, elementName);
+                this.checkFunction(operation, expressionElement);
             } else if (Predicates.isOperand.test(expressionElement)) {
-                // System.err.println(" operand " + expressionElement.getTextContent());
+                // NOPMD ignore
             } else if (Predicates.isM.test(expressionElement)) {
-                // System.err.println(" m");
+                // NOPMD ignore
             } else if (Predicates.isCnt.test(expressionElement)) {
-                // System.err.println(" cnt");
+                // NOPMD ignore
             } else if (Predicates.isLiteralE.test(expressionElement)) {
-                // System.err.println(" literal " + expressionElement.getTextContent());
+                // NOPMD ignore
             } else if (Predicates.isStringE.test(expressionElement)) {
-                // System.err.println(" string literal " + expressionElement.getTextContent());
+                // NOPMD ignore
             } else if (Predicates.isOperandExpression.test(expressionElement)) {
                 this.checkExpression(operation, expressionElement, EDirection.READ);
             } else if (Predicates.isParensExpression.test(expressionElement)) {
@@ -400,13 +399,13 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
             } else if (Predicates.isIterator.test(expressionElement)) {
                 this.checkIterator(operation, expressionElement);
             } else if (Predicates.isArgumentName.test(expressionElement)) {
-                this.checkArgumentName(operation, expressionElement);
+                this.checkArgumentName();
             } else if (Predicates.isArrayConstructorExpression.test(expressionElement)) {
                 this.checkArrayConstructorExpression(operation, expressionElement, direction);
             } else if (Predicates.isC.or(Predicates.isLabel).test(expressionElement)) {
-                // ignore
+                // NOPMD ignore
             } else if (expressionElement.getNodeType() == Node.TEXT_NODE) {
-                // System.err.println(" text node " + expressionElement.getTextContent());
+                // NOPMD ignore
             } else {
                 this.logger.error("Unknown expression element {}", expressionElement.toString());
             }
@@ -420,7 +419,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                 .forEach(value -> this.checkExpression(operation, value, direction));
     }
 
-    private void checkArgumentName(final FortranOperation operation, final Node expression) {
+    private void checkArgumentName() {
         // TODO we do not know how to handle argument names in read and write statements
     }
 
@@ -458,8 +457,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         }
     }
 
-    private boolean checkFunction(final FortranOperation operation, final Node expressionElement,
-            final String elementName) {
+    private boolean checkFunction(final FortranOperation operation, final Node expressionElement) {
         if (Predicates.isNamedExpressionAccess.test(expressionElement)) {
             // System.err.println("function " + elementName);
             final Node rlt = NodeUtils.findChildFirst(expressionElement, Predicates.isRLT);

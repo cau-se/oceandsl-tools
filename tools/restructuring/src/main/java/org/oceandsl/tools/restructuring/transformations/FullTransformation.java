@@ -11,7 +11,6 @@ public class FullTransformation extends CompositeTransformation {
 
     public FullTransformation(final AssemblyModel model) {
         super(model);
-        // TODO Auto-generated constructor stub
     }
 
     @Override

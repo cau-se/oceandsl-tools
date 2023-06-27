@@ -36,8 +36,8 @@ public class TeetimeConfiguration extends Configuration {
 
         final CompileRestructureYamlStage yamlProcessor = new CompileRestructureYamlStage();
 
-        final TableCsvSink<MoveOperationEntry> csvSink = new TableCsvSink<>(settings.getOutputPath().getParent(),
-                MoveOperationEntry.class, true);
+        final TableCsvSink<String, MoveOperationEntry> csvSink = new TableCsvSink<>(
+                settings.getOutputPath().getParent(), MoveOperationEntry.class, true);
 
         final Path outputPath = settings.getOutputPath().getParent().resolve(name + ".yaml");
         final YamlSink<YamlRestructureModel> yamlSink = new YamlSink<>(outputPath);

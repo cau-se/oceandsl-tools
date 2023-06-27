@@ -40,9 +40,9 @@ import kieker.model.analysismodel.type.TypePackage;
 
 import teetime.framework.Configuration;
 
-import org.oceandsl.analysis.code.stages.CsvReaderProducerStage;
 import org.oceandsl.analysis.code.stages.data.GlobalDataEntry;
 import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.analysis.generic.source.CsvRowReaderProducerStage;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
@@ -63,7 +63,7 @@ public class TeetimeStorageConfiguration extends Configuration {
 
         final Path storagePath = settings.getInputFile().resolve(StaticArchitectureRecoveryMain.STORAGE_FILENAME);
 
-        final CsvReaderProducerStage<GlobalDataEntry> storagesReader = new CsvReaderProducerStage<>(storagePath,
+        final CsvRowReaderProducerStage<GlobalDataEntry> storagesReader = new CsvRowReaderProducerStage<>(storagePath,
                 settings.getSplitSymbol(), '"', '\\', true, GlobalDataEntry.class);
 
         final CleanupStorageComponentSignatureStage cleanupComponentSignatureStage = new CleanupStorageComponentSignatureStage(

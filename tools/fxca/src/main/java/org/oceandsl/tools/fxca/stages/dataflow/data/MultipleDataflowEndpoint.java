@@ -31,7 +31,7 @@ import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
 public class MultipleDataflowEndpoint implements IDataflowEndpoint {
 
     @Getter
-    private final String name = "<composed>";
+    private final String name = "<composed>"; // NOPMD cannot be static due to getter
 
     @Getter
     private final List<DataflowEndpoint> endpoints = new ArrayList<>();

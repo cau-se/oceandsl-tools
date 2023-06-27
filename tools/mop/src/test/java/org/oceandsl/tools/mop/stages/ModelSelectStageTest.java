@@ -53,12 +53,12 @@ import teetime.framework.test.StageTester;
 import org.oceandsl.tools.mop.AbstractModelTestFactory;
 import org.oceandsl.tools.mop.SarModelFactory;
 
-public class ModelSelectStageTest {
+class ModelSelectStageTest {
 
     private ModelRepository repository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         this.repository = new ModelRepository("test");
         final TypeModel typeModel = SarModelFactory.createTypeModel();
         this.repository.register(
@@ -83,7 +83,7 @@ public class ModelSelectStageTest {
     }
 
     @Test
-    public void test() {
+    void test() {
         final List<Pattern> patterns = new ArrayList<>();
         patterns.add(Pattern.compile(SarModelFactory.SAR_ASSEMBLY_SIGNATURE));
 

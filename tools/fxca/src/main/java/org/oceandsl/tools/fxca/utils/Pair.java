@@ -22,28 +22,28 @@ import java.util.Comparator;
  *
  * @author Henning Schnoor
  *
- * @param <T1>
+ * @param <F>
  *            first element type
- * @param <T2>
+ * @param <S>
  *            second element type
  *
  * @since 1.3.0
  */
-public class Pair<T1, T2> {
+public class Pair<F, S> {
 
-    public T1 first;
-    public T2 second;
+    public F first;
+    public S second;
 
-    public Pair(final T1 first, final T2 second) {
+    public Pair(final F first, final S second) {
         this.first = first;
         this.second = second;
     }
 
-    public T1 getFirst() {
+    public F getFirst() {
         return this.first;
     }
 
-    public T2 getSecond() {
+    public S getSecond() {
         return this.second;
     }
 

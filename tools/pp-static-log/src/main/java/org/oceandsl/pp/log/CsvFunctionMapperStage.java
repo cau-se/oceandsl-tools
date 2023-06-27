@@ -43,16 +43,16 @@ public class CsvFunctionMapperStage extends AbstractProducerStage<Map<String, St
     protected void execute() throws Exception {
         final Map<String, String> functionMap = new HashMap<>();
         for (final Path path : this.paths) {
-            final BufferedReader reader = Files.newBufferedReader(path);
-            reader.readLine(); // skip header
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final String[] values = line.split(",");
-                if (values.length == 2) {
-                    functionMap.put(values[1].trim().toLowerCase(Locale.ROOT), values[0].trim());
+            try (BufferedReader reader = Files.newBufferedReader(path)) {
+                reader.readLine(); // skip header
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    final String[] values = line.split(",");
+                    if (values.length == 2) {
+                        functionMap.put(values[1].trim().toLowerCase(Locale.ROOT), values[0].trim());
+                    }
                 }
             }
-            reader.close();
         }
         this.outputPort.send(functionMap);
         this.workCompleted();

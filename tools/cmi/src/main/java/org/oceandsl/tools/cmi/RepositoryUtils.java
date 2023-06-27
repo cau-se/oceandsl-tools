@@ -56,7 +56,7 @@ public final class RepositoryUtils {
     public static void print(final Report report, final EObject object, final String offset) {
         object.eCrossReferences();
         report.addMessage(offset + object.getClass().getCanonicalName()); // NOPMD testing tool
-        RepositoryUtils.printAttributes(report, object, offset + "  ");
+        RepositoryUtils.printAttributes(object, offset + "  ");
         RepositoryUtils.printContainments(report, object, offset + "  ");
         RepositoryUtils.printReferences(report, object, offset + "  ");
     }
@@ -164,7 +164,7 @@ public final class RepositoryUtils {
         }
     }
 
-    private static void printAttributes(final Report report, final EObject object, final String offset) {
+    private static void printAttributes(final EObject object, final String offset) {
         for (final EAttribute attribute : object.eClass().getEAllAttributes()) {
             final Object value = object.eGet(attribute);
             if (value != null) {

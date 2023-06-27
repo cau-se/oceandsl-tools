@@ -17,7 +17,6 @@ public abstract class CompositeTransformation extends AbstractTransformationStep
     public CompositeTransformation(final AssemblyModel model) {
         super(model);
         this.steps = new ArrayList<>();
-        // TODO Auto-generated constructor stub
     }
 
     public List<AbstractTransformationStep> getSteps() {

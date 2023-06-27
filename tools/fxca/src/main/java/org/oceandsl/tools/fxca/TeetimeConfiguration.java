@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.LoggerFactory;
+
 import teetime.framework.Configuration;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
@@ -107,23 +109,23 @@ public class TeetimeConfiguration extends Configuration {
         final CreateCommonBlocksTableStage commonBlocksTableStage = new CreateCommonBlocksTableStage();
 
         /** output stages. */
-        final TableCsvSink<FileOperationEntry> operationTableSink = new TableCsvSink<>(
+        final TableCsvSink<String, FileOperationEntry> operationTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.OPERATION_DEFINITIONS),
                 FileOperationEntry.class, true);
-        final TableCsvSink<CallerCalleeEntry> callTableSink = new TableCsvSink<>(
+        final TableCsvSink<String, CallerCalleeEntry> callTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.CALL_TABLE),
                 CallerCalleeEntry.class, true);
-        final TableCsvSink<NotFoundEntry> notFoundSink = new TableCsvSink<>(
+        final TableCsvSink<String, NotFoundEntry> notFoundSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.NOT_FOUND), NotFoundEntry.class,
                 true);
 
-        final TableCsvSink<DataflowEntry> callerCalleeDataflowTableSink = new TableCsvSink<>(
+        final TableCsvSink<String, DataflowEntry> callerCalleeDataflowTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.DATAFLOW), DataflowEntry.class,
                 true);
-        final TableCsvSink<CommonBlockArgumentDataflow> commonBlockDataflowTableSink = new TableCsvSink<>(
+        final TableCsvSink<String, CommonBlockArgumentDataflow> commonBlockDataflowTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.DATAFLOW_COMMON_BLOCKS),
                 CommonBlockArgumentDataflow.class, true);
-        final TableCsvSink<GlobalDataEntry> commonBlocksTableSink = new TableCsvSink<>(
+        final TableCsvSink<String, GlobalDataEntry> commonBlocksTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.COMMON_BLOCKS),
                 GlobalDataEntry.class, true);
 
@@ -184,7 +186,7 @@ public class TeetimeConfiguration extends Configuration {
                 this.createEntry(module, values[1], values[2], values[3]);
             }
         } catch (final IOException e) {
-            System.err.println(">> cannot read " + path.toString()); // TODO improve with logger
+            LoggerFactory.getLogger(TeetimeConfiguration.class).error("Cannot read file {}", path.toString());
         }
     }
 
@@ -212,10 +214,8 @@ public class TeetimeConfiguration extends Configuration {
                     result.add(line.substring(marker, i));
                     mode = 0;
                 }
-            } else if (mode == 3) {
-                if (ch == ',') {
-                    mode = 0;
-                }
+            } else if ((mode == 3) && (ch == ',')) {
+                mode = 0;
             }
         }
         result.add(line.substring(marker, line.length()));

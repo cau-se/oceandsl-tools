@@ -64,8 +64,7 @@ public class TraceRestoratorStage extends AbstractConsumerStage<ModelRepository>
             }
 
             if (TransformationFactory.areSameModels(o, g)) {
-                this.logger.error("Identical models");
-                throw new Exception();
+                this.logger.error("Identical models. Nothing to do.");
             } else {
                 this.compMapperOutputPort.send(mapper);
             }

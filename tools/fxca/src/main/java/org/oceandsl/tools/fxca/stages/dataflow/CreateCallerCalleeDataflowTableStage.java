@@ -28,9 +28,9 @@ import org.oceandsl.tools.fxca.stages.dataflow.data.CallerCalleeDataflow;
  * @since 1.3.0
  */
 public class CreateCallerCalleeDataflowTableStage
-        extends AbstractTransformation<CallerCalleeDataflow, Table<DataflowEntry>> {
+        extends AbstractTransformation<CallerCalleeDataflow, Table<String, DataflowEntry>> {
 
-    private final Table<DataflowEntry> callsTable;
+    private final Table<String, DataflowEntry> callsTable;
 
     public CreateCallerCalleeDataflowTableStage() {
         this.callsTable = new Table<>("dataflow-cc");
