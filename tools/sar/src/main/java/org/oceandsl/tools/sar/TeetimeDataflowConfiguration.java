@@ -50,6 +50,7 @@ import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.ModuleBasedSignatureProcessor;
+import org.oceandsl.tools.sar.stages.DataflowConstraintStage;
 import org.oceandsl.tools.sar.stages.dataflow.CleanupDataflowComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.dataflow.CountUniqueDataflowCallsStage;
 import org.oceandsl.tools.sar.stages.dataflow.DataflowExecutionModelAssembler;

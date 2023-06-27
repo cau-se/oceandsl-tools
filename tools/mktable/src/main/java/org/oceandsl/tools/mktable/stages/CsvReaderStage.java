@@ -27,7 +27,7 @@ import org.csveed.report.CsvException;
 import teetime.stage.basic.AbstractTransformation;
 
 import org.oceandsl.analysis.generic.data.MoveOperationEntry;
-import org.oceandsl.tools.mktable.Optimization;
+import org.oceandsl.tools.mktable.Table;
 
 /**
  * Reader for CSV files. Modified version. Should be merged
@@ -37,7 +37,7 @@ import org.oceandsl.tools.mktable.Optimization;
  * @since 1.0
  *
  */
-public class CsvReaderStage extends AbstractTransformation<Path, Optimization> {
+public class CsvReaderStage extends AbstractTransformation<Path, Table<String, MoveOperationEntry>> {
 
     private final char separator;
     private final char quoteSymbol;
@@ -68,28 +68,30 @@ public class CsvReaderStage extends AbstractTransformation<Path, Optimization> {
 
     @Override
     protected void execute(final Path path) throws Exception {
-        final Optimization optimization = new Optimization(path.getFileName().toString());
-        final BufferedReader reader = Files.newBufferedReader(path);
-        final CsvClient<MoveOperationEntry> csvClient = new CsvClientImpl<>(reader, MoveOperationEntry.class);
-        csvClient.setQuote(this.quoteSymbol);
-        csvClient.setSeparator(this.separator);
-        csvClient.setEscape(this.escapeSymbol);
-        csvClient.setUseHeader(this.header);
-        csvClient.skipEmptyLines(true);
+        final Table<String, MoveOperationEntry> optimization = new Table<>(path.getFileName().toString());
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
+            final CsvClient<MoveOperationEntry> csvClient = new CsvClientImpl<>(reader, MoveOperationEntry.class);
+            csvClient.setQuote(this.quoteSymbol);
+            csvClient.setSeparator(this.separator);
+            csvClient.setEscape(this.escapeSymbol);
+            csvClient.setUseHeader(this.header);
+            csvClient.skipEmptyLines(true);
 
-        try {
-            while (!csvClient.isFinished()) {
-                final MoveOperationEntry bean = csvClient.readBean();
-                if (bean != null) {
-                    optimization.getList().add(bean);
-                } else {
-                    break;
+            try {
+                while (!csvClient.isFinished()) {
+                    final MoveOperationEntry bean = csvClient.readBean();
+                    if (bean != null) {
+                        optimization.getList().add(bean);
+                    } else {
+                        break;
+                    }
                 }
+            } catch (final CsvException e) {
+                this.logger.error("Error reading csv file in line {} path {}", csvClient.getCurrentLine(),
+                        path.toString());
             }
-
-            reader.close();
-        } catch (final CsvException e) {
-            this.logger.error("Error reading csv file in line {} path {}", csvClient.getCurrentLine(), path.toString());
+        } catch (final IOException e) {
+            this.logger.error("Error reading csv file {}", path.toString());
         }
         this.outputPort.send(optimization);
     }

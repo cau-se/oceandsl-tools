@@ -177,12 +177,10 @@ public class StaticArchitectureRecoveryMain {
     }
 
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
-        if (this.containsValue(this.settings.getInputMode(), EInputMode.CALL, EInputMode.BOTH)) {
-            if (!ParameterEvaluationUtils.isFileReadable(
-                    this.settings.getInputFile().resolve(StaticArchitectureRecoveryMain.CALLTABLE_FILENAME).toFile(),
-                    "", commander)) {
-                return false;
-            }
+        if (this.containsValue(this.settings.getInputMode(), EInputMode.CALL, EInputMode.BOTH)
+                && !ParameterEvaluationUtils.isFileReadable(this.settings.getInputFile()
+                        .resolve(StaticArchitectureRecoveryMain.CALLTABLE_FILENAME).toFile(), "", commander)) {
+            return false;
         }
         if (this.containsValue(this.settings.getInputMode(), EInputMode.DATAFLOW, EInputMode.BOTH)) {
             if (!ParameterEvaluationUtils.isFileReadable(this.settings.getInputFile()
@@ -200,13 +198,9 @@ public class StaticArchitectureRecoveryMain {
             }
         }
 
-        if (!ParameterEvaluationUtils.checkDirectory(
+        return ParameterEvaluationUtils.checkDirectory(
                 this.settings.getOutputDirectory().toAbsolutePath().getParent().toFile(), "output directory",
-                commander)) {
-            return false;
-        }
-
-        return true;
+                commander);
     }
 
     /**

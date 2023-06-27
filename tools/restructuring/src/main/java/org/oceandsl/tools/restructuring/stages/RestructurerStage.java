@@ -3,7 +3,7 @@ package org.oceandsl.tools.restructuring.stages;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.tools.restructuring.mapper.AbstractComponentMapper;
+import org.oceandsl.tools.restructuring.mapper.BasicComponentMapper;
 import org.oceandsl.tools.restructuring.stages.exec.RestructureStepFinder;
 
 /**
@@ -11,7 +11,7 @@ import org.oceandsl.tools.restructuring.stages.exec.RestructureStepFinder;
  * @author Serafim Simonov
  * @since 1.3.0
  */
-public class RestructurerStage extends AbstractConsumerStage<AbstractComponentMapper> {
+public class RestructurerStage extends AbstractConsumerStage<BasicComponentMapper> {
 
     // protected final InputPort<ComponentsMapper> compMapperPort =
     // this.createInputPort();
@@ -28,7 +28,7 @@ public class RestructurerStage extends AbstractConsumerStage<AbstractComponentMa
     }
 
     @Override
-    protected void execute(final AbstractComponentMapper mapper) throws Exception {
+    protected void execute(final BasicComponentMapper mapper) throws Exception {
         final RestructureStepFinder restructureStepsFinder = new RestructureStepFinder(mapper);
         restructureStepsFinder.findTransformation();
 

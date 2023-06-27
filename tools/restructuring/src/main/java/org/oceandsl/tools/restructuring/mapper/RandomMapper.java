@@ -15,14 +15,19 @@ import kieker.model.analysismodel.assembly.AssemblyModel;
  * @author Serafim Simonov
  * @since 1.3.0
  */
-public class RandomMapper extends AbstractComponentMapper {
+public class RandomMapper extends BasicComponentMapper {
 
     /**
-     * Cosntructor is used to
+     * Constructor is used to create a random mapper.
      *
      * @param original
+     *            original model
      * @param goal
-     * @param componentMapper
+     *            goal model
+     * @param originalModelName
+     *            name of the original model
+     * @param goalModelName
+     *            name of the goal model
      */
     public RandomMapper(final AssemblyModel original, final AssemblyModel goal, final String originalModelName,
             final String goalModelName) {
@@ -37,78 +42,15 @@ public class RandomMapper extends AbstractComponentMapper {
         this.computeOriginalComponentNames();
     }
 
-    @Override
-    public HashMap<String, String> getOperationToComponentO() {
-        return this.operationToComponentO;
-    }
-
-    @Override
-    public void setOperationToComponentO(final HashMap<String, String> operationToComponentO) {
-        this.operationToComponentO = operationToComponentO;
-    }
-
-    @Override
-    public HashMap<String, String> getOperationToComponentG() {
-        return this.operationToComponentG;
-    }
-
-    @Override
-    public void setOperationToComponentG(final HashMap<String, String> operationToComponentG) {
-        this.operationToComponentG = operationToComponentG;
-    }
-
-    @Override
-    public HashMap<String, HashMap<String, Integer>> getTraceModell() {
-        return this.traceModell;
-    }
-
-    @Override
-    public void setTraceModell(final HashMap<String, HashMap<String, Integer>> traceModell) {
-        this.traceModell = traceModell;
-    }
-
-    @Override
-    public HashMap<String, String> getGoalToOriginal() {
-        return this.goalToOriginal;
-    }
-
-    @Override
-    public void setGoalToOriginal(final HashMap<String, String> goalToOriginal) {
-        this.goalToOriginal = goalToOriginal;
-    }
-
-    @Override
-    public HashMap<String, String> getOriginalToGoal() {
-        return this.originallToGoal;
-    }
-
-    @Override
-    public void setOriginalToGoal(final HashMap<String, String> originallToGoal) {
-        this.originallToGoal = originallToGoal;
-    }
-
-    @Override
-    public AssemblyModel getOriginal() {
-        return this.original;
-
-    }
-
-    @Override
-    public AssemblyModel getGoal() {
-        return this.goal;
-
-    }
-
     private void computeOriginalComponentNames() {
         final List<String> randComps = this.getRandomComponents(new ArrayList<>(this.goal.getComponents().keySet()));
 
         int currentRand = 0;
         for (final String origC : this.original.getComponents().keySet()) {
             this.goalToOriginal.put(randComps.get(currentRand), origC);
-            this.originallToGoal.put(origC, randComps.get(currentRand));
+            this.originalToGoal.put(origC, randComps.get(currentRand));
             currentRand++;
         }
-
     }
 
     private List<String> getRandomComponents(final List<String> componentNames) {

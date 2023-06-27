@@ -10,7 +10,7 @@ import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 
-import org.oceandsl.tools.restructuring.mapper.AbstractComponentMapper;
+import org.oceandsl.tools.restructuring.mapper.BasicComponentMapper;
 import org.oceandsl.tools.restructuring.transformations.AbstractTransformationStep;
 import org.oceandsl.tools.restructuring.transformations.CreateTransformation;
 import org.oceandsl.tools.restructuring.transformations.CutTransformation;
@@ -28,20 +28,20 @@ import org.oceandsl.tools.restructuring.util.TransformationFactory;
  */
 public class RestructureStepFinder {
 
-    private final AbstractComponentMapper componentMapper;
+    private final BasicComponentMapper componentMapper;
     private final AssemblyModel original;
     private final AssemblyModel goal;
     private int numberOfSteps = 0;
 
     private final List<AbstractTransformationStep> transformations = new ArrayList<>();
 
-    public RestructureStepFinder(final AbstractComponentMapper componentMapper) {
+    public RestructureStepFinder(final BasicComponentMapper componentMapper) {
         this.componentMapper = componentMapper;
         this.original = componentMapper.getOriginal();
         this.goal = componentMapper.getGoal();
     }
 
-    public AbstractComponentMapper getComponentMapper() {
+    public BasicComponentMapper getComponentMapper() {
         return this.componentMapper;
     }
 

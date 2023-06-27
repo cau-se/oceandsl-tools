@@ -11,8 +11,20 @@ import kieker.model.analysismodel.assembly.AssemblyModel;
  * @author Serafim Simonov
  * @since 1.3.0
  */
-public class EmptyMapper extends AbstractComponentMapper {
+public class EmptyMapper extends BasicComponentMapper {
 
+    /**
+     * Constructor is used to create an empty mapper.
+     *
+     * @param original
+     *            original model
+     * @param goal
+     *            goal model
+     * @param originalModelName
+     *            name of the original model
+     * @param goalModelName
+     *            name of the goal model
+     */
     public EmptyMapper(final AssemblyModel original, final AssemblyModel goal, final String originalModelName,
             final String goalModelName) {
         super(originalModelName, goalModelName);

@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mktable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.oceandsl.analysis.generic.data.MoveOperationEntry;
-
-public class Optimization {
-
-    private final List<MoveOperationEntry> list = new ArrayList<>();
-    private final String name;
-
-    public Optimization(final String name) {
-        this.name = name;
-    }
-
-    public List<MoveOperationEntry> getList() {
-        return this.list;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-}
+/**
+ * @author Reiner Jung
+ *
+ */
+package org.oceandsl.tools.sar.stages;

@@ -15,9 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.tools.restructuring;
 
+import kieker.analysis.exception.InternalErrorException;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 
-import org.oceandsl.tools.restructuring.mapper.AbstractComponentMapper;
+import org.oceandsl.tools.restructuring.mapper.BasicComponentMapper;
 import org.oceandsl.tools.restructuring.mapper.KuhnMatcherMapper;
 import org.oceandsl.tools.restructuring.stages.exec.RestructureStepFinder;
 
@@ -36,9 +37,9 @@ public class LightTraceRestorator {
         this.goal = goal;
     }
 
-    public int getNumSteps() {
+    public int getNumSteps() throws InternalErrorException {
         // TODO find better names
-        final AbstractComponentMapper mapper = new KuhnMatcherMapper(this.original, this.goal, "original", "goal");
+        final BasicComponentMapper mapper = new KuhnMatcherMapper(this.original, this.goal, "original", "goal");
 
         final RestructureStepFinder stepfinder = new RestructureStepFinder(mapper);
         stepfinder.findTransformation();
