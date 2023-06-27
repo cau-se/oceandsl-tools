@@ -19,6 +19,12 @@ import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.statistics.StatisticsModel;
 import kieker.model.analysismodel.statistics.StatisticsPackage;
 
+/**
+ * Checks for the statistics model.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
 public class CheckStatisticModelStage extends AbstractCollector<ModelRepository> {
 
     @Override

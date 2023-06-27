@@ -31,15 +31,15 @@ public class CheckProjectStage extends AbstractFilter<FortranProject> {
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        System.err.println("++ CheckProject");
+        this.logger.debug("CheckProject");
         project.getModules().values().forEach(module -> module.getOperations().values().forEach(operation -> {
             final boolean duplicate = operation.getParameters().values().stream().map(p -> p.getName())
                     .anyMatch(v -> operation.getVariables().containsKey(v));
             if (duplicate) {
-                System.err.printf("----------------------------------\n");
-                System.err.printf("op %s\n", operation.getName());
-                System.err.printf("  parameter " + this.makeStringSet(operation.getParameters().keySet()));
-                System.err.printf("  variables " + this.makeStringSet(operation.getVariables().keySet()));
+                this.logger.debug("----------------------------------");
+                this.logger.debug("op {}", operation.getName());
+                this.logger.debug("  parameter {}", this.makeStringSet(operation.getParameters().keySet()));
+                this.logger.debug("  variables {}", this.makeStringSet(operation.getVariables().keySet()));
             }
         }));
         this.outputPort.send(project);

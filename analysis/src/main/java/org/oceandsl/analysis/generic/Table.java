@@ -20,27 +20,29 @@ import java.util.List;
 
 /**
  *
+ * @param <R>
+ *            table name or origin class.
  * @param <T>
  *            table row class / bean
  *
  * @author Reiner Jung
  * @since 1.1
  */
-public class Table<T> {
+public class Table<R, T> {
 
-    private final String name;
+    private final R label;
     private final List<T> rows = new ArrayList<>();
 
-    public Table(final String name) {
-        this.name = name;
+    public Table(final R label) {
+        this.label = label;
     }
 
     public List<T> getRows() {
         return this.rows;
     }
 
-    public String getName() {
-        return this.name;
+    public R getLabel() {
+        return this.label;
     }
 
 }

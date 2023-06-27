@@ -17,7 +17,7 @@ import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 
-import org.oceandsl.tools.restructuring.util.RestructurerTools;
+import org.oceandsl.tools.restructuring.util.RestructurerUtils;
 
 /**
  *
@@ -50,12 +50,10 @@ public class KuhnMatcherMapper extends BasicComponentMapper {
             final String goalModelName) throws InternalErrorException {
         super(originalModelName, goalModelName);
 
-        this.original = RestructurerTools.cloneModel(orig);
-        this.goal = RestructurerTools.alterComponentNames(goal);
+        this.original = RestructurerUtils.cloneModel(orig);
+        this.goal = RestructurerUtils.alterComponentNames(goal);
         this.s.addAll(this.original.getComponents().keySet());
         this.t.addAll(this.goal.getComponents().keySet());
-
-        final SimpleWeightedGraph<String, DefaultEdge> graph = new SimpleWeightedGraph<>(DefaultEdge.class);
 
         this.populateOperationTocomponentG();
         this.populateOperationToComponentO();
@@ -68,6 +66,7 @@ public class KuhnMatcherMapper extends BasicComponentMapper {
         // init mappings
 
         // create graphp
+        final SimpleWeightedGraph<String, DefaultEdge> graph = new SimpleWeightedGraph<>(DefaultEdge.class);
 
         // initial graph
         for (final Entry<String, AssemblyComponent> c : this.original.getComponents().entrySet()) { // each

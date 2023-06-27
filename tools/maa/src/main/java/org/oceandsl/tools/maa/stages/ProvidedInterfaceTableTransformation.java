@@ -41,11 +41,11 @@ import org.oceandsl.analysis.generic.Table;
  * @since 1.2
  */
 public class ProvidedInterfaceTableTransformation
-        extends AbstractTransformation<ModelRepository, Table<ProvidedInterfaceEntry>> {
+        extends AbstractTransformation<ModelRepository, Table<String, ProvidedInterfaceEntry>> {
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
-        final Table<ProvidedInterfaceEntry> table = new Table<>("interfaces");
+        final Table<String, ProvidedInterfaceEntry> table = new Table<>("interfaces");
         final TypeModel typeModel = element.getModel(TypePackage.Literals.TYPE_MODEL);
         final Map<ProvidedInterfaceType, Set<RequiredInterfaceType>> providedToRequiredMap = this
                 .createLookupProvidedInterfaceType(typeModel.getComponentTypes().values());

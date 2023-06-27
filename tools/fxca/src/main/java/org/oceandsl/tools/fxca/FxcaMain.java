@@ -93,7 +93,7 @@ public final class FxcaMain extends AbstractService<TeetimeConfiguration, Settin
                 try {
                     directories.addAll(IOUtils.pathsInDirectory(rootPath, useDirectory, useDirectory, true));
                 } catch (final IOException e) {
-                    FxcaMain.LOGGER.error("Error scanning directory {}: {} ", rootPath, e.getLocalizedMessage());
+                    FxcaMain.LOGGER.error("Error scanning directory {}: {} ", rootPath, e.getLocalizedMessage()); // NOPMD
                 }
             }
         }
@@ -103,5 +103,6 @@ public final class FxcaMain extends AbstractService<TeetimeConfiguration, Settin
 
     @Override
     protected void shutdownService() {
+        // nothing special to be done here
     }
 }

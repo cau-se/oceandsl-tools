@@ -17,22 +17,60 @@ package org.oceandsl.tools.maa.stages;
 
 import org.csveed.annotations.CsvCell;
 
+/**
+ * Component statistics class.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
 public class ComponentStatistics {
 
     @CsvCell(columnIndex = 1, columnName = "component")
-    private final String componentName;
+    private String componentName;
     @CsvCell(columnIndex = 2, columnName = "operations")
-    private final int operations;
+    private int operations;
     @CsvCell(columnIndex = 3, columnName = "provided-operations")
-    private final long providedOperations;
+    private long providedOperations;
     @CsvCell(columnIndex = 4, columnName = "requires-operations")
-    private final long requiredOperations;
+    private long requiredOperations;
 
     public ComponentStatistics(final String componentName, final int operations, final long providedOperations,
             final long requiredOperations) {
         this.componentName = componentName;
         this.operations = operations;
         this.providedOperations = providedOperations;
+        this.requiredOperations = requiredOperations;
+    }
+
+    public String getComponentName() {
+        return this.componentName;
+    }
+
+    public void setComponentName(final String componentName) {
+        this.componentName = componentName;
+    }
+
+    public int getOperations() {
+        return this.operations;
+    }
+
+    public void setOperations(final int operations) {
+        this.operations = operations;
+    }
+
+    public long getProvidedOperations() {
+        return this.providedOperations;
+    }
+
+    public void setProvidedOperations(final long providedOperations) {
+        this.providedOperations = providedOperations;
+    }
+
+    public long getRequiredOperations() {
+        return this.requiredOperations;
+    }
+
+    public void setRequiredOperations(final long requiredOperations) {
         this.requiredOperations = requiredOperations;
     }
 

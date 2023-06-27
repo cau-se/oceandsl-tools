@@ -46,7 +46,7 @@ public class TeetimeConfiguration extends Configuration {
         final GenerateRestructureModelStage generateModelStage = new GenerateRestructureModelStage();
         final RestructureModelSink modelSink = new RestructureModelSink(parameterConfiguration.getOutputDirectory());
         final AggregateModelEditDistanceStage aggregateStage = new AggregateModelEditDistanceStage();
-        final TableCsvSink<ModelEditDistanceEntry> medSinkStage = new TableCsvSink<>(
+        final TableCsvSink<String, ModelEditDistanceEntry> medSinkStage = new TableCsvSink<>(
                 parameterConfiguration.getOutputDirectory(), ModelEditDistanceEntry.class, true);
 
         this.connectPorts(modelSource.getOutputPort(), modelReader.getInputPort());

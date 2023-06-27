@@ -23,6 +23,12 @@ import org.eclipse.emf.ecore.EReference;
 
 import org.oceandsl.tools.cmi.RepositoryUtils;
 
+/**
+ * Utility class.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
 public final class GenericCheckUtils {
 
     private GenericCheckUtils() {

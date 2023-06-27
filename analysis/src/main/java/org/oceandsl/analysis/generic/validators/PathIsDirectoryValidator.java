@@ -30,7 +30,7 @@ import com.beust.jcommander.ParameterException;
 public class PathIsDirectoryValidator implements IParameterValidator {
 
     @Override
-    public void validate(final String name, final String value) throws ParameterException {
+    public void validate(final String name, final String value) throws ParameterException { // NOPMD
         final File file = Paths.get(value).toFile();
         if (!file.isDirectory()) {
             throw new ParameterException(String.format("Parameter %s: path %s is not a directory.", name, value));

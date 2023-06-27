@@ -19,7 +19,11 @@ import org.oceandsl.tools.restructuring.transformations.SplitTransformation;
  * @author Serafim Simonov
  * @since 1.3.0
  */
-public class TransformationFactory {
+public final class TransformationFactory {
+
+    private TransformationFactory() {
+        // do not instantiate factory
+    }
 
     public static CreateTransformation createCreateTransformation(final String componentName,
             final AssemblyModel model) {

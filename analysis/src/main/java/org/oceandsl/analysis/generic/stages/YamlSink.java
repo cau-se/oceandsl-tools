@@ -41,9 +41,9 @@ public class YamlSink<T> extends AbstractConsumerStage<T> {
     protected void execute(final T object) throws Exception {
         final Yaml yaml = new Yaml();
         yaml.setBeanAccess(BeanAccess.FIELD);
-        final Writer writer = Files.newBufferedWriter(this.path);
-        writer.write(yaml.dumpAs(object, Tag.MAP, null));
-        writer.close();
+        try (final Writer writer = Files.newBufferedWriter(this.path)) {
+            writer.write(yaml.dumpAs(object, Tag.MAP, null));
+        }
     }
 
 }

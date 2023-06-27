@@ -27,11 +27,11 @@ import com.beust.jcommander.ParameterException;
 public class CheckValidator implements IParameterValidator {
 
     @Override
-    public void validate(final String name, final String value) throws ParameterException {
+    public void validate(final String name, final String value) throws ParameterException { // NOPMD
         try {
             ECheck.valueOf(value.toUpperCase(Locale.getDefault()));
         } catch (final IllegalArgumentException ex) {
-            throw new ParameterException(
+            throw new ParameterException( // NOPMD
                     String.format("Error: %s is not a valid value for parameter %s  ", value, name));
         }
     }

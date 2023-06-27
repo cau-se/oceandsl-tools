@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright 2023 Kieker Project (http://kieker-monitoring.net)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.generic.validators;
+package org.oceandsl.analysis.generic.source;
 
-import java.io.File;
-import java.nio.file.Paths;
-
-import com.beust.jcommander.IParameterValidator;
-import com.beust.jcommander.ParameterException;
+import java.nio.file.Path;
 
 /**
- * Check whether the specified path refers to a directory.
- *
  * @author Reiner Jung
- * @since 1.3.0
+ * @since 2.0.0
+ *
  */
-public class ParentPathIsDirectoryValidator implements IParameterValidator {
+public class FileNameLabelMapper implements IPathLabelMapper<String> {
 
     @Override
-    public void validate(final String name, final String value) throws ParameterException {
-        final File file = Paths.get(value).getParent().toFile();
-        if (!file.isDirectory()) {
-            throw new ParameterException(String.format("Parameter %s: path %s is not a directory.", name, value)); // NOPMD
-        }
+    public String map(final Path path) {
+        return path.getFileName().toString();
     }
 
 }

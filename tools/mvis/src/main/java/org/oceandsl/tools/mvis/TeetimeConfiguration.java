@@ -152,8 +152,8 @@ public class TeetimeConfiguration extends Configuration {
         }
         if (settings.getComputeStatistics().contains(EStatistics.NUM_OF_CALLS)) {
             final NumberOfCallsStage numberOfCallsStage = new NumberOfCallsStage();
-            final TableCsvSink<NumberOfCallsEntry> operationCallSink = new TableCsvSink<>(settings.getOutputDirectory(),
-                    String.format("%s-%s", settings.getSelector().getFilePrefix(),
+            final TableCsvSink<String, NumberOfCallsEntry> operationCallSink = new TableCsvSink<>(
+                    settings.getOutputDirectory(), String.format("%s-%s", settings.getSelector().getFilePrefix(),
                             TeetimeConfiguration.OPERATION_CALLS_CSV),
                     NumberOfCallsEntry.class);
 
@@ -172,7 +172,7 @@ public class TeetimeConfiguration extends Configuration {
                     settings.getGraphGenerationMode());
             final OperationNodeCountCouplingStage functionNodeCouplingStage = new OperationNodeCountCouplingStage();
 
-            final TableCsvSink<OperationNodeCountEntry> distinctOperationDegreeSink = new TableCsvSink<>(
+            final TableCsvSink<String, OperationNodeCountEntry> distinctOperationDegreeSink = new TableCsvSink<>(
                     settings.getOutputDirectory(), String.format("%s-%s", settings.getSelector().getFilePrefix(),
                             TeetimeConfiguration.DISTINCT_OPERATION_DEGREE_CSV),
                     OperationNodeCountEntry.class);
@@ -193,7 +193,7 @@ public class TeetimeConfiguration extends Configuration {
                     settings.getGraphGenerationMode());
             final ModuleNodeCountCouplingStage moduleNodeCouplingStage = new ModuleNodeCountCouplingStage();
 
-            final TableCsvSink<ModuleNodeCountCouplingEntry> distinctModuleDegreeSink = new TableCsvSink<>(
+            final TableCsvSink<String, ModuleNodeCountCouplingEntry> distinctModuleDegreeSink = new TableCsvSink<>(
                     settings.getOutputDirectory(), String.format("%s-%s", settings.getSelector().getFilePrefix(),
                             TeetimeConfiguration.DISTINCT_MODULE_DEGREE_CSV),
                     ModuleNodeCountCouplingEntry.class);

@@ -26,9 +26,9 @@ import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockArgumentDataflow;
  * @since 1.3.0
  */
 public class CreateCommonBlockDataflowTableStage
-        extends AbstractTransformation<CommonBlockArgumentDataflow, Table<CommonBlockArgumentDataflow>> {
+        extends AbstractTransformation<CommonBlockArgumentDataflow, Table<String, CommonBlockArgumentDataflow>> {
 
-    private final Table<CommonBlockArgumentDataflow> callsTable;
+    private final Table<String, CommonBlockArgumentDataflow> callsTable;
 
     public CreateCommonBlockDataflowTableStage() {
         this.callsTable = new Table<>("dataflow-cb");

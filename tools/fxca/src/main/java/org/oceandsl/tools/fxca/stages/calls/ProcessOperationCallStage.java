@@ -45,14 +45,11 @@ import org.oceandsl.tools.fxca.utils.Pair;
  */
 public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
 
-    private final OutputPort<Table<NotFoundEntry>> notFoundOutputPort = this.createOutputPort();
-
-    public ProcessOperationCallStage() {
-    }
+    private final OutputPort<Table<String, NotFoundEntry>> notFoundOutputPort = this.createOutputPort();
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        final Table<NotFoundEntry> notFoundTable = new Table<>("not-found");
+        final Table<String, NotFoundEntry> notFoundTable = new Table<>("not-found");
 
         project.getModules().values().stream().filter(module -> module != project.getDefaultModule())
                 .forEach(module -> {
@@ -66,7 +63,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
     }
 
     private void processSubroutines(final FortranProject project, final FortranModule module, final Element element,
-            final Table<NotFoundEntry> notFoundTable) {
+            final Table<String, NotFoundEntry> notFoundTable) {
         try {
             final List<Pair<String, String>> calls = NodeUtils.findSubroutineCalls(element);
             this.processCalls(project, module, calls, notFoundTable);
@@ -77,7 +74,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
     }
 
     private void processFunctions(final FortranProject project, final FortranModule module, final Element element,
-            final Table<NotFoundEntry> notFoundTable) {
+            final Table<String, NotFoundEntry> notFoundTable) {
         try {
             final List<Pair<String, String>> calls = NodeUtils.findFunctionCalls(element);
             this.processCalls(project, module, calls, notFoundTable);
@@ -89,7 +86,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
     }
 
     private void processCalls(final FortranProject project, final FortranModule module,
-            final List<Pair<String, String>> calls, final Table<NotFoundEntry> notFoundTable) {
+            final List<Pair<String, String>> calls, final Table<String, NotFoundEntry> notFoundTable) {
         calls.forEach(call -> {
             final Pair<FortranModule, FortranOperation> caller = this.findOperation(project.getModules().values(),
                     call.getFirst());
@@ -131,7 +128,7 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
                 block -> block.getVariables().keySet().contains(variableName.toLowerCase(Locale.getDefault())));
     }
 
-    public OutputPort<Table<NotFoundEntry>> getNotFoundOutputPort() {
+    public OutputPort<Table<String, NotFoundEntry>> getNotFoundOutputPort() {
         return this.notFoundOutputPort;
     }
 

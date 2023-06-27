@@ -15,14 +15,18 @@
  ***************************************************************************/
 package org.oceandsl.tools.fxca.model;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * @author Reiner jung
+ * @author Reiner Jung
  * @since 1.3.0
  */
-public class MMObject {
+public class MMObject implements Serializable {
+
+    private static final long serialVersionUID = 61791515389910510L;
 
     @Getter
     @Setter

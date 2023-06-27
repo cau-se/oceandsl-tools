@@ -20,8 +20,8 @@ import java.util.Comparator;
 
 import teetime.stage.basic.AbstractFilter;
 
+import org.oceandsl.analysis.generic.Table;
 import org.oceandsl.analysis.generic.data.MoveOperationEntry;
-import org.oceandsl.tools.mktable.Table;
 
 /**
  *
@@ -32,7 +32,7 @@ public class SortTableStage extends AbstractFilter<Table<String, MoveOperationEn
 
     @Override
     protected void execute(final Table<String, MoveOperationEntry> optimization) throws Exception {
-        Collections.sort(optimization.getList(), new Comparator<MoveOperationEntry>() {
+        Collections.sort(optimization.getRows(), new Comparator<MoveOperationEntry>() {
             @Override
             public int compare(final MoveOperationEntry arg0, final MoveOperationEntry arg1) {
                 return arg0.getTargetComponentName().compareTo(arg1.getTargetComponentName());

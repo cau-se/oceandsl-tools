@@ -28,10 +28,7 @@ import org.oceandsl.tools.restructuring.transformations.SplitTransformation;
  */
 public class OutputModelCreator {
 
-    RestructuremodelFactory factory = RestructuremodelFactory.eINSTANCE;
-
-    public OutputModelCreator() {
-    }
+    private final RestructuremodelFactory factory = RestructuremodelFactory.eINSTANCE;
 
     public TransformationModel createOutputModel(final String name, final List<AbstractTransformationStep> steps) {
         final TransformationModel outputModel = this.factory.createTransformationModel();

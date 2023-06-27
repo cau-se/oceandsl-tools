@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.code.stages;
+package org.oceandsl.analysis.generic.source;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.csveed.api.CsvClient;
 import org.csveed.api.CsvClientImpl;
@@ -29,7 +27,7 @@ import org.csveed.report.CsvException;
 import teetime.stage.basic.AbstractTransformation;
 
 /**
- * Reader for CSV files.
+ * Reader for multiple CSV files, producing single records for each row.
  *
  * @param <T>
  *            ICsvRecord datatype
@@ -38,7 +36,7 @@ import teetime.stage.basic.AbstractTransformation;
  * @since 1.0
  *
  */
-public class CsvReaderStage<T> extends AbstractTransformation<Path, List<T>> {
+public class CsvRowReaderStage<R, T> extends AbstractTransformation<Path, T> {
 
     private final char separator;
     private final char quoteSymbol;
@@ -63,8 +61,8 @@ public class CsvReaderStage<T> extends AbstractTransformation<Path, List<T>> {
      * @throws IOException
      *             when a stream could not be opened.
      */
-    public CsvReaderStage(final char separator, final char quoteSymbol, final char escapeSymbol, final boolean header,
-            final Class<T> clazz) {
+    public CsvRowReaderStage(final char separator, final char quoteSymbol, final char escapeSymbol,
+            final boolean header, final Class<T> clazz) {
         this.separator = separator;
         this.quoteSymbol = quoteSymbol;
         this.escapeSymbol = escapeSymbol;
@@ -74,31 +72,31 @@ public class CsvReaderStage<T> extends AbstractTransformation<Path, List<T>> {
 
     @Override
     protected void execute(final Path path) throws Exception {
-        final BufferedReader reader = Files.newBufferedReader(path);
-        final CsvClient<T> csvClient = new CsvClientImpl<>(reader, this.clazz);
-        csvClient.setQuote(this.quoteSymbol);
-        csvClient.setSeparator(this.separator);
-        csvClient.setEscape(this.escapeSymbol);
-        csvClient.setUseHeader(this.header);
-        csvClient.skipEmptyLines(true);
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
+            final CsvClient<T> csvClient = new CsvClientImpl<>(reader, this.clazz);
+            csvClient.setQuote(this.quoteSymbol);
+            csvClient.setSeparator(this.separator);
+            csvClient.setEscape(this.escapeSymbol);
+            csvClient.setUseHeader(this.header);
+            csvClient.skipEmptyLines(true);
 
-        final List<T> outputList = new ArrayList<>();
-
-        try {
-            while (!csvClient.isFinished()) {
-                final T bean = csvClient.readBean();
-                if (bean != null) {
-                    outputList.add(bean);
-                } else {
-                    break;
+            try {
+                while (!csvClient.isFinished()) {
+                    final T bean = csvClient.readBean();
+                    if (bean != null) {
+                        this.outputPort.send(bean);
+                    } else {
+                        break;
+                    }
                 }
-            }
 
-            reader.close();
-        } catch (final CsvException e) {
-            this.logger.error("Error reading csv file in line {} path {}", csvClient.getCurrentLine(), path.toString());
+            } catch (final CsvException e) {
+                this.logger.error("Error reading csv file in line {} path {}", csvClient.getCurrentLine(),
+                        path.toString());
+            }
+        } catch (final IOException e) {
+            this.logger.error("Error reading csv file {}", path.toString());
         }
-        this.outputPort.send(outputList);
     }
 
 }

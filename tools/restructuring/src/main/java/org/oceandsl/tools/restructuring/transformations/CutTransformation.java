@@ -16,7 +16,6 @@ public class CutTransformation extends AtomicTransformation {
 
     public CutTransformation(final AssemblyModel model) {
         super(model);
-        // TODO Auto-generated constructor stub
     }
 
     public void setComponentName(final String componentName) {

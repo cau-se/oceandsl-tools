@@ -19,6 +19,11 @@ import kieker.analysis.architecture.repository.ModelRepository;
 
 import teetime.stage.basic.AbstractFilter;
 
-public abstract class AbstractMergeInterfaceStage extends AbstractFilter<ModelRepository> {
+/**
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
+public abstract class AbstractMergeInterfaceStage extends AbstractFilter<ModelRepository> { // NOPMD
 
 }

@@ -29,11 +29,12 @@ import org.oceandsl.tools.fxca.model.FortranProject;
  *
  * @since 1.3.0
  */
-public class CreateOperationTableStage extends AbstractTransformation<FortranProject, Table<FileOperationEntry>> {
+public class CreateOperationTableStage
+        extends AbstractTransformation<FortranProject, Table<String, FileOperationEntry>> {
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        final Table<FileOperationEntry> callsTable = new Table<>("operation");
+        final Table<String, FileOperationEntry> callsTable = new Table<>("operation");
         project.getModules().values().forEach(module -> {
             final String path = module.getFileName();
             module.getOperations().values().forEach(operation -> {

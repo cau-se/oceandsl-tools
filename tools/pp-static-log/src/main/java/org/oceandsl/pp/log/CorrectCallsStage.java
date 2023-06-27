@@ -59,7 +59,7 @@ public class CorrectCallsStage extends AbstractStage {
                 this.unprocessedInvocation.setTargetPath(calleeFile);
                 this.outputPort.send(this.unprocessedInvocation);
                 this.unprocessedInvocation = null; // NOPMD NullAssignment
-            } else if (this.functionFileMap.size() > 0) {
+            } else if (!this.functionFileMap.isEmpty()) {
                 this.logger.warn("No match found for function {}", this.unprocessedInvocation.getCallee());
                 final String guessedCalleeFile = this.learnedFileMap.get(this.unprocessedInvocation.getCallee());
                 if (guessedCalleeFile != null) {
