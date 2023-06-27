@@ -20,20 +20,20 @@ import java.nio.file.Path;
 import teetime.framework.Configuration;
 import teetime.stage.InitialElementProducer;
 
+import org.oceandsl.tools.mktable.stages.CreateLaTeXTable;
 import org.oceandsl.tools.mktable.stages.CsvReaderStage;
 import org.oceandsl.tools.mktable.stages.SortTableStage;
 
 /**
- * Pipe and Filter configuration relabling tool.
+ * Pipe and Filter configuration generating latex tables from operation movements.
  *
  * @author Reiner Jung
- * @since 1.1
+ * @since 1.3.0
  */
 public class TeetimeConfiguration extends Configuration {
 
     public TeetimeConfiguration(final Settings settings) {
-        final teetime.stage.InitialElementProducer<Path> pathSource = new InitialElementProducer<>(
-                settings.getInputPaths());
+        final InitialElementProducer<Path> pathSource = new InitialElementProducer<>(settings.getInputPaths());
         final CsvReaderStage csvReaderStage = new CsvReaderStage(';', '"', '\\', true);
         final SortTableStage sortTableStage = new SortTableStage();
         final CreateLaTeXTable createLaTeXTable = new CreateLaTeXTable(settings.getOutputPath());

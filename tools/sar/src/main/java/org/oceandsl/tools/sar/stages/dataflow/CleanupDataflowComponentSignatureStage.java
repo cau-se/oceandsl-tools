@@ -30,8 +30,6 @@ import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
  */
 public class CleanupDataflowComponentSignatureStage extends AbstractFilter<DataflowEntry> {
 
-    private static final String UNKNOWN = "<unknown>";
-
     private final OutputPort<String> errorMessageOutputPort = this.createOutputPort(String.class);
 
     private final List<AbstractSignatureProcessor> processors;

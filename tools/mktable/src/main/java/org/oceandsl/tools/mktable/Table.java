@@ -13,14 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar;
+package org.oceandsl.tools.mktable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Different input modes.
+ * Table consisting of a list of records and an origin label.
  *
  * @author Reiner Jung
- * @since 1.3.0
+ * @since 2.0.0
+ *
+ * @param <R>
+ * @param <T>
  */
-public enum EInputMode {
-    CALL, DATAFLOW, BOTH
+public class Table<R, T> {
+
+    private final List<T> list = new ArrayList<>();
+    private final R origin;
+
+    public Table(final R origin) {
+        this.origin = origin;
+    }
+
+    public List<T> getList() {
+        return this.list;
+    }
+
+    public R getOrigin() {
+        return this.origin;
+    }
+
 }

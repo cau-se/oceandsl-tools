@@ -57,6 +57,11 @@ public class DataflowExecutionModelAssembler extends AbstractModelAssembler<Data
         final DeploymentContext sourceContext = this.deploymentModel.getContexts().get(event.getSource().getHostname());
         final DeployedComponent callerComponent = sourceContext.getComponents()
                 .get(event.getSource().getComponentSignature());
+        if (callerComponent == null) {
+            this.logger.error("Event refers to not existing caller component {}",
+                    event.getSource().getComponentSignature());
+            return;
+        }
 
         final DeploymentContext targetContext = this.deploymentModel.getContexts().get(event.getTarget().getHostname());
         final DeployedComponent calleeComponent = targetContext.getComponents()
