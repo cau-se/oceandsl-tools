@@ -33,6 +33,11 @@ import kieker.model.analysismodel.type.ProvidedInterfaceType;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
 
+/**
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 public class SimilarMethodPrefixMergeInterfaceStage extends AbstractMergeInterfaceStage {
 
     private final double methodDistance;
