@@ -21,6 +21,12 @@ import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.deployment.DeploymentPackage;
 
+/**
+ * check deployment model.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
 public class CheckDeploymentModelStage extends AbstractCollector<ModelRepository> {
 
     @Override

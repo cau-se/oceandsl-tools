@@ -29,7 +29,11 @@ import java.util.List;
  *
  * @since 1.3.0
  */
-public class ListTools {
+public final class ListUtils {
+
+    private ListUtils() {
+        // utility class
+    }
 
     // mutable versions of List.of
     public static <T> List<T> ofM() {
@@ -37,13 +41,13 @@ public class ListTools {
     }
 
     public static <T> List<T> ofM(final T element) {
-        final List<T> result = ListTools.ofM();
+        final List<T> result = ListUtils.ofM();
         result.add(element);
         return result;
     }
 
     public static <T> List<T> ofM(final List<T> list1, final List<T> list2, final Comparator<T> comparator) {
-        final List<T> newList = (list1 == null) ? ListTools.ofM() : ListTools.ofM(list1);
+        final List<T> newList = (list1 == null) ? ListUtils.ofM() : ListUtils.ofM(list1);
         if (list2 != null) {
             newList.addAll(list2);
         }
@@ -52,17 +56,17 @@ public class ListTools {
     }
 
     public static <T> List<T> ofM(final Iterable<T> elements) {
-        return ListTools.ofM(elements.iterator());
+        return ListUtils.ofM(elements.iterator());
     }
 
     public static <T> List<T> ofM(final Iterable<T> elements, final Comparator<T> comparator) {
-        final List<T> result = ListTools.ofM(elements.iterator());
+        final List<T> result = ListUtils.ofM(elements.iterator());
         Collections.sort(result, comparator);
         return result;
     }
 
     public static <T> List<T> ofM(final Iterator<T> iterator) {
-        final List<T> newList = ListTools.ofM();
+        final List<T> newList = ListUtils.ofM();
         iterator.forEachRemaining(newList::add);
         return newList;
     }
@@ -72,7 +76,7 @@ public class ListTools {
             final HashSet<T> checkForDoubles = new HashSet<>(collection);
             checkForDoubles.forEach(System.out::println);
             if (checkForDoubles.size() == 1) {
-                return ListTools.getUniqueElement(checkForDoubles);
+                return ListUtils.getUniqueElement(checkForDoubles);
             }
             throw new IllegalArgumentException("Unique element exists only for singletons.");
 
@@ -82,7 +86,7 @@ public class ListTools {
     }
 
     public static <T> T getUniqueElementIfNonEmpty(final Collection<T> collection, final T alternative) {
-        return collection.isEmpty() ? alternative : ListTools.getUniqueElement(collection);
+        return collection.isEmpty() ? alternative : ListUtils.getUniqueElement(collection);
     }
 
 }

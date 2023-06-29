@@ -13,41 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.analysis.code.stages.data;
+package org.oceandsl.analysis.code;
+
+import kieker.model.analysismodel.execution.EDirection;
 
 /**
- *
  * @author Reiner Jung
- * @since 1.3.0
+ * @since 2.0.0
  */
-public enum EDirection {
-    READ, WRITE, BOTH, NONE;
+public final class CodeUtils {
 
-    public EDirection merge(final EDirection direction) {
-        switch (this) {
-        case NONE:
-            return direction;
-        case BOTH:
-            return BOTH;
+    public static final String UNKNOWN_OPERATION = "++unknown-operation++";
+    public static final String UNKNOWN_COMPONENT = "++unknown-component++";
+    public static final String NO_FILE = "++no-file++";
+    public static final String NO_PACKAGE = "++no-package++";
+
+    private CodeUtils() {
+        // utility class
+    }
+
+    // duplicate from AggregateDataflowStage
+    public static EDirection merge(final EDirection left, final EDirection right) {
+        switch (left) {
         case READ:
-            switch (direction) {
-            case BOTH:
-            case WRITE:
-                return EDirection.BOTH;
+            switch (right) {
             case READ:
+                return EDirection.READ;
+            case WRITE:
+            case BOTH:
+                return EDirection.BOTH;
             case NONE:
-                return READ;
+            default:
+                return left;
             }
         case WRITE:
-            switch (direction) {
-            case BOTH:
+            switch (right) {
             case READ:
+            case BOTH:
                 return EDirection.BOTH;
             case WRITE:
+                return EDirection.WRITE;
             case NONE:
-                return WRITE;
+            default:
+                return left;
             }
+        case NONE:
+            return right;
+        case BOTH:
+        default:
+            return EDirection.BOTH;
         }
-        return NONE;
     }
 }

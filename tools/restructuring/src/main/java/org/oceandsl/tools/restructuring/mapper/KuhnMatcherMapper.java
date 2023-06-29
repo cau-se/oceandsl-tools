@@ -1,6 +1,5 @@
 package org.oceandsl.tools.restructuring.mapper;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -10,51 +9,64 @@ import org.jgrapht.alg.interfaces.MatchingAlgorithm.Matching;
 import org.jgrapht.alg.matching.MaximumWeightBipartiteMatching;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import kieker.analysis.exception.InternalErrorException;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyOperation;
 
-import org.oceandsl.tools.restructuring.util.RestructurerTools;
+import org.oceandsl.tools.restructuring.util.RestructurerUtils;
 
 /**
  *
  * @author Serafim Simonov
  * @since 1.3.0
  */
-public class KuhnMatcherMapper extends AbstractComponentMapper {
+public class KuhnMatcherMapper extends BasicComponentMapper {
 
-    private final SimpleWeightedGraph<String, DefaultEdge> graph;
+    private final static Logger LOGGER = LoggerFactory.getLogger(KuhnMatcherMapper.class);
+
     private final Set<String> s = new HashSet<>();
     private final Set<String> t = new HashSet<>();
     private final Matching<String, DefaultEdge> matching;
 
-    private HashMap<String, String> operationToComponentO = new HashMap<>();
-    private HashMap<String, String> operationToComponentG = new HashMap<>();
-
-    private HashMap<String, HashMap<String, Integer>> traceModell = new HashMap<>();
-    private HashMap<String, String> goalToOriginal = new HashMap<>();
-    private HashMap<String, String> originalToGoal = new HashMap<>();
-
+    /**
+     * Constructor is used to create a kuhn mapper.
+     *
+     * @param original
+     *            original model
+     * @param goal
+     *            goal model
+     * @param originalModelName
+     *            name of the original model
+     * @param goalModelName
+     *            name of the goal model
+     * @throws InternalErrorException
+     *             when there is a difference in functions between original and goal operations
+     */
     public KuhnMatcherMapper(final AssemblyModel orig, final AssemblyModel goal, final String originalModelName,
-            final String goalModelName) {
+            final String goalModelName) throws InternalErrorException {
         super(originalModelName, goalModelName);
-        this.original = RestructurerTools.cloneModel(orig);
-        this.goal = RestructurerTools.alterComponentNames(goal);
+
+        this.original = RestructurerUtils.cloneModel(orig);
+        this.goal = RestructurerUtils.alterComponentNames(goal);
         this.s.addAll(this.original.getComponents().keySet());
         this.t.addAll(this.goal.getComponents().keySet());
-        this.graph = new SimpleWeightedGraph<>(DefaultEdge.class);
+
         this.populateOperationTocomponentG();
         this.populateOperationToComponentO();
 
         if (this.operationToComponentO.size() != this.operationToComponentG.size()) {
-            throw new Error("Some operations are lost?");
+            throw new InternalErrorException("Some operations are lost.");
         }
         // System.out.println("Same comps:" +
         // operationToComponentO.values().equals(operationToComponentG.values()));
         // init mappings
 
         // create graphp
+        final SimpleWeightedGraph<String, DefaultEdge> graph = new SimpleWeightedGraph<>(DefaultEdge.class);
 
         // initial graph
         for (final Entry<String, AssemblyComponent> c : this.original.getComponents().entrySet()) { // each
@@ -65,7 +77,7 @@ public class KuhnMatcherMapper extends AbstractComponentMapper {
 
             final String origVertex = c.getKey();
 
-            this.graph.addVertex(origVertex); // create vertex from original component
+            graph.addVertex(origVertex); // create vertex from original component
             for (final Entry<String, AssemblyOperation> ops : c.getValue().getOperations().entrySet()) { // iterate
                                                                                                          // through
                 // operations in
@@ -73,26 +85,26 @@ public class KuhnMatcherMapper extends AbstractComponentMapper {
                 // componen
 
                 final String goalVertex = this.operationToComponentG.get(ops.getKey());
-                if (!this.graph.containsVertex(goalVertex)) { // vertex was not added yet , thus
-                                                              // simply create and edge
-                    this.graph.addVertex(goalVertex); // component on goal as vertex
-                    final DefaultEdge edge = this.graph.addEdge(origVertex, goalVertex);// add edge
-                    this.graph.setEdgeWeight(edge, 1); // weight is 1 first encounter
+                if (!graph.containsVertex(goalVertex)) { // vertex was not added yet , thus
+                                                         // simply create and edge
+                    graph.addVertex(goalVertex); // component on goal as vertex
+                    final DefaultEdge edge = graph.addEdge(origVertex, goalVertex);// add edge
+                    graph.setEdgeWeight(edge, 1); // weight is 1 first encounter
                 } else { // component already in the graph
                          // check if there is already a connection between current orig and goal
                          // components
-                    DefaultEdge edge = this.graph.getEdge(origVertex, goalVertex);
+                    DefaultEdge edge = graph.getEdge(origVertex, goalVertex);
 
                     if (edge != null) { // edge exists. Simply adjust the weights
-                        final double currentWeight = this.graph.getEdgeWeight(edge);
-                        this.graph.setEdgeWeight(edge, currentWeight + 1);
+                        final double currentWeight = graph.getEdgeWeight(edge);
+                        graph.setEdgeWeight(edge, currentWeight + 1);
                     } else {
                         // no edges. Create a simple edge
                         if (origVertex.equals(goalVertex)) {
-                            System.out.println(origVertex + " " + goalVertex);
+                            KuhnMatcherMapper.LOGGER.debug("{} {}", origVertex, goalVertex);
                         }
-                        edge = this.graph.addEdge(origVertex, goalVertex); // add edge
-                        this.graph.setEdgeWeight(edge, 1); // weight is 1 first encounter
+                        edge = graph.addEdge(origVertex, goalVertex); // add edge
+                        graph.setEdgeWeight(edge, 1); // weight is 1 first encounter
                     }
                 }
 
@@ -101,8 +113,7 @@ public class KuhnMatcherMapper extends AbstractComponentMapper {
             //
 
         }
-        assert this.graph.vertexSet()
-                .size() == (this.original.getComponents().size() + this.goal.getComponents().size());
+        assert graph.vertexSet().size() == (this.original.getComponents().size() + this.goal.getComponents().size());
         // add dummies to equlize partitions
         /*
          * if(this.orig.getComponents().size()<this.goal.getComponents().size()) { //stock ip orig
@@ -135,75 +146,13 @@ public class KuhnMatcherMapper extends AbstractComponentMapper {
         // System.out.println(this.s.size()*this.t.size());
         // System.out.println(this.graph.edgeSet().size());
         // assert this.s.size()*this.t.size()==this.graph.edgeSet().size();
-        final MaximumWeightBipartiteMatching<String, DefaultEdge> matcher = new MaximumWeightBipartiteMatching<>(
-                this.graph, this.s, this.t);
+        final MaximumWeightBipartiteMatching<String, DefaultEdge> matcher = new MaximumWeightBipartiteMatching<>(graph,
+                this.s, this.t);
         this.matching = matcher.getMatching();
         this.computeOriginalComponentNames();
         // System.out.println("Size of gto "+this.goalToOriginal.size());
         // System.out.println("Size of otg " + this.originallToGoal.size());
         // System.out.println("Num of matching"+this.matching.getEdges().size());
-
-    }
-
-    @Override
-    public HashMap<String, String> getOperationToComponentO() {
-        return this.operationToComponentO;
-    }
-
-    @Override
-    public void setOperationToComponentO(final HashMap<String, String> operationToComponentO) {
-        this.operationToComponentO = operationToComponentO;
-    }
-
-    @Override
-    public HashMap<String, String> getOperationToComponentG() {
-        return this.operationToComponentG;
-    }
-
-    @Override
-    public void setOperationToComponentG(final HashMap<String, String> operationToComponentG) {
-        this.operationToComponentG = operationToComponentG;
-    }
-
-    @Override
-    public HashMap<String, HashMap<String, Integer>> getTraceModell() {
-        return this.traceModell;
-    }
-
-    @Override
-    public void setTraceModell(final HashMap<String, HashMap<String, Integer>> traceModell) {
-        this.traceModell = traceModell;
-    }
-
-    @Override
-    public HashMap<String, String> getGoalToOriginal() {
-        return this.goalToOriginal;
-    }
-
-    @Override
-    public void setGoalToOriginal(final HashMap<String, String> goalToOriginal) {
-        this.goalToOriginal = goalToOriginal;
-    }
-
-    @Override
-    public HashMap<String, String> getOriginalToGoal() {
-        return this.originalToGoal;
-    }
-
-    @Override
-    public void setOriginalToGoal(final HashMap<String, String> originalToGoal) {
-        this.originalToGoal = originalToGoal;
-    }
-
-    @Override
-    public AssemblyModel getOriginal() {
-        return this.original;
-
-    }
-
-    @Override
-    public AssemblyModel getGoal() {
-        return this.goal;
 
     }
 

@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.LoggerFactory;
+
 import teetime.framework.Configuration;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
@@ -30,6 +32,7 @@ import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 import org.oceandsl.analysis.code.stages.data.DataflowEntry;
 import org.oceandsl.analysis.code.stages.data.FileOperationEntry;
+import org.oceandsl.analysis.code.stages.data.GlobalDataEntry;
 import org.oceandsl.analysis.code.stages.data.NotFoundEntry;
 import org.oceandsl.analysis.generic.stages.DirectoryProducer;
 import org.oceandsl.analysis.generic.stages.DirectoryScannerStage;
@@ -45,13 +48,12 @@ import org.oceandsl.tools.fxca.stages.calls.CreateOperationTableStage;
 import org.oceandsl.tools.fxca.stages.calls.ProcessOperationCallStage;
 import org.oceandsl.tools.fxca.stages.dataflow.AggregateCommonBlocksStage;
 import org.oceandsl.tools.fxca.stages.dataflow.AggregateDataflowStage;
-import org.oceandsl.tools.fxca.stages.dataflow.CommonBlockArgumentDataflow;
 import org.oceandsl.tools.fxca.stages.dataflow.ComputeDirectionalityOfParametersStage;
 import org.oceandsl.tools.fxca.stages.dataflow.CreateCallerCalleeDataflowTableStage;
 import org.oceandsl.tools.fxca.stages.dataflow.CreateCommonBlockDataflowTableStage;
 import org.oceandsl.tools.fxca.stages.dataflow.CreateCommonBlocksTableStage;
 import org.oceandsl.tools.fxca.stages.dataflow.DataFlowAnalysisStage;
-import org.oceandsl.tools.fxca.stages.dataflow.GlobalDataEntry;
+import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockArgumentDataflow;
 import org.oceandsl.tools.fxca.utils.PatternUriProcessor;
 
 /**
@@ -107,19 +109,25 @@ public class TeetimeConfiguration extends Configuration {
         final CreateCommonBlocksTableStage commonBlocksTableStage = new CreateCommonBlocksTableStage();
 
         /** output stages. */
-        final TableCsvSink<FileOperationEntry> operationTableSink = new TableCsvSink<>(
-                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.OPERATION_DEFINITIONS), true);
-        final TableCsvSink<CallerCalleeEntry> callTableSink = new TableCsvSink<>(
-                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.CALL_TABLE), true);
-        final TableCsvSink<NotFoundEntry> notFoundSink = new TableCsvSink<>(
-                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.NOT_FOUND), true);
+        final TableCsvSink<String, FileOperationEntry> operationTableSink = new TableCsvSink<>(
+                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.OPERATION_DEFINITIONS),
+                FileOperationEntry.class, true);
+        final TableCsvSink<String, CallerCalleeEntry> callTableSink = new TableCsvSink<>(
+                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.CALL_TABLE),
+                CallerCalleeEntry.class, true);
+        final TableCsvSink<String, NotFoundEntry> notFoundSink = new TableCsvSink<>(
+                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.NOT_FOUND), NotFoundEntry.class,
+                true);
 
-        final TableCsvSink<DataflowEntry> callerCalleeDataflowTableSink = new TableCsvSink<>(
-                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.DATAFLOW), true);
-        final TableCsvSink<CommonBlockArgumentDataflow> commonBlockDataflowTableSink = new TableCsvSink<>(
-                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.DATAFLOW_COMMON_BLOCKS), true);
-        final TableCsvSink<GlobalDataEntry> commonBlocksTableSink = new TableCsvSink<>(
-                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.COMMON_BLOCKS), true);
+        final TableCsvSink<String, DataflowEntry> callerCalleeDataflowTableSink = new TableCsvSink<>(
+                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.DATAFLOW), DataflowEntry.class,
+                true);
+        final TableCsvSink<String, CommonBlockArgumentDataflow> commonBlockDataflowTableSink = new TableCsvSink<>(
+                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.DATAFLOW_COMMON_BLOCKS),
+                CommonBlockArgumentDataflow.class, true);
+        final TableCsvSink<String, GlobalDataEntry> commonBlocksTableSink = new TableCsvSink<>(
+                o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.COMMON_BLOCKS),
+                GlobalDataEntry.class, true);
 
         /** connections. */
         this.connectPorts(producer.getOutputPort(), directoryScannerStage.getInputPort());
@@ -178,7 +186,7 @@ public class TeetimeConfiguration extends Configuration {
                 this.createEntry(module, values[1], values[2], values[3]);
             }
         } catch (final IOException e) {
-            System.err.println(">> cannot read " + path.toString()); // TODO improve with logger
+            LoggerFactory.getLogger(TeetimeConfiguration.class).error("Cannot read file {}", path.toString());
         }
     }
 
@@ -206,10 +214,8 @@ public class TeetimeConfiguration extends Configuration {
                     result.add(line.substring(marker, i));
                     mode = 0;
                 }
-            } else if (mode == 3) {
-                if (ch == ',') {
-                    mode = 0;
-                }
+            } else if ((mode == 3) && (ch == ',')) {
+                mode = 0;
             }
         }
         result.add(line.substring(marker, line.length()));

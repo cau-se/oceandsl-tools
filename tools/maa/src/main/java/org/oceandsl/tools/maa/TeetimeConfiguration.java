@@ -31,12 +31,15 @@ import org.oceandsl.analysis.architecture.stages.ModelChangeNameStage;
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryProducerStage;
 import org.oceandsl.analysis.architecture.stages.ModelSink;
 import org.oceandsl.analysis.generic.stages.TableCsvSink;
+import org.oceandsl.tools.maa.stages.CallEntry;
 import org.oceandsl.tools.maa.stages.CollectConnectionsStage;
+import org.oceandsl.tools.maa.stages.ComponentStatistics;
 import org.oceandsl.tools.maa.stages.ComponentStatisticsStage;
 import org.oceandsl.tools.maa.stages.FindDistinctCollectionsStage;
 import org.oceandsl.tools.maa.stages.GenerateProvidedInterfacesStage;
 import org.oceandsl.tools.maa.stages.GroupComponentsHierarchicallyStage;
 import org.oceandsl.tools.maa.stages.OperationCallsStage;
+import org.oceandsl.tools.maa.stages.ProvidedInterfaceEntry;
 import org.oceandsl.tools.maa.stages.ProvidedInterfaceTableTransformation;
 
 /**
@@ -56,20 +59,25 @@ public class TeetimeConfiguration extends Configuration {
         final ModelSink modelSink = new ModelSink(settings.getOutputModelPath());
 
         final ProvidedInterfaceTableTransformation providedInterfaceTableTransformation = new ProvidedInterfaceTableTransformation();
-        final TableCsvSink providedInterfaceSink = new TableCsvSink(settings.getOutputModelPath(),
-                "provided-interfaces.csv", true);
+        final TableCsvSink<String, ProvidedInterfaceEntry> providedInterfaceSink = new TableCsvSink<>(
+                settings.getOutputModelPath(), "provided-interfaces.csv", ProvidedInterfaceEntry.class, true);
 
         OutputPort<ModelRepository> outputPort = modelReader.getOutputPort();
         if (settings.isComputeInterfaces()) {
             final CollectConnectionsStage computeInterfaces = new CollectConnectionsStage();
             final FindDistinctCollectionsStage findDistinctCollectionsStage = new FindDistinctCollectionsStage();
             final GenerateProvidedInterfacesStage generateProvidedInterfacesStage = new GenerateProvidedInterfacesStage();
+            // final AbstractMergeInterfaceStage mergeInterfaceStage = new
+            // SimilarMethodSuffixMergeInterfaceStage(0.4);
 
             this.connectPorts(outputPort, computeInterfaces.getInputPort());
             this.connectPorts(computeInterfaces.getOutputPort(), findDistinctCollectionsStage.getInputPort());
             this.connectPorts(findDistinctCollectionsStage.getOutputPort(),
                     generateProvidedInterfacesStage.getInputPort());
+            // this.connectPorts(generateProvidedInterfacesStage.getOutputPort(),
+            // mergeInterfaceStage.getInputPort());
 
+            // outputPort = mergeInterfaceStage.getOutputPort();
             outputPort = generateProvidedInterfacesStage.getOutputPort();
         }
 
@@ -97,16 +105,18 @@ public class TeetimeConfiguration extends Configuration {
 
         if (settings.isOperationCalls()) {
             final OperationCallsStage operationCallsStage = new OperationCallsStage();
-            final TableCsvSink operationCallSink = new TableCsvSink(settings.getOutputModelPath(),
-                    "operation-calls.csv", true);
+            final TableCsvSink<String, CallEntry> operationCallSink = new TableCsvSink<>(settings.getOutputModelPath(),
+                    "operation-calls.csv", CallEntry.class, true);
+
             this.connectPorts(distributor.getNewOutputPort(), operationCallsStage.getInputPort());
             this.connectPorts(operationCallsStage.getOutputPort(), operationCallSink.getInputPort());
         }
 
         if (settings.isComponentStatistics()) {
             final ComponentStatisticsStage componentStatisticsStage = new ComponentStatisticsStage();
-            final TableCsvSink operationCallSink = new TableCsvSink(settings.getOutputModelPath(),
-                    "component-statistics.csv", true);
+            final TableCsvSink<String, ComponentStatistics> operationCallSink = new TableCsvSink<>(
+                    settings.getOutputModelPath(), "component-statistics.csv", ComponentStatistics.class, true);
+
             this.connectPorts(distributor.getNewOutputPort(), componentStatisticsStage.getInputPort());
             this.connectPorts(componentStatisticsStage.getOutputPort(), operationCallSink.getInputPort());
         }

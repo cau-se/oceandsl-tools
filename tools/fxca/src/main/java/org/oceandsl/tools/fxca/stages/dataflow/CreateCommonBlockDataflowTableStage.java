@@ -18,6 +18,7 @@ package org.oceandsl.tools.fxca.stages.dataflow;
 import teetime.stage.basic.AbstractTransformation;
 
 import org.oceandsl.analysis.generic.Table;
+import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockArgumentDataflow;
 
 /**
  *
@@ -25,20 +26,12 @@ import org.oceandsl.analysis.generic.Table;
  * @since 1.3.0
  */
 public class CreateCommonBlockDataflowTableStage
-        extends AbstractTransformation<CommonBlockArgumentDataflow, Table<CommonBlockArgumentDataflow>> {
+        extends AbstractTransformation<CommonBlockArgumentDataflow, Table<String, CommonBlockArgumentDataflow>> {
 
-    private static final String COMMON_BLOCK = "common-block";
-    private static final String PATH = "path";
-    private static final String MODULE = "module";
-    private static final String OPERATION = "operation";
-    private static final String DIRECTION = "direction";
-
-    private final Table<CommonBlockArgumentDataflow> callsTable;
+    private final Table<String, CommonBlockArgumentDataflow> callsTable;
 
     public CreateCommonBlockDataflowTableStage() {
-        this.callsTable = new Table<>("dataflow-cb", CreateCommonBlockDataflowTableStage.COMMON_BLOCK,
-                CreateCommonBlockDataflowTableStage.PATH, CreateCommonBlockDataflowTableStage.MODULE,
-                CreateCommonBlockDataflowTableStage.OPERATION, CreateCommonBlockDataflowTableStage.DIRECTION);
+        this.callsTable = new Table<>("dataflow-cb");
     }
 
     @Override

@@ -36,6 +36,8 @@ import kieker.common.record.flow.trace.operation.CallOperationEvent;
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
+import org.oceandsl.analysis.code.CodeUtils;
+
 /**
  * Produce operation and operation call events based on flow records. This stage requires
  * structurally intact traces.
@@ -130,7 +132,8 @@ public class OperationAndCallGeneratorStage extends AbstractConsumerStage<IFlowR
             if (!traceData.getOperationStack().empty()) {
                 this.operationOutputPort.send(newEvent);
             } else if (this.createEntryCall) {
-                final OperationEvent triggerEvent = new OperationEvent("external", "<unknown>", "<unknown>");
+                final OperationEvent triggerEvent = new OperationEvent("external", CodeUtils.UNKNOWN_COMPONENT,
+                        CodeUtils.UNKNOWN_OPERATION);
                 this.operationOutputPort.send(triggerEvent);
                 this.operationOutputPort.send(newEvent);
                 traceData.getOperationStack().push(triggerEvent);

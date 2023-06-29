@@ -41,15 +41,14 @@ import org.oceandsl.analysis.generic.Table;
  * @author Reiner Jung
  * @since 1.1
  */
-public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, Table<NumberOfCallsEntry>> {
+public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, Table<String, NumberOfCallsEntry>> {
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
         final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
         final StatisticsModel statisticsModel = repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
 
-        final Table<NumberOfCallsEntry> result = new Table<>(repository.getName(), "source-file", "source-function",
-                "target-file", "target-function", "calls");
+        final Table<String, NumberOfCallsEntry> result = new Table<>(repository.getName());
 
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> invocationEntry : executionModel
                 .getInvocations().entrySet()) {

@@ -1,3 +1,18 @@
+/***************************************************************************
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package org.oceandsl.tools.delta.stages;
 
 import java.util.HashMap;
@@ -6,18 +21,26 @@ import java.util.Map;
 import teetime.stage.basic.AbstractTransformation;
 
 import org.oceandsl.analysis.generic.Table;
+import org.oceandsl.analysis.generic.data.MoveOperationEntry;
 import org.oceandsl.tools.restructuring.restructuremodel.CutOperation;
 import org.oceandsl.tools.restructuring.restructuremodel.MoveOperation;
 import org.oceandsl.tools.restructuring.restructuremodel.PasteOperation;
 import org.oceandsl.tools.restructuring.restructuremodel.TransformationModel;
 
-public class CompileRestructureTableStage extends AbstractTransformation<TransformationModel, Table<MoveOperationEntry>> {
+/**
+ * Process transformation model and generate a table of {@link MoveOperationEntry}.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
+public class CompileRestructureTableStage
+        extends AbstractTransformation<TransformationModel, Table<String, MoveOperationEntry>> {
 
-    private final Table<MoveOperationEntry> table;
+    private final Table<String, MoveOperationEntry> table;
     private final Map<String, CutOperation> rememberCutOperation = new HashMap<>();
 
     public CompileRestructureTableStage(final String name) {
-        this.table = new Table<>(name, "source-component", "target-component", "element");
+        this.table = new Table<>(name);
     }
 
     @Override
@@ -31,14 +54,15 @@ public class CompileRestructureTableStage extends AbstractTransformation<Transfo
                 final CutOperation cut = move.getCutOperation();
                 final PasteOperation paste = move.getPasteOperation();
 
-                this.table.getRows()
-                        .add(new MoveOperationEntry(cut.getComponentName(), paste.getComponentName(), cut.getOperationName()));
+                this.table.getRows().add(new MoveOperationEntry(cut.getComponentName(), paste.getComponentName(),
+                        cut.getOperationName()));
             } else if (action instanceof PasteOperation) {
                 final PasteOperation paste = (PasteOperation) action;
                 if (this.rememberCutOperation.containsKey(paste.getOperationName())) {
                     final CutOperation cut = this.rememberCutOperation.get(paste.getOperationName());
-                    this.table.getRows()
-                            .add(new MoveOperationEntry(cut.getComponentName(), paste.getComponentName(), cut.getOperationName()));
+
+                    this.table.getRows().add(new MoveOperationEntry(cut.getComponentName(), paste.getComponentName(),
+                            cut.getOperationName()));
                 } else {
                     this.logger.error("Have paste without cut. {} {}", paste.getComponentName(),
                             paste.getOperationName());

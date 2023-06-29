@@ -28,7 +28,7 @@ import com.beust.jcommander.ParameterException;
 public class InputModeValidator implements IParameterValidator {
 
     @Override
-    public void validate(final String name, final String value) throws ParameterException {
+    public void validate(final String name, final String value) throws ParameterException { // NOPMD
         try {
             EInputMode.valueOf(value.toUpperCase(Locale.getDefault()));
         } catch (final IllegalArgumentException e) {
@@ -40,7 +40,7 @@ public class InputModeValidator implements IParameterValidator {
                     modes += "," + mode.name().toLowerCase(Locale.getDefault());
                 }
             }
-            throw new ParameterException(String.format("Parameter %s: %s is not a valid input mode. Valid modes are %s",
+            throw new ParameterException(String.format("Parameter %s: %s is not a valid input mode. Valid modes are %s", // NOPMD
                     name, value, modes));
         }
     }

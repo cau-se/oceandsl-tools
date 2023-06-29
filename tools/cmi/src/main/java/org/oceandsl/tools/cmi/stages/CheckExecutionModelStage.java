@@ -35,6 +35,12 @@ import kieker.model.analysismodel.execution.Tuple;
 
 import org.oceandsl.tools.cmi.RepositoryUtils;
 
+/**
+ * Check execution model.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
 public class CheckExecutionModelStage extends AbstractCollector<ModelRepository> {
 
     @Override

@@ -35,9 +35,10 @@ public class ModelChangeNameStage extends AbstractFilter<ModelRepository> {
     }
 
     @Override
-    protected void execute(final ModelRepository element) throws Exception {
+    protected void execute(final ModelRepository input) throws Exception {
         final ModelRepository output = new ModelRepository(this.name);
-        element.getModels().entrySet().forEach(entry -> output.getModels().put(entry.getKey(), entry.getValue()));
+        input.getModels().entrySet()
+                .forEach(entry -> output.register(input.getModelDescriptor(entry.getKey()), entry.getValue()));
         this.outputPort.send(output);
     }
 

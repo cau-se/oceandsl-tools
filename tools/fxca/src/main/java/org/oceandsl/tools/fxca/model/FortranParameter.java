@@ -26,7 +26,7 @@ public class FortranParameter extends DataflowObject implements IContainable, ID
 
     @Getter
     @Setter
-    private int position;
+    private int position; // NOPMD
 
     public FortranParameter(final String name, final int position) {
         super(name);

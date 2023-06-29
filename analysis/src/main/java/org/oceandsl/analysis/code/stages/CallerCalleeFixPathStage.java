@@ -30,10 +30,10 @@ import teetime.stage.basic.AbstractFilter;
 import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 
 /**
- * This stage receives an {@link CallerCalleeEntry} object and checks whether the file path for caller
- * and callee operation are specified. In case they are missing, the stage sets them based on its
- * operation to file lookup table. In case the operation is not listed, it collects all operations
- * which do not have a file name.
+ * This stage receives an {@link CallerCalleeEntry} object and checks whether the file path for
+ * caller and callee operation are specified. In case they are missing, the stage sets them based on
+ * its operation to file lookup table. In case the operation is not listed, it collects all
+ * operations which do not have a file name.
  *
  * <ul>
  * <li>outputPort sends out {@link CallerCalleeEntry} objects with all 4 values set.</li>
@@ -44,6 +44,7 @@ import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
  * @author Reiner Jung
  * @since 1.1
  */
+// TODO adapt to csveed
 public class CallerCalleeFixPathStage extends AbstractFilter<CallerCalleeEntry> {
 
     private final Map<String, String> operationToFileMap = new HashMap<>();
@@ -53,7 +54,8 @@ public class CallerCalleeFixPathStage extends AbstractFilter<CallerCalleeEntry> 
     public CallerCalleeFixPathStage(final List<Path> functionMapPaths, final String splitSymbol) throws IOException {
         for (final Path functionMapPath : functionMapPaths) {
             try (BufferedReader reader = Files.newBufferedReader(functionMapPath)) {
-                String line = reader.readLine();
+                String line;
+                reader.readLine(); // skip header
                 while ((line = reader.readLine()) != null) {
                     final String[] values = line.split(splitSymbol);
                     if (values.length >= 2) {

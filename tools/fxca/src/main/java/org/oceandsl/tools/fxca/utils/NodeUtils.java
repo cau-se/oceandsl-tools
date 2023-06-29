@@ -28,6 +28,8 @@ import java.util.function.Predicate;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -43,7 +45,9 @@ import org.xml.sax.SAXException;
  */
 public class NodeUtils {
 
-    private static String ROOT_PROGRAM = "main";
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodeUtils.class);
+
+    private static final String ROOT_PROGRAM = "main";
 
     /** methods. */
 
@@ -111,11 +115,11 @@ public class NodeUtils {
             spaces = spaces + " ";
         }
         int numberOfPrintedNodes = 1;
-        System.out.println(spaces + "[node type] " + NodeUtils.nodeType(node.getNodeType()));
-        System.out.println(spaces + "[node name] " + node.getNodeName());
-        System.out.println(spaces + "[node value] " + node.getNodeValue());
-        System.out.println(spaces + "[node text content] " + node.getTextContent());
-        System.out.println(spaces + "[node #kids] " + node.getChildNodes().getLength());
+        NodeUtils.LOGGER.info("{}[node type] ", spaces, NodeUtils.nodeType(node.getNodeType())); // NOPMD
+        NodeUtils.LOGGER.info("{}[node name] ", spaces, node.getNodeName()); // NOPMD
+        NodeUtils.LOGGER.info("{}[node value] ", spaces, node.getNodeValue()); // NOPMD
+        NodeUtils.LOGGER.info("{}[node text content] ", spaces, node.getTextContent()); // NOPMD
+        NodeUtils.LOGGER.info("{}[node #kids] ", spaces, node.getChildNodes().getLength()); // NOPMD
 
         for (int i = 0; i < node.getChildNodes().getLength(); i++) {
             final Node child = node.getChildNodes().item(i);
@@ -126,13 +130,14 @@ public class NodeUtils {
 
     public static Node getSuccessorNode(final Node node, final String path) {
         final String firstNumber = StringUtils.substringBefore(path, ",");
-        final String nextPath = StringUtils.substringAfter(path, ",");
         final int childIndex = Integer.parseInt(firstNumber);
         final NodeList children = node.getChildNodes();
         if (children.getLength() < childIndex) {
-            System.err.println("No children found for node " + node);
+            NodeUtils.LOGGER.error("No children found for node {}", node);
             return null;
         }
+
+        final String nextPath = StringUtils.substringAfter(path, ",");
         if (nextPath.isEmpty()) {
             return node.getChildNodes().item(childIndex);
         } else {
@@ -222,8 +227,8 @@ public class NodeUtils {
         // End if we do not have anywhere to search, or we have reached the limit (where "-1" counts
         // as "no limit").
         while ((current != null) && ((result.size() < maxElementsToFind) || (maxElementsToFind == -1))) {
-
-            if (!inParanthesisInterval && condition.test(current) && ((current != parent) || includeSelf)) {
+            // current, parent must not be identical
+            if (!inParanthesisInterval && condition.test(current) && ((current != parent) || includeSelf)) { // NOPMD
                 result.add(current);
             }
 
@@ -247,7 +252,7 @@ public class NodeUtils {
 
             // Check for nextNode-stationaly points
             final Node nextNodeResult = nextNode.apply(current);
-            current = current == nextNodeResult ? null : nextNodeResult;
+            current = current == nextNodeResult ? null : nextNodeResult; // NOPMD must be identical
         }
 
         return result;
@@ -355,7 +360,7 @@ public class NodeUtils {
             result.add(new Pair<>(caller, callee));
         }
 
-        return ListTools.ofM(result, Pair.getComparatorFirstSecond());
+        return ListUtils.ofM(result, Pair.getComparatorFirstSecond());
     }
 
     private static Node findContainingStatement(final Node parent, final Predicate<Node> condition,
@@ -404,12 +409,12 @@ public class NodeUtils {
         if (Predicates.isNamedExpression.test(node)) {
             // NodeList children = node.getChildNodes();
             final Node firstChild = node.getFirstChild();
-            final Node firstGrandChild = firstChild.getFirstChild();
             if (!Predicates.isBigN.test(firstChild)) {
                 throw new IllegalArgumentException(String.format(
                         "Expected <N> in named expression, but found %s as first child.", firstChild.getNodeName()));
             }
 
+            final Node firstGrandChild = firstChild.getFirstChild();
             if (!Predicates.isSmallN.test(firstGrandChild)) {
                 throw new IllegalArgumentException(
                         String.format("Expected <n> in named expression, but found %s as first gand child.",

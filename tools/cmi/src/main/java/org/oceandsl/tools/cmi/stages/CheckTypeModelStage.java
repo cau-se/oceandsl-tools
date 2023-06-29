@@ -24,6 +24,12 @@ import kieker.model.analysismodel.type.StorageType;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
 
+/**
+ * Checks for the type model.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
 public class CheckTypeModelStage extends AbstractCollector<ModelRepository> {
 
     @Override

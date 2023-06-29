@@ -18,6 +18,12 @@ package org.oceandsl.tools.mop;
 import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.ParameterException;
 
+/**
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ *
+ */
 public class OperationConverter implements IStringConverter<EOperation> {
 
     @Override
@@ -27,7 +33,7 @@ public class OperationConverter implements IStringConverter<EOperation> {
                 return operation;
             }
         }
-        throw new ParameterException(String.format("%s is not a valid model operation.", value));
+        throw new ParameterException(String.format("%s is not a valid model operation.", value)); // NOPMD
     }
 
 }

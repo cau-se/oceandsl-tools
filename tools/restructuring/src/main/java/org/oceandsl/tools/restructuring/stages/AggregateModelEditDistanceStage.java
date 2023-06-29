@@ -12,12 +12,12 @@ import org.oceandsl.analysis.generic.Table;
  * @since 1.3.0
  */
 public class AggregateModelEditDistanceStage
-        extends AbstractTransformation<ResultRecord, Table<ModelEditDistanceEntry>> {
+        extends AbstractTransformation<ResultRecord, Table<String, ModelEditDistanceEntry>> {
 
-    private final Table<ModelEditDistanceEntry> table;
+    private final Table<String, ModelEditDistanceEntry> table;
 
     public AggregateModelEditDistanceStage() {
-        this.table = new Table<>("med-output", "original", "goal", "med");
+        this.table = new Table<>("med-output");
     }
 
     @Override

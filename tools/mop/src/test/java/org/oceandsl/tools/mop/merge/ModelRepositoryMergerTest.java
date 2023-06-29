@@ -49,7 +49,7 @@ import org.oceandsl.tools.mop.SarModelFactory;
  * @author Reiner Jung
  *
  */
-public class ModelRepositoryMergerTest {
+class ModelRepositoryMergerTest {
 
     private static final String NUMBER_OF_OPERATION = "Number of operation";
 
@@ -58,7 +58,7 @@ public class ModelRepositoryMergerTest {
      * {@link org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils#perform(kieker.analysis.stage.model.ModelRepository, kieker.analysis.stage.model.ModelRepository, org.oceandsl.tools.mop.EStrategy)}.
      */
     @Test
-    public void testPerformType() {
+    void testPerformType() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
@@ -83,7 +83,7 @@ public class ModelRepositoryMergerTest {
     }
 
     @Test
-    public void testPerformAssembly() {
+    void testPerformAssembly() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
@@ -104,7 +104,8 @@ public class ModelRepositoryMergerTest {
                         .get(AbstractModelTestFactory.OP_SIGNATURE);
                 Assertions.assertTrue(operation != null,
                         "Operation not found " + AbstractModelTestFactory.OP_SIGNATURE);
-                Assertions.assertTrue(operation.getOperationType() == componentType.getProvidedOperations()
+                // must be the same object not only equal
+                Assertions.assertTrue(operation.getOperationType() == componentType.getProvidedOperations() // NOPMD
                         .get(AbstractModelTestFactory.OP_SIGNATURE), "Wrong operation type");
             } else if (AbstractModelTestFactory.JOINT_ASSEMBLY_SIGNATURE.equals(entry.getKey())) {
                 Assertions.assertEquals(2, component.getOperations().size(),
@@ -121,7 +122,7 @@ public class ModelRepositoryMergerTest {
     }
 
     @Test
-    public void testPerformDeployment() {
+    void testPerformDeployment() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
@@ -153,7 +154,7 @@ public class ModelRepositoryMergerTest {
     }
 
     @Test
-    public void testPerformExecution() {
+    void testPerformExecution() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
@@ -164,7 +165,7 @@ public class ModelRepositoryMergerTest {
     }
 
     @Test
-    public void testPerformStatistics() {
+    void testPerformStatistics() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
@@ -177,7 +178,7 @@ public class ModelRepositoryMergerTest {
     }
 
     @Test
-    public void testPerformSource() {
+    void testPerformSource() {
         final ModelRepository darRepo = this.createDarModel();
         final ModelRepository sarRepo = this.createSarModel();
         ModelRepositoryMergerUtils.perform(darRepo, sarRepo);
@@ -196,8 +197,9 @@ public class ModelRepositoryMergerTest {
     private void checkDeployedOperation(final DeployedComponent deployedComponent,
             final AssemblyComponent assemblyComponent, final String operationSignature) {
         final DeployedOperation deployedOperation = deployedComponent.getOperations().get(operationSignature);
+        // must be the same object not only equal
         Assertions.assertTrue(
-                deployedOperation.getAssemblyOperation() == assemblyComponent.getOperations().get(operationSignature),
+                deployedOperation.getAssemblyOperation() == assemblyComponent.getOperations().get(operationSignature), // NOPMD
                 "Wrong assembly operation for " + operationSignature);
     }
 

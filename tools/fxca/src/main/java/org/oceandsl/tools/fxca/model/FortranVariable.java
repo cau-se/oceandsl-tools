@@ -29,7 +29,7 @@ import lombok.Getter;
 public class FortranVariable extends DataflowObject implements IContainable, IDataflowEndpoint {
 
     @Getter
-    Set<IDataflowEndpoint> sources = new HashSet<>();
+    private final Set<IDataflowEndpoint> sources = new HashSet<>();
 
     public FortranVariable(final String name) {
         super(name);

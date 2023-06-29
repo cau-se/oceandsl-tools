@@ -1,3 +1,18 @@
+/***************************************************************************
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 package org.oceandsl.tools.restructuring.stages;
 
 /**
@@ -6,26 +21,27 @@ package org.oceandsl.tools.restructuring.stages;
  * @since 1.3.0
  */
 public class ResultRecord {
-	String originalModelName;
-	String goalModelName;
-	int numberOfSteps;
 
-	public ResultRecord(String originalModelName, String goalModelName, int numberOfSteps) {
-		this.originalModelName = originalModelName;
-		this.goalModelName = goalModelName;
-		this.numberOfSteps = numberOfSteps;
-	}
+    private final String originalModelName;
+    private final String goalModelName;
+    private final int numberOfSteps;
 
-	public String getOriginalModelName() {
-		return originalModelName;
-	}
+    public ResultRecord(final String originalModelName, final String goalModelName, final int numberOfSteps) {
+        this.originalModelName = originalModelName;
+        this.goalModelName = goalModelName;
+        this.numberOfSteps = numberOfSteps;
+    }
 
-	public String getGoalModelName() {
-		return goalModelName;
-	}
+    public String getOriginalModelName() {
+        return this.originalModelName;
+    }
 
-	public int getNumberOfSteps() {
-		return numberOfSteps;
-	}
+    public String getGoalModelName() {
+        return this.goalModelName;
+    }
+
+    public int getNumberOfSteps() {
+        return this.numberOfSteps;
+    }
 
 }

@@ -19,6 +19,12 @@ import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyPackage;
 
+/**
+ * Check assembly model.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
 public class CheckAssemblyModelStage extends AbstractCollector<ModelRepository> {
 
     @Override

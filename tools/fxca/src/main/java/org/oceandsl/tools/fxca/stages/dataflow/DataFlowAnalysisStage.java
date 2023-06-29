@@ -22,10 +22,12 @@ import java.util.Set;
 
 import org.w3c.dom.Node;
 
+import kieker.model.analysismodel.execution.EDirection;
+
 import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.analysis.code.stages.data.EDirection;
+import org.oceandsl.analysis.code.CodeUtils;
 import org.oceandsl.tools.fxca.model.CommonBlock;
 import org.oceandsl.tools.fxca.model.FortranModule;
 import org.oceandsl.tools.fxca.model.FortranOperation;
@@ -34,6 +36,7 @@ import org.oceandsl.tools.fxca.model.FortranProject;
 import org.oceandsl.tools.fxca.model.FortranVariable;
 import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
 import org.oceandsl.tools.fxca.stages.dataflow.data.CallerCalleeDataflow;
+import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockArgumentDataflow;
 import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockEntry;
 import org.oceandsl.tools.fxca.stages.dataflow.data.DataflowEndpoint;
 import org.oceandsl.tools.fxca.stages.dataflow.data.IDataflowEntry;
@@ -46,9 +49,6 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
 
     private final OutputPort<CommonBlockEntry> commonBlockOutputPort = this.createOutputPort(CommonBlockEntry.class);
     private final OutputPort<IDataflowEntry> dataflowOutputPort = this.createOutputPort(IDataflowEntry.class);
-
-    public DataFlowAnalysisStage() {
-    }
 
     public OutputPort<CommonBlockEntry> getCommonBlockOutputPort() {
         return this.commonBlockOutputPort;
@@ -79,11 +79,11 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
         // common blocks specified explicitly in this subroutine
         operation.getCommonBlocks().values().forEach(commonBlock -> {
             this.analyzeCommonBlock(module, commonBlock);
-            this.analyzeCommonBlockOperationDataflow(project, module, operation, commonBlock);
+            this.analyzeCommonBlockOperationDataflow(module, operation, commonBlock);
         });
         // common blocks specified explicitly in the module/file of the operation
-        operation.getModule().getCommonBlocks().values().forEach(
-                commonBlock -> this.analyzeCommonBlockOperationDataflow(project, module, operation, commonBlock));
+        operation.getModule().getCommonBlocks().values()
+                .forEach(commonBlock -> this.analyzeCommonBlockOperationDataflow(module, operation, commonBlock));
 
         // call based dataflow
         NodeUtils
@@ -92,8 +92,8 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
                 .forEach(node -> this.analyzeStatement(project, module, operation, node));
     }
 
-    private void analyzeCommonBlockOperationDataflow(final FortranProject project, final FortranModule module,
-            final FortranOperation operation, final CommonBlock commonBlock) {
+    private void analyzeCommonBlockOperationDataflow(final FortranModule module, final FortranOperation operation,
+            final CommonBlock commonBlock) {
         final boolean parametersInvolved = operation.getParameters().values().stream()
                 .anyMatch(parameter -> commonBlock.getVariables().containsKey(parameter.getName()));
 
@@ -129,7 +129,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
             } else {
                 return EDirection.NONE;
             }
-        }).reduce(direction, (d, n) -> d.merge(n));
+        }).reduce(direction, (d, n) -> CodeUtils.merge(d, n));
     }
 
     private EDirection computeVariableCommonBlockDirection(final FortranOperation operation,
@@ -139,9 +139,9 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
                 return this.resolveDirection(variable);
             } else {
                 return variable.getSources().stream().map(source -> this.findDirection(source, commonBlock))
-                        .reduce(EDirection.NONE, (d, n) -> d.merge(n));
+                        .reduce(EDirection.NONE, (d, n) -> CodeUtils.merge(d, n));
             }
-        }).reduce(EDirection.NONE, (d, n) -> d.merge(n));
+        }).reduce(EDirection.NONE, (d, n) -> CodeUtils.merge(d, n));
     }
 
     private EDirection findDirection(final IDataflowEndpoint source, final CommonBlock commonBlock) {
@@ -174,7 +174,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
                 } else {
                     return EDirection.NONE;
                 }
-            }).reduce(variable.getDirection(), (o, n) -> o.merge(n));
+            }).reduce(variable.getDirection(), (o, n) -> CodeUtils.merge(o, n));
         } else {
             return variable.getDirection();
         }
@@ -195,11 +195,11 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
         } else if (Predicates.isSelectCaseStatement.test(statement)) {
             this.analyzeSelectCaseStatement(project, module, operation, statement);
         } else if (Predicates.isDataStatement.test(statement)) {
-            this.analyzeDataStatement(project, module, operation, statement);
+            this.analyzeDataStatement();
         } else if (Predicates.isDoStatement.or(Predicates.isDoLabelStatement).test(statement)) {
             this.analyzeDoStatement(project, module, operation, statement);
         } else if (Predicates.isSaveStatement.test(statement)) {
-            this.analyzeSaveArgument(project, module, operation, statement);
+            this.analyzeSaveArgument();
         } else if (Predicates.isWhereStatement.test(statement)) {
             this.analyzeWhereStatement(project, module, operation, statement);
         } else if (Predicates.isAllocateStatement.or(Predicates.isC).or(Predicates.isCloseStatement)
@@ -213,22 +213,20 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
                 .or(Predicates.isPrintStatement).or(Predicates.isReadStatement).or(Predicates.isReturnStatement)
                 .or(Predicates.isRewindStatement).or(Predicates.isStopStatement).or(Predicates.isTDeclStmt)
                 .or(Predicates.isWriteStatement).or(Predicates.isExternalStatement).test(statement)) {
-            // ignore
+            // NOPMD ignore
         } else if (statement.getNodeType() == Node.TEXT_NODE) {
-            // ignore
+            // NOPMD ignore
         } else {
-            System.err.println(this.getClass().getSimpleName() + ": Unknown statement " + statement);
+            this.logger.error("Error: Unsupported statement by {}: {} ", this.getClass().getSimpleName(), statement);
         }
     }
 
-    private void analyzeSaveArgument(final FortranProject project, final FortranModule module,
-            final FortranOperation operation, final Node statement) {
+    private void analyzeSaveArgument() {
         // save variables after termination of a subroutine
         // https://docs.oracle.com/cd/E19957-01/805-4939/6j4m0vnb7/index.html
     }
 
-    private void analyzeDataStatement(final FortranProject project, final FortranModule module,
-            final FortranOperation operation, final Node statement) {
+    private void analyzeDataStatement() {
         // nothing to be done here, as read/write access is determined in other stage
     }
 
@@ -317,7 +315,8 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
 
     private void analyzeSelectCaseStatement(final FortranProject project, final FortranModule module,
             final FortranOperation operation, final Node statement) {
-        System.err.println("CASE");
+        // TODO add support for case statement
+        this.logger.error("CASE statement not supoprted {} {} {} {}", project, module, operation, statement);
     }
 
     private void analyzeIfStatement(final FortranProject project, final FortranModule module,
@@ -435,7 +434,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
                 this.createFlowFromEndpointToOperation(writeEndpoint, e);
             });
         } else if (readEndpoint == null) {
-            // skip
+            // NOPMD skip
         } else {
             this.logger.error("Internal error: Illegal read endpoint {}", readEndpoint.toString());
         }
@@ -469,7 +468,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
             // skip
             return null;
         } else {
-            System.err.println("ILLEGAL " + expressionNode);
+            this.logger.error("Unsupported expression part found in dataflow analysis: {}", expressionNode);
             return new DataflowEndpoint(contextModule, contextOperation, null, EDirection.NONE);
         }
     }
@@ -522,7 +521,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
         if (callee != null) {
             final List<Node> rlt = NodeUtils.findAllSiblings(functionNode.getFirstChild(), Predicates.isRLT,
                     o -> false);
-            if (rlt.size() > 0) {
+            if (!rlt.isEmpty()) {
                 final Node parensR = rlt.get(0).getFirstChild();
                 if (Predicates.isParensR.test(parensR)) {
                     final Node elementLT = NodeUtils.findChildFirst(parensR, Predicates.isElementLT);
@@ -561,7 +560,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
     }
 
     private int computeArgumentIndex(final FortranOperation operation, final int argumentIndex) {
-        if (operation.isVariableArguments() && argumentIndex >= operation.getParameters().size()) {
+        if (operation.isVariableArguments() && (argumentIndex >= operation.getParameters().size())) {
             return operation.getParameters().size() - 1;
         } else {
             return argumentIndex;

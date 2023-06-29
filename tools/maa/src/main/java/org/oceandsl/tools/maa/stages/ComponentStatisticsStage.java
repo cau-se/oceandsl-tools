@@ -37,14 +37,14 @@ import org.oceandsl.analysis.generic.Table;
  * @author Reiner Jung
  * @since 1.4
  */
-public class ComponentStatisticsStage extends AbstractTransformation<ModelRepository, Table> {
+public class ComponentStatisticsStage
+        extends AbstractTransformation<ModelRepository, Table<String, ComponentStatistics>> {
 
     @Override
     protected void execute(final ModelRepository element) throws Exception {
         final AssemblyModel assemblyModel = element.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
         final ExecutionModel executionModel = element.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
-        final Table<ComponentStatistics> table = new Table<>("component-statistics", "component", "operations",
-                "provided", "required");
+        final Table<String, ComponentStatistics> table = new Table<>("component-statistics");
 
         int i = 0;
         for (final AssemblyComponent component : assemblyModel.getComponents().values()) {
@@ -70,7 +70,7 @@ public class ComponentStatisticsStage extends AbstractTransformation<ModelReposi
             final Collection<Invocation> invocations) {
         return invocations.stream()
                 .anyMatch(invocation -> invocation.getCallee().getAssemblyOperation().equals(operation)
-                        && invocation.getCaller().getComponent().getAssemblyComponent() != component);
+                        && (invocation.getCaller().getComponent().getAssemblyComponent() != component));
     }
 
     private Long countAllRequiredOperations(final AssemblyComponent component,
@@ -82,7 +82,7 @@ public class ComponentStatisticsStage extends AbstractTransformation<ModelReposi
             final Collection<Invocation> invocations) {
         return invocations.stream()
                 .anyMatch(invocation -> invocation.getCaller().getAssemblyOperation().equals(operation)
-                        && invocation.getCallee().getComponent().getAssemblyComponent() != component);
+                        && (invocation.getCallee().getComponent().getAssemblyComponent() != component));
     }
 
 }

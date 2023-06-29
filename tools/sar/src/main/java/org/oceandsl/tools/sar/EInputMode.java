@@ -15,6 +15,12 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar;
 
+/**
+ * Different input modes.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 public enum EInputMode {
     CALL, DATAFLOW, BOTH
 }

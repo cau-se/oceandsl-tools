@@ -15,8 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.csveed.annotations.CsvCell;
 
 import kieker.model.analysismodel.execution.EDirection;
 
@@ -28,21 +27,24 @@ import kieker.model.analysismodel.execution.EDirection;
  */
 public class StorageOperationDataflow {
 
-    @Getter
-    private final String commonBlockName;
+    @CsvCell(columnIndex = 1, columnName = "common-block")
+    private String commonBlockName;
 
-    @Getter
-    private final String fileName;
+    @CsvCell(columnIndex = 2, columnName = "file")
+    private String fileName;
 
-    @Getter
-    private final String moduleName;
+    @CsvCell(columnIndex = 3, columnName = "module")
+    private String moduleName;
 
-    @Getter
-    private final String operationName;
+    @CsvCell(columnIndex = 4, columnName = "operation")
+    private String operationName;
 
-    @Getter
-    @Setter
-    private EDirection direction; // NOPMD lombok
+    @CsvCell(columnIndex = 5, columnName = "direction")
+    private EDirection direction;
+
+    public StorageOperationDataflow() {
+        // default constructor for csv reader
+    }
 
     public StorageOperationDataflow(final String commonBlockName, final String fileName, final String moduleName,
             final String operationName, final EDirection direction) {
@@ -50,6 +52,46 @@ public class StorageOperationDataflow {
         this.fileName = fileName;
         this.moduleName = moduleName;
         this.operationName = operationName;
+        this.direction = direction;
+    }
+
+    public String getCommonBlockName() {
+        return this.commonBlockName;
+    }
+
+    public void setCommonBlockName(final String commonBlockName) {
+        this.commonBlockName = commonBlockName;
+    }
+
+    public String getFileName() {
+        return this.fileName;
+    }
+
+    public void setFileName(final String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getModuleName() {
+        return this.moduleName;
+    }
+
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public String getOperationName() {
+        return this.operationName;
+    }
+
+    public void setOperationName(final String operationName) {
+        this.operationName = operationName;
+    }
+
+    public EDirection getDirection() {
+        return this.direction;
+    }
+
+    public void setDirection(final EDirection direction) {
         this.direction = direction;
     }
 

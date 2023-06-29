@@ -8,7 +8,7 @@ import teetime.framework.AbstractConsumerStage;
 import teetime.framework.OutputPort;
 
 import org.oceandsl.tools.restructuring.EMappingStrategy;
-import org.oceandsl.tools.restructuring.mapper.AbstractComponentMapper;
+import org.oceandsl.tools.restructuring.mapper.BasicComponentMapper;
 import org.oceandsl.tools.restructuring.mapper.ComponentsMapper;
 import org.oceandsl.tools.restructuring.mapper.EmptyMapper;
 import org.oceandsl.tools.restructuring.mapper.KuhnMatcherMapper;
@@ -24,7 +24,7 @@ public class TraceRestoratorStage extends AbstractConsumerStage<ModelRepository>
 
     private final EMappingStrategy strat;
 
-    protected final OutputPort<AbstractComponentMapper> compMapperOutputPort = this.createOutputPort();// original
+    protected final OutputPort<BasicComponentMapper> compMapperOutputPort = this.createOutputPort();// original
 
     private ModelRepository goal;
     private ModelRepository original;
@@ -33,7 +33,7 @@ public class TraceRestoratorStage extends AbstractConsumerStage<ModelRepository>
         this.strat = strat;
     }
 
-    public OutputPort<AbstractComponentMapper> getOutputPort() {
+    public OutputPort<BasicComponentMapper> getOutputPort() {
         return this.compMapperOutputPort;
     }
 
@@ -46,7 +46,7 @@ public class TraceRestoratorStage extends AbstractConsumerStage<ModelRepository>
             this.logger.info("Processing {} -> {}", this.original.getName(), this.goal.getName());
             final AssemblyModel o = this.original.getModel(AssemblyPackage.eINSTANCE.getAssemblyModel());
             final AssemblyModel g = this.goal.getModel(AssemblyPackage.eINSTANCE.getAssemblyModel());
-            AbstractComponentMapper mapper;
+            BasicComponentMapper mapper;
             switch (this.strat) {
             case EMPTY:
                 mapper = new EmptyMapper(o, g, this.original.getName(), this.goal.getName());
@@ -64,8 +64,7 @@ public class TraceRestoratorStage extends AbstractConsumerStage<ModelRepository>
             }
 
             if (TransformationFactory.areSameModels(o, g)) {
-                this.logger.error("Identical models");
-                throw new Exception();
+                this.logger.error("Identical models. Nothing to do.");
             } else {
                 this.compMapperOutputPort.send(mapper);
             }

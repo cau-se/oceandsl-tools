@@ -18,6 +18,8 @@ package org.oceandsl.tools.sar.signature.processor;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.oceandsl.analysis.code.CodeUtils;
+
 /**
  * @author Reiner Jung
  * @since 1.1
@@ -31,7 +33,7 @@ public class FileBasedSignatureProcessor extends AbstractSignatureProcessor {
     @Override
     public boolean processSignatures(final String pathString, final String componentSignature,
             final String elementSignature) {
-        if ("<no-file>".equals(pathString)) {
+        if (CodeUtils.NO_FILE.equals(pathString)) {
             this.componentSignature = pathString;
         } else {
             final Path path = Paths.get(pathString);

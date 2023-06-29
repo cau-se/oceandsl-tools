@@ -18,7 +18,7 @@ package org.oceandsl.tools.fxca.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.oceandsl.analysis.code.stages.data.EDirection;
+import kieker.model.analysismodel.execution.EDirection;
 
 /**
  * @author Reiner Jung
@@ -26,6 +26,8 @@ import org.oceandsl.analysis.code.stages.data.EDirection;
  *
  */
 public class DataflowObject extends MMObject {
+
+    private static final long serialVersionUID = -4196503062613279597L;
 
     @Getter
     private final String name;
@@ -44,27 +46,31 @@ public class DataflowObject extends MMObject {
     }
 
     public void addDirection(final EDirection value) {
-        switch (this.direction) {
-        case NONE:
+        if (this.direction == null) {
             this.direction = value;
-            break;
-        case READ:
-            if ((value == EDirection.WRITE) || (value == EDirection.BOTH)) {
+        } else {
+            switch (this.direction) {
+            case READ:
+                if ((value == EDirection.WRITE) || (value == EDirection.BOTH)) {
+                    this.direction = EDirection.BOTH;
+                } else {
+                    this.direction = EDirection.READ;
+                }
+                break;
+            case WRITE:
+                if ((value == EDirection.READ) || (value == EDirection.BOTH)) {
+                    this.direction = EDirection.BOTH;
+                } else {
+                    this.direction = EDirection.WRITE;
+                }
+                break;
+            case BOTH:
                 this.direction = EDirection.BOTH;
-            } else {
-                this.direction = EDirection.READ;
+                break;
+            default:
+                this.direction = value;
+                break;
             }
-            break;
-        case WRITE:
-            if ((value == EDirection.READ) || (value == EDirection.BOTH)) {
-                this.direction = EDirection.BOTH;
-            } else {
-                this.direction = EDirection.WRITE;
-            }
-            break;
-        case BOTH:
-            this.direction = EDirection.BOTH;
-            break;
         }
     }
 }

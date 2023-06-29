@@ -7,11 +7,11 @@ import teetime.framework.Configuration;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
+import org.oceandsl.analysis.generic.data.MoveOperationEntry;
 import org.oceandsl.analysis.generic.stages.TableCsvSink;
 import org.oceandsl.analysis.generic.stages.YamlSink;
 import org.oceandsl.tools.delta.stages.CompileRestructureTableStage;
 import org.oceandsl.tools.delta.stages.CompileRestructureYamlStage;
-import org.oceandsl.tools.delta.stages.MoveOperationEntry;
 import org.oceandsl.tools.delta.stages.ResturctureModelReader;
 import org.oceandsl.tools.delta.stages.data.YamlRestructureModel;
 import org.oceandsl.tools.restructuring.restructuremodel.TransformationModel;
@@ -36,7 +36,8 @@ public class TeetimeConfiguration extends Configuration {
 
         final CompileRestructureYamlStage yamlProcessor = new CompileRestructureYamlStage();
 
-        final TableCsvSink<MoveOperationEntry> csvSink = new TableCsvSink<>(settings.getOutputPath().getParent(), true);
+        final TableCsvSink<String, MoveOperationEntry> csvSink = new TableCsvSink<>(
+                settings.getOutputPath().getParent(), MoveOperationEntry.class, true);
 
         final Path outputPath = settings.getOutputPath().getParent().resolve(name + ".yaml");
         final YamlSink<YamlRestructureModel> yamlSink = new YamlSink<>(outputPath);

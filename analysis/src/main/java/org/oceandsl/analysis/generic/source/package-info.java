@@ -13,29 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.delta.stages;
-
-import lombok.Getter;
-
-/**
- * @author reiner
- *
- */
-public class MoveOperationEntry {
-
-    @Getter
-    private final String sourceComponentName;
-
-    @Getter
-    private final String targetComponentName;
-
-    @Getter
-    private final String operationName;
-
-    public MoveOperationEntry(final String sourceComponentName, final String targetComponentName, final String operationName) {
-        this.sourceComponentName = sourceComponentName;
-        this.targetComponentName = targetComponentName;
-        this.operationName = operationName;
-    }
-
-}
+package org.oceandsl.analysis.generic.source;

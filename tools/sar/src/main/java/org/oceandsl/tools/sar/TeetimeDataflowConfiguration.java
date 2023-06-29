@@ -43,12 +43,14 @@ import kieker.model.analysismodel.type.TypePackage;
 
 import teetime.framework.Configuration;
 
-import org.oceandsl.analysis.code.stages.CsvReaderStage;
+import org.oceandsl.analysis.code.stages.data.DataflowEntry;
 import org.oceandsl.analysis.generic.EModuleMode;
+import org.oceandsl.analysis.generic.source.CsvRowReaderProducerStage;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.MapBasedSignatureProcessor;
 import org.oceandsl.tools.sar.signature.processor.ModuleBasedSignatureProcessor;
+import org.oceandsl.tools.sar.stages.DataflowConstraintStage;
 import org.oceandsl.tools.sar.stages.dataflow.CleanupDataflowComponentSignatureStage;
 import org.oceandsl.tools.sar.stages.dataflow.CountUniqueDataflowCallsStage;
 import org.oceandsl.tools.sar.stages.dataflow.DataflowExecutionModelAssembler;
@@ -70,10 +72,10 @@ public class TeetimeDataflowConfiguration extends Configuration {
         final Path storageDataflowPath = settings.getInputFile()
                 .resolve(StaticArchitectureRecoveryMain.STORAGE_DATAFLOW_FILENAME);
 
-        final CsvReaderStage<CallerCalleeDataflow> callerCalleeDataflowReader = new CsvReaderStage<>(
-                callerCalleeDataflowPath, settings.getSplitSymbol(), '"', '\\', true);
-        final CsvReaderStage<StorageOperationDataflow> storageOperationDataflowReader = new CsvReaderStage<>(
-                storageDataflowPath, settings.getSplitSymbol(), '"', '\\', true);
+        final CsvRowReaderProducerStage<DataflowEntry> callerCalleeDataflowReader = new CsvRowReaderProducerStage<>(
+                callerCalleeDataflowPath, settings.getSplitSymbol(), '"', '\\', true, DataflowEntry.class);
+        final CsvRowReaderProducerStage<StorageOperationDataflow> storageOperationDataflowReader = new CsvRowReaderProducerStage<>(
+                storageDataflowPath, settings.getSplitSymbol(), '"', '\\', true, StorageOperationDataflow.class);
 
         final ElementAndDataflow4StaticDataStage elementAndDataflow4StaticDataStage = new ElementAndDataflow4StaticDataStage(
                 settings.getHostname(), repository.getModel(TypePackage.Literals.TYPE_MODEL));

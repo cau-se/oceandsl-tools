@@ -31,12 +31,11 @@ import org.oceandsl.analysis.generic.Table;
  * @since 1.1
  */
 public class ModuleNodeCountCouplingStage
-        extends AbstractTransformation<IGraph<INode, IEdge>, Table<ModuleNodeCountCouplingEntry>> {
+        extends AbstractTransformation<IGraph<INode, IEdge>, Table<String, ModuleNodeCountCouplingEntry>> {
 
     @Override
     protected void execute(final IGraph<INode, IEdge> graph) throws Exception {
-        final Table<ModuleNodeCountCouplingEntry> result = new Table<>(graph.getLabel(), "module", "in-edges",
-                "out-edges");
+        final Table<String, ModuleNodeCountCouplingEntry> result = new Table<>(graph.getLabel());
 
         for (final INode vertex : graph.getGraph().nodes()) {
             result.getRows().add(new ModuleNodeCountCouplingEntry(this.getFilepath(vertex.getId()),

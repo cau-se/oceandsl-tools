@@ -17,6 +17,7 @@ package org.oceandsl.tools.fxca.stages.dataflow;
 
 import teetime.stage.basic.AbstractTransformation;
 
+import org.oceandsl.analysis.code.stages.data.GlobalDataEntry;
 import org.oceandsl.analysis.generic.Table;
 import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockEntry;
 
@@ -26,23 +27,24 @@ import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockEntry;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CreateCommonBlocksTableStage extends AbstractTransformation<CommonBlockEntry, Table<GlobalDataEntry>> {
+public class CreateCommonBlocksTableStage
+        extends AbstractTransformation<CommonBlockEntry, Table<String, GlobalDataEntry>> {
 
     private static final String COMMON_BLOCKS = "common-blocks";
 
-    private final Table<GlobalDataEntry> commonBlocksTable = new Table<>(CreateCommonBlocksTableStage.COMMON_BLOCKS,
-            "common-block", "files", "modules", "variables");
+    private final Table<String, GlobalDataEntry> commonBlocksTable = new Table<>(
+            CreateCommonBlocksTableStage.COMMON_BLOCKS);
 
     @Override
     protected void execute(final CommonBlockEntry entry) throws Exception {
         final String files = entry.getModules().stream().map(module -> module.getFileName())
-                .reduce((list, element) -> list += "," + element).get();
+                .reduce((list, element) -> list + "," + element).get();
         final String modules = entry.getModules().stream().map(module -> module.getModuleName())
-                .reduce((list, element) -> list += "," + element).get();
+                .reduce((list, element) -> list + "," + element).get();
         if (entry.getVariables().isEmpty()) {
             this.logger.error("Internal error: Common block {} without variables.", entry.getName());
         } else {
-            final String variables = entry.getVariables().stream().reduce((list, element) -> list += "," + element)
+            final String variables = entry.getVariables().stream().reduce((list, element) -> list + "," + element)
                     .get();
             this.commonBlocksTable.getRows().add(new GlobalDataEntry(entry.getName(), files, modules, variables));
         }

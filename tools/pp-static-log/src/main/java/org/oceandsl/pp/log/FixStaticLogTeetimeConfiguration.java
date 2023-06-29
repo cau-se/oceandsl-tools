@@ -19,8 +19,8 @@ import java.io.IOException;
 
 import teetime.framework.Configuration;
 
-import org.oceandsl.analysis.code.stages.CsvReaderStage;
 import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
+import org.oceandsl.analysis.generic.source.CsvRowReaderProducerStage;
 
 /**
  * Pipe and Filter configuration for the static log preprocessor.
@@ -31,8 +31,9 @@ import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 public class FixStaticLogTeetimeConfiguration extends Configuration {
 
     public FixStaticLogTeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
-        final CsvReaderStage<CallerCalleeEntry> readCsvStage = new CsvReaderStage<>(parameterConfiguration.getInputPath(),
-                ',', '"', '\\', true);
+        final CsvRowReaderProducerStage<CallerCalleeEntry> readCsvStage = new CsvRowReaderProducerStage<>(
+                parameterConfiguration.getInputPath(), ',', '"', '\\', true, CallerCalleeEntry.class);
+
         final CsvFunctionMapperStage functionMapperStage = new CsvFunctionMapperStage(
                 parameterConfiguration.getMapPaths());
         final CorrectCallsStage correctCallsStage = new CorrectCallsStage();

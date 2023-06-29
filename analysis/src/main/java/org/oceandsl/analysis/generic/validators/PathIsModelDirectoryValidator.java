@@ -21,7 +21,7 @@ import java.nio.file.Paths;
 import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.ParameterException;
 
-import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
+import kieker.analysis.architecture.repository.ArchitectureModelRepositoryFactory;
 
 /**
  * Check whether the given directory contains a kieker model.
@@ -32,14 +32,15 @@ import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
  */
 public class PathIsModelDirectoryValidator implements IParameterValidator {
 
-    private final String[] modelFiles = { ".project", ArchitectureModelManagementUtils.TYPE_MODEL_NAME,
-            ArchitectureModelManagementUtils.ASSEMBLY_MODEL_NAME,
-            ArchitectureModelManagementUtils.DEPLOYMENT_MODEL_NAME,
-            ArchitectureModelManagementUtils.EXECUTION_MODEL_NAME, ArchitectureModelManagementUtils.SOURCE_MODEL_NAME,
-            ArchitectureModelManagementUtils.STATISTICS_MODEL_NAME };
+    private final String[] modelFiles = { ".project", ArchitectureModelRepositoryFactory.TYPE_MODEL_NAME,
+            ArchitectureModelRepositoryFactory.ASSEMBLY_MODEL_NAME,
+            ArchitectureModelRepositoryFactory.DEPLOYMENT_MODEL_NAME,
+            ArchitectureModelRepositoryFactory.EXECUTION_MODEL_NAME,
+            ArchitectureModelRepositoryFactory.SOURCE_MODEL_NAME,
+            ArchitectureModelRepositoryFactory.STATISTICS_MODEL_NAME };
 
     @Override
-    public void validate(final String name, final String value) throws ParameterException {
+    public void validate(final String name, final String value) throws ParameterException { // NOPMD
         final File modelDirectory = Paths.get(value).toFile();
         for (final String fileName : this.modelFiles) {
             boolean found = false;

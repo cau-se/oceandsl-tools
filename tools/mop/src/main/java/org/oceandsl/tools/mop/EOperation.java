@@ -15,6 +15,12 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop;
 
+/**
+ * Model operations.
+ *
+ * @author Reiner Jung
+ * @since 2.0.0
+ */
 public enum EOperation {
     MERGE, SELECT
 }

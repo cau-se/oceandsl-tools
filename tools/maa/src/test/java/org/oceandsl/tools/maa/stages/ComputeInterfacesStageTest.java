@@ -38,10 +38,10 @@ import teetime.framework.test.StageTester;
  * @author Reiner Jung
  * @since 1.2
  */
-public class ComputeInterfacesStageTest {
+class ComputeInterfacesStageTest {
 
     @Test
-    public void noProvidedInterface() {
+    void noProvidedInterface() {
         final ModelRepository modelRepository = TestModelRepositoryUtils.createThreeComponentModel();
         TestModelInvocationUtils.addInvocations(modelRepository);
 
@@ -131,7 +131,7 @@ public class ComputeInterfacesStageTest {
     }
 
     @Test
-    public void noRequiredInterface() {
+    void noRequiredInterface() {
         final ModelRepository modelRepository = TestModelRepositoryUtils.createThreeComponentModel();
         TestModelInvocationUtils.addProvidedInterfaces(modelRepository);
         TestModelInvocationUtils.addInvocations(modelRepository);
@@ -156,7 +156,7 @@ public class ComputeInterfacesStageTest {
     }
 
     @Test
-    public void completeModelInterface() {
+    void completeModelInterface() {
         final ModelRepository modelRepository = TestModelRepositoryUtils.createThreeComponentModel();
         TestModelInvocationUtils.addProvidedInterfaces(modelRepository);
         TestModelInvocationUtils.addRequiredInterfaces(modelRepository);

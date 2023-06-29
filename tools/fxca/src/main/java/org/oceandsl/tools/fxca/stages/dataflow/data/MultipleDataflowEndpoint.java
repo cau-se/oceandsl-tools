@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
-
 import lombok.Getter;
+
+import org.oceandsl.analysis.code.CodeUtils;
+import org.oceandsl.tools.fxca.model.IDataflowEndpoint;
 
 /**
  * @author Reiner Jung
@@ -30,7 +31,7 @@ import lombok.Getter;
 public class MultipleDataflowEndpoint implements IDataflowEndpoint {
 
     @Getter
-    private final String name = "<composed>";
+    private final String name = "<composed>"; // NOPMD cannot be static due to getter
 
     @Getter
     private final List<DataflowEndpoint> endpoints = new ArrayList<>();
@@ -51,7 +52,7 @@ public class MultipleDataflowEndpoint implements IDataflowEndpoint {
 
         if (selectedEndpoint.isPresent()) {
             final DataflowEndpoint endpoint = selectedEndpoint.get();
-            endpoint.setDirection(endpoint.getDirection().merge(newEndpoint.getDirection()));
+            endpoint.setDirection(CodeUtils.merge(endpoint.getDirection(), newEndpoint.getDirection()));
         } else {
             this.endpoints.add(newEndpoint);
         }

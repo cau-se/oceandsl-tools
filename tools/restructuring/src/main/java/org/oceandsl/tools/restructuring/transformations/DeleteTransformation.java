@@ -13,7 +13,6 @@ public class DeleteTransformation extends AtomicTransformation {
 
     public DeleteTransformation(final AssemblyModel model) {
         super(model);
-        // TODO Auto-generated constructor stub
     }
 
     public void setComponentName(final String componentName) {

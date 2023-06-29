@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -15,21 +16,19 @@ import kieker.model.analysismodel.assembly.AssemblyModel;
  * @author Serafim Simonov
  * @since 1.3.0
  */
-public class ComponentsMapper extends AbstractComponentMapper {
-
-    private HashMap<String, String> operationToComponentO = new HashMap<>();
-    private HashMap<String, String> operationToComponentG = new HashMap<>();
-
-    private HashMap<String, HashMap<String, Integer>> traceModell = new HashMap<>();
-    private HashMap<String, String> goalToOriginal = new HashMap<>();
-    private HashMap<String, String> originallToGoal = new HashMap<>();
+public class ComponentsMapper extends BasicComponentMapper {
 
     /**
-     * Cosntructor is used to
+     * Constructor is used to create a component mapper.
      *
      * @param original
+     *            original model
      * @param goal
-     * @param compMapper
+     *            goal model
+     * @param originalModelName
+     *            name of the original model
+     * @param goalModelName
+     *            name of the goal model
      */
     public ComponentsMapper(final AssemblyModel original, final AssemblyModel goal, final String originalModelName,
             final String goalModelName) {
@@ -46,85 +45,22 @@ public class ComponentsMapper extends AbstractComponentMapper {
 
     }
 
-    @Override
-    public HashMap<String, String> getOperationToComponentO() {
-        return this.operationToComponentO;
-    }
-
-    @Override
-    public void setOperationToComponentO(final HashMap<String, String> operationToComponentO) {
-        this.operationToComponentO = operationToComponentO;
-    }
-
-    @Override
-    public HashMap<String, String> getOperationToComponentG() {
-        return this.operationToComponentG;
-    }
-
-    @Override
-    public void setOperationToComponentG(final HashMap<String, String> operationToComponentG) {
-        this.operationToComponentG = operationToComponentG;
-    }
-
-    @Override
-    public HashMap<String, HashMap<String, Integer>> getTraceModell() {
-        return this.traceModell;
-    }
-
-    @Override
-    public void setTraceModell(final HashMap<String, HashMap<String, Integer>> traceModell) {
-        this.traceModell = traceModell;
-    }
-
-    @Override
-    public HashMap<String, String> getGoalToOriginal() {
-        return this.goalToOriginal;
-    }
-
-    @Override
-    public void setGoalToOriginal(final HashMap<String, String> goalToOriginal) {
-        this.goalToOriginal = goalToOriginal;
-    }
-
-    @Override
-    public HashMap<String, String> getOriginalToGoal() {
-        return this.originallToGoal;
-    }
-
-    @Override
-    public void setOriginalToGoal(final HashMap<String, String> originallToGoal) {
-        this.originallToGoal = originallToGoal;
-    }
-
-    @Override
-    public AssemblyModel getOriginal() {
-        return this.original;
-
-    }
-
-    @Override
-    public AssemblyModel getGoal() {
-        return this.goal;
-
-    }
-
     private void computeOriginalComponentNames() {
         final Set<String> assignedComponentsG = new HashSet<>();
         final Set<String> assignedComponentsO = new HashSet<>();
-        for (final Entry<String, HashMap<String, Integer>> goalComponent : this.traceModell.entrySet()) {
+        for (final Entry<String, Map<String, Integer>> goalComponent : this.traceModell.entrySet()) {
             final ArrayList<Entry<String, Integer>> componentTraces = new ArrayList<>(
                     goalComponent.getValue().entrySet());
             componentTraces.sort(Comparator.comparing(Entry::getValue));
 
             for (final Entry<String, Integer> e : componentTraces) {
-                if (assignedComponentsO.contains(e.getKey())) {
-                    continue;
+                if (!assignedComponentsO.contains(e.getKey())) {
+                    assignedComponentsO.add(e.getKey());
+                    assignedComponentsG.add(goalComponent.getKey());
+                    this.goalToOriginal.put(goalComponent.getKey(), e.getKey());
+                    this.originalToGoal.put(e.getKey(), goalComponent.getKey());
+                    break;
                 }
-                assignedComponentsO.add(e.getKey());
-                assignedComponentsG.add(goalComponent.getKey());
-                this.goalToOriginal.put(goalComponent.getKey(), e.getKey());
-                this.originallToGoal.put(e.getKey(), goalComponent.getKey());
-                break;
             }
         }
 

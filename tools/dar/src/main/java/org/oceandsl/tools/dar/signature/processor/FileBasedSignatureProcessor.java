@@ -20,6 +20,8 @@ import java.nio.file.Paths;
 
 import kieker.analysis.architecture.recovery.signature.AbstractSignatureProcessor;
 
+import org.oceandsl.analysis.code.CodeUtils;
+
 /**
  * @author Reiner Jung
  * @since 1.1
@@ -32,7 +34,7 @@ public class FileBasedSignatureProcessor extends AbstractSignatureProcessor {
 
     @Override
     public void processSignatures(final String componentSignature, final String operationSignature) {
-        if ("<<no-file>>".equals(componentSignature)) {
+        if (CodeUtils.NO_FILE.equals(componentSignature)) {
             this.componentSignature = componentSignature;
         } else {
             final Path path = Paths.get(componentSignature);

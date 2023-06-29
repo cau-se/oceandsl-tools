@@ -40,7 +40,7 @@ public class Settings { // NOPMD dataclass - required to contain settings
     private Path inputFile;
 
     @Parameter(names = { "-sc",
-            "--separation-character" }, required = false, description = "Separation character for CSV files, default is comma (,)")
+            "--separation-character" }, required = false, converter = CharacterConverter.class, description = "Separation character for CSV files, default is comma (,)")
     private Character splitSymbol;
 
     @Parameter(names = { "-g",

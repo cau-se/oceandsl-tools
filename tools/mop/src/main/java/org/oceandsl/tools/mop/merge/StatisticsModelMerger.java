@@ -102,7 +102,7 @@ public final class StatisticsModelMerger {
         } else if (targetValue instanceof String) {
             return (String) targetValue + (String) value;
         } else {
-            StatisticsModelMerger.LOGGER.warn("Statistic values of type {} cannot be merged.",
+            StatisticsModelMerger.LOGGER.warn("Statistic values of type {} cannot be merged.", // NOPMD
                     targetValue.getClass().getCanonicalName());
             return null;
         }
@@ -129,7 +129,7 @@ public final class StatisticsModelMerger {
             return StatisticsModelMerger.findMatchingStorageDataflow(executionModel.getStorageDataflows(),
                     (StorageDataflow) object);
         } else {
-            StatisticsModelMerger.LOGGER.warn("Edge type {} not supported by statistics merger.",
+            StatisticsModelMerger.LOGGER.warn("Edge type {} not supported by statistics merger.", // NOPMD
                     object.getClass().getCanonicalName());
             return Optional.empty();
         }
@@ -175,14 +175,16 @@ public final class StatisticsModelMerger {
             final StorageDataflow dataflow) {
 
         if (dataflow.getDirection() == null) {
-            System.err.printf("df %s:%s <--> %s:%s\n", dataflow.getCode().getComponent().getSignature(),
+            StatisticsModelMerger.LOGGER.debug("dataflow {}:{} <--> {}:{}\n",
+                    dataflow.getCode().getComponent().getSignature(),
                     dataflow.getCode().getAssemblyOperation().getOperationType().getSignature(),
                     dataflow.getStorage().getComponent().getSignature(),
                     dataflow.getStorage().getAssemblyStorage().getStorageType().getName());
         }
 
         if (targetDataflow.getDirection() == null) {
-            System.err.printf("td %s:%s <--> %s:%s\n", targetDataflow.getCode().getComponent().getSignature(),
+            StatisticsModelMerger.LOGGER.debug("target dataflow {}:{} <--> {}:{}\n",
+                    targetDataflow.getCode().getComponent().getSignature(),
                     targetDataflow.getCode().getAssemblyOperation().getOperationType().getSignature(),
                     targetDataflow.getStorage().getComponent().getSignature(),
                     targetDataflow.getStorage().getAssemblyStorage().getStorageType().getName());
@@ -194,10 +196,13 @@ public final class StatisticsModelMerger {
     }
 
     private static boolean isIdenticalOperation(final DeployedOperation left, final DeployedOperation right) {
-        if (left.getAssemblyOperation().getOperationType().getSignature()
-                .equals(right.getAssemblyOperation().getOperationType().getSignature())) {
-            return left.getComponent().getAssemblyComponent().getSignature()
-                    .equals(right.getComponent().getAssemblyComponent().getSignature());
+        final String leftOperationSignature = left.getAssemblyOperation().getOperationType().getSignature();
+        final String rightOperationSignature = right.getAssemblyOperation().getOperationType().getSignature();
+
+        if (leftOperationSignature.equals(rightOperationSignature)) {
+            final String leftComponentSignature = left.getComponent().getAssemblyComponent().getSignature();
+            final String rightComponentSignature = right.getComponent().getAssemblyComponent().getSignature();
+            return leftComponentSignature.equals(rightComponentSignature);
         } else {
             return false;
         }
@@ -208,21 +213,21 @@ public final class StatisticsModelMerger {
         final StorageType rightStorage = right.getAssemblyStorage().getStorageType();
 
         if (leftStorage == null) {
-            LOGGER.error("Left storage: Missing reference to storage type.", left);
+            StatisticsModelMerger.LOGGER.error("Left storage: Missing reference to storage type. {}", left);
         }
         if (leftStorage.getName() == null) {
-            LOGGER.error("Left storage type has no name.", left);
+            StatisticsModelMerger.LOGGER.error("Left storage type has no name. {}", left);
         }
 
         if (rightStorage == null) {
-            LOGGER.error("Right storage: Missing reference to storage type.", right);
+            StatisticsModelMerger.LOGGER.error("Right storage: Missing reference to storage type. {}", right);
         }
         if (rightStorage.getName() == null) {
-            LOGGER.error("Right storage type has no name.", right);
+            StatisticsModelMerger.LOGGER.error("Right storage type has no name. {}", right);
         }
 
         if (leftStorage.getName().equals(rightStorage.getName())
-                && checkType(leftStorage.getType(), rightStorage.getType())) {
+                && StatisticsModelMerger.checkType(leftStorage.getType(), rightStorage.getType())) {
             return left.getComponent().getAssemblyComponent().getSignature()
                     .equals(right.getComponent().getAssemblyComponent().getSignature());
         } else {
@@ -240,7 +245,7 @@ public final class StatisticsModelMerger {
 
     private static boolean isIdenticalDirection(final EDirection left, final EDirection right) {
         if (left == null) {
-            LOGGER.error("Left direction is not set.");
+            StatisticsModelMerger.LOGGER.error("Left direction is not set.");
         }
         if (left.equals(right)) {
             return true;

@@ -30,7 +30,7 @@ import org.oceandsl.tools.fxca.stages.dataflow.data.CommonBlockEntry;
  */
 public class AggregateCommonBlocksStage extends AbstractFilter<CommonBlockEntry> {
 
-    Map<String, CommonBlockEntry> entries = new HashMap<>();
+    private final Map<String, CommonBlockEntry> entries = new HashMap<>();
 
     @Override
     protected void execute(final CommonBlockEntry entry) throws Exception {

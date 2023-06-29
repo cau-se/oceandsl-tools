@@ -30,42 +30,32 @@ import org.oceandsl.tools.fxca.utils.Pair;
  * @author Reiner Jung
  * @since 1.3.0
  */
-public class CreateFileContentsTableStage extends AbstractTransformation<FortranProject, Table<CallerCalleeEntry>> {
-
-    // TODO does not create file content table
-
-    private static final String SOURCE_PATH = "callerfilename";
-    private static final String SOURCE_MODULE = "callermodule";
-    private static final String SOURCE_OPERATION = "callerfunction";
-    private static final String TARGET_PATH = "calleefilename";
-    private static final String TARGET_MODULE = "calleemodule";
-    private static final String TARGET_OPERATION = "calleefunction";
+public class CreateFileContentsTableStage
+        extends AbstractTransformation<FortranProject, Table<String, CallerCalleeEntry>> {
 
     @Override
     protected void execute(final FortranProject project) throws Exception {
-        final Table<CallerCalleeEntry> callsTable = new Table<>("calls", CreateFileContentsTableStage.SOURCE_PATH,
-                CreateFileContentsTableStage.SOURCE_MODULE, CreateFileContentsTableStage.SOURCE_OPERATION,
-                CreateFileContentsTableStage.TARGET_PATH, CreateFileContentsTableStage.TARGET_MODULE,
-                CreateFileContentsTableStage.TARGET_OPERATION);
+        final Table<String, CallerCalleeEntry> callsTable = new Table<>("calls");
 
         project.getCalls().forEach(call -> {
             final Pair<FortranModule, FortranOperation> callerPair = call.getFirst();
             final Pair<FortranModule, FortranOperation> calleePair = call.getSecond();
 
             if (callerPair != null) {
-                final Operation caller = this.composeOperation(callerPair);
+                final FQNOperation caller = this.composeOperation(callerPair);
                 if (calleePair != null) {
-                    final Operation callee = this.composeOperation(calleePair);
-                    callsTable.getRows().add(new CallerCalleeEntry(caller.path, caller.moduleName, caller.operation,
-                            callee.path, callee.moduleName, callee.operation));
+                    final FQNOperation callee = this.composeOperation(calleePair);
+                    callsTable.getRows().add(new CallerCalleeEntry(caller.path, caller.moduleName, caller.operationName,
+                            callee.path, callee.moduleName, callee.operationName));
                 } else {
                     this.logger.warn("Caller {} {} {} has no callee ", caller.path, caller.moduleName,
-                            caller.operation);
+                            caller.operationName);
                 }
             } else {
                 if (calleePair != null) {
-                    final Operation callee = this.composeOperation(calleePair);
-                    this.logger.warn("No caller for callee {} {} {}", callee.path, callee.moduleName, callee.operation);
+                    final FQNOperation callee = this.composeOperation(calleePair);
+                    this.logger.warn("No caller for callee {} {} {}", callee.path, callee.moduleName,
+                            callee.operationName);
                 } else {
                     this.logger.error("Empty call");
                 }
@@ -75,27 +65,33 @@ public class CreateFileContentsTableStage extends AbstractTransformation<Fortran
         this.outputPort.send(callsTable);
     }
 
-    private Operation composeOperation(final Pair<FortranModule, FortranOperation> operationDescription) {
+    private FQNOperation composeOperation(final Pair<FortranModule, FortranOperation> operationDescription) {
         final FortranModule module = operationDescription.getFirst();
 
         final FortranOperation callerOperation = operationDescription.getSecond();
 
         if (module.isNamedModule()) {
-            return new Operation(module.getFileName(), module.getModuleName(), callerOperation.getName());
+            return new FQNOperation(module.getFileName(), module.getModuleName(), callerOperation.getName());
         } else {
-            return new Operation(module.getFileName(), "<no-module>", callerOperation.getName());
+            return new FQNOperation(module.getFileName(), "<no-module>", callerOperation.getName());
         }
     }
 
-    private class Operation {
+    /**
+     * Local fully qualified operation representation.
+     *
+     * @author Reiner Jung
+     * @since 2.0.0
+     */
+    private class FQNOperation {
         private final String path;
         private final String moduleName;
-        private final String operation;
+        private final String operationName;
 
-        Operation(final String path, final String moduleName, final String operation) {
+        private FQNOperation(final String path, final String moduleName, final String operationName) {
             this.path = path;
             this.moduleName = moduleName;
-            this.operation = operation;
+            this.operationName = operationName;
         }
     }
 

@@ -20,16 +20,15 @@ import java.util.List;
 import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractFilter;
 
-import org.oceandsl.tools.sar.CallerCalleeDataflow;
+import org.oceandsl.analysis.code.CodeUtils;
+import org.oceandsl.analysis.code.stages.data.DataflowEntry;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 
 /**
  * @author Reiner Jung
  * @since 1.1
  */
-public class CleanupDataflowComponentSignatureStage extends AbstractFilter<CallerCalleeDataflow> {
-
-    private static final String UNKNOWN = "<unknown>";
+public class CleanupDataflowComponentSignatureStage extends AbstractFilter<DataflowEntry> {
 
     private final OutputPort<String> errorMessageOutputPort = this.createOutputPort(String.class);
 
@@ -40,28 +39,30 @@ public class CleanupDataflowComponentSignatureStage extends AbstractFilter<Calle
     }
 
     @Override
-    protected void execute(final CallerCalleeDataflow event) throws Exception {
-        final Entry caller = this.executeEntry(event.getSourceFileName(), event.getSourceModuleName(),
-                event.getSourceOperationName());
-        final Entry callee = this.executeEntry(event.getTargetFileName(), event.getTargetModuleName(),
-                event.getTargetOperatioName());
-        final CallerCalleeDataflow newEvent = new CallerCalleeDataflow(event.getSourceFileName(), caller.component,
-                caller.element, event.getTargetFileName(), callee.component, callee.element, event.getDirection());
+    protected void execute(final DataflowEntry event) throws Exception {
+        final Entry caller = this.executeEntry(event.getSourcePath(), event.getSourceModule(),
+                event.getSourceOperation());
+        final Entry callee = this.executeEntry(event.getTargetPath(), event.getTargetModule(),
+                event.getTargetOperation());
+        final DataflowEntry newEvent = new DataflowEntry(event.getSourcePath(), caller.component, caller.element,
+                event.getTargetPath(), callee.component, callee.element, event.getDirection());
+
         this.outputPort.send(newEvent);
     }
 
     private Entry executeEntry(final String path, final String componentSignature, final String operationSignature) {
         final Entry entry = new Entry();
-        entry.component = UNKNOWN;
-        entry.element = UNKNOWN;
+        entry.component = CodeUtils.UNKNOWN_COMPONENT;
+        entry.element = CodeUtils.UNKNOWN_OPERATION;
+
         for (final AbstractSignatureProcessor processor : this.processors) {
             if (!processor.processSignatures(path, componentSignature, operationSignature)) {
                 this.errorMessageOutputPort.send(processor.getErrorMessage());
             }
-            if (UNKNOWN.equals(entry.component)) {
+            if (CodeUtils.UNKNOWN_COMPONENT.equals(entry.component)) {
                 entry.component = processor.getComponentSignature();
             }
-            if (UNKNOWN.equals(entry.element)) {
+            if (CodeUtils.UNKNOWN_OPERATION.equals(entry.element)) {
                 entry.element = processor.getElementSignature();
             }
         }

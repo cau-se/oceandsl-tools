@@ -20,6 +20,7 @@ import java.util.List;
 import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractFilter;
 
+import org.oceandsl.analysis.code.CodeUtils;
 import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
 import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
 
@@ -28,8 +29,6 @@ import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
  * @since 1.1
  */
 public class CleanupComponentSignatureStage extends AbstractFilter<CallerCalleeEntry> {
-
-    private static final String UNKNOWN = "<unknown>";
 
     private final OutputPort<String> errorMessageOutputPort = this.createOutputPort(String.class);
 
@@ -45,24 +44,26 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCalleeE
                 event.getCaller());
         final FullyQualifiedOperation callee = this.executeOperation(event.getTargetPath(), event.getTargetModule(),
                 event.getCallee());
-        final CallerCalleeEntry newEvent = new CallerCalleeEntry(event.getSourcePath(), caller.component, caller.operation,
-                event.getTargetPath(), callee.component, callee.operation);
+        final CallerCalleeEntry newEvent = new CallerCalleeEntry(event.getSourcePath(), caller.component,
+                caller.operation, event.getTargetPath(), callee.component, callee.operation);
+
         this.outputPort.send(newEvent);
     }
 
     private FullyQualifiedOperation executeOperation(final String path, final String componentSignature,
             final String operationSignature) {
         final FullyQualifiedOperation entry = new FullyQualifiedOperation();
-        entry.component = CleanupComponentSignatureStage.UNKNOWN;
-        entry.operation = CleanupComponentSignatureStage.UNKNOWN;
+        entry.component = CodeUtils.UNKNOWN_COMPONENT;
+        entry.operation = CodeUtils.UNKNOWN_OPERATION;
+
         for (final AbstractSignatureProcessor processor : this.processors) {
             if (!processor.processSignatures(path, componentSignature, operationSignature)) {
                 this.errorMessageOutputPort.send(processor.getErrorMessage());
             }
-            if (UNKNOWN.equals(entry.component)) {
+            if (CodeUtils.UNKNOWN_COMPONENT.equals(entry.component)) {
                 entry.component = processor.getComponentSignature();
             }
-            if (UNKNOWN.equals(entry.operation)) {
+            if (CodeUtils.UNKNOWN_OPERATION.equals(entry.operation)) {
                 entry.operation = processor.getElementSignature();
             }
         }

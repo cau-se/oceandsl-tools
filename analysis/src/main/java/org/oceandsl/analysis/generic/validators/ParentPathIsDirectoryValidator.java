@@ -33,7 +33,7 @@ public class ParentPathIsDirectoryValidator implements IParameterValidator {
     public void validate(final String name, final String value) throws ParameterException {
         final File file = Paths.get(value).getParent().toFile();
         if (!file.isDirectory()) {
-            throw new ParameterException(String.format("Parameter %s: path %s is not a directory.", name, value));
+            throw new ParameterException(String.format("Parameter %s: path %s is not a directory.", name, value)); // NOPMD
         }
     }
 

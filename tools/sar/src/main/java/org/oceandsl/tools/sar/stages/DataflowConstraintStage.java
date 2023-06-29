@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.sar;
+package org.oceandsl.tools.sar.stages;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import kieker.analysis.architecture.recovery.events.AbstractElementEvent;
 import kieker.analysis.architecture.recovery.events.DataflowEvent;
+import kieker.analysis.architecture.recovery.events.GenericElementEvent;
 import kieker.analysis.architecture.recovery.events.OperationEvent;
 
 import teetime.framework.AbstractStage;
@@ -57,24 +57,7 @@ public class DataflowConstraintStage extends AbstractStage {
         final OperationEvent operationEvent = this.controlInputPort.receive();
 
         if (operationEvent != null) {
-            if (this.operationEventRegister.containsKey(operationEvent.getHostname())) {
-                final Map<String, Set<String>> components = this.operationEventRegister
-                        .get(operationEvent.getHostname());
-                if (components.containsKey(operationEvent.getComponentSignature())) {
-                    final Set<String> operations = components.get(operationEvent.getComponentSignature());
-                    if (!operations.contains(operationEvent.getOperationSignature())) {
-                        operations.add(operationEvent.getOperationSignature());
-                    }
-                } else {
-                    components.put(operationEvent.getComponentSignature(), new HashSet<String>());
-                }
-            } else {
-                final Map<String, Set<String>> components = new HashMap<>();
-                final Set<String> operations = new HashSet<>();
-                operations.add(operationEvent.getOperationSignature());
-                components.put(operationEvent.getComponentSignature(), operations);
-                this.operationEventRegister.put(operationEvent.getHostname(), components);
-            }
+            this.createComponentAndAddOperation(operationEvent);
             for (int i = 0; i < this.storedEvents.size(); i++) {
                 final DataflowEvent dataflowEvent = this.storedEvents.get(i);
                 if (this.checkEndpoint(dataflowEvent.getSource()) && this.checkEndpoint(dataflowEvent.getTarget())) {
@@ -82,6 +65,26 @@ public class DataflowConstraintStage extends AbstractStage {
                     this.storedEvents.remove(i);
                 }
             }
+        }
+    }
+
+    private void createComponentAndAddOperation(final OperationEvent operationEvent) {
+        if (this.operationEventRegister.containsKey(operationEvent.getHostname())) {
+            final Map<String, Set<String>> components = this.operationEventRegister.get(operationEvent.getHostname());
+            if (components.containsKey(operationEvent.getComponentSignature())) {
+                final Set<String> operations = components.get(operationEvent.getComponentSignature());
+                if (!operations.contains(operationEvent.getOperationSignature())) {
+                    operations.add(operationEvent.getOperationSignature());
+                }
+            } else {
+                components.put(operationEvent.getComponentSignature(), new HashSet<String>());
+            }
+        } else {
+            final Map<String, Set<String>> components = new HashMap<>();
+            final Set<String> operations = new HashSet<>();
+            operations.add(operationEvent.getOperationSignature());
+            components.put(operationEvent.getComponentSignature(), operations);
+            this.operationEventRegister.put(operationEvent.getHostname(), components);
         }
     }
 
@@ -96,7 +99,7 @@ public class DataflowConstraintStage extends AbstractStage {
         }
     }
 
-    private boolean checkEndpoint(final AbstractElementEvent event) {
+    private boolean checkEndpoint(final GenericElementEvent event) {
         if (event instanceof OperationEvent) {
             return this.checkOperationEvent((OperationEvent) event);
         } else {

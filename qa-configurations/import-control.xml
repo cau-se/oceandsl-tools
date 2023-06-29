@@ -9,6 +9,7 @@
 	
 	<allow pkg="org.apache"/>
 	<allow pkg="org.codehaus"/>
+	<allow pkg="org.csveed"/>
 	<allow pkg="org.eclipse"/>
 	<allow pkg="org.hamcrest"/>
 	<allow pkg="org.junit"/>
@@ -20,6 +21,8 @@
     <allow pkg="org.osgi"/>
     <allow pkg="org.mosim"/>
 
+
+	<allow pkg="lombok"/>
     <allow pkg="kieker"/>
     <allow pkg="teetime"/>
 

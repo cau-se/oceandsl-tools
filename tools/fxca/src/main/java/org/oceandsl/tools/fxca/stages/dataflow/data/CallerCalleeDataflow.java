@@ -18,7 +18,7 @@ package org.oceandsl.tools.fxca.stages.dataflow.data;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.oceandsl.analysis.code.stages.data.EDirection;
+import kieker.model.analysismodel.execution.EDirection;
 
 /**
  * @author Reiner Jung

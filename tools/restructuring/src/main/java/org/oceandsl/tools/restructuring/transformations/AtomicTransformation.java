@@ -11,7 +11,6 @@ public abstract class AtomicTransformation extends AbstractTransformationStep {
 
     public AtomicTransformation(final AssemblyModel model) {
         super(model);
-        // TODO Auto-generated constructor stub
     }
 
 }
