@@ -67,4 +67,5 @@ public class ProvidedInterfaceEntry {
     public void setCallerComponentTypes(final String callerComponentTypes) {
         this.callerComponentTypes = callerComponentTypes;
     }
+
 }

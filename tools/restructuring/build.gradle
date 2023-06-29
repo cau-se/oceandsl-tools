@@ -26,8 +26,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.26'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
 
+<<<<<<< HEAD
 	implementation 'org.csveed:csveed:0.7.4'
 
+=======
+>>>>>>> origin/main
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.0'
 
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3'

@@ -55,5 +55,4 @@ public class NotFoundEntry {
     public void setCall(final String call) {
         this.call = call;
     }
-
 }

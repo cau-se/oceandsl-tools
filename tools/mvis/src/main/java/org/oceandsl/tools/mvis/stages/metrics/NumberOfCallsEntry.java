@@ -13,6 +13,7 @@ public class NumberOfCallsEntry {
     @CsvCell(columnIndex = 4, columnName = "target-operation")
     private final String targetFunction;
     @CsvCell(columnIndex = 5, columnName = "calls")
+
     private final long calls;
 
     public NumberOfCallsEntry(final String sourceFile, final String sourceFunction, final String targetFile,

@@ -33,6 +33,7 @@ public class FixStaticLogTeetimeConfiguration extends Configuration {
     public FixStaticLogTeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
         final CsvRowReaderProducerStage<CallerCalleeEntry> readCsvStage = new CsvRowReaderProducerStage<>(
                 parameterConfiguration.getInputPath(), ',', '"', '\\', true, CallerCalleeEntry.class);
+
         final CsvFunctionMapperStage functionMapperStage = new CsvFunctionMapperStage(
                 parameterConfiguration.getMapPaths());
         final CorrectCallsStage correctCallsStage = new CorrectCallsStage();

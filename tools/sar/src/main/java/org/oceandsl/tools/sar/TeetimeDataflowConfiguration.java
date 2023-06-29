@@ -72,8 +72,8 @@ public class TeetimeDataflowConfiguration extends Configuration {
         final Path storageDataflowPath = settings.getInputFile()
                 .resolve(StaticArchitectureRecoveryMain.STORAGE_DATAFLOW_FILENAME);
 
-        final CsvRowReaderProducerStage<DataflowEntry> callerCalleeDataflowReader = new CsvRowReaderProducerStage<>(callerCalleeDataflowPath,
-                settings.getSplitSymbol(), '"', '\\', true, DataflowEntry.class);
+        final CsvRowReaderProducerStage<DataflowEntry> callerCalleeDataflowReader = new CsvRowReaderProducerStage<>(
+                callerCalleeDataflowPath, settings.getSplitSymbol(), '"', '\\', true, DataflowEntry.class);
         final CsvRowReaderProducerStage<StorageOperationDataflow> storageOperationDataflowReader = new CsvRowReaderProducerStage<>(
                 storageDataflowPath, settings.getSplitSymbol(), '"', '\\', true, StorageOperationDataflow.class);
 

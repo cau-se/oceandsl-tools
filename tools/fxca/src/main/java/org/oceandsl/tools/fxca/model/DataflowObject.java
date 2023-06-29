@@ -27,6 +27,8 @@ import kieker.model.analysismodel.execution.EDirection;
  */
 public class DataflowObject extends MMObject {
 
+    private static final long serialVersionUID = -4196503062613279597L;
+
     @Getter
     private final String name;
 
@@ -49,14 +51,14 @@ public class DataflowObject extends MMObject {
         } else {
             switch (this.direction) {
             case READ:
-                if (value == EDirection.WRITE || value == EDirection.BOTH) {
+                if ((value == EDirection.WRITE) || (value == EDirection.BOTH)) {
                     this.direction = EDirection.BOTH;
                 } else {
                     this.direction = EDirection.READ;
                 }
                 break;
             case WRITE:
-                if (value == EDirection.READ || value == EDirection.BOTH) {
+                if ((value == EDirection.READ) || (value == EDirection.BOTH)) {
                     this.direction = EDirection.BOTH;
                 } else {
                     this.direction = EDirection.WRITE;

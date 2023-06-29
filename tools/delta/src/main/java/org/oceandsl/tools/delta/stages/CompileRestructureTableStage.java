@@ -60,6 +60,7 @@ public class CompileRestructureTableStage
                 final PasteOperation paste = (PasteOperation) action;
                 if (this.rememberCutOperation.containsKey(paste.getOperationName())) {
                     final CutOperation cut = this.rememberCutOperation.get(paste.getOperationName());
+
                     this.table.getRows().add(new MoveOperationEntry(cut.getComponentName(), paste.getComponentName(),
                             cut.getOperationName()));
                 } else {

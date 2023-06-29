@@ -107,6 +107,7 @@ public class TeetimeConfiguration extends Configuration {
             final OperationCallsStage operationCallsStage = new OperationCallsStage();
             final TableCsvSink<String, CallEntry> operationCallSink = new TableCsvSink<>(settings.getOutputModelPath(),
                     "operation-calls.csv", CallEntry.class, true);
+
             this.connectPorts(distributor.getNewOutputPort(), operationCallsStage.getInputPort());
             this.connectPorts(operationCallsStage.getOutputPort(), operationCallSink.getInputPort());
         }
@@ -115,6 +116,7 @@ public class TeetimeConfiguration extends Configuration {
             final ComponentStatisticsStage componentStatisticsStage = new ComponentStatisticsStage();
             final TableCsvSink<String, ComponentStatistics> operationCallSink = new TableCsvSink<>(
                     settings.getOutputModelPath(), "component-statistics.csv", ComponentStatistics.class, true);
+
             this.connectPorts(distributor.getNewOutputPort(), componentStatisticsStage.getInputPort());
             this.connectPorts(componentStatisticsStage.getOutputPort(), operationCallSink.getInputPort());
         }

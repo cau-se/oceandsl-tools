@@ -50,6 +50,7 @@ public class OperationCallsStage extends AbstractTransformation<ModelRepository,
             final String calleeSignature = callee.getAssemblyOperation().getOperationType().getSignature();
             result.getRows()
                     .add(new CallEntry(callerComponent, callerSignature, calleeComponent, calleeSignature, numOfCalls));
+
         });
 
         this.outputPort.send(result);
