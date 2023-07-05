@@ -132,24 +132,27 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
         final INode targetVertex = this.addStorageVertex(storageDataflow.getStorage());
 
         final StatisticRecord statisticRecord = this.statisticsModel.getStatistics().get(storageDataflow);
-
-        final long calls = (Long) statisticRecord.getProperties().get(PropertyConstants.CALLS);
-        this.addEdge(sourceVertex, targetVertex, calls);
+        if (statisticRecord != null) {
+            final Long calls = (Long) statisticRecord.getProperties().get(PropertyConstants.CALLS);
+            if (calls != null) {
+                this.addEdge(sourceVertex, targetVertex, calls);
+            }
+        }
 
         // TODO add this if useful: how to add values to the edge for dataflow
-//        EDirection direction = storageAccess.getDirection();
-//        switch(direction){
-//            case WRITE:
-//                this.addEdge(sourceVertex, targetVertex, 1);
-//                break;
-//            case READ:
-//                this.addEdge(targetVertex, sourceVertex, 0);
-//                break;
-//            case BOTH:
-//                this.addEdge(sourceVertex, targetVertex, 2);
-//                this.addEdge(targetVertex, sourceVertex, 2);
-//                break;
-//        }
+        // EDirection direction = storageAccess.getDirection();
+        // switch(direction){
+        // case WRITE:
+        // this.addEdge(sourceVertex, targetVertex, 1);
+        // break;
+        // case READ:
+        // this.addEdge(targetVertex, sourceVertex, 0);
+        // break;
+        // case BOTH:
+        // this.addEdge(sourceVertex, targetVertex, 2);
+        // this.addEdge(targetVertex, sourceVertex, 2);
+        // break;
+        // }
     }
 
     private void handleOperationDataflow(final OperationDataflow operationDataflow) {
