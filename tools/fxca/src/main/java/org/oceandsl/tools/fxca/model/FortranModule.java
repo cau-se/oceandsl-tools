@@ -29,6 +29,8 @@ import lombok.Getter;
  */
 public class FortranModule extends MMObject implements IContainable {
 
+    private static final long serialVersionUID = 870011289028135834L;
+
     @Getter
     private final Set<String> usedModules = new HashSet<>();
     @Getter

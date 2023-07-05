@@ -59,13 +59,13 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
     public ProcessModuleStructureStage(final IUriProcessor uriProcessor, final List<FortranModule> modules,
             final String defaultModuleName) {
         this.project = new FortranProject();
-        if (modules.size() > 0) {
+        if (modules.isEmpty()) {
+            this.project.setDefaultModule(new FortranModule(defaultModuleName, "", true, null));
+            modules.forEach(module -> this.project.getModules().put(module.getFileName(), module));
+        } else {
             this.project.setDefaultModule(modules.get(0));
             this.project.getModules().put(this.project.getDefaultModule().getFileName(),
                     this.project.getDefaultModule());
-        } else {
-            this.project.setDefaultModule(new FortranModule(defaultModuleName, "", true, null));
-            modules.forEach(module -> this.project.getModules().put(module.getFileName(), module));
         }
         this.uriProcessor = uriProcessor;
     }
@@ -190,22 +190,6 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                     module.getVariables().put(variableName, this.createVariable(variableName));
                 }
             }
-        });
-    }
-
-    private void computeCommonBlocks(final FortranModule module, final Element documentElement)
-            throws ParserConfigurationException, SAXException, IOException {
-        final Set<Node> commonStatements = this.getDescendentAttributes(documentElement, Predicates.isCommonStatement,
-                operationNode -> operationNode);
-        commonStatements.forEach(statement -> {
-            final Node commonBlockNameNode = statement.getChildNodes().item(1);
-            final String commonBlockName = commonBlockNameNode.getFirstChild().getTextContent()
-                    .toLowerCase(Locale.getDefault());
-            CommonBlock commonBlock = module.getCommonBlocks().get(commonBlockName);
-            if (commonBlock == null) {
-                commonBlock = new CommonBlock(commonBlockName, statement);
-            }
-            module.getCommonBlocks().put(commonBlockName, this.createCommonBlock(commonBlock, statement));
         });
     }
 
@@ -351,8 +335,7 @@ public class ProcessModuleStructureStage extends AbstractTransformation<Document
                 final String variableName = objectName.toLowerCase(Locale.getDefault());
                 if (!operation.getParameters().containsKey(variableName)) {
                     operation.getVariables().put(variableName, this.createVariable(variableName));
-                } else {
-                    // NOPMD currently empty
+                } else { // NOPMD currently empty
                     // here you could set the parameter type
                 }
             }

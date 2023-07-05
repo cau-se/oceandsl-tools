@@ -48,7 +48,7 @@ import kieker.model.analysismodel.type.TypePackage;
  * @author Reiner Jung
  *
  */
-public final class TestModelInvocationUtils {
+public final class TestModelInvocationUtils { // NOPMD is not a test class
 
     private TestModelInvocationUtils() {
         // utility class

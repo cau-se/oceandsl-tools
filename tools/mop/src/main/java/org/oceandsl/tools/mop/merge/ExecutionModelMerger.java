@@ -78,36 +78,54 @@ public final class ExecutionModelMerger {
                 .getStorageDataflows()) {
             final Tuple<DeployedOperation, DeployedStorage> targetModelKey = ExecutionModelMerger
                     .findTupleStorageKeys(targetModel.getStorageDataflows(), entry.getKey());
-            if (targetModelKey == null) {
-                final StorageDataflow value = ExecutionModelCloneUtils.duplicate(deploymentModel, entry.getValue());
-                final Tuple<DeployedOperation, DeployedStorage> key = ExecutionFactory.eINSTANCE.createTuple();
-                key.setFirst(value.getCode());
-                key.setSecond(value.getStorage());
-                targetModel.getStorageDataflows().put(key, value);
-            } else {
-                final StorageDataflow targetStorageDataflow = targetModel.getStorageDataflows().get(targetModelKey);
-                final StorageDataflow sourceStorageDataflow = entry.getValue();
-                switch (sourceStorageDataflow.getDirection()) {
-                case READ:
-                    if (targetStorageDataflow.getDirection() == EDirection.WRITE) {
-                        targetStorageDataflow.setDirection(EDirection.BOTH);
-                    }
-                    break;
-                case WRITE:
-                    if (targetStorageDataflow.getDirection() == EDirection.READ) {
-                        targetStorageDataflow.setDirection(EDirection.BOTH);
-                    }
-                    break;
-                case BOTH:
-                    targetStorageDataflow.setDirection(EDirection.BOTH);
-                    break;
-                default:
-                    throw new InternalError(
-                            "Found unsupported direction type " + sourceStorageDataflow.getDirection().getName());
-                }
-                targetModel.getStorageDataflows().put(targetModelKey, targetStorageDataflow);
-            }
+            ExecutionModelMerger.mergeStorageDataflow(targetModelKey, deploymentModel, targetModel, entry.getValue());
         }
+    }
+
+    private static void mergeStorageDataflow(final Tuple<DeployedOperation, DeployedStorage> targetModelKey,
+            final DeploymentModel deploymentModel, final ExecutionModel targetModel,
+            final StorageDataflow sourceStorageDataflow) {
+        if (targetModelKey == null) {
+            ExecutionModelMerger.mergeStorageDataflowNotExistingInTargetModel(deploymentModel, targetModel,
+                    sourceStorageDataflow);
+        } else {
+            ExecutionModelMerger.mergeStorageDataflowExistingInTarget(targetModel, targetModelKey,
+                    sourceStorageDataflow);
+        }
+    }
+
+    private static void mergeStorageDataflowNotExistingInTargetModel(final DeploymentModel deploymentModel,
+            final ExecutionModel targetModel, final StorageDataflow sourceStorageDataflow) {
+        final StorageDataflow value = ExecutionModelCloneUtils.duplicate(deploymentModel, sourceStorageDataflow);
+        final Tuple<DeployedOperation, DeployedStorage> key = ExecutionFactory.eINSTANCE.createTuple();
+        key.setFirst(value.getCode());
+        key.setSecond(value.getStorage());
+        targetModel.getStorageDataflows().put(key, value);
+    }
+
+    private static void mergeStorageDataflowExistingInTarget(final ExecutionModel targetModel,
+            final Tuple<DeployedOperation, DeployedStorage> targetModelKey,
+            final StorageDataflow sourceStorageDataflow) {
+        final StorageDataflow targetStorageDataflow = targetModel.getStorageDataflows().get(targetModelKey);
+        switch (sourceStorageDataflow.getDirection()) {
+        case READ:
+            if (targetStorageDataflow.getDirection() == EDirection.WRITE) {
+                targetStorageDataflow.setDirection(EDirection.BOTH);
+            }
+            break;
+        case WRITE:
+            if (targetStorageDataflow.getDirection() == EDirection.READ) {
+                targetStorageDataflow.setDirection(EDirection.BOTH);
+            }
+            break;
+        case BOTH:
+            targetStorageDataflow.setDirection(EDirection.BOTH);
+            break;
+        default:
+            throw new InternalError(
+                    "Found unsupported direction type " + sourceStorageDataflow.getDirection().getName());
+        }
+        targetModel.getStorageDataflows().put(targetModelKey, targetStorageDataflow);
     }
 
     private static Tuple<DeployedOperation, DeployedStorage> findTupleStorageKeys(
@@ -128,37 +146,49 @@ public final class ExecutionModelMerger {
                 .getOperationDataflows()) {
             final Tuple<DeployedOperation, DeployedOperation> targetModelKey = ExecutionModelMerger
                     .findTupleOperationKeys(targetModel.getOperationDataflows(), entry.getKey());
+            final OperationDataflow sourceOperationDataflow = entry.getValue();
             if (targetModelKey == null) {
-                final OperationDataflow value = ExecutionModelCloneUtils.duplicate(deploymentModel, entry.getValue());
-                final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
-                key.setFirst(value.getCaller());
-                key.setSecond(value.getCallee());
-                targetModel.getOperationDataflows().put(key, value);
+                ExecutionModelMerger.mergeOperationDataflowNotExistingInTargetModel(deploymentModel, targetModel,
+                        sourceOperationDataflow);
             } else {
-                final OperationDataflow targetOperationDataflow = targetModel.getOperationDataflows()
-                        .get(targetModelKey);
-                final OperationDataflow sourceOperationDataflow = entry.getValue();
-                switch (sourceOperationDataflow.getDirection()) {
-                case READ:
-                    if (targetOperationDataflow.getDirection() == EDirection.WRITE) {
-                        targetOperationDataflow.setDirection(EDirection.BOTH);
-                    }
-                    break;
-                case WRITE:
-                    if (targetOperationDataflow.getDirection() == EDirection.READ) {
-                        targetOperationDataflow.setDirection(EDirection.BOTH);
-                    }
-                    break;
-                case BOTH:
-                    targetOperationDataflow.setDirection(EDirection.BOTH);
-                    break;
-                default:
-                    throw new InternalError(
-                            "Found unsupported direction type " + sourceOperationDataflow.getDirection().getName());
-                }
-                targetModel.getOperationDataflows().put(targetModelKey, targetOperationDataflow);
+                ExecutionModelMerger.mergeOperationDataflowExistingInTarget(targetModel, targetModelKey,
+                        sourceOperationDataflow);
             }
         }
+    }
+
+    private static void mergeOperationDataflowNotExistingInTargetModel(final DeploymentModel deploymentModel,
+            final ExecutionModel targetModel, final OperationDataflow sourceOperationDataflow) {
+        final OperationDataflow value = ExecutionModelCloneUtils.duplicate(deploymentModel, sourceOperationDataflow);
+        final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
+        key.setFirst(value.getCaller());
+        key.setSecond(value.getCallee());
+        targetModel.getOperationDataflows().put(key, value);
+    }
+
+    private static void mergeOperationDataflowExistingInTarget(final ExecutionModel targetModel,
+            final Tuple<DeployedOperation, DeployedOperation> targetModelKey,
+            final OperationDataflow sourceOperationDataflow) {
+        final OperationDataflow targetOperationDataflow = targetModel.getOperationDataflows().get(targetModelKey);
+        switch (sourceOperationDataflow.getDirection()) {
+        case READ:
+            if (targetOperationDataflow.getDirection() == EDirection.WRITE) {
+                targetOperationDataflow.setDirection(EDirection.BOTH);
+            }
+            break;
+        case WRITE:
+            if (targetOperationDataflow.getDirection() == EDirection.READ) {
+                targetOperationDataflow.setDirection(EDirection.BOTH);
+            }
+            break;
+        case BOTH:
+            targetOperationDataflow.setDirection(EDirection.BOTH);
+            break;
+        default:
+            throw new InternalError(
+                    "Found unsupported direction type " + sourceOperationDataflow.getDirection().getName());
+        }
+        targetModel.getOperationDataflows().put(targetModelKey, targetOperationDataflow);
     }
 
     private static Tuple<DeployedOperation, DeployedOperation> findTupleOperationKeys(

@@ -31,6 +31,8 @@ import lombok.Setter;
  */
 public class FortranOperation extends MMObject implements IDataflowEndpoint, IContainable {
 
+    private static final long serialVersionUID = -3656752458538237388L;
+
     @Getter
     private final String name;
 

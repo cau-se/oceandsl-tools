@@ -28,6 +28,8 @@ import lombok.Getter;
  */
 public class FortranVariable extends DataflowObject implements IContainable, IDataflowEndpoint {
 
+    private static final long serialVersionUID = -7967091842094930275L;
+
     @Getter
     private final Set<IDataflowEndpoint> sources = new HashSet<>();
 

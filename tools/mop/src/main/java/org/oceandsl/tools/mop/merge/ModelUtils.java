@@ -48,7 +48,7 @@ public final class ModelUtils {
         // Utility class
     }
 
-    public static boolean areObjectsEqual(final EObject left, final EObject right) {
+    public static boolean areObjectsEqual(final EObject left, final EObject right) { // NOPMD
         if (left == null) {
             return right == null;
         } else {
