@@ -65,12 +65,12 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
             final BeforeOperationEvent before = (BeforeOperationEvent) element;
             final AddrOutput rewriteInfo = this.findRewriteInfo(before.getOperationSignature());
             this.outputPort.send(new BeforeOperationEvent(before.getTimestamp(), before.getTraceId(),
-                    before.getOrderIndex(), rewriteInfo.name, rewriteInfo.getFilename()));
+                    before.getOrderIndex(), rewriteInfo.name, rewriteInfo.filename));
         } else if (element instanceof AfterOperationEvent) {
             final AfterOperationEvent before = (AfterOperationEvent) element;
             final AddrOutput rewriteInfo = this.findRewriteInfo(before.getOperationSignature());
             this.outputPort.send(new AfterOperationEvent(before.getTimestamp(), before.getTraceId(),
-                    before.getOrderIndex(), rewriteInfo.name, rewriteInfo.getFilename()));
+                    before.getOrderIndex(), rewriteInfo.name, rewriteInfo.filename));
         } else {
             this.outputPort.send(element);
         }
@@ -134,18 +134,6 @@ public class RewriteBeforeAndAfterEventsStage extends AbstractConsumerStage<IMon
             this.name = name;
             this.filename = filename;
             this.linenumber = linenumber;
-        }
-
-        public String getName() {
-            return this.name;
-        }
-
-        public String getFilename() {
-            return this.filename;
-        }
-
-        public Integer getLinenumber() {
-            return this.linenumber;
         }
 
         @Override
