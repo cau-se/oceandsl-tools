@@ -19,16 +19,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import org.oceandsl.tools.fxca.utils.Pair;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import org.oceandsl.tools.fxca.utils.Pair;
 
 /**
  * @author Henning Schnoor
  * @since 1.3.0
  */
 public class FortranProject extends MMObject {
+
+    private static final long serialVersionUID = -6785473767290507697L;
 
     /**
      * Actual list to which List-calls are delegated.

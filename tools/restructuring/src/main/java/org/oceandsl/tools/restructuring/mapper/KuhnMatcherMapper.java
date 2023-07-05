@@ -61,99 +61,61 @@ public class KuhnMatcherMapper extends BasicComponentMapper {
         if (this.operationToComponentO.size() != this.operationToComponentG.size()) {
             throw new InternalErrorException("Some operations are lost.");
         }
-        // System.out.println("Same comps:" +
-        // operationToComponentO.values().equals(operationToComponentG.values()));
-        // init mappings
 
-        // create graphp
-        final SimpleWeightedGraph<String, DefaultEdge> graph = new SimpleWeightedGraph<>(DefaultEdge.class);
+        final SimpleWeightedGraph<String, DefaultEdge> graph = this.createInitialGraph();
 
-        // initial graph
-        for (final Entry<String, AssemblyComponent> c : this.original.getComponents().entrySet()) { // each
-            // component
-            // is
-            // a
-            // vertex
-
-            final String origVertex = c.getKey();
-
-            graph.addVertex(origVertex); // create vertex from original component
-            for (final Entry<String, AssemblyOperation> ops : c.getValue().getOperations().entrySet()) { // iterate
-                                                                                                         // through
-                // operations in
-                // original
-                // componen
-
-                final String goalVertex = this.operationToComponentG.get(ops.getKey());
-                if (!graph.containsVertex(goalVertex)) { // vertex was not added yet , thus
-                                                         // simply create and edge
-                    graph.addVertex(goalVertex); // component on goal as vertex
-                    final DefaultEdge edge = graph.addEdge(origVertex, goalVertex);// add edge
-                    graph.setEdgeWeight(edge, 1); // weight is 1 first encounter
-                } else { // component already in the graph
-                         // check if there is already a connection between current orig and goal
-                         // components
-                    DefaultEdge edge = graph.getEdge(origVertex, goalVertex);
-
-                    if (edge != null) { // edge exists. Simply adjust the weights
-                        final double currentWeight = graph.getEdgeWeight(edge);
-                        graph.setEdgeWeight(edge, currentWeight + 1);
-                    } else {
-                        // no edges. Create a simple edge
-                        if (origVertex.equals(goalVertex)) {
-                            KuhnMatcherMapper.LOGGER.debug("{} {}", origVertex, goalVertex);
-                        }
-                        edge = graph.addEdge(origVertex, goalVertex); // add edge
-                        graph.setEdgeWeight(edge, 1); // weight is 1 first encounter
-                    }
-                }
-
-            }
-            // e.getValue().getOperations();
-            //
-
-        }
         assert graph.vertexSet().size() == (this.original.getComponents().size() + this.goal.getComponents().size());
-        // add dummies to equlize partitions
-        /*
-         * if(this.orig.getComponents().size()<this.goal.getComponents().size()) { //stock ip orig
-         * vertices with dummies int diff =
-         * this.goal.getComponents().size()-this.orig.getComponents().size(); for(int
-         * i=0;i<diff;i++) { String dummy = "dummy"+i; this.graph.addVertex(dummy);
-         * this.s.add(dummy); for(Entry <String,
-         * AssemblyComponent>e:this.goal.getComponents().entrySet()) { DefaultEdge
-         * edge=this.graph.addEdge(dummy, e.getKey()); this.graph.setEdgeWeight(edge, 0); } }
-         *
-         * }else if(this.orig.getComponents().size()>this.goal.getComponents().size()) { //stock up
-         * goal vertices with dummies int diff =
-         * this.orig.getComponents().size()-this.goal.getComponents().size(); for(int
-         * i=0;i<diff;i++) { String dummy = "dummy"+i; this.graph.addVertex(dummy);
-         * this.t.add(dummy); for(Entry <String,
-         * AssemblyComponent>e:this.orig.getComponents().entrySet()) { DefaultEdge
-         * edge=this.graph.addEdge(e.getKey(), dummy);
-         *
-         * this.graph.setEdgeWeight(edge, 0); } } }
-         *
-         * //add 0 edges if not exist yet
-         *
-         * for(String o:this.s) { for(String g : this.t) { if(!this.graph.containsEdge(o,g)) {
-         * DefaultEdge edge=this.graph.addEdge(o, g); this.graph.setEdgeWeight(edge, 0); } } }
-         */
-        // System.out.println(this.s.size());
-        // System.out.println(this.t.size());
 
-        // assert this.s.size()==this.t.size();
-        // System.out.println(this.s.size()*this.t.size());
-        // System.out.println(this.graph.edgeSet().size());
-        // assert this.s.size()*this.t.size()==this.graph.edgeSet().size();
         final MaximumWeightBipartiteMatching<String, DefaultEdge> matcher = new MaximumWeightBipartiteMatching<>(graph,
                 this.s, this.t);
         this.matching = matcher.getMatching();
         this.computeOriginalComponentNames();
-        // System.out.println("Size of gto "+this.goalToOriginal.size());
-        // System.out.println("Size of otg " + this.originallToGoal.size());
-        // System.out.println("Num of matching"+this.matching.getEdges().size());
+    }
 
+    private SimpleWeightedGraph<String, DefaultEdge> createInitialGraph() {
+        // create graph
+        final SimpleWeightedGraph<String, DefaultEdge> graph = new SimpleWeightedGraph<>(DefaultEdge.class);
+
+        // each component is a vertex
+        for (final Entry<String, AssemblyComponent> c : this.original.getComponents().entrySet()) {
+            graph.addVertex(c.getKey()); // create vertex from original component
+
+            // iterate through operations in original component
+            this.processOperations(graph, c);
+        }
+
+        return graph;
+    }
+
+    private void processOperations(final SimpleWeightedGraph<String, DefaultEdge> graph,
+            final Entry<String, AssemblyComponent> componentEntry) {
+        final String origVertex = componentEntry.getKey();
+        for (final Entry<String, AssemblyOperation> ops : componentEntry.getValue().getOperations().entrySet()) {
+
+            final String goalVertex = this.operationToComponentG.get(ops.getKey());
+            if (!graph.containsVertex(goalVertex)) { // vertex was not added yet , thus
+                                                     // simply create and edge
+                graph.addVertex(goalVertex); // component on goal as vertex
+                final DefaultEdge edge = graph.addEdge(origVertex, goalVertex);// add edge
+                graph.setEdgeWeight(edge, 1); // weight is 1 first encounter
+            } else { // component already in the graph
+                     // check if there is already a connection between current orig and goal
+                     // components
+                DefaultEdge edge = graph.getEdge(origVertex, goalVertex);
+
+                if (edge != null) { // edge exists. Simply adjust the weights
+                    final double currentWeight = graph.getEdgeWeight(edge);
+                    graph.setEdgeWeight(edge, currentWeight + 1);
+                } else {
+                    // no edges. Create a simple edge
+                    if (origVertex.equals(goalVertex)) {
+                        KuhnMatcherMapper.LOGGER.debug("{} {}", origVertex, goalVertex);
+                    }
+                    edge = graph.addEdge(origVertex, goalVertex); // add edge
+                    graph.setEdgeWeight(edge, 1); // weight is 1 first encounter
+                }
+            }
+        }
     }
 
     private void computeOriginalComponentNames() {
@@ -168,7 +130,6 @@ public class KuhnMatcherMapper extends BasicComponentMapper {
 
             }
         }
-        // graph.getEdgeWeight(e)
     }
 
     private void populateOperationToComponentO() {

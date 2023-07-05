@@ -46,7 +46,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         this.outputPort.send(project);
     }
 
-    private void computeParameterDirectionality(final FortranModule module, final FortranOperation operation) {
+    private void computeParameterDirectionality(final FortranModule module, final FortranOperation operation) { // NOPMD
         final List<Node> statements = NodeUtils.findAllSiblings(operation.getNode(), o -> true,
                 Predicates.isEndSubroutineStatement.or(Predicates.isEndProgramStatement)
                         .or(Predicates.isEndFunctionStatement));
@@ -87,7 +87,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                 this.checkNamelistStatement(operation, statement);
             } else if (Predicates.isImplicitNoneStmt.test(statement)) {
                 operation.setImplicit(false);
-            } else if (Predicates.isM.or(Predicates.isC).or(Predicates.isTDeclStmt).or(Predicates.isFile)
+            } else if (Predicates.isM.or(Predicates.isC).or(Predicates.isTDeclStmt).or(Predicates.isFile) // NOPMD
                     .or(Predicates.isInclude).or(Predicates.isOperationStatement).or(Predicates.isProgramStatement)
                     .or(Predicates.isEndStatement).or(Predicates.isGotoStatement).or(Predicates.isLabel)
                     .or(Predicates.isContinueStatement).or(Predicates.isFormatStatement).or(Predicates.isElseStatement)
@@ -96,9 +96,9 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                     .or(Predicates.isInquireStatement).or(Predicates.isParameterStatement)
                     .or(Predicates.isCommonStatement).or(Predicates.isExitStatement).or(Predicates.isExternalStatement)
                     .test(statement)) {
-                // NOPMD ignore
-            } else if (statement.getNodeType() == Node.TEXT_NODE) {
-                // NOPMD ignore text
+                // ignore
+            } else if (statement.getNodeType() == Node.TEXT_NODE) { // NOPMD
+                // ignore text
             } else {
                 this.logger.debug("In file {}: Unkown statement {}", module.getFileName(), statement);
             }
@@ -131,7 +131,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
         }
     }
 
-    private void checkEndFileStatement(final FortranOperation operation, final Node sibling) {
+    private void checkEndFileStatement(final FortranOperation operation, final Node sibling) { // NOPMD
         // no dataflow
     }
 
@@ -175,8 +175,7 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
 
     private void checkAssignmentExpression(final FortranOperation operation, final Node assignment) {
         final Node node = NodeUtils.getAssignmentExpression(assignment);
-        if (Predicates.isNamedExpression.test(node)) {
-            // NOPMD ignore
+        if (Predicates.isNamedExpression.test(node)) { // NOPMD ignore
         } else if (Predicates.isAssignmentE2.test(node)) {
             this.checkExpression(operation, node, EDirection.READ);
         } else {
@@ -374,7 +373,8 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
      * @param direction
      *            direction of variable value access
      */
-    private void checkExpression(final FortranOperation operation, final Node node, final EDirection direction) {
+    private void checkExpression(final FortranOperation operation, final Node node, final EDirection direction) { // NOPMD
+                                                                                                                  // complexity
         final List<Node> expression = NodeUtils.findAllSiblings(node.getFirstChild(), o -> true, o -> false);
         expression.forEach(expressionElement -> {
             if (Predicates.isNamedExpression.test(expressionElement)) {
@@ -382,16 +382,6 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                 this.checkVariable(operation, elementName, direction);
                 this.checkParameter(operation, elementName);
                 this.checkFunction(operation, expressionElement);
-            } else if (Predicates.isOperand.test(expressionElement)) {
-                // NOPMD ignore
-            } else if (Predicates.isM.test(expressionElement)) {
-                // NOPMD ignore
-            } else if (Predicates.isCnt.test(expressionElement)) {
-                // NOPMD ignore
-            } else if (Predicates.isLiteralE.test(expressionElement)) {
-                // NOPMD ignore
-            } else if (Predicates.isStringE.test(expressionElement)) {
-                // NOPMD ignore
             } else if (Predicates.isOperandExpression.test(expressionElement)) {
                 this.checkExpression(operation, expressionElement, EDirection.READ);
             } else if (Predicates.isParensExpression.test(expressionElement)) {
@@ -402,10 +392,11 @@ public class ComputeDirectionalityOfParametersStage extends AbstractTransformati
                 this.checkArgumentName();
             } else if (Predicates.isArrayConstructorExpression.test(expressionElement)) {
                 this.checkArrayConstructorExpression(operation, expressionElement, direction);
-            } else if (Predicates.isC.or(Predicates.isLabel).test(expressionElement)) {
-                // NOPMD ignore
-            } else if (expressionElement.getNodeType() == Node.TEXT_NODE) {
-                // NOPMD ignore
+            } else if (Predicates.isC.or(Predicates.isLabel).or(Predicates.isOperand).or(Predicates.isM) // NOPMD
+                    .or(Predicates.isCnt).or(Predicates.isLiteralE).or(Predicates.isStringE).test(expressionElement)) {
+                // ignore
+            } else if (expressionElement.getNodeType() == Node.TEXT_NODE) { // NOPMD
+                // ignore
             } else {
                 this.logger.error("Unknown expression element {}", expressionElement.toString());
             }

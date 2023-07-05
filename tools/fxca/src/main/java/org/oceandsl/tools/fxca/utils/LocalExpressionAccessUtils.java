@@ -31,7 +31,23 @@ import org.w3c.dom.Node;
  *
  * @since 1.3.0
  */
-public class LocalExpressionAccess {
+public final class LocalExpressionAccessUtils {
+
+    private static LocalAccessParameters namesInCommonBlocks = new LocalAccessParameters(Predicates.isCommonStatement,
+            Predicates.isCommonBlockObjectName, Predicates.isSmallN,
+            smallNNode -> NodeUtils.getSuccessorNode(smallNNode, "0").getTextContent());
+
+    private static LocalAccessParameters namesInOperationParameterList = new LocalAccessParameters(
+            Predicates.isOperationStatement, Predicates.isArgumentName, Predicates.isSmallN,
+            smallNNode -> NodeUtils.getSuccessorNode(smallNNode, "0").getTextContent());
+
+    private static LocalAccessParameters namesInLocalVariableList = new LocalAccessParameters(Predicates.isTDeclStmt,
+            Predicates.isEnDecl, Predicates.isSmallN,
+            smallNNode -> NodeUtils.getSuccessorNode(smallNNode, "0").getTextContent());
+
+    private LocalExpressionAccessUtils() {
+        // private constructor for utility class
+    }
 
     // we often need to search for names that are defined at the current node, which are *not*
     // external
@@ -52,20 +68,8 @@ public class LocalExpressionAccess {
         COMMON_BLOCK, LOCAL_VARIABLE, OPERATION_PARAMETER, OPERATION_CALL
     }
 
-    private static LocalAccessParameters namesInCommonBlocks = new LocalAccessParameters(Predicates.isCommonStatement,
-            Predicates.isCommonBlockObjectName, Predicates.isSmallN,
-            smallNNode -> NodeUtils.getSuccessorNode(smallNNode, "0").getTextContent());
-
-    private static LocalAccessParameters namesInOperationParameterList = new LocalAccessParameters(
-            Predicates.isOperationStatement, Predicates.isArgumentName, Predicates.isSmallN,
-            smallNNode -> NodeUtils.getSuccessorNode(smallNNode, "0").getTextContent());
-
-    private static LocalAccessParameters namesInLocalVariableList = new LocalAccessParameters(Predicates.isTDeclStmt,
-            Predicates.isEnDecl, Predicates.isSmallN,
-            smallNNode -> NodeUtils.getSuccessorNode(smallNNode, "0").getTextContent());
-
     private static Set<String> localNamesDefinedInApplyingBlocks(final Node node,
-            final LocalAccessParameters parameters, final boolean verbose) {
+            final LocalAccessParameters parameters) {
 
         final List<Node> applyingBlocks = new ArrayList<>();
 
@@ -78,7 +82,7 @@ public class LocalExpressionAccess {
             current = current.getParentNode();
         }
 
-        return LocalExpressionAccess.localNamesDefinedInBlocks(applyingBlocks, parameters); // allNamesDefinedInCommonBlocks
+        return LocalExpressionAccessUtils.localNamesDefinedInBlocks(applyingBlocks, parameters); // allNamesDefinedInCommonBlocks
     }
 
     private static Set<String> localNamesDefinedInBlocks(final Collection<Node> applyingBlocks,
@@ -86,7 +90,7 @@ public class LocalExpressionAccess {
         final Set<String> result = new HashSet<>();
 
         for (final Node blockNode : applyingBlocks) {
-            result.addAll(LocalExpressionAccess.localNamesDefinedInBlock(blockNode, parameters));
+            result.addAll(LocalExpressionAccessUtils.localNamesDefinedInBlock(blockNode, parameters));
         }
 
         return result;
@@ -116,24 +120,24 @@ public class LocalExpressionAccess {
 
         final String nameOfCalledFunction = NodeUtils.nameOfCalledFunction(node);
 
-        return LocalExpressionAccess.localNamesDefinedInApplyingBlocks(node, parameters, false)
+        return LocalExpressionAccessUtils.localNamesDefinedInApplyingBlocks(node, parameters)
                 .contains(nameOfCalledFunction);
     }
 
     public static EAccessType typeOfReferenceAccess(final Node referenceNode) {
 
-        if (LocalExpressionAccess.isNamedExpressionLocalReference(referenceNode,
-                LocalExpressionAccess.namesInCommonBlocks)) {
+        if (LocalExpressionAccessUtils.isNamedExpressionLocalReference(referenceNode,
+                LocalExpressionAccessUtils.namesInCommonBlocks)) {
             return EAccessType.COMMON_BLOCK;
         }
 
-        if (LocalExpressionAccess.isNamedExpressionLocalReference(referenceNode,
-                LocalExpressionAccess.namesInOperationParameterList)) {
+        if (LocalExpressionAccessUtils.isNamedExpressionLocalReference(referenceNode,
+                LocalExpressionAccessUtils.namesInOperationParameterList)) {
             return EAccessType.OPERATION_PARAMETER;
         }
 
-        if (LocalExpressionAccess.isNamedExpressionLocalReference(referenceNode,
-                LocalExpressionAccess.namesInLocalVariableList)) {
+        if (LocalExpressionAccessUtils.isNamedExpressionLocalReference(referenceNode,
+                LocalExpressionAccessUtils.namesInLocalVariableList)) {
             return EAccessType.LOCAL_VARIABLE;
         }
 
@@ -142,14 +146,14 @@ public class LocalExpressionAccess {
 
     public static boolean isLocalAccess(final Node referenceNode) {
         return Predicates.isCallStatement.or(Predicates.isNamedExpressionAccess).test(referenceNode)
-                && (LocalExpressionAccess.typeOfReferenceAccess(referenceNode) != EAccessType.OPERATION_CALL);
+                && (LocalExpressionAccessUtils.typeOfReferenceAccess(referenceNode) != EAccessType.OPERATION_CALL);
     }
 
     public static String nameOfCalledFunctionOrLocalReference(final Node referenceNode) {
 
         // rewritten the switch statement because checkstyle cannot parse it
 
-        final EAccessType switchValue = LocalExpressionAccess.typeOfReferenceAccess(referenceNode);
+        final EAccessType switchValue = LocalExpressionAccessUtils.typeOfReferenceAccess(referenceNode);
         String suffix = null;
 
         if (switchValue == EAccessType.COMMON_BLOCK) {

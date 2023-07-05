@@ -25,6 +25,7 @@ import kieker.model.analysismodel.deployment.impl.EStringToDeployedOperationMapE
 import kieker.model.analysismodel.deployment.impl.EStringToDeployedStorageMapEntryImpl;
 import kieker.model.analysismodel.execution.ExecutionFactory;
 import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
 import kieker.model.analysismodel.execution.StorageDataflow;
 
 /**
@@ -47,14 +48,30 @@ public final class ExecutionModelCloneUtils {
         return newInvocation;
     }
 
-    public static StorageDataflow duplicate(final DeploymentModel deploymentModel, final StorageDataflow access) {
-        final StorageDataflow newAccess = ExecutionFactory.eINSTANCE.createStorageDataflow();
-        newAccess.setDirection(access.getDirection());
+    public static StorageDataflow duplicate(final DeploymentModel deploymentModel,
+            final StorageDataflow storageDataflow) {
+        final StorageDataflow newStorageDataflow = ExecutionFactory.eINSTANCE.createStorageDataflow();
+        newStorageDataflow.setDirection(storageDataflow.getDirection());
 
-        newAccess.setCode(ExecutionModelCloneUtils.findDeployedOperation(deploymentModel, access.getCode()));
-        newAccess.setStorage(ExecutionModelCloneUtils.findDeployedStorage(deploymentModel, access.getStorage()));
+        newStorageDataflow
+                .setCode(ExecutionModelCloneUtils.findDeployedOperation(deploymentModel, storageDataflow.getCode()));
+        newStorageDataflow.setStorage(
+                ExecutionModelCloneUtils.findDeployedStorage(deploymentModel, storageDataflow.getStorage()));
 
-        return newAccess;
+        return newStorageDataflow;
+    }
+
+    public static OperationDataflow duplicate(final DeploymentModel deploymentModel,
+            final OperationDataflow operationDataflow) {
+        final OperationDataflow newOperationDataflow = ExecutionFactory.eINSTANCE.createOperationDataflow();
+        newOperationDataflow.setDirection(operationDataflow.getDirection());
+
+        newOperationDataflow.setCaller(
+                ExecutionModelCloneUtils.findDeployedOperation(deploymentModel, operationDataflow.getCaller()));
+        newOperationDataflow.setCallee(
+                ExecutionModelCloneUtils.findDeployedOperation(deploymentModel, operationDataflow.getCallee()));
+
+        return newOperationDataflow;
     }
 
     private static DeployedOperation findDeployedOperation(final DeploymentModel targetModel,

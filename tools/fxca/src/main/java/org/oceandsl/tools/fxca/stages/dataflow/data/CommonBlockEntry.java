@@ -18,9 +18,9 @@ package org.oceandsl.tools.fxca.stages.dataflow.data;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.oceandsl.tools.fxca.model.FortranModule;
-
 import lombok.Getter;
+
+import org.oceandsl.tools.fxca.model.FortranModule;
 
 /**
  * @author Reiner Jung
@@ -29,13 +29,13 @@ import lombok.Getter;
 public class CommonBlockEntry {
 
     @Getter
-    Set<FortranModule> modules = new HashSet<>();
+    private final Set<FortranModule> modules = new HashSet<>();
 
     @Getter
-    String name;
+    private final String name;
 
     @Getter
-    Set<String> variables = new HashSet<>();
+    private final Set<String> variables = new HashSet<>();
 
     public CommonBlockEntry(final String name) {
         this.name = name;

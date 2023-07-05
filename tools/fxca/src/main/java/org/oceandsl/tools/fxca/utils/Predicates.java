@@ -28,7 +28,7 @@ import org.w3c.dom.Node;
  *
  * @since 1.3.0
  */
-public class Predicates { // NOPMD
+public final class Predicates { // NOPMD
 
     public static Predicate<Node> isProgramStatement = NodeUtils.hasName("program-stmt");
     public static Predicate<Node> isEndProgramStatement = NodeUtils.hasName("end-program-stmt");
@@ -77,7 +77,7 @@ public class Predicates { // NOPMD
     public static Predicate<Node> isCommonStatement = NodeUtils.hasName("common-stmt");
     public static Predicate<Node> isCommonBlockObjectName = NodeUtils.hasName("common-block-obj-N");
     public static Predicate<Node> isCommonBlockObject = NodeUtils.hasName("common-block-obj");
-    public static Predicate<Node> isLocalAccess = node -> LocalExpressionAccess.isLocalAccess(node);
+    public static Predicate<Node> isLocalAccess = node -> LocalExpressionAccessUtils.isLocalAccess(node);
     public static Predicate<Node> isDummyArgumentLT = NodeUtils.hasName("dummy-arg-LT");
 
     public static Predicate<Node> isNamedExpressionAccess = Predicates.isNamedExpression
@@ -199,4 +199,8 @@ public class Predicates { // NOPMD
             .or(Predicates.isWriteStatement).or(Predicates.isWhereStatement).or(Predicates.isCloseStatement)
             .or(Predicates.isOpenStatement).or(Predicates.isSaveStatement);
     public static Predicate<Node> isExternalStatement = NodeUtils.hasName("external-stmt");
+
+    private Predicates() {
+        // make this a utility class
+    }
 }
