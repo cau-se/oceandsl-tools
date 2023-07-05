@@ -202,7 +202,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
             this.analyzeSaveArgument();
         } else if (Predicates.isWhereStatement.test(statement)) {
             this.analyzeWhereStatement(project, module, operation, statement);
-        } else if (Predicates.isAllocateStatement.or(Predicates.isC).or(Predicates.isCloseStatement)
+        } else if (Predicates.isAllocateStatement.or(Predicates.isC).or(Predicates.isCloseStatement) // NOPMD
                 .or(Predicates.isProgramStatement).or(Predicates.isCommonStatement).or(Predicates.isContinueStatement)
                 .or(Predicates.isDeallocateStatement).or(Predicates.isDIMStatement).or(Predicates.isElseStatement)
                 .or(Predicates.isEndFileStatement).or(Predicates.isEndStatement).or(Predicates.isExitStatement)
@@ -213,9 +213,9 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
                 .or(Predicates.isPrintStatement).or(Predicates.isReadStatement).or(Predicates.isReturnStatement)
                 .or(Predicates.isRewindStatement).or(Predicates.isStopStatement).or(Predicates.isTDeclStmt)
                 .or(Predicates.isWriteStatement).or(Predicates.isExternalStatement).test(statement)) {
-            // NOPMD ignore
-        } else if (statement.getNodeType() == Node.TEXT_NODE) {
-            // NOPMD ignore
+            // ignore
+        } else if (statement.getNodeType() == Node.TEXT_NODE) { // NOPMD
+            // ignore
         } else {
             this.logger.error("Error: Unsupported statement by {}: {} ", this.getClass().getSimpleName(), statement);
         }
@@ -433,8 +433,7 @@ public class DataFlowAnalysisStage extends AbstractConsumerStage<FortranProject>
             ((MultipleDataflowEndpoint) readEndpoint).getEndpoints().forEach(e -> {
                 this.createFlowFromEndpointToOperation(writeEndpoint, e);
             });
-        } else if (readEndpoint == null) {
-            // NOPMD skip
+        } else if (readEndpoint == null) { // NOPMD skip
         } else {
             this.logger.error("Internal error: Illegal read endpoint {}", readEndpoint.toString());
         }

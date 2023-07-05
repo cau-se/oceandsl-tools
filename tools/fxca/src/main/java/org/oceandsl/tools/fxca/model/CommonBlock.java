@@ -27,6 +27,8 @@ import lombok.Getter;
  */
 public class CommonBlock extends MMObject implements IDataflowEndpoint, IContainable {
 
+    private static final long serialVersionUID = 9092564756024097942L;
+
     @Getter
     private final String name;
 

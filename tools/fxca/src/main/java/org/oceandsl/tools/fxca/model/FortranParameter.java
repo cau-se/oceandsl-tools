@@ -24,6 +24,8 @@ import lombok.Setter;
  */
 public class FortranParameter extends DataflowObject implements IContainable, IDataflowEndpoint {
 
+    private static final long serialVersionUID = -7293904706907658599L;
+
     @Getter
     @Setter
     private int position; // NOPMD

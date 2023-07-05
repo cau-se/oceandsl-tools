@@ -83,7 +83,7 @@ public final class FxcaMain extends AbstractService<TeetimeConfiguration, Settin
     protected boolean checkParameters(final JCommander commander) throws ConfigurationException {
         IOUtils.createDirectory(this.settings.getOutputDirectoryPath());
 
-        final Predicate<Path> useDirectory = IOUtils.isDirectory;
+        final Predicate<Path> useDirectory = IOUtils.IS_DIRECTORY;
 
         final List<Path> directories = new ArrayList<>();
         if (this.settings.isFlat()) {

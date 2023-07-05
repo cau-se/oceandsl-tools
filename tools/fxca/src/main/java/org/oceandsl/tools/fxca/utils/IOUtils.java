@@ -41,6 +41,8 @@ public final class IOUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
 
+    public final static Predicate<Path> IS_DIRECTORY = element -> Files.isDirectory(element);
+
     private IOUtils() {
         // utility class
     }
@@ -70,10 +72,8 @@ public final class IOUtils {
         directoryPath.toFile().mkdirs();
     }
 
-    public final static Predicate<Path> isDirectory = element -> Files.isDirectory(element);
-
     public static Predicate<Path> isDirectoryWithTheseFiles(final Iterable<String> filenames) {
-        Predicate<Path> result = IOUtils.isDirectory;
+        Predicate<Path> result = IOUtils.IS_DIRECTORY;
         for (final String filename : filenames) {
             result = result.and(directory -> Files.exists(directory.resolve(Paths.get(filename))));
         }

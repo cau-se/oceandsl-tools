@@ -2,6 +2,11 @@ package org.oceandsl.tools.fxca.stages.dataflow;
 
 import lombok.Getter;
 
+/**
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ */
 public class GlobalDataEntry {
 
     @Getter

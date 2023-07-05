@@ -204,6 +204,12 @@ public class SimilarMethodPrefixMergeInterfaceStage extends AbstractMergeInterfa
         }
     }
 
+    /**
+     * Internal Tuple class.
+     *
+     * @author Reiner Jung
+     * @since 1.3.0
+     */
     private class Tuple {
 
         private final OperationType operationType;
@@ -215,6 +221,12 @@ public class SimilarMethodPrefixMergeInterfaceStage extends AbstractMergeInterfa
         }
     }
 
+    /**
+     * Internal MethodDistance class.
+     *
+     * @author Reiner Jung
+     * @since 1.3.0
+     */
     private class MethodDistance {
 
         private final ProvidedInterfaceType firstIface;

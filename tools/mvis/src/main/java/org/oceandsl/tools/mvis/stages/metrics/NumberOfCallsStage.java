@@ -52,46 +52,59 @@ public class NumberOfCallsStage extends AbstractTransformation<ModelRepository, 
 
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> invocationEntry : executionModel
                 .getInvocations().entrySet()) {
-            final Invocation value = invocationEntry.getValue();
-            if (value == null) {
-                this.logger.error("Broken invocation entry. {} -> {}",
-                        this.getName(invocationEntry.getKey().getFirst()),
-                        this.getName(invocationEntry.getKey().getSecond()));
-            }
-            final StatisticRecord statistics = this.findStatistics(statisticsModel.getStatistics(), value);
-            if (statistics != null) {
-                final Long data = (Long) statistics.getProperties().get(PropertyConstants.CALLS);
-
-                result.getRows().add(new NumberOfCallsEntry(
-                        value.getCaller().getAssemblyOperation().getComponent().getComponentType().getSignature(),
-                        value.getCaller().getAssemblyOperation().getOperationType().getSignature(),
-                        value.getCallee().getAssemblyOperation().getComponent().getComponentType().getSignature(),
-                        value.getCallee().getAssemblyOperation().getOperationType().getSignature(), data));
-            } else {
-                this.logger.warn("Missing statistics for invocation {} -> {}",
-                        this.getName(invocationEntry.getValue().getCaller()),
-                        this.getName(invocationEntry.getValue().getCallee()));
-            }
+            this.processInvocation(result, statisticsModel, invocationEntry);
         }
 
         this.outputPort.send(result);
     }
 
+    private void processInvocation(final Table<String, NumberOfCallsEntry> result,
+            final StatisticsModel statisticsModel,
+            final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> invocationEntry) {
+        final Invocation value = invocationEntry.getValue();
+        if (value == null) {
+            this.logger.error("Broken invocation entry. {} -> {}", this.getName(invocationEntry.getKey().getFirst()),
+                    this.getName(invocationEntry.getKey().getSecond()));
+        }
+        final StatisticRecord statistics = this.findStatistics(statisticsModel.getStatistics(), value);
+        if (statistics != null) {
+            final Long data = (Long) statistics.getProperties().get(PropertyConstants.CALLS);
+
+            result.getRows()
+                    .add(new NumberOfCallsEntry(
+                            value.getCaller().getAssemblyOperation().getComponent().getComponentType().getSignature(),
+                            value.getCaller().getAssemblyOperation().getOperationType().getSignature(),
+                            value.getCallee().getAssemblyOperation().getComponent().getComponentType().getSignature(),
+                            value.getCallee().getAssemblyOperation().getOperationType().getSignature(), data));
+        } else {
+            this.logger.warn("Missing statistics for invocation {} -> {}",
+                    this.getName(invocationEntry.getValue().getCaller()),
+                    this.getName(invocationEntry.getValue().getCallee()));
+        }
+    }
+
     private StatisticRecord findStatistics(final EMap<EObject, StatisticRecord> statistics,
             final Invocation invocation) {
         for (final Entry<EObject, StatisticRecord> entry : statistics.entrySet()) {
-            if (entry.getKey() instanceof Invocation) {
-                final Invocation key = (Invocation) entry.getKey();
-                if (key != null) {
-                    if (invocation.getCaller().equals(key.getCaller())
-                            && invocation.getCallee().equals(key.getCallee())) {
-                        return entry.getValue();
-                    }
-                } else {
-                    this.logger.error("Found statistics without a key value");
-                    for (final Entry<String, Object> recordEntry : entry.getValue().getProperties().entrySet()) {
-                        this.logger.error("property {} = {}", recordEntry.getKey(), recordEntry.getValue());
-                    }
+            final StatisticRecord statistic = this.findStatistic(entry, invocation);
+            if (statistic != null) {
+                return statistic;
+            }
+        }
+        return null;
+    }
+
+    private StatisticRecord findStatistic(final Entry<EObject, StatisticRecord> entry, final Invocation invocation) {
+        if (entry.getKey() instanceof Invocation) {
+            final Invocation key = (Invocation) entry.getKey();
+            if (key != null) {
+                if (invocation.getCaller().equals(key.getCaller()) && invocation.getCallee().equals(key.getCallee())) {
+                    return entry.getValue();
+                }
+            } else {
+                this.logger.error("Found statistics without a key value");
+                for (final Entry<String, Object> recordEntry : entry.getValue().getProperties().entrySet()) {
+                    this.logger.error("property {} = {}", recordEntry.getKey(), recordEntry.getValue());
                 }
             }
         }
