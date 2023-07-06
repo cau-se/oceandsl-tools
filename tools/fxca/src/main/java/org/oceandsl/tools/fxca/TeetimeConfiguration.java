@@ -48,7 +48,6 @@ import org.oceandsl.tools.fxca.stages.calls.CreateOperationTableStage;
 import org.oceandsl.tools.fxca.stages.calls.ProcessOperationCallStage;
 import org.oceandsl.tools.fxca.stages.dataflow.AggregateCommonBlocksStage;
 import org.oceandsl.tools.fxca.stages.dataflow.AggregateDataflowStage;
-import org.oceandsl.tools.fxca.stages.dataflow.CommonBlockArgumentDataflow;
 import org.oceandsl.tools.fxca.stages.dataflow.ComputeDirectionalityOfParametersStage;
 import org.oceandsl.tools.fxca.stages.dataflow.CreateCallerCalleeDataflowTableStage;
 import org.oceandsl.tools.fxca.stages.dataflow.CreateCommonBlockDataflowTableStage;
@@ -215,7 +214,7 @@ public class TeetimeConfiguration extends Configuration {
                     result.add(line.substring(marker, i));
                     mode = 0;
                 }
-            } else if ((mode == 3) && (ch == ',')) {
+            } else if (mode == 3 && ch == ',') {
                 mode = 0;
             }
         }
@@ -242,4 +241,3 @@ public class TeetimeConfiguration extends Configuration {
         operation.setModule(module);
     }
 }
-
