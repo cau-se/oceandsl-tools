@@ -47,7 +47,7 @@ public class CallerCalleeDataflow {
 
     @Getter
     @Setter
-    private EDirection direction;
+    private EDirection direction; // NOPMD pmd does not understand lombok
 
     public CallerCalleeDataflow(final String sourceFileName, final String sourceModuleName,
             final String sourceOperationName, final String targetFileName, final String targetModuleName,
