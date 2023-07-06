@@ -43,15 +43,9 @@ public class CreateCallTableStage extends AbstractTransformation<FortranProject,
             if (callerPair != null) {
                 final FQNOperation caller = this.composeOperation(callerPair);
                 if (calleePair != null) {
-<<<<<<< HEAD
                     final FQNOperation callee = this.composeOperation(calleePair);
                     callsTable.getRows().add(new CallerCalleeEntry(caller.path, caller.moduleName, caller.operationName,
                             callee.path, callee.moduleName, callee.operationName));
-=======
-                    final Operation callee = this.composeOperation(calleePair);
-                    callsTable.getRows().add(new CallerCalleeEntry(caller.path, caller.moduleName, caller.operation,
-                            callee.path, callee.moduleName, callee.operation));
->>>>>>> 8cc9707 (Cleanups.)
                 } else {
                     this.logger.warn("Caller {} {} {} has no callee ", caller.path, caller.moduleName,
                             caller.operationName);
