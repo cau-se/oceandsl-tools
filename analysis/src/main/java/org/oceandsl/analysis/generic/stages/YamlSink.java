@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright 2023 Kieker Project (http://kieker-monitoring.net)
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,11 @@ import org.yaml.snakeyaml.nodes.Tag;
 import teetime.framework.AbstractConsumerStage;
 
 /**
+ * Sink creating a yaml file.
+ *
+ * @param <T>
+ *            row data type.
+ *
  * @author Reiner Jung
  * @since 1.3.0
  */

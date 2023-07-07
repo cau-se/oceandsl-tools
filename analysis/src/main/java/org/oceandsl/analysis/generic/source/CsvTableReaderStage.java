@@ -32,9 +32,9 @@ import org.oceandsl.analysis.generic.Table;
  * Reader for multiple CSV files. Output them as tables.
  *
  * @param <R>
- *            table label type
+ *            label data type
  * @param <T>
- *            ICsvRecord datatype
+ *            record data type
  *
  * @author Reiner Jung
  * @since 1.0

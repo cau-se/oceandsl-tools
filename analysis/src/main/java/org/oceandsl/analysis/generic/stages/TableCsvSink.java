@@ -32,6 +32,8 @@ import org.oceandsl.analysis.generic.Table;
 /**
  * Save tables with a specific row type as a csv files based on a path function.
  *
+ * @param <R>
+ *            label type
  * @param <T>
  *            row type
  *
@@ -49,6 +51,18 @@ public class TableCsvSink<R, T> extends AbstractConsumerStage<Table<R, T>> {
     private Class<T> clazz;
     private char[] newline;
 
+    /**
+     * Create table sink.
+     *
+     * @param filePathFunction
+     *            function to map string to path
+     * @param clazz
+     *            row data type
+     * @param header
+     *            boolean flag specify whether a header line should be written
+     * @param newline
+     *            end of line marker
+     */
     public TableCsvSink(final Function<String, Path> filePathFunction, final Class<T> clazz, final boolean header,
             final char[] newline) {
         this.header = header;
@@ -57,6 +71,20 @@ public class TableCsvSink<R, T> extends AbstractConsumerStage<Table<R, T>> {
         this.newline = newline; // NOPMD
     }
 
+    /**
+     * Create table sink.
+     *
+     * @param filePath
+     *            directory path where the output files are placed in.
+     * @param filename
+     *            filename suffix
+     * @param clazz
+     *            row data type
+     * @param header
+     *            boolean flag specify whether a header line should be written
+     * @param newline
+     *            end of line marker
+     */
     public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz, final boolean header,
             final char[] newline) {
         this(new Function<>() {
@@ -68,6 +96,18 @@ public class TableCsvSink<R, T> extends AbstractConsumerStage<Table<R, T>> {
         }, clazz, header, newline);
     }
 
+    /**
+     * Create table sink.
+     *
+     * @param filePath
+     *            directory path where the output files are placed in.
+     * @param clazz
+     *            row data type
+     * @param header
+     *            boolean flag specify whether a header line should be written
+     * @param newline
+     *            end of line marker
+     */
     public TableCsvSink(final Path filePath, final Class<T> clazz, final boolean header, final char[] newline) {
         this(new Function<>() {
 
@@ -76,22 +116,6 @@ public class TableCsvSink<R, T> extends AbstractConsumerStage<Table<R, T>> {
                 return filePath.resolve(String.format("%s.csv", name));
             }
         }, clazz, header, newline);
-    }
-
-    public TableCsvSink(final Function<String, Path> filePathFunction, final Class<T> clazz, final boolean header) {
-        this(filePathFunction, clazz, header, TableCsvSink.LF);
-    }
-
-    public TableCsvSink(final Path filePath, final Class<T> clazz, final boolean header) {
-        this(filePath, clazz, header, TableCsvSink.LF);
-    }
-
-    public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz) {
-        this(filePath, filename, clazz, false, TableCsvSink.LF);
-    }
-
-    public TableCsvSink(final Path filePath, final String filename, final Class<T> clazz, final boolean header) {
-        this(filePath, filename, clazz, header, TableCsvSink.LF);
     }
 
     @Override

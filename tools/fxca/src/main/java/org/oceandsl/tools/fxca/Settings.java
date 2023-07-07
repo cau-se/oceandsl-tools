@@ -58,6 +58,9 @@ public class Settings { // NOPMD data class
             "--flat" }, required = false, description = "Scan source directories flat, i.e. not in recusrive mode.")
     private boolean flat;
 
+    @Parameter(names = "--eol", required = false, description = "End of line symbol")
+    private String lineSeparator = System.lineSeparator();
+
     public List<Path> getInputDirectoryPaths() {
         return this.inputDirectoryPaths;
     }
@@ -80,6 +83,14 @@ public class Settings { // NOPMD data class
 
     public List<Path> getLibraryFunctionsPaths() {
         return this.libraryFunctionsPaths;
+    }
+
+    public char[] getLineSeparator() {
+        return this.lineSeparator.toCharArray();
+    }
+
+    public void setLineSeparator(final String lineSeparator) {
+        this.lineSeparator = lineSeparator;
     }
 
 }

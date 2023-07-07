@@ -31,7 +31,7 @@ public interface IPathLabelMapper<T> {
      *
      * @param path
      *            input path
-     * @return
+     * @return returns label
      */
     T map(Path path);
 }
