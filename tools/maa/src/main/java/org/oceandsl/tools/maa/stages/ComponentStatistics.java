@@ -34,6 +34,10 @@ public class ComponentStatistics {
     @CsvCell(columnIndex = 4, columnName = "requires-operations")
     private long requiredOperations;
 
+    public ComponentStatistics() {
+        // dummy for csveed
+    }
+
     public ComponentStatistics(final String componentName, final int operations, final long providedOperations,
             final long requiredOperations) {
         this.componentName = componentName;
@@ -72,6 +76,35 @@ public class ComponentStatistics {
 
     public void setRequiredOperations(final long requiredOperations) {
         this.requiredOperations = requiredOperations;
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (object instanceof ComponentStatistics) {
+            final ComponentStatistics other = (ComponentStatistics) object;
+            return this.checkString(this.componentName, other.getComponentName())
+                    && this.operations == other.getOperations()
+                    && this.providedOperations == other.getProvidedOperations()
+                    && this.requiredOperations == other.getRequiredOperations();
+        } else {
+            return false;
+        }
+    }
+
+    private boolean checkString(final String left, final String right) {
+        if (left == null && right == null) {
+            return true;
+        } else if (left != null && right != null) {
+            return left.equals(right);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.componentName.hashCode() ^ Long.hashCode(this.operations) ^ Long.hashCode(this.providedOperations)
+                ^ Long.hashCode(this.requiredOperations);
     }
 
 }

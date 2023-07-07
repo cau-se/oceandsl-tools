@@ -41,6 +41,10 @@ public class CommonBlockArgumentDataflow implements IDataflowEntry {
     @CsvCell(columnIndex = 5, columnName = "direction")
     private EDirection direction;
 
+    public CommonBlockArgumentDataflow() {
+        // dummy constructor for csveed
+    }
+
     public CommonBlockArgumentDataflow(final String commonBlockName, final String fileName, final String moduleName,
             final String operationName, final EDirection direction) {
         this.commonBlockName = commonBlockName;
@@ -90,4 +94,33 @@ public class CommonBlockArgumentDataflow implements IDataflowEntry {
         this.direction = direction;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object instanceof CommonBlockArgumentDataflow) {
+            final CommonBlockArgumentDataflow other = (CommonBlockArgumentDataflow) object;
+            return this.checkString(this.commonBlockName, other.getCommonBlockName())
+                    && this.checkString(this.fileName, other.getFileName())
+                    && this.checkString(this.moduleName, other.getModuleName())
+                    && this.checkString(this.operationName, other.getOperationName())
+                    && this.direction.equals(other.getDirection());
+        } else {
+            return false;
+        }
+    }
+
+    private boolean checkString(final String left, final String right) {
+        if (left == null && right == null) {
+            return true;
+        } else if (left != null && right != null) {
+            return left.equals(right);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.commonBlockName.hashCode() ^ this.direction.hashCode() ^ this.fileName.hashCode()
+                ^ this.moduleName.hashCode() ^ this.operationName.hashCode();
+    }
 }

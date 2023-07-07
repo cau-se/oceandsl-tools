@@ -41,4 +41,31 @@ public class ModelEditDistanceEntry {
         this.numberOfSteps = numberOfSteps;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object instanceof ModelEditDistanceEntry) {
+            final ModelEditDistanceEntry other = (ModelEditDistanceEntry) object;
+            return this.checkString(this.goalModelName, other.getGoalModelName())
+                    && this.checkString(this.originalModelName, other.getOriginalModelName())
+                    && this.numberOfSteps == other.getNumberOfSteps();
+        } else {
+            return false;
+        }
+    }
+
+    private boolean checkString(final String left, final String right) {
+        if (left == null && right == null) {
+            return true;
+        } else if (left != null && right != null) {
+            return left.equals(right);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.goalModelName.hashCode() ^ this.originalModelName.hashCode() ^ Integer.hashCode(this.numberOfSteps);
+    }
+
 }

@@ -95,4 +95,34 @@ public class StorageOperationDataflow {
         this.direction = direction;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object instanceof StorageOperationDataflow) {
+            final StorageOperationDataflow other = (StorageOperationDataflow) object;
+            return this.checkString(this.commonBlockName, other.getCommonBlockName())
+                    && this.checkString(this.fileName, other.getFileName())
+                    && this.checkString(this.moduleName, other.getModuleName())
+                    && this.checkString(this.operationName, other.getOperationName())
+                    && this.direction.equals(other.getDirection());
+        } else {
+            return false;
+        }
+    }
+
+    private boolean checkString(final String left, final String right) {
+        if (left == null && right == null) {
+            return true;
+        } else if (left != null && right != null) {
+            return left.equals(right);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.commonBlockName.hashCode() ^ this.fileName.hashCode() ^ this.moduleName.hashCode()
+                ^ this.operationName.hashCode() ^ this.direction.hashCode();
+    }
+
 }
