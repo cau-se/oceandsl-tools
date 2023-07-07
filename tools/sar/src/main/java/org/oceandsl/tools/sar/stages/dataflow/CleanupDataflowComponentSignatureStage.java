@@ -54,6 +54,7 @@ public class CleanupDataflowComponentSignatureStage extends AbstractFilter<Dataf
         final Entry entry = new Entry();
         entry.component = CodeUtils.UNKNOWN_COMPONENT;
         entry.element = CodeUtils.UNKNOWN_OPERATION;
+
         for (final AbstractSignatureProcessor processor : this.processors) {
             if (!processor.processSignatures(path, componentSignature, operationSignature)) {
                 this.errorMessageOutputPort.send(processor.getErrorMessage());

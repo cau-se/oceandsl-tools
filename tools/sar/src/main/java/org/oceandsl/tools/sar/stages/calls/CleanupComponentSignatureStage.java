@@ -46,6 +46,7 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCalleeE
                 event.getCallee());
         final CallerCalleeEntry newEvent = new CallerCalleeEntry(event.getSourcePath(), caller.component,
                 caller.operation, event.getTargetPath(), callee.component, callee.operation);
+
         this.outputPort.send(newEvent);
     }
 
@@ -54,6 +55,7 @@ public class CleanupComponentSignatureStage extends AbstractFilter<CallerCalleeE
         final FullyQualifiedOperation entry = new FullyQualifiedOperation();
         entry.component = CodeUtils.UNKNOWN_COMPONENT;
         entry.operation = CodeUtils.UNKNOWN_OPERATION;
+
         for (final AbstractSignatureProcessor processor : this.processors) {
             if (!processor.processSignatures(path, componentSignature, operationSignature)) {
                 this.errorMessageOutputPort.send(processor.getErrorMessage());

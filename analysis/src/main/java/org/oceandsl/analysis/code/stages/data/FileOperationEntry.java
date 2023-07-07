@@ -73,5 +73,4 @@ public class FileOperationEntry {
     public int hashCode() {
         return this.name.hashCode() ^ this.path.hashCode();
     }
-
 }

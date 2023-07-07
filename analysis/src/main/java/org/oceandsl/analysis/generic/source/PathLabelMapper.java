@@ -28,5 +28,4 @@ public class PathLabelMapper implements IPathLabelMapper<Path> {
     public Path map(final Path path) {
         return path;
     }
-
 }

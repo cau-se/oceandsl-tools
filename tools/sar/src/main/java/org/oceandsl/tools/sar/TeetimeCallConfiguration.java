@@ -70,8 +70,8 @@ public class TeetimeCallConfiguration extends Configuration {
         super();
         final Path inputCallPath = settings.getInputFile().resolve(StaticArchitectureRecoveryMain.CALLTABLE_FILENAME);
 
-        final CsvRowReaderProducerStage<CallerCalleeEntry> readCallsCsvStage = new CsvRowReaderProducerStage<>(inputCallPath,
-                settings.getSplitSymbol(), '"', '\\', true, CallerCalleeEntry.class);
+        final CsvRowReaderProducerStage<CallerCalleeEntry> readCallsCsvStage = new CsvRowReaderProducerStage<>(
+                inputCallPath, settings.getSplitSymbol(), '"', '\\', true, CallerCalleeEntry.class);
 
         final CleanupComponentSignatureStage cleanupComponentSignatureStage = new CleanupComponentSignatureStage(
                 this.createProcessors(settings.getModuleModes(), settings, logger));

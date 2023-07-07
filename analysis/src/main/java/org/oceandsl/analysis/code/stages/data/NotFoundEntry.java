@@ -97,5 +97,4 @@ public class NotFoundEntry {
     public int hashCode() {
         return this.call.hashCode() ^ this.fileName.hashCode() ^ this.moduleName.hashCode() ^ this.operation.hashCode();
     }
-
 }

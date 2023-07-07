@@ -106,5 +106,4 @@ public class ComponentStatistics {
         return this.componentName.hashCode() ^ Long.hashCode(this.operations) ^ Long.hashCode(this.providedOperations)
                 ^ Long.hashCode(this.requiredOperations);
     }
-
 }

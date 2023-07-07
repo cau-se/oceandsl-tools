@@ -35,6 +35,7 @@ public class CreateOperationTableStage
     @Override
     protected void execute(final FortranProject project) throws Exception {
         final Table<String, FileOperationEntry> callsTable = new Table<>("operation");
+
         project.getModules().values().forEach(module -> {
             final String path = module.getFileName();
             module.getOperations().values().forEach(operation -> {
