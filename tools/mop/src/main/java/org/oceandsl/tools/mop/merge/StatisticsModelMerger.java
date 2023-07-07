@@ -174,7 +174,7 @@ public final class StatisticsModelMerger {
     private static boolean isIdenticalStorageDataflow(final StorageDataflow targetDataflow,
             final StorageDataflow dataflow) {
 
-        if ((dataflow.getDirection() == null) || StatisticsModelMerger.LOGGER.isDebugEnabled()) {
+        if (dataflow.getDirection() == null || StatisticsModelMerger.LOGGER.isDebugEnabled()) {
             StatisticsModelMerger.LOGGER.debug("dataflow {}:{} <--> {}:{}\n",
                     dataflow.getCode().getComponent().getSignature(),
                     dataflow.getCode().getAssemblyOperation().getOperationType().getSignature(),
@@ -182,7 +182,7 @@ public final class StatisticsModelMerger {
                     dataflow.getStorage().getAssemblyStorage().getStorageType().getName());
         }
 
-        if ((targetDataflow.getDirection() == null) || StatisticsModelMerger.LOGGER.isDebugEnabled()) {
+        if (targetDataflow.getDirection() == null || StatisticsModelMerger.LOGGER.isDebugEnabled()) {
             StatisticsModelMerger.LOGGER.debug("target dataflow {}:{} <--> {}:{}\n",
                     targetDataflow.getCode().getComponent().getSignature(),
                     targetDataflow.getCode().getAssemblyOperation().getOperationType().getSignature(),

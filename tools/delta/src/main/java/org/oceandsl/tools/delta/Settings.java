@@ -37,11 +37,22 @@ public class Settings { // NOPMD data class
             "--output" }, required = true, converter = PathConverter.class, description = "Output restructure information as CSV table")
     private Path outputPath;
 
+    @Parameter(names = { "--eol" }, required = false, description = "End of line symbol")
+    private String lineSeparator = System.lineSeparator();
+
     public Path getInputPath() {
         return this.inputPath;
     }
 
     public Path getOutputPath() {
         return this.outputPath;
+    }
+
+    public char[] getLineSeparator() {
+        return this.lineSeparator.toCharArray();
+    }
+
+    public void setLineSeparator(final String lineSeparator) {
+        this.lineSeparator = lineSeparator;
     }
 }

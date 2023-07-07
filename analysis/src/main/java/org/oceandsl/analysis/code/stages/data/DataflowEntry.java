@@ -114,4 +114,35 @@ public class DataflowEntry {
         this.direction = direction;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object instanceof DataflowEntry) {
+            final DataflowEntry other = (DataflowEntry) object;
+            return this.checkString(this.sourcePath, other.getSourcePath())
+                    && this.checkString(this.sourceModule, other.getSourceModule())
+                    && this.checkString(this.sourceOperation, other.getSourceOperation())
+                    && this.checkString(this.targetPath, other.getTargetPath())
+                    && this.checkString(this.targetModule, other.getTargetModule())
+                    && this.checkString(this.targetOperation, other.getTargetOperation());
+        } else {
+            return false;
+        }
+    }
+
+    private boolean checkString(final String left, final String right) {
+        if (left == null && right == null) {
+            return true;
+        } else if (left != null && right != null) {
+            return left.equals(right);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.sourcePath.hashCode() ^ this.sourceModule.hashCode() ^ this.sourceOperation.hashCode()
+                ^ this.targetPath.hashCode() ^ this.targetModule.hashCode() ^ this.targetOperation.hashCode();
+    }
+
 }

@@ -64,6 +64,9 @@ public class Settings { // NOPMD
             "--mode" }, required = true, variableArity = true, converter = GraphGenerationConverter.class, description = "Mode deciding whether an edge is added when its nodes are not selected")
     private EGraphGenerationMode graphGenerationMode;
 
+    @Parameter(names = "--eol", required = false, description = "End of line symbol")
+    private String lineSeparator = System.lineSeparator();
+
     public Path getInputDirectory() {
         return this.inputDirectory;
     }
@@ -90,5 +93,13 @@ public class Settings { // NOPMD
 
     public EGraphGenerationMode getGraphGenerationMode() {
         return this.graphGenerationMode;
+    }
+
+    public char[] getLineSeparator() {
+        return this.lineSeparator.toCharArray();
+    }
+
+    public void setLineSeparator(final String lineSeparator) {
+        this.lineSeparator = lineSeparator;
     }
 }

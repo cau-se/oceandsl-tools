@@ -44,6 +44,9 @@ public class Settings { // NOPMD data class
             "--strategy" }, required = true, converter = MappingStrategyConverter.class, description = "Strategy identifier")
     private EMappingStrategy mappingStrat;
 
+    @Parameter(names = "--eol", required = false, description = "End of line symbol")
+    private String lineSeparator = System.lineSeparator();
+
     public List<Path> getInputModelPaths() {
         return this.inputModelPaths;
     }
@@ -60,4 +63,11 @@ public class Settings { // NOPMD data class
         return this.mappingStrat;
     }
 
+    public char[] getLineSeparator() {
+        return this.lineSeparator.toCharArray();
+    }
+
+    public void setLineSeparator(final String lineSeparator) {
+        this.lineSeparator = lineSeparator;
+    }
 }

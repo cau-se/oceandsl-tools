@@ -15,12 +15,12 @@
 	<allow pkg="org.junit"/>
 	<allow pkg="org.json"/>
 	<allow pkg="org.mockito"/>
+    <allow pkg="org.mosim"/>
+    <allow pkg="org.osgi"/>
 	<allow pkg="org.powermock"/>
 	<allow pkg="org.slf4j"/>	
 	<allow pkg="org.xtext"/>
-    <allow pkg="org.osgi"/>
-    <allow pkg="org.mosim"/>
-
+    <allow pkg="org.yaml"/>
 
 	<allow pkg="lombok"/>
     <allow pkg="kieker"/>

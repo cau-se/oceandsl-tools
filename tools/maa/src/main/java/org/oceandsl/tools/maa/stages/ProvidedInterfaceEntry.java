@@ -28,6 +28,10 @@ public class ProvidedInterfaceEntry {
     @CsvCell(columnIndex = 4, columnName = "caller-component-types")
     private String callerComponentTypes;
 
+    public ProvidedInterfaceEntry() {
+        // dummy for csveed
+    }
+
     public ProvidedInterfaceEntry(final String componentType, final String providedInterface, final String operation,
             final String callerComponentTypes) {
         this.componentType = componentType;
@@ -68,4 +72,32 @@ public class ProvidedInterfaceEntry {
         this.callerComponentTypes = callerComponentTypes;
     }
 
+    @Override
+    public boolean equals(final Object object) {
+        if (object instanceof ProvidedInterfaceEntry) {
+            final ProvidedInterfaceEntry other = (ProvidedInterfaceEntry) object;
+            return this.checkString(this.callerComponentTypes, other.getCallerComponentTypes())
+                    && this.checkString(this.componentType, other.getComponentType())
+                    && this.checkString(this.operation, other.getOperation())
+                    && this.checkString(this.providedInterface, other.getProvidedInterface());
+        } else {
+            return false;
+        }
+    }
+
+    private boolean checkString(final String left, final String right) {
+        if (left == null && right == null) {
+            return true;
+        } else if (left != null && right != null) {
+            return left.equals(right);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.callerComponentTypes.hashCode() ^ this.componentType.hashCode() ^ this.operation.hashCode()
+                ^ this.providedInterface.hashCode();
+    }
 }

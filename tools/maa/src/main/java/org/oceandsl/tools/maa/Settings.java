@@ -56,6 +56,9 @@ public class Settings {
             "--component-statistics" }, required = false, description = "Output numerous component statistics")
     private boolean componentStatistics;
 
+    @Parameter(names = "--eol", required = false, description = "End of line symbol")
+    private String lineSeparator = System.lineSeparator();
+
     public Path getInputModelPath() {
         return this.inputModelPath;
     }
@@ -88,4 +91,11 @@ public class Settings {
         return this.experimentName;
     }
 
+    public char[] getLineSeparator() {
+        return this.lineSeparator.toCharArray();
+    }
+
+    public void setLineSeparator(final String lineSeparator) {
+        this.lineSeparator = lineSeparator;
+    }
 }

@@ -41,21 +41,21 @@ public final class ExecutionModelMerger {
     }
 
     /* default */ static void mergeExecutionModel(final DeploymentModel deploymentModel, // NOPMD
-            final ExecutionModel targetModel, final ExecutionModel mergeModel) {
-        ExecutionModelMerger.mergeInvocations(deploymentModel, targetModel, mergeModel);
-        ExecutionModelMerger.mergeStorageDataflows(deploymentModel, targetModel, mergeModel);
-        ExecutionModelMerger.mergeOperationDataflows(deploymentModel, targetModel, mergeModel);
+            final ExecutionModel lastModel, final ExecutionModel mergeModel) {
+        ExecutionModelMerger.mergeInvocations(deploymentModel, lastModel, mergeModel);
+        ExecutionModelMerger.mergeStorageDataflows(deploymentModel, lastModel, mergeModel);
+        ExecutionModelMerger.mergeOperationDataflows(deploymentModel, lastModel, mergeModel);
     }
 
-    private static void mergeInvocations(final DeploymentModel deploymentModel, final ExecutionModel targetModel,
+    private static void mergeInvocations(final DeploymentModel deploymentModel, final ExecutionModel lastModel,
             final ExecutionModel mergeModel) {
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> entry : mergeModel.getInvocations()) {
-            if (!ExecutionModelMerger.compareTupleOperationKeys(targetModel.getInvocations(), entry.getKey())) {
+            if (!ExecutionModelMerger.compareTupleOperationKeys(lastModel.getInvocations(), entry.getKey())) {
                 final Invocation value = ExecutionModelCloneUtils.duplicate(deploymentModel, entry.getValue());
                 final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
                 key.setFirst(value.getCaller());
                 key.setSecond(value.getCallee());
-                targetModel.getInvocations().put(key, value);
+                lastModel.getInvocations().put(key, value);
             }
         }
     }
@@ -72,41 +72,39 @@ public final class ExecutionModelMerger {
         return false;
     }
 
-    private static void mergeStorageDataflows(final DeploymentModel deploymentModel, final ExecutionModel targetModel,
+    private static void mergeStorageDataflows(final DeploymentModel deploymentModel, final ExecutionModel lastModel,
             final ExecutionModel mergeModel) {
         for (final Entry<Tuple<DeployedOperation, DeployedStorage>, StorageDataflow> entry : mergeModel
                 .getStorageDataflows()) {
-            final Tuple<DeployedOperation, DeployedStorage> targetModelKey = ExecutionModelMerger
-                    .findTupleStorageKeys(targetModel.getStorageDataflows(), entry.getKey());
-            ExecutionModelMerger.mergeStorageDataflow(targetModelKey, deploymentModel, targetModel, entry.getValue());
+            final Tuple<DeployedOperation, DeployedStorage> lastModelKey = ExecutionModelMerger
+                    .findTupleStorageKeys(lastModel.getStorageDataflows(), entry.getKey());
+            ExecutionModelMerger.mergeStorageDataflow(lastModelKey, deploymentModel, lastModel, entry.getValue());
         }
     }
 
-    private static void mergeStorageDataflow(final Tuple<DeployedOperation, DeployedStorage> targetModelKey,
-            final DeploymentModel deploymentModel, final ExecutionModel targetModel,
+    private static void mergeStorageDataflow(final Tuple<DeployedOperation, DeployedStorage> lastModelKey,
+            final DeploymentModel deploymentModel, final ExecutionModel lastModel,
             final StorageDataflow sourceStorageDataflow) {
-        if (targetModelKey == null) {
-            ExecutionModelMerger.mergeStorageDataflowNotExistingInTargetModel(deploymentModel, targetModel,
+        if (lastModelKey == null) {
+            ExecutionModelMerger.mergeStorageDataflowNotExistingInlastModel(deploymentModel, lastModel,
                     sourceStorageDataflow);
         } else {
-            ExecutionModelMerger.mergeStorageDataflowExistingInTarget(targetModel, targetModelKey,
-                    sourceStorageDataflow);
+            ExecutionModelMerger.mergeStorageDataflowExistingInTarget(lastModel, lastModelKey, sourceStorageDataflow);
         }
     }
 
-    private static void mergeStorageDataflowNotExistingInTargetModel(final DeploymentModel deploymentModel,
-            final ExecutionModel targetModel, final StorageDataflow sourceStorageDataflow) {
+    private static void mergeStorageDataflowNotExistingInlastModel(final DeploymentModel deploymentModel,
+            final ExecutionModel lastModel, final StorageDataflow sourceStorageDataflow) {
         final StorageDataflow value = ExecutionModelCloneUtils.duplicate(deploymentModel, sourceStorageDataflow);
         final Tuple<DeployedOperation, DeployedStorage> key = ExecutionFactory.eINSTANCE.createTuple();
         key.setFirst(value.getCode());
         key.setSecond(value.getStorage());
-        targetModel.getStorageDataflows().put(key, value);
+        lastModel.getStorageDataflows().put(key, value);
     }
 
-    private static void mergeStorageDataflowExistingInTarget(final ExecutionModel targetModel,
-            final Tuple<DeployedOperation, DeployedStorage> targetModelKey,
-            final StorageDataflow sourceStorageDataflow) {
-        final StorageDataflow targetStorageDataflow = targetModel.getStorageDataflows().get(targetModelKey);
+    private static void mergeStorageDataflowExistingInTarget(final ExecutionModel lastModel,
+            final Tuple<DeployedOperation, DeployedStorage> lastModelKey, final StorageDataflow sourceStorageDataflow) {
+        final StorageDataflow targetStorageDataflow = lastModel.getStorageDataflows().get(lastModelKey);
         switch (sourceStorageDataflow.getDirection()) {
         case READ:
             if (targetStorageDataflow.getDirection() == EDirection.WRITE) {
@@ -125,7 +123,7 @@ public final class ExecutionModelMerger {
             throw new InternalError(
                     "Found unsupported direction type " + sourceStorageDataflow.getDirection().getName());
         }
-        targetModel.getStorageDataflows().put(targetModelKey, targetStorageDataflow);
+        lastModel.getStorageDataflows().put(lastModelKey, targetStorageDataflow);
     }
 
     private static Tuple<DeployedOperation, DeployedStorage> findTupleStorageKeys(
@@ -140,36 +138,36 @@ public final class ExecutionModelMerger {
         return null;
     }
 
-    private static void mergeOperationDataflows(final DeploymentModel deploymentModel, final ExecutionModel targetModel,
+    private static void mergeOperationDataflows(final DeploymentModel deploymentModel, final ExecutionModel lastModel,
             final ExecutionModel mergeModel) {
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, OperationDataflow> entry : mergeModel
                 .getOperationDataflows()) {
-            final Tuple<DeployedOperation, DeployedOperation> targetModelKey = ExecutionModelMerger
-                    .findTupleOperationKeys(targetModel.getOperationDataflows(), entry.getKey());
+            final Tuple<DeployedOperation, DeployedOperation> lastModelKey = ExecutionModelMerger
+                    .findTupleOperationKeys(lastModel.getOperationDataflows(), entry.getKey());
             final OperationDataflow sourceOperationDataflow = entry.getValue();
-            if (targetModelKey == null) {
-                ExecutionModelMerger.mergeOperationDataflowNotExistingInTargetModel(deploymentModel, targetModel,
+            if (lastModelKey == null) {
+                ExecutionModelMerger.mergeOperationDataflowNotExistingInlastModel(deploymentModel, lastModel,
                         sourceOperationDataflow);
             } else {
-                ExecutionModelMerger.mergeOperationDataflowExistingInTarget(targetModel, targetModelKey,
+                ExecutionModelMerger.mergeOperationDataflowExistingInTarget(lastModel, lastModelKey,
                         sourceOperationDataflow);
             }
         }
     }
 
-    private static void mergeOperationDataflowNotExistingInTargetModel(final DeploymentModel deploymentModel,
-            final ExecutionModel targetModel, final OperationDataflow sourceOperationDataflow) {
+    private static void mergeOperationDataflowNotExistingInlastModel(final DeploymentModel deploymentModel,
+            final ExecutionModel lastModel, final OperationDataflow sourceOperationDataflow) {
         final OperationDataflow value = ExecutionModelCloneUtils.duplicate(deploymentModel, sourceOperationDataflow);
         final Tuple<DeployedOperation, DeployedOperation> key = ExecutionFactory.eINSTANCE.createTuple();
         key.setFirst(value.getCaller());
         key.setSecond(value.getCallee());
-        targetModel.getOperationDataflows().put(key, value);
+        lastModel.getOperationDataflows().put(key, value);
     }
 
-    private static void mergeOperationDataflowExistingInTarget(final ExecutionModel targetModel,
-            final Tuple<DeployedOperation, DeployedOperation> targetModelKey,
+    private static void mergeOperationDataflowExistingInTarget(final ExecutionModel lastModel,
+            final Tuple<DeployedOperation, DeployedOperation> lastModelKey,
             final OperationDataflow sourceOperationDataflow) {
-        final OperationDataflow targetOperationDataflow = targetModel.getOperationDataflows().get(targetModelKey);
+        final OperationDataflow targetOperationDataflow = lastModel.getOperationDataflows().get(lastModelKey);
         switch (sourceOperationDataflow.getDirection()) {
         case READ:
             if (targetOperationDataflow.getDirection() == EDirection.WRITE) {
@@ -188,7 +186,7 @@ public final class ExecutionModelMerger {
             throw new InternalError(
                     "Found unsupported direction type " + sourceOperationDataflow.getDirection().getName());
         }
-        targetModel.getOperationDataflows().put(targetModelKey, targetOperationDataflow);
+        lastModel.getOperationDataflows().put(lastModelKey, targetOperationDataflow);
     }
 
     private static Tuple<DeployedOperation, DeployedOperation> findTupleOperationKeys(

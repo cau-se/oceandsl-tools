@@ -111,23 +111,23 @@ public class TeetimeConfiguration extends Configuration {
         /** output stages. */
         final TableCsvSink<String, FileOperationEntry> operationTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.OPERATION_DEFINITIONS),
-                FileOperationEntry.class, true);
+                FileOperationEntry.class, true, settings.getLineSeparator());
         final TableCsvSink<String, CallerCalleeEntry> callTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.CALL_TABLE),
-                CallerCalleeEntry.class, true);
+                CallerCalleeEntry.class, true, settings.getLineSeparator());
         final TableCsvSink<String, NotFoundEntry> notFoundSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.NOT_FOUND), NotFoundEntry.class,
-                true);
+                true, settings.getLineSeparator());
 
         final TableCsvSink<String, DataflowEntry> callerCalleeDataflowTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.DATAFLOW), DataflowEntry.class,
-                true);
+                true, settings.getLineSeparator());
         final TableCsvSink<String, CommonBlockArgumentDataflow> commonBlockDataflowTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.DATAFLOW_COMMON_BLOCKS),
-                CommonBlockArgumentDataflow.class, true);
+                CommonBlockArgumentDataflow.class, true, settings.getLineSeparator());
         final TableCsvSink<String, GlobalDataEntry> commonBlocksTableSink = new TableCsvSink<>(
                 o -> settings.getOutputDirectoryPath().resolve(TeetimeConfiguration.COMMON_BLOCKS),
-                GlobalDataEntry.class, true);
+                GlobalDataEntry.class, true, settings.getLineSeparator());
 
         /** connections. */
         this.connectPorts(producer.getOutputPort(), directoryScannerStage.getInputPort());
@@ -214,7 +214,7 @@ public class TeetimeConfiguration extends Configuration {
                     result.add(line.substring(marker, i));
                     mode = 0;
                 }
-            } else if ((mode == 3) && (ch == ',')) {
+            } else if (mode == 3 && ch == ',') {
                 mode = 0;
             }
         }

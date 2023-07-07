@@ -74,6 +74,7 @@ public class TeetimeDataflowConfiguration extends Configuration {
 
         final CsvRowReaderProducerStage<DataflowEntry> callerCalleeDataflowReader = new CsvRowReaderProducerStage<>(
                 callerCalleeDataflowPath, settings.getSplitSymbol(), '"', '\\', true, DataflowEntry.class);
+
         final CsvRowReaderProducerStage<StorageOperationDataflow> storageOperationDataflowReader = new CsvRowReaderProducerStage<>(
                 storageDataflowPath, settings.getSplitSymbol(), '"', '\\', true, StorageOperationDataflow.class);
 

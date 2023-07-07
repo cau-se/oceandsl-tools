@@ -57,7 +57,7 @@ public class CsvRowReaderStage<R, T> extends AbstractTransformation<Path, T> {
      *            indicate how to interpret the first line in the CSV file, set to true to indicate
      *            that the first line contains the header information
      * @param clazz
-     *            bean class
+     *            row class
      * @throws IOException
      *             when a stream could not be opened.
      */

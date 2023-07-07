@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright 2023 Kieker Project (http://kieker-monitoring.net)
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,5 +28,4 @@ public class PathLabelMapper implements IPathLabelMapper<Path> {
     public Path map(final Path path) {
         return path;
     }
-
 }

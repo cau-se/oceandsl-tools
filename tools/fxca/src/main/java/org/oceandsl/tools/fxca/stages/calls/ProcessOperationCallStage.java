@@ -75,7 +75,6 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
 
     private void processFunctions(final FortranProject project, final FortranModule module, final Element element,
             final Table<String, NotFoundEntry> notFoundTable) {
-
         try {
             final List<Pair<String, String>> calls = NodeUtils.findFunctionCalls(element);
             this.processCalls(project, module, calls, notFoundTable);
@@ -88,7 +87,6 @@ public class ProcessOperationCallStage extends AbstractFilter<FortranProject> {
 
     private void processCalls(final FortranProject project, final FortranModule module,
             final List<Pair<String, String>> calls, final Table<String, NotFoundEntry> notFoundTable) {
-
         calls.forEach(call -> {
             final Pair<FortranModule, FortranOperation> caller = this.findOperation(project.getModules().values(),
                     call.getFirst());

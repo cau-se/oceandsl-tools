@@ -37,17 +37,17 @@ import org.oceandsl.tools.restructuring.stages.TraceRestoratorStage;
  */
 public class TeetimeConfiguration extends Configuration {
 
-    public TeetimeConfiguration(final Settings parameterConfiguration) throws IOException {
+    public TeetimeConfiguration(final Settings settings) throws IOException {
 
-        final ModelSource modelSource = new ModelSource(parameterConfiguration.getInputModelPaths());
+        final ModelSource modelSource = new ModelSource(settings.getInputModelPaths());
         final ModelRepositoryReaderStage modelReader = new ModelRepositoryReaderStage();
-        final TraceRestoratorStage traceRestorator = new TraceRestoratorStage(parameterConfiguration.getMappingStrat());
+        final TraceRestoratorStage traceRestorator = new TraceRestoratorStage(settings.getMappingStrat());
         final RestructurerStage restructurer = new RestructurerStage();
         final GenerateRestructureModelStage generateModelStage = new GenerateRestructureModelStage();
-        final RestructureModelSink modelSink = new RestructureModelSink(parameterConfiguration.getOutputDirectory());
+        final RestructureModelSink modelSink = new RestructureModelSink(settings.getOutputDirectory());
         final AggregateModelEditDistanceStage aggregateStage = new AggregateModelEditDistanceStage();
         final TableCsvSink<String, ModelEditDistanceEntry> medSinkStage = new TableCsvSink<>(
-                parameterConfiguration.getOutputDirectory(), ModelEditDistanceEntry.class, true);
+                settings.getOutputDirectory(), ModelEditDistanceEntry.class, true, settings.getLineSeparator());
 
         this.connectPorts(modelSource.getOutputPort(), modelReader.getInputPort());
 

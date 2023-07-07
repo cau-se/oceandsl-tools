@@ -31,8 +31,10 @@ import org.oceandsl.analysis.generic.Table;
 /**
  * Reader for a CSV file. Outputs the whole file as a table.
  *
+ * @param <R>
+ *            label data type
  * @param <T>
- *            ICsvRecord datatype
+ *            record data type
  *
  * @author Reiner Jung
  * @since 1.0
@@ -94,7 +96,7 @@ public class CsvTableReaderProducerStage<R, T> extends AbstractProducerStage<Tab
      *            that the first line contains the header information
      * @param clazz
      *            bean class
-     * @param pathLabelMapper
+     * @param mapper
      *            table label mapper object
      * @throws IOException
      *             when a stream could not be opened.
