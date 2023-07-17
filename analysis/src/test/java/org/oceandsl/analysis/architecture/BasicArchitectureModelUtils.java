@@ -19,8 +19,19 @@ import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyFactory;
 import kieker.model.analysismodel.assembly.AssemblyModel;
+import kieker.model.analysismodel.assembly.AssemblyOperation;
 import kieker.model.analysismodel.assembly.AssemblyPackage;
+import kieker.model.analysismodel.deployment.DeployedComponent;
+import kieker.model.analysismodel.deployment.DeployedOperation;
+import kieker.model.analysismodel.deployment.DeploymentContext;
+import kieker.model.analysismodel.deployment.DeploymentFactory;
 import kieker.model.analysismodel.deployment.DeploymentModel;
+import kieker.model.analysismodel.deployment.DeploymentPackage;
+import kieker.model.analysismodel.execution.ExecutionFactory;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.OperationType;
 import kieker.model.analysismodel.type.TypeFactory;
@@ -39,6 +50,7 @@ public final class BasicArchitectureModelUtils {
     public static final String OPERATION_A_A = "a()";
     public static final String OPERATION_B_A = "b()";
     public static final String BASE = "base";
+    public static final String CONTEXT = "test-context";
 
     private BasicArchitectureModelUtils() {
         // do not instantiate
@@ -49,7 +61,8 @@ public final class BasicArchitectureModelUtils {
 
         final TypeModel typeModel = createTypeModel(repository);
         final AssemblyModel assemblyModel = createAssemblyModel(repository, typeModel);
-        final DeploymentModel deploymentModel = createDeploymentModel(repository, assemblyModel, typeModel);
+        final DeploymentModel deploymentModel = createDeploymentModel(repository, assemblyModel);
+        createExecutionModel(repository, deploymentModel);
 
         return repository;
     }
@@ -88,14 +101,81 @@ public final class BasicArchitectureModelUtils {
     private static AssemblyModel createAssemblyModel(final ModelRepository repository, final TypeModel typeModel) {
         final AssemblyModel assemblyModel = repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL);
 
-        final AssemblyComponent componentA = AssemblyFactory.eINSTANCE.createAssemblyComponent();
-        componentA.setComponentType(typeModel.getComponentTypes().get(COMPONENT_A));
-        assemblyModel.getComponents().put(COMPONENT_A, componentA);
-        final AssemblyComponent componentB = AssemblyFactory.eINSTANCE.createAssemblyComponent();
-        componentB.setComponentType(typeModel.getComponentTypes().get(COMPONENT_B));
-        assemblyModel.getComponents().put(COMPONENT_B, componentB);
+        createAssemblyComponent(typeModel, assemblyModel, COMPONENT_A);
+        createAssemblyComponent(typeModel, assemblyModel, COMPONENT_B);
 
         return assemblyModel;
+    }
+
+    private static void createAssemblyComponent(final TypeModel typeModel, final AssemblyModel assemblyModel,
+            final String name) {
+        final ComponentType typeComponent = typeModel.getComponentTypes().get(name);
+        final AssemblyComponent component = AssemblyFactory.eINSTANCE.createAssemblyComponent();
+        component.setComponentType(typeComponent);
+        typeComponent.getProvidedOperations().values().forEach(operationType -> {
+            final AssemblyOperation operation = AssemblyFactory.eINSTANCE.createAssemblyOperation();
+            operation.setOperationType(operationType);
+            component.getOperations().put(operationType.getSignature(), operation);
+        });
+
+        assemblyModel.getComponents().put(name, component);
+    }
+
+    private static DeploymentModel createDeploymentModel(final ModelRepository repository,
+            final AssemblyModel assemblyModel) {
+        final DeploymentModel deploymentModel = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
+
+        final DeploymentContext context = DeploymentFactory.eINSTANCE.createDeploymentContext();
+        context.setName(CONTEXT);
+
+        deploymentModel.getContexts().put(CONTEXT, context);
+
+        createDeploymentComponent(assemblyModel, deploymentModel, COMPONENT_A);
+        createDeploymentComponent(assemblyModel, deploymentModel, COMPONENT_B);
+
+        return deploymentModel;
+    }
+
+    private static void createDeploymentComponent(final AssemblyModel assemblyModel,
+            final DeploymentModel deploymentModel, final String name) {
+        final AssemblyComponent assemblyComponent = assemblyModel.getComponents().get(name);
+        final DeployedComponent component = DeploymentFactory.eINSTANCE.createDeployedComponent();
+        component.setAssemblyComponent(assemblyComponent);
+        assemblyComponent.getOperations().forEach(entry -> {
+            final DeployedOperation operation = DeploymentFactory.eINSTANCE.createDeployedOperation();
+            operation.setAssemblyOperation(entry.getValue());
+            component.getOperations().put(entry.getKey(), operation);
+        });
+
+        deploymentModel.getContexts().get(CONTEXT).getComponents().put(name, component);
+    }
+
+    private static ExecutionModel createExecutionModel(final ModelRepository repository,
+            final DeploymentModel deploymentModel) {
+        final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
+
+        createLink(CONTEXT, COMPONENT_A, OPERATION_A_A, COMPONENT_B, OPERATION_B_A, deploymentModel, executionModel);
+
+        return executionModel;
+    }
+
+    private static void createLink(final String contextName, final String componentNameA, final String operationNameA,
+            final String componentNameB, final String operationNameB, final DeploymentModel deploymentModel,
+            final ExecutionModel executionModel) {
+        final DeploymentContext context = deploymentModel.getContexts().get(contextName);
+        final DeployedComponent componentA = context.getComponents().get(componentNameA);
+        final DeployedComponent componentB = context.getComponents().get(componentNameB);
+        final DeployedOperation operationA = componentA.getOperations().get(operationNameA);
+        final DeployedOperation operationB = componentB.getOperations().get(operationNameB);
+
+        final Invocation invocation = ExecutionFactory.eINSTANCE.createInvocation();
+        invocation.setCaller(operationA);
+        invocation.setCallee(operationB);
+        final Tuple<DeployedOperation, DeployedOperation> tuple = ExecutionFactory.eINSTANCE.createTuple();
+        tuple.setFirst(operationA);
+        tuple.setSecond(operationB);
+
+        executionModel.getInvocations().put(tuple, invocation);
     }
 
 }

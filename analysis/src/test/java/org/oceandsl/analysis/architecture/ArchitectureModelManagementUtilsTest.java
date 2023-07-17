@@ -48,15 +48,14 @@ class ArchitectureModelManagementUtilsTest {
         final ModelRepository repository = ArchitectureModelManagementUtils
                 .createModelRepository(ArchitectureModelManagementUtilsTest.EXPERIMENT_NAME);
         Assertions.assertEquals(ArchitectureModelManagementUtilsTest.EXPERIMENT_NAME, repository.getName());
-        Assertions.assertEquals(TypeModel.class, repository.getModel(TypePackage.Literals.TYPE_MODEL).getClass());
-        Assertions.assertEquals(AssemblyModel.class,
-                repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL).getClass());
-        Assertions.assertEquals(DeploymentModel.class,
-                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL).getClass());
-        Assertions.assertEquals(ExecutionModel.class,
-                repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL).getClass());
-        Assertions.assertEquals(StatisticsModel.class,
-                repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL).getClass());
-        Assertions.assertEquals(SourceModel.class, repository.getModel(SourcePackage.Literals.SOURCE_MODEL).getClass());
+        Assertions.assertInstanceOf(TypeModel.class, repository.getModel(TypePackage.Literals.TYPE_MODEL));
+        Assertions.assertInstanceOf(AssemblyModel.class, repository.getModel(AssemblyPackage.Literals.ASSEMBLY_MODEL));
+        Assertions.assertInstanceOf(DeploymentModel.class,
+                repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL));
+        Assertions.assertInstanceOf(ExecutionModel.class,
+                repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
+        Assertions.assertInstanceOf(StatisticsModel.class,
+                repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL));
+        Assertions.assertInstanceOf(SourceModel.class, repository.getModel(SourcePackage.Literals.SOURCE_MODEL));
     }
 }

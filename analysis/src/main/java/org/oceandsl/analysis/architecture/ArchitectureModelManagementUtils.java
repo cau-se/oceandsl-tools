@@ -61,36 +61,6 @@ import kieker.model.analysismodel.type.TypePackage;
  */
 public final class ArchitectureModelManagementUtils {
 
-    public static final String TYPE_MODEL_NAME = "type-model.xmi";
-
-    public static final String ASSEMBLY_MODEL_NAME = "assembly-model.xmi";
-
-    public static final String DEPLOYMENT_MODEL_NAME = "deployment-model.xmi";
-
-    public static final String EXECUTION_MODEL_NAME = "execution-model.xmi";
-
-    public static final String STATISTICS_MODEL_NAME = "statistics-model.xmi";
-
-    public static final String SOURCE_MODEL_NAME = "source-model.xmi";
-
-    public static final ModelDescriptor TYPE_MODEL_DESCRIPTOR = new ModelDescriptor(
-            ArchitectureModelManagementUtils.TYPE_MODEL_NAME, TypePackage.Literals.TYPE_MODEL, TypeFactory.eINSTANCE);
-    public static final ModelDescriptor ASSEMBLY_MODEL_DESCRIPTOR = new ModelDescriptor(
-            ArchitectureModelManagementUtils.ASSEMBLY_MODEL_NAME, AssemblyPackage.Literals.ASSEMBLY_MODEL,
-            AssemblyFactory.eINSTANCE);
-    public static final ModelDescriptor DEPLOYMENT_MODEL_DESCRIPTOR = new ModelDescriptor(
-            ArchitectureModelManagementUtils.DEPLOYMENT_MODEL_NAME, DeploymentPackage.Literals.DEPLOYMENT_MODEL,
-            DeploymentFactory.eINSTANCE);
-    public static final ModelDescriptor EXECUTION_MODEL_DESCRIPTOR = new ModelDescriptor(
-            ArchitectureModelManagementUtils.EXECUTION_MODEL_NAME, ExecutionPackage.Literals.EXECUTION_MODEL,
-            ExecutionFactory.eINSTANCE);
-    public static final ModelDescriptor STATISTICS_MODEL_DESCRIPTOR = new ModelDescriptor(
-            ArchitectureModelManagementUtils.STATISTICS_MODEL_NAME, StatisticsPackage.Literals.STATISTICS_MODEL,
-            StatisticsFactory.eINSTANCE);
-    public static final ModelDescriptor SOURCE_MODEL_DESCRIPTOR = new ModelDescriptor(
-            ArchitectureModelManagementUtils.SOURCE_MODEL_NAME, SourcePackage.Literals.SOURCE_MODEL,
-            SourceFactory.eINSTANCE);
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ArchitectureModelManagementUtils.class);
 
     private ArchitectureModelManagementUtils() {
@@ -103,25 +73,27 @@ public final class ArchitectureModelManagementUtils {
     }
 
     public static ModelRepository createModelRepository(final String repositoryName) {
-        final ModelRepository repository = new ModelRepository(repositoryName);
-        repository.register(ArchitectureModelManagementUtils.TYPE_MODEL_DESCRIPTOR,
+        final ModelRepository repository = ArchitectureModelRepositoryFactory
+                .createEmptyModelRepository(repositoryName);
+        repository.register(ArchitectureModelRepositoryFactory.TYPE_MODEL_DESCRIPTOR,
                 TypeFactory.eINSTANCE.createTypeModel());
-        repository.register(ArchitectureModelManagementUtils.ASSEMBLY_MODEL_DESCRIPTOR,
+        repository.register(ArchitectureModelRepositoryFactory.ASSEMBLY_MODEL_DESCRIPTOR,
                 AssemblyFactory.eINSTANCE.createAssemblyModel());
-        repository.register(ArchitectureModelManagementUtils.DEPLOYMENT_MODEL_DESCRIPTOR,
+        repository.register(ArchitectureModelRepositoryFactory.DEPLOYMENT_MODEL_DESCRIPTOR,
                 DeploymentFactory.eINSTANCE.createDeploymentModel());
-        repository.register(ArchitectureModelManagementUtils.EXECUTION_MODEL_DESCRIPTOR,
+        repository.register(ArchitectureModelRepositoryFactory.EXECUTION_MODEL_DESCRIPTOR,
                 ExecutionFactory.eINSTANCE.createExecutionModel());
-        repository.register(ArchitectureModelManagementUtils.STATISTICS_MODEL_DESCRIPTOR,
+        repository.register(ArchitectureModelRepositoryFactory.STATISTICS_MODEL_DESCRIPTOR,
                 StatisticsFactory.eINSTANCE.createStatisticsModel());
-        repository.register(ArchitectureModelManagementUtils.SOURCE_MODEL_DESCRIPTOR,
+        repository.register(ArchitectureModelRepositoryFactory.SOURCE_MODEL_DESCRIPTOR,
                 SourceFactory.eINSTANCE.createSourceModel());
 
         return repository;
     }
 
     public static ModelRepository loadModelRepository(final Path path) throws ConfigurationException {
-        final ModelRepository repository = new ModelRepository(path.getFileName().toString());
+        final ModelRepository repository = ArchitectureModelRepositoryFactory
+                .createEmptyModelRepository(path.getFileName().toString());
 
         final Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
         final Map<String, Object> extensionToFactoryMap = registry.getExtensionToFactoryMap();
@@ -138,17 +110,17 @@ public final class ArchitectureModelManagementUtils {
         packageRegistry.put(SourcePackage.eNS_URI, SourcePackage.eINSTANCE);
 
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.TYPE_MODEL_DESCRIPTOR, path, true);
+                ArchitectureModelRepositoryFactory.TYPE_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.ASSEMBLY_MODEL_DESCRIPTOR, path, true);
+                ArchitectureModelRepositoryFactory.ASSEMBLY_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.DEPLOYMENT_MODEL_DESCRIPTOR, path, true);
+                ArchitectureModelRepositoryFactory.DEPLOYMENT_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.EXECUTION_MODEL_DESCRIPTOR, path, true);
+                ArchitectureModelRepositoryFactory.EXECUTION_MODEL_DESCRIPTOR, path, true);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.STATISTICS_MODEL_DESCRIPTOR, path, false);
+                ArchitectureModelRepositoryFactory.STATISTICS_MODEL_DESCRIPTOR, path, false);
         ArchitectureModelManagementUtils.readModel(resourceSet, repository,
-                ArchitectureModelManagementUtils.SOURCE_MODEL_DESCRIPTOR, path, false);
+                ArchitectureModelRepositoryFactory.SOURCE_MODEL_DESCRIPTOR, path, false);
 
         return repository;
     }
@@ -207,17 +179,17 @@ public final class ArchitectureModelManagementUtils {
         ArchitectureModelManagementUtils.writeEclipseProject(outputDirectory, repository.getName());
 
         ArchitectureModelManagementUtils.writeModel(resourceSet, outputDirectory,
-                ArchitectureModelManagementUtils.TYPE_MODEL_DESCRIPTOR, repository);
+                ArchitectureModelRepositoryFactory.TYPE_MODEL_DESCRIPTOR, repository);
         ArchitectureModelManagementUtils.writeModel(resourceSet, outputDirectory,
-                ArchitectureModelManagementUtils.ASSEMBLY_MODEL_DESCRIPTOR, repository);
+                ArchitectureModelRepositoryFactory.ASSEMBLY_MODEL_DESCRIPTOR, repository);
         ArchitectureModelManagementUtils.writeModel(resourceSet, outputDirectory,
-                ArchitectureModelManagementUtils.DEPLOYMENT_MODEL_DESCRIPTOR, repository);
+                ArchitectureModelRepositoryFactory.DEPLOYMENT_MODEL_DESCRIPTOR, repository);
         ArchitectureModelManagementUtils.writeModel(resourceSet, outputDirectory,
-                ArchitectureModelManagementUtils.EXECUTION_MODEL_DESCRIPTOR, repository);
+                ArchitectureModelRepositoryFactory.EXECUTION_MODEL_DESCRIPTOR, repository);
         ArchitectureModelManagementUtils.writeModel(resourceSet, outputDirectory,
-                ArchitectureModelManagementUtils.STATISTICS_MODEL_DESCRIPTOR, repository);
+                ArchitectureModelRepositoryFactory.STATISTICS_MODEL_DESCRIPTOR, repository);
         ArchitectureModelManagementUtils.writeModel(resourceSet, outputDirectory,
-                ArchitectureModelManagementUtils.SOURCE_MODEL_DESCRIPTOR, repository);
+                ArchitectureModelRepositoryFactory.SOURCE_MODEL_DESCRIPTOR, repository);
     }
 
     private static void writeEclipseProject(final Path outputDirectory, final String name) throws IOException {
