@@ -16,7 +16,7 @@ dependencies {
 
 	implementation 'org.yaml:snakeyaml:2.0'
 	implementation 'org.csveed:csveed:0.7.4'
-	
+
 	testImplementation 'org.hamcrest:hamcrest-core:2.2'
 }
 
