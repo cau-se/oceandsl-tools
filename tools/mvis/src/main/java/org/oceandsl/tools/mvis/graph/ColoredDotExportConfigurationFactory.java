@@ -82,7 +82,9 @@ public class ColoredDotExportConfigurationFactory {
         builder.addEdgeAttribute(DotEdgeAttribute.LABEL, e -> this.getProperty(e, PropertyConstants.CALLS).toString());
 
         builder.addClusterAttribute(DotClusterAttribute.STYLE, v -> "filled");
-        builder.addClusterAttribute(DotClusterAttribute.FILLCOLOR, v -> "white");
+        builder.addClusterAttribute(DotClusterAttribute.FILLCOLOR, v -> {
+            return this.createBackgroundColorFromVertex(v);
+        });
 
         return builder;
     }
