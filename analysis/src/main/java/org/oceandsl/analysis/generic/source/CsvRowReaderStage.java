@@ -36,7 +36,7 @@ import teetime.stage.basic.AbstractTransformation;
  * @since 1.0
  *
  */
-public class CsvRowReaderStage<R, T> extends AbstractTransformation<Path, T> {
+public class CsvRowReaderStage<T> extends AbstractTransformation<Path, T> {
 
     private final char separator;
     private final char quoteSymbol;

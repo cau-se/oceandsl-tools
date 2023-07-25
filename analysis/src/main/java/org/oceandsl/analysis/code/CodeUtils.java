@@ -33,6 +33,15 @@ public final class CodeUtils {
     }
 
     // duplicate from AggregateDataflowStage
+    /**
+     * Merge two direction values.
+     *
+     * @param left
+     *            left operand
+     * @param right
+     *            right operand
+     * @return returns the merged value
+     */
     public static EDirection merge(final EDirection left, final EDirection right) {
         switch (left) {
         case READ:

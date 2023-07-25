@@ -15,17 +15,15 @@
  ***************************************************************************/
 package org.oceandsl.analysis.architecture.stages;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
 import kieker.analysis.architecture.recovery.events.DeployedOperationCallEvent;
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.deployment.DeployedOperation;
-import kieker.model.analysismodel.deployment.DeploymentPackage;
 import kieker.model.analysismodel.execution.ExecutionFactory;
 import kieker.model.analysismodel.execution.ExecutionModel;
 import kieker.model.analysismodel.execution.ExecutionPackage;
@@ -50,7 +48,8 @@ class CountUniqueCallsStageTest {
 
         final StatisticsModel statisticsModel = repository.getModel(StatisticsPackage.Literals.STATISTICS_MODEL);
         final ExecutionModel executionModel = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
-        final ExecutionModel deployedModel = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
+        // final ExecutionModel deployedModel =
+        // repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
 
         final CountUniqueCallsStage stage = new CountUniqueCallsStage(statisticsModel, executionModel);
 
@@ -60,7 +59,7 @@ class CountUniqueCallsStageTest {
         final DeployedOperationCallEvent event = new DeployedOperationCallEvent(tuple, duration);
 
         StageTester.test(stage).send(event).to(stage.getInputPort()).start();
-        assertThat(stage.getOutputPort(), StageTester.produces(event));
+        MatcherAssert.assertThat(stage.getOutputPort(), StageTester.produces(event));
     }
 
 }

@@ -26,8 +26,6 @@ import kieker.analysis.exception.InternalErrorException;
 import kieker.model.analysismodel.execution.Invocation;
 import kieker.model.analysismodel.execution.OperationDataflow;
 import kieker.model.analysismodel.execution.StorageDataflow;
-import kieker.model.analysismodel.source.SourceModel;
-import kieker.model.analysismodel.source.SourcePackage;
 
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 
@@ -37,31 +35,17 @@ import org.oceandsl.analysis.graph.IGraphElementSelector;
  */
 public class AllSelectorColor implements IGraphElementSelector {
 
-    private SourceModel sourceModel;
     private final List<String> groupA;
     private final List<String> groupB;
-    private String filePrefix; // NOPMD ImmutableField, however this does not work, as the
-                               // constructor reassign values
-                               // constructor
 
     public AllSelectorColor(final String[] groupA, final String[] groupB) {
         this.groupA = Arrays.asList(groupA);
         this.groupB = Arrays.asList(groupB);
-        this.filePrefix = "diff";
-        for (final String partition : groupA) {
-            this.filePrefix += "-" + partition;
-        }
-        for (final String partition : groupB) {
-            this.filePrefix += "-" + partition;
-        }
     }
 
     @Override
     public void setRepository(final ModelRepository repository) throws InternalErrorException {
-        this.sourceModel = repository.getModel(SourcePackage.Literals.SOURCE_MODEL);
-        if (this.sourceModel == null) {
-            throw new InternalErrorException("Missing source model.");
-        }
+        // does not need lookup to any model
     }
 
     @Override
@@ -86,7 +70,7 @@ public class AllSelectorColor implements IGraphElementSelector {
 
     @Override
     public String getFilePrefix() {
-        return this.filePrefix;
+        return "all-color";
     }
 
     @Override
