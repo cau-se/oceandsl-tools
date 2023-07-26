@@ -19,6 +19,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 
+import teetime.stage.basic.AbstractTransformation;
+
 import org.oceandsl.analysis.architecture.ArchitectureModelManagementUtils;
 import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
 
@@ -26,7 +28,8 @@ import org.oceandsl.tools.mop.merge.ModelRepositoryMergerUtils;
  * @author Reiner Jung
  * @since 1.2
  */
-public class ModelMergeStage extends AbstractModelOperationStage {
+public class ModelMergeStage extends AbstractTransformation<ModelRepository, ModelRepository>
+        implements IModelOperationStage {
 
     private final ModelRepository lastModel;
 

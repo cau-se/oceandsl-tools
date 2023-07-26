@@ -29,7 +29,7 @@ public class OperationConverter implements IStringConverter<EOperation> {
     @Override
     public EOperation convert(final String value) {
         for (final EOperation operation : EOperation.values()) {
-            if (operation.name().equalsIgnoreCase(value)) {
+            if (operation.name().equalsIgnoreCase(value.replace("-", "_"))) {
                 return operation;
             }
         }

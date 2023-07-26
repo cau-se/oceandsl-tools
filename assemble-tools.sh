@@ -12,7 +12,7 @@ cd $BASE_DIR/build/oceandsl-tools
 mkdir bin
 mkdir lib
 
-for I in allen-upper-limit cmi dar delta fxca maa mop mvis sar relabel restructuring ; do
+for I in allen-upper-limit cmi dar delta fxca maa mktable mop mvis sar relabel restructuring ; do
 	unzip $BASE_DIR/tools/$I/build/distributions/$I-$VERSION.zip
 	mv $I-$VERSION/lib/* lib/
 	mv $I-$VERSION/bin/* bin/

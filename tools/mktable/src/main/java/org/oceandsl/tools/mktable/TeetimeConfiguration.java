@@ -19,11 +19,15 @@ import java.nio.file.Path;
 
 import teetime.framework.Configuration;
 import teetime.stage.InitialElementProducer;
+import teetime.stage.basic.distributor.Distributor;
+import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
+import org.oceandsl.analysis.generic.Table;
 import org.oceandsl.analysis.generic.data.MoveOperationEntry;
 import org.oceandsl.analysis.generic.source.CsvTableReaderStage;
 import org.oceandsl.analysis.generic.source.FileNameLabelMapper;
-import org.oceandsl.tools.mktable.stages.CreateLaTeXTable;
+import org.oceandsl.tools.mktable.stages.CompactTableStage;
+import org.oceandsl.tools.mktable.stages.CreateLaTeXTable2;
 import org.oceandsl.tools.mktable.stages.SortTableStage;
 
 /**
@@ -39,10 +43,20 @@ public class TeetimeConfiguration extends Configuration {
         final CsvTableReaderStage<String, MoveOperationEntry> csvReaderStage = new CsvTableReaderStage<>(';', '"', '\\',
                 true, MoveOperationEntry.class, new FileNameLabelMapper());
         final SortTableStage sortTableStage = new SortTableStage();
-        final CreateLaTeXTable createLaTeXTable = new CreateLaTeXTable(settings.getOutputPath());
+        final Distributor<Table<String, MoveOperationEntry>> distributor = new Distributor<>(
+                new CopyByReferenceStrategy());
+        final CompactTableStage compactTableStage = new CompactTableStage();
+
+        final CreateLaTeXTable2 createFullLaTeXTable = new CreateLaTeXTable2(
+                settings.getOutputPath().resolve("full.tex"));
+        final CreateLaTeXTable2 createCompactLaTeXTable = new CreateLaTeXTable2(
+                settings.getOutputPath().resolve("compact.tex"));
 
         this.connectPorts(pathSource.getOutputPort(), csvReaderStage.getInputPort());
         this.connectPorts(csvReaderStage.getOutputPort(), sortTableStage.getInputPort());
-        this.connectPorts(sortTableStage.getOutputPort(), createLaTeXTable.getInputPort());
+        this.connectPorts(sortTableStage.getOutputPort(), distributor.getInputPort());
+        this.connectPorts(distributor.getNewOutputPort(), createFullLaTeXTable.getInputPort());
+        this.connectPorts(distributor.getNewOutputPort(), compactTableStage.getInputPort());
+        this.connectPorts(compactTableStage.getOutputPort(), createCompactLaTeXTable.getInputPort());
     }
 }

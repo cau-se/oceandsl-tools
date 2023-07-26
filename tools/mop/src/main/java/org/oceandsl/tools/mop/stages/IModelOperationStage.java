@@ -17,7 +17,8 @@ package org.oceandsl.tools.mop.stages;
 
 import kieker.analysis.architecture.repository.ModelRepository;
 
-import teetime.stage.basic.AbstractTransformation;
+import teetime.framework.InputPort;
+import teetime.framework.OutputPort;
 
 /**
  * Marker class for all model operations.
@@ -26,6 +27,10 @@ import teetime.stage.basic.AbstractTransformation;
  * @since 1.3
  *
  */
-public abstract class AbstractModelOperationStage extends AbstractTransformation<ModelRepository, ModelRepository> { // NOPMD
+public interface IModelOperationStage {
+
+    InputPort<ModelRepository> getInputPort();
+
+    OutputPort<ModelRepository> getOutputPort();
 
 }
