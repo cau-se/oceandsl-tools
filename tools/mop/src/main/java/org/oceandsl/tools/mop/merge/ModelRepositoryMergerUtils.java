@@ -15,6 +15,8 @@
  ***************************************************************************/
 package org.oceandsl.tools.mop.merge;
 
+import java.util.List;
+
 import kieker.analysis.architecture.repository.ModelRepository;
 import kieker.model.analysismodel.assembly.AssemblyPackage;
 import kieker.model.analysismodel.deployment.DeploymentPackage;
@@ -22,6 +24,8 @@ import kieker.model.analysismodel.execution.ExecutionPackage;
 import kieker.model.analysismodel.source.SourcePackage;
 import kieker.model.analysismodel.statistics.StatisticsPackage;
 import kieker.model.analysismodel.type.TypePackage;
+
+import org.oceandsl.tools.mop.stages.MergeClosestFitComponentStage.SimilarityEntry;
 
 /**
  * Merge two different model repositories.
@@ -59,6 +63,11 @@ public final class ModelRepositoryMergerUtils {
                 lastModelRepository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),
                 lastModelRepository.getModel(SourcePackage.Literals.SOURCE_MODEL),
                 mergeModelRepository.getModel(SourcePackage.Literals.SOURCE_MODEL));
+    }
+
+    public static void perform(final ModelRepository lastModel, final ModelRepository repository,
+            final List<SimilarityEntry> similarity) {
+
     }
 
 }

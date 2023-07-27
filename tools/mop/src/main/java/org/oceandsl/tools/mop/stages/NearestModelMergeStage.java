@@ -21,26 +21,24 @@ import teetime.framework.CompositeStage;
 import teetime.framework.InputPort;
 import teetime.framework.OutputPort;
 
-import org.oceandsl.tools.mop.MergeClosestFitComponentStage;
-
 public class NearestModelMergeStage extends CompositeStage implements IModelOperationStage {
 
     private final ModelMergeStage modelMergeStage;
     private final MergeClosestFitComponentStage mergeClosestFitComponentStage;
 
     public NearestModelMergeStage(final String name) {
-        this.modelMergeStage = new ModelMergeStage(name);
         this.mergeClosestFitComponentStage = new MergeClosestFitComponentStage();
-        this.connectPorts(this.modelMergeStage.getOutputPort(), this.mergeClosestFitComponentStage.getInputPort());
+        this.modelMergeStage = new ModelMergeStage(name);
+        this.connectPorts(this.mergeClosestFitComponentStage.getOutputPort(), this.modelMergeStage.getInputPort());
     }
 
     @Override
     public InputPort<ModelRepository> getInputPort() {
-        return this.modelMergeStage.getInputPort();
+        return this.mergeClosestFitComponentStage.getInputPort();
     }
 
     @Override
     public OutputPort<ModelRepository> getOutputPort() {
-        return this.mergeClosestFitComponentStage.getOutputPort();
+        return this.modelMergeStage.getOutputPort();
     }
 }
