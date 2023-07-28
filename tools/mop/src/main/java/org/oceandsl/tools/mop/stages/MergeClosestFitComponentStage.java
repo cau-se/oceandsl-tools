@@ -32,13 +32,37 @@ import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
 
+import teetime.framework.OutputPort;
 import teetime.stage.basic.AbstractTransformation;
 
+import org.oceandsl.analysis.generic.Table;
+
+/**
+ * Identify matching components based on the number of shared operations. This merger assumes that
+ * operation are fully qualified and do not appear twice. This can be an issue with object oriented
+ * software where methods of different classes can have the same name. For these cases, the method
+ * names must be prefixed with their initial FQN class name.
+ *
+ * @author Reiner Jung
+ * @since 1.3.0
+ *
+ */
 public class MergeClosestFitComponentStage extends AbstractTransformation<ModelRepository, ModelRepository> {
 
-    private static final double THRESHOLD = 0.4;
-
     private ModelRepository lastRepository;
+
+    private final OutputPort<Table<String, SimilarityEntry>> similarityOutputPort = this
+            .createOutputPort("similarityOutputPort");
+
+    private final double threshold;
+
+    public MergeClosestFitComponentStage(final double threshold) {
+        this.threshold = threshold;
+    }
+
+    public OutputPort<Table<String, SimilarityEntry>> getSimilarityOutputPort() {
+        return this.similarityOutputPort;
+    }
 
     @Override
     protected void execute(final ModelRepository repository) throws Exception {
@@ -46,77 +70,104 @@ public class MergeClosestFitComponentStage extends AbstractTransformation<ModelR
         if (this.lastRepository == null) {
             this.lastRepository = repository;
         } else {
-            // compute component similarities
-            final TypeModel lastTypeModel = this.lastRepository.getModel(TypePackage.Literals.TYPE_MODEL);
-            final TypeModel newTypeModel = repository.getModel(TypePackage.Literals.TYPE_MODEL);
+            final List<SimilarityEntry> entries = this.computeComponentNameSimilarites(repository);
 
-            final ComponentType[] lastComponents = lastTypeModel.getComponentTypes().values()
-                    .toArray(new ComponentType[lastTypeModel.getComponentTypes().values().size()]);
-            final ComponentType[] newComponents = newTypeModel.getComponentTypes().values()
-                    .toArray(new ComponentType[newTypeModel.getComponentTypes().values().size()]);
-            final List<SimilarityEntry> entries = new ArrayList<>();
-            for (int i = 0; i < lastComponents.length; i++) {
-                final ComponentType left = lastComponents[i];
-                for (int j = 0; j < newComponents.length; j++) {
-                    final ComponentType right = newComponents[j];
-                    entries.add(new SimilarityEntry(left, right, this.computeSimilarity(left, right)));
-                }
-            }
+            this.sortForBestFit(entries);
+            this.removeLesserFittingEntries(entries);
+            this.removeEntriesBelowThreshold(entries);
 
-            // sort best fit
-            entries.sort((a, b) -> { // NOCS this is how a comparator is implemented
-                if (a.similarity < b.similarity) {
-                    return 1;
-                } else if (a.similarity > b.similarity) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            });
+            this.similarityOutputPort.send(this.makeTable(entries, repository.getName()));
 
-            for (int i = 0; i < entries.size(); i++) {
-                final SimilarityEntry current = entries.get(i);
-                for (int j = i + 1; j < entries.size(); j++) {
-                    final SimilarityEntry next = entries.get(j);
-                    if (current.left == next.left || current.left == next.right || current.right == next.left
-                            || current.right == next.right) {
-                        entries.remove(j);
-                        j--; // NOCS, NOPMD this is necessary due to list operations
-                    }
-                }
-            }
-
-            for (int i = 0; i < entries.size(); i++) {
-                if (entries.get(i).similarity < THRESHOLD) {
-                    entries.remove(i);
-                    i--; // NOCS
-                }
-            }
-
-            // entries.forEach(e -> System.err.printf("%s <- %s : %f\n", e.left.getSignature(),
-            // e.right.getSignature(),
-            // e.similarity));
-
-            entries.forEach(entry -> {
-                if (this.isNumber(entry.right.getSignature()) || this.isHash(entry.right.getSignature())) {
-                    this.fixDeploymentSignature(repository, entry.right.getSignature(), entry.left.getSignature());
-                    this.fixAssemblySignature(repository, entry.right.getSignature(), entry.left.getSignature());
-                    this.fixTypeSignature(repository, entry.right.getSignature(), entry.left.getSignature());
-                    entry.right.setSignature(entry.left.getSignature());
-                } else if (this.isNumber(entry.left.getSignature()) || this.isHash(entry.left.getSignature())) {
-                    this.fixDeploymentSignature(repository, entry.left.getSignature(), entry.right.getSignature());
-                    this.fixAssemblySignature(repository, entry.left.getSignature(), entry.right.getSignature());
-                    this.fixTypeSignature(repository, entry.left.getSignature(), entry.right.getSignature());
-                    entry.left.setSignature(entry.right.getSignature());
-                } else {
-                    this.fixDeploymentSignature(repository, entry.right.getSignature(), entry.left.getSignature());
-                    this.fixAssemblySignature(repository, entry.right.getSignature(), entry.left.getSignature());
-                    this.fixTypeSignature(repository, entry.right.getSignature(), entry.left.getSignature());
-                    entry.right.setSignature(entry.left.getSignature());
-                }
-            });
+            this.changeComponentNamesBasedOnBestFit(repository, entries);
         }
         this.outputPort.send(repository);
+    }
+
+    private List<SimilarityEntry> computeComponentNameSimilarites(final ModelRepository repository) {
+        final TypeModel lastTypeModel = this.lastRepository.getModel(TypePackage.Literals.TYPE_MODEL);
+        final TypeModel newTypeModel = repository.getModel(TypePackage.Literals.TYPE_MODEL);
+
+        final ComponentType[] lastComponents = lastTypeModel.getComponentTypes().values()
+                .toArray(new ComponentType[lastTypeModel.getComponentTypes().values().size()]);
+        final ComponentType[] newComponents = newTypeModel.getComponentTypes().values()
+                .toArray(new ComponentType[newTypeModel.getComponentTypes().values().size()]);
+
+        final List<SimilarityEntry> entries = new ArrayList<>();
+
+        for (final ComponentType left : lastComponents) {
+            for (final ComponentType right : newComponents) {
+                entries.add(new SimilarityEntry(left, right, this.computeSimilarity(left, right)));
+            }
+        }
+        return entries;
+    }
+
+    private void sortForBestFit(final List<SimilarityEntry> entries) {
+        // sort best fit
+        entries.sort((a, b) -> { // NOCS this is how a comparator is implemented
+            if (a.getSimilarity() < b.getSimilarity()) {
+                return 1;
+            } else if (a.getSimilarity() > b.getSimilarity()) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+    }
+
+    private void removeLesserFittingEntries(final List<SimilarityEntry> entries) {
+        for (int i = 0; i < entries.size(); i++) {
+            final SimilarityEntry current = entries.get(i);
+            for (int j = i + 1; j < entries.size(); j++) {
+                final SimilarityEntry next = entries.get(j);
+                if ((current.getLeft() == next.getLeft()) || (current.getLeft() == next.getRight())
+                        || (current.getRight() == next.getLeft()) || (current.getRight() == next.getRight())) {
+                    entries.remove(j);
+                    j--; // NOCS, NOPMD this is necessary due to list operations
+                }
+            }
+        }
+    }
+
+    private void removeEntriesBelowThreshold(final List<SimilarityEntry> entries) {
+        for (int i = 0; i < entries.size(); i++) {
+            if (entries.get(i).getSimilarity() < this.threshold) {
+                entries.remove(i);
+                i--; // NOCS, NOPMD
+            }
+        }
+    }
+
+    private void changeComponentNamesBasedOnBestFit(final ModelRepository repository,
+            final List<SimilarityEntry> entries) {
+        entries.forEach(entry -> {
+            if (this.isNumber(entry.getRight().getSignature()) || this.isHash(entry.getRight().getSignature())) {
+                this.fixDeploymentSignature(repository, entry.getRight().getSignature(),
+                        entry.getLeft().getSignature());
+                this.fixAssemblySignature(repository, entry.getRight().getSignature(), entry.getLeft().getSignature());
+                this.fixTypeSignature(repository, entry.getRight().getSignature(), entry.getLeft().getSignature());
+                entry.getRight().setSignature(entry.getLeft().getSignature());
+            } else if (this.isNumber(entry.getLeft().getSignature()) || this.isHash(entry.getLeft().getSignature())) {
+                this.fixDeploymentSignature(repository, entry.getLeft().getSignature(),
+                        entry.getRight().getSignature());
+                this.fixAssemblySignature(repository, entry.getLeft().getSignature(), entry.getRight().getSignature());
+                this.fixTypeSignature(repository, entry.getLeft().getSignature(), entry.getRight().getSignature());
+                entry.getLeft().setSignature(entry.getRight().getSignature());
+            } else {
+                this.fixDeploymentSignature(repository, entry.getRight().getSignature(),
+                        entry.getLeft().getSignature());
+                this.fixAssemblySignature(repository, entry.getRight().getSignature(), entry.getLeft().getSignature());
+                this.fixTypeSignature(repository, entry.getRight().getSignature(), entry.getLeft().getSignature());
+                entry.getRight().setSignature(entry.getLeft().getSignature());
+            }
+        });
+
+    }
+
+    private Table<String, SimilarityEntry> makeTable(final List<SimilarityEntry> entries, final String name) {
+        final Table<String, SimilarityEntry> table = new Table<>(name);
+        table.getRows().addAll(entries);
+        return table;
     }
 
     private void fixTypeSignature(final ModelRepository repository, final String search, final String replacement) {
@@ -157,7 +208,35 @@ public class MergeClosestFitComponentStage extends AbstractTransformation<ModelR
     }
 
     private boolean isHash(final String signature) {
-        if (signature.length() == 32) {
+        if (signature.length() == 32) { private void changeComponentNamesBasedOnBestFit(final ModelRepository repository, final List<SimilarityEntry> entries) {
+            entries.forEach(entry -> {
+                if (this.isNumber(entry.getRight().getSignature()) || this.isHash(entry.getRight().getSignature())) {
+                    this.fixDeploymentSignature(repository, entry.getRight().getSignature(),
+                            entry.getLeft().getSignature());
+                    this.fixAssemblySignature(repository, entry.getRight().getSignature(),
+                            entry.getLeft().getSignature());
+                    this.fixTypeSignature(repository, entry.getRight().getSignature(), entry.getLeft().getSignature());
+                    entry.getRight().setSignature(entry.getLeft().getSignature());
+                } else if (this.isNumber(entry.getLeft().getSignature())
+                        || this.isHash(entry.getLeft().getSignature())) {
+                    this.fixDeploymentSignature(repository, entry.getLeft().getSignature(),
+                            entry.getRight().getSignature());
+                    this.fixAssemblySignature(repository, entry.getLeft().getSignature(),
+                            entry.getRight().getSignature());
+                    this.fixTypeSignature(repository, entry.getLeft().getSignature(), entry.getRight().getSignature());
+                    entry.getLeft().setSignature(entry.getRight().getSignature());
+                } else {
+                    this.fixDeploymentSignature(repository, entry.getRight().getSignature(),
+                            entry.getLeft().getSignature());
+                    this.fixAssemblySignature(repository, entry.getRight().getSignature(),
+                            entry.getLeft().getSignature());
+                    this.fixTypeSignature(repository, entry.getRight().getSignature(), entry.getLeft().getSignature());
+                    entry.getRight().setSignature(entry.getLeft().getSignature());
+                }
+            });
+
+        }
+
             return signature.matches("[a-f0-9]*");
         } else {
             return false;
@@ -171,31 +250,6 @@ public class MergeClosestFitComponentStage extends AbstractTransformation<ModelR
         final double leftMatch = leftSet.stream().filter(l -> rightSet.contains(l)).count();
         final double rightMatch = rightSet.stream().filter(r -> leftSet.contains(r)).count();
 
-        return (leftMatch / leftSet.size() + rightMatch / rightSet.size()) / 2.0d;
-    }
-
-    public class SimilarityEntry {
-
-        private final double similarity;
-        private final ComponentType right;
-        private final ComponentType left;
-
-        public SimilarityEntry(final ComponentType left, final ComponentType right, final double similarity) {
-            this.left = left;
-            this.right = right;
-            this.similarity = similarity;
-        }
-
-        public ComponentType getLeft() {
-            return this.left;
-        }
-
-        public ComponentType getRight() {
-            return this.right;
-        }
-
-        public double getSimilarity() {
-            return this.similarity;
-        }
+        return ((leftMatch / leftSet.size()) + (rightMatch / rightSet.size())) / 2.0d;
     }
 }

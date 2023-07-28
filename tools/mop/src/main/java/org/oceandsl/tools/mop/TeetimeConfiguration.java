@@ -46,7 +46,8 @@ public class TeetimeConfiguration extends Configuration {
             modelOperationStage = new ModelMergeStage(settings.getExperimentName());
             break;
         case NEAREST_MERGE:
-            modelOperationStage = new NearestModelMergeStage(settings.getExperimentName());
+            modelOperationStage = new NearestModelMergeStage(settings.getExperimentName(),
+                    settings.getOutputDirectory(), settings.getThreshold());
             break;
         case MERGE:
             modelOperationStage = new ModelMergeStage(settings.getExperimentName());
