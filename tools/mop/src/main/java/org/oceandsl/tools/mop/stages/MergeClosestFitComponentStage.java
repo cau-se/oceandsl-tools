@@ -93,11 +93,9 @@ public class MergeClosestFitComponentStage extends AbstractTransformation<ModelR
                 }
             }
 
-            System.err.println("----------------------------------------------");
-            entries.forEach(entry -> {
-                System.err.printf("left: %s right: %s %f\n", entry.left.getSignature(), entry.right.getSignature(),
-                        entry.similarity);
-            });
+            // entries.forEach(e -> System.err.printf("%s <- %s : %f\n", e.left.getSignature(),
+            // e.right.getSignature(),
+            // e.similarity));
 
             entries.forEach(entry -> {
                 if (this.isNumber(entry.right.getSignature()) || this.isHash(entry.right.getSignature())) {
@@ -117,15 +115,8 @@ public class MergeClosestFitComponentStage extends AbstractTransformation<ModelR
                     entry.right.setSignature(entry.left.getSignature());
                 }
             });
-
-            System.err.println("----------------------------------------------");
-            entries.forEach(entry -> {
-                System.err.printf("left: %s right: %s %f\n", entry.left.getSignature(), entry.right.getSignature(),
-                        entry.similarity);
-            });
-
-            this.outputPort.send(repository);
         }
+        this.outputPort.send(repository);
     }
 
     private void fixTypeSignature(final ModelRepository repository, final String search, final String replacement) {

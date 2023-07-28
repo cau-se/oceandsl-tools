@@ -32,6 +32,7 @@ import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentContext;
 import kieker.model.analysismodel.execution.EDirection;
 import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.OperationDataflow;
 import kieker.model.analysismodel.execution.StorageDataflow;
 import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
@@ -83,6 +84,8 @@ public final class ModelUtils {
                 return ModelUtils.isEqual((Invocation) left, (Invocation) right);
             } else if (left instanceof StorageDataflow) {
                 return ModelUtils.isEqual((StorageDataflow) left, (StorageDataflow) right);
+            } else if (left instanceof OperationDataflow) {
+                return ModelUtils.isEqual((OperationDataflow) left, (OperationDataflow) right);
             } else if (left instanceof Tuple) {
                 return ModelUtils.isEqual((Tuple<?, ?>) left, (Tuple<?, ?>) right);
             } else {
@@ -97,12 +100,23 @@ public final class ModelUtils {
                 && ModelUtils.areObjectsEqual((EObject) leftTuple.getSecond(), (EObject) rightTuple.getSecond());
     }
 
-    public static boolean isEqual(final StorageDataflow leftStorageDataflow, final StorageDataflow rightStorageAccess) {
+    public static boolean isEqual(final StorageDataflow leftStorageDataflow,
+            final StorageDataflow rightStorageDataflow) {
         ModelUtils.check(leftStorageDataflow, "StorageDataflow leftStorageDataflow");
-        ModelUtils.check(rightStorageAccess, "StorageDataflow rightStorageAccess");
-        return ModelUtils.isEqual(leftStorageDataflow.getCode(), rightStorageAccess.getCode())
-                && ModelUtils.compareDirections(leftStorageDataflow.getDirection(), rightStorageAccess.getDirection())
-                && ModelUtils.isEqual(leftStorageDataflow.getStorage(), rightStorageAccess.getStorage());
+        ModelUtils.check(rightStorageDataflow, "StorageDataflow rightStorageDataflow");
+        return ModelUtils.isEqual(leftStorageDataflow.getCode(), rightStorageDataflow.getCode())
+                && ModelUtils.compareDirections(leftStorageDataflow.getDirection(), rightStorageDataflow.getDirection())
+                && ModelUtils.isEqual(leftStorageDataflow.getStorage(), rightStorageDataflow.getStorage());
+    }
+
+    public static boolean isEqual(final OperationDataflow leftOperationDataflow,
+            final OperationDataflow rightOperationDataflow) {
+        ModelUtils.check(leftOperationDataflow, "OperationDataflow leftOperationDataflow");
+        ModelUtils.check(rightOperationDataflow, "OperationDataflow rightOperationDataflow");
+        return ModelUtils.isEqual(leftOperationDataflow.getCaller(), rightOperationDataflow.getCaller())
+                && ModelUtils.compareDirections(leftOperationDataflow.getDirection(),
+                        rightOperationDataflow.getDirection())
+                && ModelUtils.isEqual(leftOperationDataflow.getCallee(), rightOperationDataflow.getCallee());
     }
 
     private static boolean compareDirections(final EDirection leftDirection, final EDirection rightDirection) {
