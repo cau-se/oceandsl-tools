@@ -208,35 +208,7 @@ public class MergeClosestFitComponentStage extends AbstractTransformation<ModelR
     }
 
     private boolean isHash(final String signature) {
-        if (signature.length() == 32) { private void changeComponentNamesBasedOnBestFit(final ModelRepository repository, final List<SimilarityEntry> entries) {
-            entries.forEach(entry -> {
-                if (this.isNumber(entry.getRight().getSignature()) || this.isHash(entry.getRight().getSignature())) {
-                    this.fixDeploymentSignature(repository, entry.getRight().getSignature(),
-                            entry.getLeft().getSignature());
-                    this.fixAssemblySignature(repository, entry.getRight().getSignature(),
-                            entry.getLeft().getSignature());
-                    this.fixTypeSignature(repository, entry.getRight().getSignature(), entry.getLeft().getSignature());
-                    entry.getRight().setSignature(entry.getLeft().getSignature());
-                } else if (this.isNumber(entry.getLeft().getSignature())
-                        || this.isHash(entry.getLeft().getSignature())) {
-                    this.fixDeploymentSignature(repository, entry.getLeft().getSignature(),
-                            entry.getRight().getSignature());
-                    this.fixAssemblySignature(repository, entry.getLeft().getSignature(),
-                            entry.getRight().getSignature());
-                    this.fixTypeSignature(repository, entry.getLeft().getSignature(), entry.getRight().getSignature());
-                    entry.getLeft().setSignature(entry.getRight().getSignature());
-                } else {
-                    this.fixDeploymentSignature(repository, entry.getRight().getSignature(),
-                            entry.getLeft().getSignature());
-                    this.fixAssemblySignature(repository, entry.getRight().getSignature(),
-                            entry.getLeft().getSignature());
-                    this.fixTypeSignature(repository, entry.getRight().getSignature(), entry.getLeft().getSignature());
-                    entry.getRight().setSignature(entry.getLeft().getSignature());
-                }
-            });
-
-        }
-
+        if (signature.length() == 32) {
             return signature.matches("[a-f0-9]*");
         } else {
             return false;
