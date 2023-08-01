@@ -8,27 +8,22 @@ e.g., common blocks in Fortran.
 ===== ========================== ======== ======================================================
 Short Long                       Required Description
 ===== ========================== ======== ======================================================
--i    --call-input                        Operation call CSV file
--j    --dataflow-input                    Dataflow CSV file
--cs   --call-separation-char              Separation character for operation call CSV files,
-                                          default is comma (,)
--ds   --dataflow-separation-char          Separation character for dataflow CSV files, default
-                                          is comma (,)
--ns   --names-separation-char             Separation character for function name lists CSV 
-                                          files, default is comma (,)
--f    --function-names                    Function file map CSV file
+-i    --input                    yes      Input directory
 -o    --output                   yes      Output directory to store graphics and statistics
--M    --component-maps                    Component, file and function map file
--l    --source-label             yes      Set source label for the read data
--c    --case-insensitive                  Handle function names in CSV case insensitive
+-M    --component-maps                    Component, file and function map files
+-E    --experiment-name                   Name of the experiment
 -H    --hostname                          Hostname to be used in CSV reconstruction
--E    --experiment-name          yes      Name of the experiment
--n    --missing-mappings-file             Output file for the list of files with a missing
-                                          mapping in the mapping file
+-g    --input-mode                        Input mode to be used for static analysis
+                                          Possible Values: [CALL, DATAFLOW, BOTH]
 -a    --missing-functions                 Output file for the list of functions without an
                                           associated file
--m    --module-modes             yes      Module converter strategies (at lease one of):
-                                          module-mode, file-mode, map-mode
+-n    --missing-mappings-file             Output file for the list of files with a missing
+                                          mapping in the mapping file. 
+-m    --module-modes                      Module converter strategies (at lease one of):
+                                          module-mode, file-mode, map-mode 
+-sc   --separation-character              Separation character for CSV files, default is
+                                          comma (,)
+-l    --source-label                      Set source label for the read data
 ===== ========================== ======== ======================================================
 
 The tool reads a list of operation calls, e.g., in Fortran, one subroutine

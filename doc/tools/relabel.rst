@@ -12,6 +12,7 @@ Short Long                  Required Description
 -i    --input               yes      Directory for the input model
 -o    --output              yes      Directory for the modified model
 -r    --replacements        yes      Replacement for labels source:target
+-e    --experiment          no       Set experiment name of the model repository
 ===== ===================== ======== ======================================================
 
 Examples

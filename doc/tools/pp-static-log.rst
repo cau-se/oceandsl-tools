@@ -18,3 +18,4 @@ Short Long                  Required Description
 -o    --output              yes      Output file for 4 column log
 ===== ===================== ======== ======================================================
 
+(Deprecated)

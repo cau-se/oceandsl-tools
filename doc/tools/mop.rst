@@ -2,6 +2,9 @@ Model Operation
 ===============
 
 Merges models together from different sources or select a portion of the model.
+In merge mode, the tool tries to infer whether two components from the input
+models are the same based on their similarity in operations. The highest fit
+is considered the corresponding component and merged.
 
 ===== ===================== ======== ======================================================
 Short Long                  Required Description
@@ -10,6 +13,8 @@ Short Long                  Required Description
 -o    --output              yes      Ouput architecture model directory
 -e    --experiment          yes      Experiment name
 -s    --selection-criteria           Element selection criteria file
+-t    --threshold                    Threshold for accepted similarity in component names:
+                                     1 = identical, 0 = nothing identical Default: 0.4
 ===== ===================== ======== ======================================================
 
 Example merge:
