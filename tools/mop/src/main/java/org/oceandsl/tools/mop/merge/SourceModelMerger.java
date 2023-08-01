@@ -44,22 +44,23 @@ public final class SourceModelMerger {
     }
 
     /* default */ static void mergeSourceModel(final TypeModel typeModel, final AssemblyModel assemblyModel, // NOPMD
-            final DeploymentModel deploymentModel, final ExecutionModel executionModel, final SourceModel model,
-            final SourceModel mergeModel) {
-        for (final Entry<EObject, EList<String>> mergeSource : mergeModel.getSources()) {
-            final EObject modelKey = SourceModelMerger.findCorrespondingKey(model.getSources(), mergeSource.getKey());
+            final DeploymentModel deploymentModel, final ExecutionModel executionModel,
+            final SourceModel lastSourceModel, final SourceModel mergeSourceModel) {
+        for (final Entry<EObject, EList<String>> mergeSource : mergeSourceModel.getSources()) {
+            final EObject modelKey = SourceModelMerger.findCorrespondingKey(lastSourceModel.getSources(),
+                    mergeSource.getKey());
             if (modelKey != null) {
-                final EList<String> modelSource = model.getSources().get(modelKey);
+                final EList<String> modelSource = lastSourceModel.getSources().get(modelKey);
                 if (modelSource == null) {
                     SourceModelMerger.LOGGER.error("Model error no sources for existing key {}", modelKey);
-                    model.getSources().put(modelKey, mergeSource.getValue());
+                    lastSourceModel.getSources().put(modelKey, mergeSource.getValue());
                 } else {
                     SourceModelMerger.mergeSources(modelSource, mergeSource.getValue());
                 }
             } else {
                 final EList<String> modelSources = new BasicEList<>();
                 SourceModelMerger.mergeSources(modelSources, mergeSource.getValue());
-                model.getSources().put(SourceModelMerger.findCorrespondingObject(typeModel, assemblyModel,
+                lastSourceModel.getSources().put(SourceModelMerger.findCorrespondingObject(typeModel, assemblyModel,
                         deploymentModel, executionModel, mergeSource.getKey()), modelSources);
             }
         }

@@ -41,6 +41,8 @@ import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
 
+import teetime.stage.basic.AbstractTransformation;
+
 /**
  * Keep only deployed components that match the patterns and remove all other deployed components
  * including the all assembly components, component types, statistics and source annotations that
@@ -50,7 +52,8 @@ import kieker.model.analysismodel.type.TypePackage;
  * @since 1.3
  *
  */
-public class ModelSelectStage extends AbstractModelOperationStage {
+public class ModelSelectStage extends AbstractTransformation<ModelRepository, ModelRepository>
+        implements IModelOperationStage {
 
     private final List<Pattern> patterns;
 

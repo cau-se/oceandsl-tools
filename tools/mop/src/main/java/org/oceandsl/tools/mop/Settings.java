@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.converters.DoubleConverter;
 import com.beust.jcommander.converters.PathConverter;
 
 /**
@@ -49,6 +50,10 @@ public class Settings { // NOPMD data class
             "--selection-criteria" }, required = false, converter = PathConverter.class, description = "Element selection criteria file")
     private Path selectionCriteriaPath;
 
+    @Parameter(names = { "-t",
+            "--threshold" }, required = false, converter = DoubleConverter.class, description = "Threshold for accepted similarity in component names: 1 = identical, 0 = nothing identical, default = 0.4")
+    private double threshold = 0.4d;
+
     private final List<Pattern> selectionCriteriaPatterns = new ArrayList<>();
 
     public List<Path> getInputModelPaths() {
@@ -73,6 +78,14 @@ public class Settings { // NOPMD data class
 
     public List<Pattern> getSelectionCriteriaPatterns() {
         return this.selectionCriteriaPatterns;
+    }
+
+    public double getThreshold() {
+        return this.threshold;
+    }
+
+    public void setThreshold(final double threshold) {
+        this.threshold = threshold;
     }
 
 }

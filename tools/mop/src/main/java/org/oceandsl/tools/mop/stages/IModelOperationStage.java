@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop;
+package org.oceandsl.tools.mop.stages;
 
-import com.beust.jcommander.IStringConverter;
-import com.beust.jcommander.ParameterException;
+import kieker.analysis.architecture.repository.ModelRepository;
+
+import teetime.framework.InputPort;
+import teetime.framework.OutputPort;
 
 /**
+ * Marker class for all model operations.
  *
  * @author Reiner Jung
- * @since 2.0.0
+ * @since 1.3
  *
  */
-public class OperationConverter implements IStringConverter<EOperation> {
+public interface IModelOperationStage {
 
-    @Override
-    public EOperation convert(final String value) {
-        for (final EOperation operation : EOperation.values()) {
-            if (operation.name().equalsIgnoreCase(value.replace("-", "_"))) {
-                return operation;
-            }
-        }
-        throw new ParameterException(String.format("%s is not a valid model operation.", value)); // NOPMD
-    }
+    InputPort<ModelRepository> getInputPort();
+
+    OutputPort<ModelRepository> getOutputPort();
 
 }

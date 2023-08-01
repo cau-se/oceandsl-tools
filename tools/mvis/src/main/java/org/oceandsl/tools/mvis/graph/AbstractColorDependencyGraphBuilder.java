@@ -28,6 +28,7 @@ import kieker.analysis.generic.graph.GraphFactory;
 import kieker.analysis.generic.graph.IEdge;
 import kieker.analysis.generic.graph.IGraph;
 import kieker.analysis.generic.graph.INode;
+import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.execution.EDirection;
 import kieker.model.analysismodel.execution.ExecutionPackage;
@@ -51,42 +52,52 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
     private SourceModel sourcesModel;
     private final IGraphElementSelector selector;
 
+    private final ColorSet componentFGSet = new ColorSet("#000000", "#0000af", "#00af00", "#4a4a4a", "#ff00ff");
+    private final ColorSet componentBGSet = new ColorSet("#ffffff", "#c0c0ff", "#c0ffc0", "#fafafa", "#ffc0ff");
+
+    private final ColorSet operationFGSet = new ColorSet("#000000", "#0000af", "#00af00", "#fafafa", "#ff00ff");
+    private final ColorSet operationBGSet = new ColorSet("#ffffff", "#a0a0ff", "#90ff90", "#eaeaea", "#d000d0");
+
     public AbstractColorDependencyGraphBuilder(final IGraphElementSelector selector) {
         super();
         this.selector = selector;
     }
 
     protected String selectForegroundColor(final EObject object) {
-        final EList<String> sources = this.sourcesModel.getSources().get(object);
-        if (sources != null) {
-            if (this.selector.isColorGroup(sources, 0)) {
-                return "#000000";
-            } else if (this.selector.isColorGroup(sources, 1)) {
-                return "#0000ff"; // blue for static
-            } else if (this.selector.isColorGroup(sources, 2)) {
-                return "#00ff00"; // green on dynamic
-            } else {
-                return "#fafafa"; // other objects
-            }
+        final ColorSet colorSet;
+        if (object instanceof AssemblyComponent) {
+            colorSet = this.componentFGSet;
         } else {
-            return "#ff00ff"; // pink on error
+            colorSet = this.operationFGSet;
         }
+        return this.selectColor(object, colorSet);
     }
 
     protected String selectBackgroundColor(final EObject object) {
+        final ColorSet colorSet;
+
+        if (object instanceof AssemblyComponent) {
+            colorSet = this.componentBGSet;
+        } else {
+            colorSet = this.operationBGSet;
+        }
+        return this.selectColor(object, colorSet);
+    }
+
+    private String selectColor(final EObject object, final ColorSet colorSet) {
         final EList<String> sources = this.sourcesModel.getSources().get(object);
         if (sources != null) {
             if (this.selector.isColorGroup(sources, 0)) {
-                return "#ffffff";
+                return colorSet.both;
             } else if (this.selector.isColorGroup(sources, 1)) {
-                return "#a0a0ff"; // blue for static
+                return colorSet.first;
             } else if (this.selector.isColorGroup(sources, 2)) {
-                return "#90ff90"; // green on dynamic
+                return colorSet.second;
             } else {
-                return "#eaeaea"; // other objects
+                return colorSet.other; // other objects
             }
         } else {
-            return "#d000d0"; // pink on error
+            return colorSet.error; // pink on error
         }
     }
 
@@ -188,4 +199,27 @@ public abstract class AbstractColorDependencyGraphBuilder extends AbstractDepend
     }
 
     protected abstract INode addStorageVertex(final DeployedStorage deployedStorage); // NOPMD
+
+    /**
+     * Color set for coloring for and background of elements.
+     *
+     * @author Reiner Jung
+     * @since 1.3.0
+     */
+    private final class ColorSet {
+        private final String both;
+        private final String first;
+        private final String second;
+        private final String other;
+        private final String error;
+
+        private ColorSet(final String both, final String first, final String second, final String other,
+                final String error) {
+            this.both = both;
+            this.first = first;
+            this.second = second;
+            this.other = other;
+            this.error = error;
+        }
+    }
 }

@@ -129,4 +129,10 @@ public class CallerCalleeEntry {
         return this.sourcePath.hashCode() ^ this.sourceModule.hashCode() ^ this.caller.hashCode()
                 ^ this.targetPath.hashCode() ^ this.targetModule.hashCode() ^ this.callee.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s:%s:%s -> %s:%s:%s", this.sourcePath, this.sourceModule, this.caller, this.targetPath,
+                this.targetModule, this.callee);
+    }
 }

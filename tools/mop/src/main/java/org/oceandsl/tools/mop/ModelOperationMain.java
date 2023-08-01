@@ -80,6 +80,8 @@ public class ModelOperationMain extends AbstractService<TeetimeConfiguration, Se
         }
         switch (this.settings.getOperation()) {
         case MERGE:
+        case NEAREST_MERGE:
+        case FUNCTION_MERGE:
             break;
         case SELECT:
             if (!ParameterEvaluationUtils.isFileReadable(this.settings.getSelectionCriteriaPath().toFile(),

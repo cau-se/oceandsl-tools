@@ -11,6 +11,7 @@
 
 
 	<rule ref="category/java/bestpractices.xml">
+		<exclude name="ArrayIsStoredDirectly"/>
 		<exclude name="UseVarargs" />
 		<exclude name="JUnitTestsShouldIncludeAssert"/>
 	</rule>
@@ -43,16 +44,16 @@
 		<exclude name="SignatureDeclareThrowsException" />
 		<exclude name="TooManyMethods" />
 		<exclude name="UseObjectForClearerAPI" />
-		<exclude name="MutableStaticState" />
 	</rule>
 
 
 	<rule ref="category/java/errorprone.xml">
+		<exclude name="AssignmentInOperand" />
 		<exclude name="AvoidCatchingNPE" />
 		<exclude name="AvoidLiteralsInIfCondition" />
-		<exclude name="AssignmentInOperand"/>
+		<exclude name="BeanMembersShouldSerialize"/>
 		<exclude name="DataflowAnomalyAnalysis" />
-		<exclude name="DoNotTerminateVM" />
+		<exclude name="DoNotCallSystemExit" />
 		<exclude name="UseProperClassLoader" />
 		<exclude name="LoggerIsNotStaticFinal" />
 	</rule>

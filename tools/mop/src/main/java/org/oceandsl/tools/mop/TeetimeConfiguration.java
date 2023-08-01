@@ -22,9 +22,10 @@ import teetime.framework.Configuration;
 import org.oceandsl.analysis.architecture.stages.ModelRepositoryReaderStage;
 import org.oceandsl.analysis.architecture.stages.ModelSink;
 import org.oceandsl.analysis.architecture.stages.ModelSource;
-import org.oceandsl.tools.mop.stages.AbstractModelOperationStage;
+import org.oceandsl.tools.mop.stages.IModelOperationStage;
 import org.oceandsl.tools.mop.stages.ModelMergeStage;
 import org.oceandsl.tools.mop.stages.ModelSelectStage;
+import org.oceandsl.tools.mop.stages.NearestModelMergeStage;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -38,9 +39,16 @@ public class TeetimeConfiguration extends Configuration {
 
         final ModelSource modelSource = new ModelSource(settings.getInputModelPaths());
         final ModelRepositoryReaderStage modelReader = new ModelRepositoryReaderStage();
-        final AbstractModelOperationStage modelOperationStage;
+        final IModelOperationStage modelOperationStage;
 
         switch (settings.getOperation()) {
+        case FUNCTION_MERGE:
+            modelOperationStage = new ModelMergeStage(settings.getExperimentName());
+            break;
+        case NEAREST_MERGE:
+            modelOperationStage = new NearestModelMergeStage(settings.getExperimentName(),
+                    settings.getOutputDirectory(), settings.getThreshold());
+            break;
         case MERGE:
             modelOperationStage = new ModelMergeStage(settings.getExperimentName());
             break;

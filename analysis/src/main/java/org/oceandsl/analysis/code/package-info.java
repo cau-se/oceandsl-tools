@@ -13,19 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package org.oceandsl.tools.mop.stages;
-
-import kieker.analysis.architecture.repository.ModelRepository;
-
-import teetime.stage.basic.AbstractTransformation;
-
-/**
- * Marker class for all model operations.
- *
- * @author Reiner Jung
- * @since 1.3
- *
- */
-public abstract class AbstractModelOperationStage extends AbstractTransformation<ModelRepository, ModelRepository> { // NOPMD
-
-}
+package org.oceandsl.analysis.code;

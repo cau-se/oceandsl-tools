@@ -21,6 +21,7 @@ import com.beust.jcommander.IStringConverter;
 
 import org.oceandsl.analysis.graph.IGraphElementSelector;
 import org.oceandsl.analysis.graph.selector.AllSelector;
+import org.oceandsl.analysis.graph.selector.AllSelectorColor;
 import org.oceandsl.analysis.graph.selector.DiffSelector;
 import org.oceandsl.analysis.graph.selector.IntersectSelector;
 import org.oceandsl.analysis.graph.selector.SubtractSelector;
@@ -37,10 +38,12 @@ public class SelectorKindConverter implements IStringConverter<IGraphElementSele
     public IGraphElementSelector convert(final String value) {
         final String[] parts = value.split(":");
         final String command = parts[0];
-        final ESelectorKind selectorKind = ESelectorKind.valueOf(command.toUpperCase(Locale.ROOT));
+        final ESelectorKind selectorKind = ESelectorKind.valueOf(command.toUpperCase(Locale.ROOT).replaceAll("-", "_"));
         switch (selectorKind) {
         case ALL:
             return new AllSelector();
+        case ALL_COLOR:
+            return new AllSelectorColor(parts[1].split(","), parts[2].split(","));
         case DIFF:
             return new DiffSelector(parts[1].split(","), parts[2].split(","));
         case SUBTRACT:
