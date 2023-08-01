@@ -34,7 +34,7 @@ public class Settings { // NOPMD data class
     private Path inputPath;
 
     @Parameter(names = { "-o",
-            "--output" }, required = true, converter = PathConverter.class, description = "Output restructure information as CSV table")
+            "--output" }, required = true, converter = PathConverter.class, description = "Output restructure information path and filename without extension")
     private Path outputPath;
 
     @Parameter(names = { "--eol" }, required = false, description = "End of line symbol")

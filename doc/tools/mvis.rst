@@ -16,6 +16,8 @@ Short Long                  Required Description
 -m    --mode                         Mode deciding whether an edge is added when its nodes
                                      are not selected add-nodes, only
 -c    --compute-statistics           Generate the listed statistics
+      --eol                          Set end of line character for CSV files
+                                     Default: system's standard symbol                               
 ===== ===================== ======== ======================================================
 
 Selectors
