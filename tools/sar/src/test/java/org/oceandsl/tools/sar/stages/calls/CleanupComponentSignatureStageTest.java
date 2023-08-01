@@ -15,8 +15,17 @@
  ***************************************************************************/
 package org.oceandsl.tools.sar.stages.calls;
 
-import org.junit.jupiter.api.Assertions;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
+
+import teetime.framework.test.StageTester;
+
+import org.oceandsl.analysis.code.stages.data.CallerCalleeEntry;
+import org.oceandsl.tools.sar.signature.processor.AbstractSignatureProcessor;
+import org.oceandsl.tools.sar.signature.processor.FileBasedSignatureProcessor;
 
 /**
  *
@@ -25,9 +34,32 @@ import org.junit.jupiter.api.Test;
  */
 class CleanupComponentSignatureStageTest {
 
+    private static final String SOURCE_PATH = "a/b/c";
+    private static final String SOURCE_MODULE = "fish";
+    private static final String CALLER = "caller()";
+    private static final String TARGET_PATH = "a/b/d";
+    private static final String TARGET_MODULE = "bicycle";
+    private static final String CALLEE = "callee()";
+
     @Test
     void test() {
-        Assertions.fail("Not yet implemented");
+        final List<AbstractSignatureProcessor> processors = new ArrayList<>();
+
+        processors.add(new FileBasedSignatureProcessor(true));
+
+        final CleanupComponentSignatureStage stage = new CleanupComponentSignatureStage(processors);
+
+        final CallerCalleeEntry cc = new CallerCalleeEntry(CleanupComponentSignatureStageTest.SOURCE_PATH,
+                CleanupComponentSignatureStageTest.SOURCE_MODULE, CleanupComponentSignatureStageTest.CALLER,
+                CleanupComponentSignatureStageTest.TARGET_PATH, CleanupComponentSignatureStageTest.TARGET_MODULE,
+                CleanupComponentSignatureStageTest.CALLEE);
+
+        final CallerCalleeEntry resultCC = new CallerCalleeEntry(CleanupComponentSignatureStageTest.SOURCE_PATH, "c",
+                CleanupComponentSignatureStageTest.CALLER, CleanupComponentSignatureStageTest.TARGET_PATH, "d",
+                CleanupComponentSignatureStageTest.CALLEE);
+
+        StageTester.test(stage).send(cc).to(stage.getInputPort()).start();
+        MatcherAssert.assertThat(stage.getOutputPort(), StageTester.produces(resultCC));
     }
 
 }

@@ -70,7 +70,6 @@ public class CleanupStorageComponentSignatureStage extends AbstractTransformatio
                 if (CodeUtils.UNKNOWN_COMPONENT.equals(entry.component)) {
                     entry.component = processor.getComponentSignature();
                 }
-                // TODO this might be obsolete
                 if (CodeUtils.UNKNOWN_OPERATION.equals(entry.element)) {
                     entry.element = processor.getElementSignature();
                 }
