@@ -10,7 +10,7 @@ All java tools can be build with
 ## Package
 
 Call `./assemble-tools.sh` to produce one tar bundle containing all tools and its
-libraries. This archive uses way less space than the individual tools, as they 
+libraries. This archive uses way less space than the individual tools, as they
 share many of the libraries.
 
 ## Execute
@@ -33,5 +33,3 @@ Current tools:
 - restructuring compute the necessary steps to change one architecture into a new one
 - rewrite-log-entries preprocess kieker log files from Kieker4C monitoring to resolve function references
 - sar (static architecutre reconstruction) read calls and data access files to reconstruct the architecture
-
-
