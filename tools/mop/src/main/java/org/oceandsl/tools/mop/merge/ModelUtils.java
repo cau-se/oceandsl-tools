@@ -191,6 +191,8 @@ public final class ModelUtils {
     }
 
     public static boolean isEqual(final DeployedComponent leftComponent, final DeployedComponent rightComponent) {
+        isContained(leftComponent, "left component " + leftComponent.getSignature());
+        isContained(rightComponent, "right component " + rightComponent.getSignature());
         return ModelUtils.isEqual(leftComponent.getSignature(), rightComponent.getSignature())
                 && ModelUtils.isEqual(leftComponent.getContext(), rightComponent.getContext());
     }
@@ -206,8 +208,10 @@ public final class ModelUtils {
     }
 
     public static boolean isEqual(final DeploymentContext leftDeploymentContext,
-            final DeploymentContext deploymentContext) {
-        return leftDeploymentContext.getName().equals(deploymentContext.getName());
+            final DeploymentContext rightDeploymentContext) {
+        ModelUtils.check(leftDeploymentContext, "left deployment context");
+        ModelUtils.check(leftDeploymentContext, "right deployment context");
+        return leftDeploymentContext.getName().equals(rightDeploymentContext.getName());
     }
 
     /** -- debug output. -- */
@@ -254,6 +258,17 @@ public final class ModelUtils {
         }
         if (object.eIsProxy()) {
             throw new InternalError("Object of type " + name + " could not be resolved.");
+        }
+    }
+
+    private static void isContained(final DeployedComponent component, final String signature) {
+        check(component, signature);
+        final EObject container = component.eContainer();
+        if (container == null) {
+            throw new InternalError("Container of " + signature + " is null");
+        }
+        if (container.eIsProxy()) {
+            throw new InternalError("Container of " + signature + " could not be resolved.");
         }
     }
 }
