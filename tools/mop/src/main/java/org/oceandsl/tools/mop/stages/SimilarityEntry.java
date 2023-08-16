@@ -16,6 +16,8 @@
 package org.oceandsl.tools.mop.stages;
 
 import org.csveed.annotations.CsvCell;
+import org.csveed.annotations.CsvConverter;
+import org.csveed.annotations.CsvIgnore;
 
 import kieker.model.analysismodel.type.ComponentType;
 
@@ -28,11 +30,15 @@ import kieker.model.analysismodel.type.ComponentType;
 public class SimilarityEntry {
 
     @CsvCell(columnIndex = 1, columnName = "left-type")
+    @CsvConverter(converter = ComponentTypeConverter.class)
     private ComponentType left;
     @CsvCell(columnIndex = 2, columnName = "right-type")
+    @CsvConverter(converter = ComponentTypeConverter.class)
     private ComponentType right;
     @CsvCell(columnIndex = 3, columnName = "similarity")
     private double similarity;
+    @CsvIgnore
+    private transient int equalNamesCount;
 
     public SimilarityEntry() {
         // csveed API
@@ -42,6 +48,7 @@ public class SimilarityEntry {
         this.left = left;
         this.right = right;
         this.similarity = similarity;
+        this.equalNamesCount = 0;
     }
 
     public ComponentType getLeft() {
@@ -66,5 +73,13 @@ public class SimilarityEntry {
 
     public void setSimilarity(final double similarity) {
         this.similarity = similarity;
+    }
+
+    public int getEqualNamesCount() {
+        return this.equalNamesCount;
+    }
+
+    public void increpementEqualNamesCount() {
+        this.equalNamesCount++;
     }
 }
