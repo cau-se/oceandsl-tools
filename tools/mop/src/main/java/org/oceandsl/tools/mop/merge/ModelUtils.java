@@ -210,7 +210,7 @@ public final class ModelUtils {
     public static boolean isEqual(final DeploymentContext leftDeploymentContext,
             final DeploymentContext rightDeploymentContext) {
         ModelUtils.check(leftDeploymentContext, "left deployment context");
-        ModelUtils.check(leftDeploymentContext, "right deployment context");
+        ModelUtils.check(rightDeploymentContext, "right deployment context");
         return leftDeploymentContext.getName().equals(rightDeploymentContext.getName());
     }
 
@@ -265,10 +265,13 @@ public final class ModelUtils {
         check(component, signature);
         final EObject container = component.eContainer();
         if (container == null) {
-            throw new InternalError("Container of " + signature + " is null");
+            throw new InternalError("DC Container of " + signature + " is null" + component.eResource());
         }
         if (container.eIsProxy()) {
-            throw new InternalError("Container of " + signature + " could not be resolved.");
+            throw new InternalError("DC Container of " + signature + " could not be resolved." + component.eResource());
+        }
+        if (component.getContext() == null) {
+            throw new InternalError("DC Context " + signature + " is null " + component.eResource());
         }
     }
 }

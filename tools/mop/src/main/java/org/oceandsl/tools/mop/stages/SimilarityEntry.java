@@ -79,7 +79,7 @@ public class SimilarityEntry {
         return this.equalNamesCount;
     }
 
-    public void increpementEqualNamesCount() {
+    public void incrementEqualNamesCount() {
         this.equalNamesCount++;
     }
 }

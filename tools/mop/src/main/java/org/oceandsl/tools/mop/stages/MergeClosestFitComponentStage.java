@@ -26,8 +26,13 @@ import kieker.model.analysismodel.assembly.AssemblyComponent;
 import kieker.model.analysismodel.assembly.AssemblyModel;
 import kieker.model.analysismodel.assembly.AssemblyPackage;
 import kieker.model.analysismodel.deployment.DeployedComponent;
+import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeploymentModel;
 import kieker.model.analysismodel.deployment.DeploymentPackage;
+import kieker.model.analysismodel.execution.ExecutionModel;
+import kieker.model.analysismodel.execution.ExecutionPackage;
+import kieker.model.analysismodel.execution.Invocation;
+import kieker.model.analysismodel.execution.Tuple;
 import kieker.model.analysismodel.type.ComponentType;
 import kieker.model.analysismodel.type.TypeModel;
 import kieker.model.analysismodel.type.TypePackage;
@@ -79,22 +84,64 @@ public class MergeClosestFitComponentStage extends AbstractTransformation<ModelR
 
             this.similarityOutputPort.send(this.makeTable(entries, repository.getName()));
 
+            // this.checkExecution(repository, "BEFORE");
+
             this.changeComponentNamesBasedOnBestFit(repository, entries);
+
+            // this.checkExecution(repository, "AFTER");
         }
         this.outputPort.send(repository);
     }
 
+    private void checkExecution(final ModelRepository repository, final String name) {
+        System.err.println("++ " + name);
+        final ExecutionModel em = repository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL);
+        em.getInvocations().entrySet().forEach(m -> {
+            final Tuple<DeployedOperation, DeployedOperation> key = m.getKey();
+            final Invocation value = m.getValue();
+            this.check(key.getFirst(), "first");
+            this.check(key.getSecond(), "second");
+            this.check(value.getCaller(), "caller");
+            this.check(value.getCallee(), "callee");
+        });
+    }
+
+    private void check(final DeployedOperation op, final String string) {
+        final DeployedComponent dc = (DeployedComponent) op.eContainer().eContainer();
+        if (dc == null) {
+            System.err.println(
+                    ">> container " + op.getAssemblyOperation().getOperationType().getSignature() + " " + string);
+            return;
+        }
+        if (op.getComponent() == null) {
+            System.err.println(
+                    ">> component " + op.getAssemblyOperation().getOperationType().getSignature() + " " + string);
+            return;
+        }
+
+        if (dc.getAssemblyComponent().getComponentType() == null) {
+            System.err.println("shite " + string);
+            return;
+        }
+
+        if (dc.eContainer() == null) {
+            System.err.println(">> component NOT CONTAINED " + dc.getSignature());
+        }
+        if (dc.getContext() == null) {
+            System.err.println(">> component NO CONTEXT " + dc.getSignature());
+        }
+    }
+
     private void ensureNoNameClashes(final List<SimilarityEntry> entries, final ModelRepository repository) {
-        final DeploymentModel model = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
-        model.getContexts().values().forEach(context -> {
-            context.getComponents().values().forEach(component -> {
-                entries.forEach(entry -> {
-                    if (component.getSignature().equals(entry.getLeft().getSignature())
-                            && (component != entry.getRight())) { // NOPMD check really if identical
-                        entry.increpementEqualNamesCount();
-                    }
-                });
-            });
+        final TypeModel model = repository.getModel(TypePackage.Literals.TYPE_MODEL);
+        // we need to ensure that the new name for a component is not already present in the
+        // model.
+        entries.forEach(entry -> {
+            final String signature = entry.getLeft().getSignature();
+            final ComponentType component = model.getComponentTypes().get(signature);
+            if (component != null && entry.getRight() != component) {
+                entry.incrementEqualNamesCount();
+            }
         });
     }
 
@@ -136,8 +183,8 @@ public class MergeClosestFitComponentStage extends AbstractTransformation<ModelR
             for (int j = i + 1; j < entries.size(); j++) {
                 final SimilarityEntry next = entries.get(j);
                 // really check if objects are identical
-                if ((current.getLeft() == next.getLeft()) || (current.getLeft() == next.getRight()) // NOPMD
-                        || (current.getRight() == next.getLeft()) || (current.getRight() == next.getRight())) { // NOPMD
+                if (current.getLeft() == next.getLeft() || current.getLeft() == next.getRight() // NOPMD
+                        || current.getRight() == next.getLeft() || current.getRight() == next.getRight()) { // NOPMD
                     entries.remove(j);
                     j--; // NOCS, NOPMD this is necessary due to list operations
                 }
@@ -182,7 +229,11 @@ public class MergeClosestFitComponentStage extends AbstractTransformation<ModelR
     }
 
     private String makeName(final String signature, final int equalNamesCount) {
-        return String.format("%s_%d", signature, equalNamesCount);
+        if (equalNamesCount > 0) {
+            return String.format("%s_%d", signature, equalNamesCount);
+        } else {
+            return signature;
+        }
     }
 
     private Table<String, SimilarityEntry> makeTable(final List<SimilarityEntry> entries, final String name) {
@@ -213,9 +264,9 @@ public class MergeClosestFitComponentStage extends AbstractTransformation<ModelR
         final DeploymentModel model = repository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL);
         model.getContexts().values().forEach(context -> {
             final DeployedComponent component = context.getComponents().get(search);
-            context.getComponents().put(replacement, component);
             component.setSignature(replacement);
             context.getComponents().removeKey(search);
+            context.getComponents().put(replacement, component);
         });
     }
 
@@ -243,6 +294,6 @@ public class MergeClosestFitComponentStage extends AbstractTransformation<ModelR
         final double leftMatch = leftSet.stream().filter(l -> rightSet.contains(l)).count();
         final double rightMatch = rightSet.stream().filter(r -> leftSet.contains(r)).count();
 
-        return ((leftMatch / leftSet.size()) + (rightMatch / rightSet.size())) / 2.0d;
+        return (leftMatch / leftSet.size() + rightMatch / rightSet.size()) / 2.0d;
     }
 }

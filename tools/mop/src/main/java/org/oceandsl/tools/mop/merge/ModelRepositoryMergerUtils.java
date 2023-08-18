@@ -48,6 +48,7 @@ public final class ModelRepositoryMergerUtils {
         ExecutionModelMerger.mergeExecutionModel(
                 lastModelRepository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
                 lastModelRepository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),
+                mergeModelRepository.getModel(DeploymentPackage.Literals.DEPLOYMENT_MODEL),
                 mergeModelRepository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL));
         StatisticsModelMerger.mergeStatisticsModel(
                 lastModelRepository.getModel(ExecutionPackage.Literals.EXECUTION_MODEL),

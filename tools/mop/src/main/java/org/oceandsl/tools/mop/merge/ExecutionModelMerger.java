@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.EMap;
 
+import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentModel;
@@ -41,14 +42,20 @@ public final class ExecutionModelMerger {
     }
 
     /* default */ static void mergeExecutionModel(final DeploymentModel deploymentModel, // NOPMD
-            final ExecutionModel lastModel, final ExecutionModel mergeModel) {
-        ExecutionModelMerger.mergeInvocations(deploymentModel, lastModel, mergeModel);
+            final ExecutionModel lastModel, final DeploymentModel mergeDeploymentModel,
+            final ExecutionModel mergeModel) {
+        ExecutionModelMerger.mergeInvocations(deploymentModel, lastModel, mergeDeploymentModel, mergeModel);
         ExecutionModelMerger.mergeStorageDataflows(deploymentModel, lastModel, mergeModel);
         ExecutionModelMerger.mergeOperationDataflows(deploymentModel, lastModel, mergeModel);
     }
 
     private static void mergeInvocations(final DeploymentModel deploymentModel, final ExecutionModel lastModel,
-            final ExecutionModel mergeModel) {
+            final DeploymentModel mergeDeploymentModel, final ExecutionModel mergeModel) {
+        // checkExecution(lastModel, "LAST");
+        // checkExecution(mergeModel, "MERGE");
+        // checkDeployment(deploymentModel, "LAST");
+        // checkDeployment(mergeDeploymentModel, "MERGE");
+        // checkWhereResourceAreFrom(mergeDeploymentModel, mergeModel, "MERGE");
         for (final Entry<Tuple<DeployedOperation, DeployedOperation>, Invocation> entry : mergeModel.getInvocations()) {
             if (!ExecutionModelMerger.compareTupleOperationKeys(lastModel.getInvocations(), entry.getKey())) {
                 final Invocation value = ExecutionModelCloneUtils.duplicate(deploymentModel, entry.getValue());
@@ -60,12 +67,87 @@ public final class ExecutionModelMerger {
         }
     }
 
+    private static void checkWhereResourceAreFrom(final DeploymentModel dm, final ExecutionModel em,
+            final String string) {
+        System.err.println("++++++ " + string);
+        em.getInvocations().forEach(entry -> {
+            checkPerOp(dm, entry.getKey().getFirst());
+            checkPerOp(dm, entry.getKey().getSecond());
+            checkPerOp(dm, entry.getValue().getCaller());
+            checkPerOp(dm, entry.getValue().getCallee());
+        });
+    }
+
+    private static void checkPerOp(final DeploymentModel dm, final DeployedOperation op) {
+        dm.getContexts().values().forEach(context -> {
+            context.getComponents().values().forEach(component -> {
+                final DeployedOperation dop = component.getOperations()
+                        .get(op.getAssemblyOperation().getOperationType().getSignature());
+                if (dop != null) {
+                    if (dop != op) {
+                        System.err.println("OP  " + op.eResource());
+                        System.err.println("DOP " + dop.eResource());
+                    } else {
+                        // System.err.println("context " +
+                        // op.eContainer().eContainer().eContainer().eContainer());
+                    }
+                }
+            });
+        });
+    }
+
+    private static void checkDeployment(final DeploymentModel deploymentModel, final String string) {
+        System.err.println("###### " + string);
+        deploymentModel.getContexts().forEach(entry -> {
+            System.err.println("  context " + entry.getKey());
+            entry.getValue().getComponents().forEach(cEntry -> {
+                final DeployedComponent component = cEntry.getValue();
+                if (component.getContext() == null) {
+                    System.err.printf("  component %s has no context\n", component.getSignature());
+                }
+            });
+        });
+    }
+
+    private static void checkExecution(final ExecutionModel em, final String name) {
+        System.err.println("!!!!! " + name);
+        em.getInvocations().entrySet().forEach(m -> {
+            final Tuple<DeployedOperation, DeployedOperation> key = m.getKey();
+            final Invocation value = m.getValue();
+            check(key.getFirst(), "first");
+            check(key.getSecond(), "second");
+            check(value.getCaller(), "caller");
+            check(value.getCallee(), "callee");
+        });
+    }
+
+    private static void check(final DeployedOperation op, final String string) {
+        final DeployedComponent dc = (DeployedComponent) op.eContainer().eContainer();
+        if (dc == null) {
+            System.err.println(
+                    ">> container " + op.getAssemblyOperation().getOperationType().getSignature() + " " + string);
+            return;
+        }
+        if (op.getComponent() == null) {
+            System.err.println(
+                    ">> component " + op.getAssemblyOperation().getOperationType().getSignature() + " " + string);
+            return;
+        }
+
+        if (dc.getAssemblyComponent().getComponentType() == null) {
+            System.err.println("shite " + string);
+            return;
+        }
+
+        // System.err.println("op " + op.getAssemblyOperation().getOperationType().getSignature());
+    }
+
     private static boolean compareTupleOperationKeys(
             final EMap<Tuple<DeployedOperation, DeployedOperation>, Invocation> invocations,
-            final Tuple<DeployedOperation, DeployedOperation> key) {
+            final Tuple<DeployedOperation, DeployedOperation> searchKey) {
         for (final Tuple<DeployedOperation, DeployedOperation> invocationKey : invocations.keySet()) {
-            if (ModelUtils.isEqual(invocationKey.getFirst(), key.getFirst())
-                    && ModelUtils.isEqual(invocationKey.getSecond(), key.getSecond())) {
+            if (ModelUtils.isEqual(invocationKey.getFirst(), searchKey.getFirst())
+                    && ModelUtils.isEqual(invocationKey.getSecond(), searchKey.getSecond())) {
                 return true;
             }
         }
