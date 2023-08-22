@@ -51,9 +51,8 @@
 		<exclude name="AssignmentInOperand" />
 		<exclude name="AvoidCatchingNPE" />
 		<exclude name="AvoidLiteralsInIfCondition" />
-		<exclude name="BeanMembersShouldSerialize"/>
 		<exclude name="DataflowAnomalyAnalysis" />
-		<exclude name="DoNotCallSystemExit" />
+		<exclude name="DoNotTerminateVM" />
 		<exclude name="UseProperClassLoader" />
 		<exclude name="LoggerIsNotStaticFinal" />
 	</rule>

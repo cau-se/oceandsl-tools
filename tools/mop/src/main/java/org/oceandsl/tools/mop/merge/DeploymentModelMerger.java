@@ -58,8 +58,8 @@ public final class DeploymentModelMerger {
     }
 
     private static void mergeDepolymentComponents(final AssemblyModel assemblyModel,
-            final DeploymentContext deploymentContext, final EMap<String, DeployedComponent> components) {
-        for (final DeployedComponent mergeComponent : components.values()) {
+            final DeploymentContext deploymentContext, final EMap<String, DeployedComponent> mergeComponents) {
+        for (final DeployedComponent mergeComponent : mergeComponents.values()) {
             if (!deploymentContext.getComponents().containsKey(mergeComponent.getSignature())) {
                 deploymentContext.getComponents().put(mergeComponent.getSignature(),
                         DeploymentModelCloneUtils.duplicate(assemblyModel, mergeComponent));
