@@ -2,9 +2,10 @@ Model Operation
 ===============
 
 Merges models together from different sources or select a portion of the model.
-In merge mode, the tool tries to infer whether two components from the input
-models are the same based on their similarity in operations. The highest fit
-is considered the corresponding component and merged.
+The tool supports multiple merge approaches:
+- merge = merge components with the same name
+- nearest-merge = merge components with have the most similar operations.
+- select = select a subset of the model
 
 ===== ===================== ======== ======================================================
 Short Long                  Required Description

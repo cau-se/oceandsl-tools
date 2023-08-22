@@ -19,7 +19,6 @@ import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.EMap;
 
-import kieker.model.analysismodel.deployment.DeployedComponent;
 import kieker.model.analysismodel.deployment.DeployedOperation;
 import kieker.model.analysismodel.deployment.DeployedStorage;
 import kieker.model.analysismodel.deployment.DeploymentModel;
@@ -65,81 +64,6 @@ public final class ExecutionModelMerger {
                 lastModel.getInvocations().put(key, value);
             }
         }
-    }
-
-    private static void checkWhereResourceAreFrom(final DeploymentModel dm, final ExecutionModel em,
-            final String string) {
-        System.err.println("++++++ " + string);
-        em.getInvocations().forEach(entry -> {
-            checkPerOp(dm, entry.getKey().getFirst());
-            checkPerOp(dm, entry.getKey().getSecond());
-            checkPerOp(dm, entry.getValue().getCaller());
-            checkPerOp(dm, entry.getValue().getCallee());
-        });
-    }
-
-    private static void checkPerOp(final DeploymentModel dm, final DeployedOperation op) {
-        dm.getContexts().values().forEach(context -> {
-            context.getComponents().values().forEach(component -> {
-                final DeployedOperation dop = component.getOperations()
-                        .get(op.getAssemblyOperation().getOperationType().getSignature());
-                if (dop != null) {
-                    if (dop != op) {
-                        System.err.println("OP  " + op.eResource());
-                        System.err.println("DOP " + dop.eResource());
-                    } else {
-                        // System.err.println("context " +
-                        // op.eContainer().eContainer().eContainer().eContainer());
-                    }
-                }
-            });
-        });
-    }
-
-    private static void checkDeployment(final DeploymentModel deploymentModel, final String string) {
-        System.err.println("###### " + string);
-        deploymentModel.getContexts().forEach(entry -> {
-            System.err.println("  context " + entry.getKey());
-            entry.getValue().getComponents().forEach(cEntry -> {
-                final DeployedComponent component = cEntry.getValue();
-                if (component.getContext() == null) {
-                    System.err.printf("  component %s has no context\n", component.getSignature());
-                }
-            });
-        });
-    }
-
-    private static void checkExecution(final ExecutionModel em, final String name) {
-        System.err.println("!!!!! " + name);
-        em.getInvocations().entrySet().forEach(m -> {
-            final Tuple<DeployedOperation, DeployedOperation> key = m.getKey();
-            final Invocation value = m.getValue();
-            check(key.getFirst(), "first");
-            check(key.getSecond(), "second");
-            check(value.getCaller(), "caller");
-            check(value.getCallee(), "callee");
-        });
-    }
-
-    private static void check(final DeployedOperation op, final String string) {
-        final DeployedComponent dc = (DeployedComponent) op.eContainer().eContainer();
-        if (dc == null) {
-            System.err.println(
-                    ">> container " + op.getAssemblyOperation().getOperationType().getSignature() + " " + string);
-            return;
-        }
-        if (op.getComponent() == null) {
-            System.err.println(
-                    ">> component " + op.getAssemblyOperation().getOperationType().getSignature() + " " + string);
-            return;
-        }
-
-        if (dc.getAssemblyComponent().getComponentType() == null) {
-            System.err.println("shite " + string);
-            return;
-        }
-
-        // System.err.println("op " + op.getAssemblyOperation().getOperationType().getSignature());
     }
 
     private static boolean compareTupleOperationKeys(
