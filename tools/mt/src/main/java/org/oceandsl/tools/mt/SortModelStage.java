@@ -37,6 +37,9 @@ public class SortModelStage extends AbstractFilter<Table<String, MoveOperationEn
 
     @Override
     protected void execute(final Table<String, MoveOperationEntry> table) throws Exception {
+        final SubstringOrderer sub = new SubstringOrderer(table);
+        sub.computeDistances();
+
         table.getRows().sort(new Comparator<MoveOperationEntry>() {
 
             @Override
@@ -46,7 +49,7 @@ public class SortModelStage extends AbstractFilter<Table<String, MoveOperationEn
                         final String leftValue = this.getValue(left, criterium);
                         final String rightValue = this.getValue(right, criterium);
 
-                        if (leftValue == null || rightValue == null) {
+                        if ((leftValue == null) || (rightValue == null)) {
                             SortModelStage.this.logger.error("No values for criterium {} found.",
                                     criterium.getColumnName());
                         } else {
