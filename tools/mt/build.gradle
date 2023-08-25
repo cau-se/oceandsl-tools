@@ -28,6 +28,8 @@ dependencies {
     
     // https://mvnrepository.com/artifact/org.apache.commons/commons-text
     implementation 'org.apache.commons:commons-text:1.10.0'
+    // https://mvnrepository.com/artifact/com.edwardraff/JSAT
+    implementation 'com.edwardraff:JSAT:0.0.9'
 
 	implementation 'org.csveed:csveed:0.7.4'
 }

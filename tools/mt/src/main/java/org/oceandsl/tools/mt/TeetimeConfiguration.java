@@ -16,13 +16,27 @@
 package org.oceandsl.tools.mt;
 
 import java.io.IOException;
+import java.util.List;
+
+import org.apache.commons.text.similarity.LevenshteinDistance;
+
+import kieker.analysis.generic.graph.clustering.ExtractDBScanClustersStage;
+import kieker.analysis.generic.graph.clustering.MTreeGeneratorStage;
+import kieker.analysis.generic.graph.clustering.OpticsData;
+import kieker.analysis.generic.graph.mtree.IDistanceFunction;
 
 import teetime.framework.Configuration;
+import teetime.stage.basic.distributor.Distributor;
+import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
 import org.oceandsl.analysis.generic.data.MoveOperationEntry;
 import org.oceandsl.analysis.generic.source.CsvTableReaderProducerStage;
 import org.oceandsl.analysis.generic.stages.SingleFileTableCsvSink;
 import org.oceandsl.analysis.generic.stages.TableCsvSink;
+import org.oceandsl.tools.mt.stages.ConstructTableStage;
+import org.oceandsl.tools.mt.stages.ConvertTableToOpticsDataStage;
+import org.oceandsl.tools.mt.stages.OpticsStage;
+import org.oceandsl.tools.mt.stages.SortModelStage;
 
 /**
  * Pipe and Filter configuration for the architecture creation tool.
@@ -33,15 +47,59 @@ import org.oceandsl.analysis.generic.stages.TableCsvSink;
 public class TeetimeConfiguration extends Configuration {
 
     public TeetimeConfiguration(final Settings settings) throws IOException {
+
+        final double clusteringDistance = 0.11;
+
+        final int minPtr = 1;
+
         final String inputFileName = settings.getInputTable().getFileName().toString();
+
         final CsvTableReaderProducerStage<String, MoveOperationEntry> csvTableReaderStage = new CsvTableReaderProducerStage<>(
                 settings.getInputTable(), ';', '"', '\\', true, MoveOperationEntry.class,
                 inputFileName.substring(0, inputFileName.lastIndexOf('.')));
         final SortModelStage sortModelStage = new SortModelStage(settings.getSortDescription());
+
+        final IDistanceFunction<OpticsData<MoveOperationEntry>> distanceFunction = new IDistanceFunction<>() {
+
+            final LevenshteinDistance distance = new LevenshteinDistance();
+
+            @Override
+            public double calculate(final OpticsData<MoveOperationEntry> data1,
+                    final OpticsData<MoveOperationEntry> data2) {
+                final String left = data1.getData().getOperationName();
+                final String right = data2.getData().getOperationName();
+                return (double) this.distance.apply(left, right) / (double) (left.length() + right.length());
+            }
+        };
+
+        final ConvertTableToOpticsDataStage converterStage = new ConvertTableToOpticsDataStage();
+
+        final Distributor<List<OpticsData<MoveOperationEntry>>> distributor = new Distributor<>(
+                new CopyByReferenceStrategy());
+
+        final MTreeGeneratorStage<OpticsData<MoveOperationEntry>> mTreeGeneratorStage = new MTreeGeneratorStage<>(
+                distanceFunction);
+
+        final OpticsStage<MoveOperationEntry> opticsStage = new OpticsStage<>(clusteringDistance, minPtr);
+
+        final ExtractDBScanClustersStage<MoveOperationEntry> clustering = new ExtractDBScanClustersStage<>(
+                clusteringDistance);
+
+        final ConstructTableStage constructTableStage = new ConstructTableStage(inputFileName);
+
         final SingleFileTableCsvSink<String, MoveOperationEntry> tableSink = new SingleFileTableCsvSink<>(
                 settings.getOutputTable(), MoveOperationEntry.class, true, TableCsvSink.LF);
 
         this.connectPorts(csvTableReaderStage.getOutputPort(), sortModelStage.getInputPort());
-        this.connectPorts(sortModelStage.getOutputPort(), tableSink.getInputPort());
+        this.connectPorts(sortModelStage.getOutputPort(), converterStage.getInputPort());
+        this.connectPorts(converterStage.getOutputPort(), distributor.getInputPort());
+        this.connectPorts(distributor.getNewOutputPort(), mTreeGeneratorStage.getInputPort());
+        this.connectPorts(mTreeGeneratorStage.getOutputPort(), opticsStage.getMTreeInputPort());
+        this.connectPorts(distributor.getNewOutputPort(), opticsStage.getModelsInputPort());
+        this.connectPorts(opticsStage.getOutputPort(), clustering.getInputPort());
+        this.connectPorts(clustering.getOutputPort(), constructTableStage.getInputPort());
+        this.connectPorts(constructTableStage.getOutputPort(), tableSink.getInputPort());
+
+        // tableSink.getInputPort());
     }
 }
