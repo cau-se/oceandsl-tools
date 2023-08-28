@@ -15,6 +15,10 @@
  ***************************************************************************/
 package org.oceandsl.tools.mt;
 
+/**
+ * @author Reiner Jung
+ * @since 1.4.0
+ */
 public enum EOrder {
     ASCENDING, DESCENDING
 }

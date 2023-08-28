@@ -21,10 +21,10 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.PathConverter;
 
 /**
- * All settings including command line parameters for the analysis.
+ * All settings including command line parameters.
  *
  * @author Reiner Jung
- * @since 1.1
+ * @since 1.4.0
  */
 public class Settings { // NOPMD data class
 
@@ -37,14 +37,14 @@ public class Settings { // NOPMD data class
     private Path outputTable;
 
     @Parameter(names = { "-s",
-            "--sort" }, required = true, converter = SortDescriptorConverter.class, description = "Sort description")
+            "--sort" }, required = false, converter = SortDescriptorConverter.class, description = "Sort description")
     private SortDescriptor sortDescription;
 
     @Parameter(names = { "-p", "--min-ptr" }, required = false, description = "Min ptr value for clustering")
     private Integer minPtr;
 
-    @Parameter(names = { "-d", "--cluster-distance" }, required = true, description = "Min cluster distance")
-    private double clusteringDistance;
+    @Parameter(names = { "-d", "--cluster-distance" }, required = false, description = "Min cluster distance")
+    private Double clusteringDistance;
 
     public Path getInputTable() {
         return this.inputTable;
@@ -66,7 +66,7 @@ public class Settings { // NOPMD data class
         }
     }
 
-    public double getClusteringDistance() {
+    public Double getClusteringDistance() {
         return this.clusteringDistance;
     }
 

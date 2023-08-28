@@ -27,17 +27,17 @@ import kieker.common.exception.ConfigurationException;
 import kieker.tools.common.AbstractService;
 
 /**
- * Architecture analysis main class.
+ * Manipulate tables main class
  *
  * @author Reiner Jung
- * @since 1.0
+ * @since 1.4.0
  */
 public class ManipulateTablesMain extends AbstractService<TeetimeConfiguration, Settings> {
 
     public static void main(final String[] args) {
         final ManipulateTablesMain main = new ManipulateTablesMain();
         try {
-            final int exitCode = main.run("architecture model operations", "mop", args, new Settings());
+            final int exitCode = main.run("Manipulate tables", "mt", args, new Settings());
             System.exit(exitCode);
         } catch (final IllegalArgumentException e) {
             LoggerFactory.getLogger(ManipulateTablesMain.class).error("Configuration error: {}",

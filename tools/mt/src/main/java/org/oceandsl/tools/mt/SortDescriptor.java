@@ -18,6 +18,13 @@ package org.oceandsl.tools.mt;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Hold all sort criteria.
+ *
+ * @author Reiner Jung
+ * @since 1.4.0
+ *
+ */
 public class SortDescriptor {
 
     List<SortCriterium> sortCriteria = new ArrayList<>();

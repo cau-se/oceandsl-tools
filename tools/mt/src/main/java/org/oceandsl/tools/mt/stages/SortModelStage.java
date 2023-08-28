@@ -25,12 +25,22 @@ import org.csveed.annotations.CsvCell;
 import teetime.stage.basic.AbstractFilter;
 
 import org.oceandsl.analysis.generic.Table;
-import org.oceandsl.analysis.generic.data.MoveOperationEntry;
 import org.oceandsl.tools.mt.EOrder;
 import org.oceandsl.tools.mt.SortCriterium;
 import org.oceandsl.tools.mt.SortDescriptor;
 
-public class SortModelStage extends AbstractFilter<Table<String, MoveOperationEntry>> {
+/**
+ * Sort a CSV table by multiple sort criteria. The table can be sorted by multiple columns. The
+ * priority of the columns and the sort order are specified in the {@link SortDescriptor}.
+ *
+ * @param <T>
+ *            row type of the CSV table which must use {@link @CsvCell} annotations for its column
+ *            in the row type
+ *
+ * @author Reiner Jung
+ * @since 1.4.0
+ */
+public class SortModelStage<T> extends AbstractFilter<Table<String, T>> {
 
     private final SortDescriptor sortDescriptor;
 
@@ -39,17 +49,17 @@ public class SortModelStage extends AbstractFilter<Table<String, MoveOperationEn
     }
 
     @Override
-    protected void execute(final Table<String, MoveOperationEntry> table) throws Exception {
-        table.getRows().sort(new Comparator<MoveOperationEntry>() {
+    protected void execute(final Table<String, T> table) throws Exception {
+        table.getRows().sort(new Comparator<T>() {
 
             @Override
-            public int compare(final MoveOperationEntry left, final MoveOperationEntry right) {
+            public int compare(final T left, final T right) {
                 for (final SortCriterium criterium : SortModelStage.this.sortDescriptor.getSortCriteria()) {
                     try {
                         final String leftValue = this.getValue(left, criterium);
                         final String rightValue = this.getValue(right, criterium);
 
-                        if (leftValue == null || rightValue == null) {
+                        if ((leftValue == null) || (rightValue == null)) {
                             SortModelStage.this.logger.error("No values for criterium {} found.",
                                     criterium.getColumnName());
                         } else {
@@ -79,16 +89,15 @@ public class SortModelStage extends AbstractFilter<Table<String, MoveOperationEn
                 return leftValue.compareTo(rightValue);
             }
 
-            private String getValue(final MoveOperationEntry entry, final SortCriterium criterium)
-                    throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException,
-                    InvocationTargetException {
+            private String getValue(final T entry, final SortCriterium criterium) throws IllegalArgumentException,
+                    IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
                 final String name = criterium.getColumnName();
                 for (final Field field : entry.getClass().getDeclaredFields()) {
                     final CsvCell[] annotations = field.getAnnotationsByType(CsvCell.class);
                     if (annotations.length > 0) {
                         if (annotations[0].columnName().equals(name)) {
                             final Method method = entry.getClass().getMethod(this.makeMethodName(field.getName()),
-                                    null);
+                                    (Class<?>[]) null);
                             return (String) method.invoke(entry);
                         }
                     }

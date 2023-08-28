@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2021 OceanDSL (https://oceandsl.uni-kiel.de)
+ * Copyright (C) 2023 OceanDSL (https://oceandsl.uni-kiel.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,11 @@ import kieker.analysis.generic.graph.clustering.OpticsData;
 import kieker.analysis.generic.graph.mtree.IDistanceFunction;
 
 import teetime.framework.Configuration;
+import teetime.framework.OutputPort;
 import teetime.stage.basic.distributor.Distributor;
 import teetime.stage.basic.distributor.strategy.CopyByReferenceStrategy;
 
+import org.oceandsl.analysis.generic.Table;
 import org.oceandsl.analysis.generic.data.MoveOperationEntry;
 import org.oceandsl.analysis.generic.source.CsvTableReaderProducerStage;
 import org.oceandsl.analysis.generic.stages.SingleFileTableCsvSink;
@@ -42,7 +44,7 @@ import org.oceandsl.tools.mt.stages.SortModelStage;
  * Pipe and Filter configuration for the architecture creation tool.
  *
  * @author Reiner Jung
- * @since 1.0
+ * @since 1.4.0
  */
 public class TeetimeConfiguration extends Configuration {
 
@@ -53,8 +55,28 @@ public class TeetimeConfiguration extends Configuration {
         final CsvTableReaderProducerStage<String, MoveOperationEntry> csvTableReaderStage = new CsvTableReaderProducerStage<>(
                 settings.getInputTable(), ';', '"', '\\', true, MoveOperationEntry.class,
                 inputFileName.substring(0, inputFileName.lastIndexOf('.')));
-        final SortModelStage sortModelStage = new SortModelStage(settings.getSortDescription());
 
+        OutputPort<Table<String, MoveOperationEntry>> outputPort = csvTableReaderStage.getOutputPort();
+
+        if (settings.getClusteringDistance() != null) {
+            outputPort = this.createClustering(settings, inputFileName, outputPort);
+        }
+
+        if (settings.getSortDescription() != null) {
+            final SortModelStage<MoveOperationEntry> sortModelStage = new SortModelStage<>(
+                    settings.getSortDescription());
+            this.connectPorts(outputPort, sortModelStage.getInputPort());
+            outputPort = sortModelStage.getOutputPort();
+        }
+
+        final SingleFileTableCsvSink<String, MoveOperationEntry> tableSink = new SingleFileTableCsvSink<>(
+                settings.getOutputTable(), MoveOperationEntry.class, true, TableCsvSink.LF);
+
+        this.connectPorts(outputPort, tableSink.getInputPort());
+    }
+
+    private OutputPort<Table<String, MoveOperationEntry>> createClustering(final Settings settings,
+            final String inputFileName, final OutputPort<Table<String, MoveOperationEntry>> outputPort) {
         final IDistanceFunction<OpticsData<MoveOperationEntry>> distanceFunction = new IDistanceFunction<>() {
 
             final LevenshteinDistance distance = new LevenshteinDistance();
@@ -84,17 +106,14 @@ public class TeetimeConfiguration extends Configuration {
 
         final ConstructTableStage constructTableStage = new ConstructTableStage(inputFileName);
 
-        final SingleFileTableCsvSink<String, MoveOperationEntry> tableSink = new SingleFileTableCsvSink<>(
-                settings.getOutputTable(), MoveOperationEntry.class, true, TableCsvSink.LF);
-
-        this.connectPorts(csvTableReaderStage.getOutputPort(), converterStage.getInputPort());
+        this.connectPorts(outputPort, converterStage.getInputPort());
         this.connectPorts(converterStage.getOutputPort(), distributor.getInputPort());
         this.connectPorts(distributor.getNewOutputPort(), mTreeGeneratorStage.getInputPort());
         this.connectPorts(mTreeGeneratorStage.getOutputPort(), opticsStage.getMTreeInputPort());
         this.connectPorts(distributor.getNewOutputPort(), opticsStage.getModelsInputPort());
         this.connectPorts(opticsStage.getOutputPort(), clustering.getInputPort());
         this.connectPorts(clustering.getOutputPort(), constructTableStage.getInputPort());
-        this.connectPorts(constructTableStage.getOutputPort(), sortModelStage.getInputPort());
-        this.connectPorts(sortModelStage.getOutputPort(), tableSink.getInputPort());
+
+        return constructTableStage.getOutputPort();
     }
 }

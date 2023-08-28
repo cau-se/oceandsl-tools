@@ -30,10 +30,8 @@ import teetime.framework.OutputPort;
 /**
  * The stage which execute the optics algorithm.
  *
- * @param <N>
- *            node type
- * @param <E>
- *            edge type
+ * @param <T>
+ *            data value type
  *
  * @author Lars Jürgensen
  * @since 2.0.0

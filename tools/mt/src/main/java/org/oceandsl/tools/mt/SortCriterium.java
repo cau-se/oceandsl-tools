@@ -15,6 +15,13 @@
  ***************************************************************************/
 package org.oceandsl.tools.mt;
 
+/**
+ * Define one sort criterium.
+ *
+ * @author Reiner Jung
+ * @since 1.4.0
+ *
+ */
 public class SortCriterium {
 
     String columnName;

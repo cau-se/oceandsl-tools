@@ -17,6 +17,12 @@ package org.oceandsl.tools.mt;
 
 import com.beust.jcommander.IStringConverter;
 
+/**
+ * Convert input string into a correct setup for the sort descriptor.
+ *
+ * @author Reiner Jung
+ * @since 1.4.0
+ */
 public class SortDescriptorConverter implements IStringConverter<SortDescriptor> {
 
     @Override
