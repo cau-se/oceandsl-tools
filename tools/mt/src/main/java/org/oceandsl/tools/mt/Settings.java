@@ -40,6 +40,12 @@ public class Settings { // NOPMD data class
             "--sort" }, required = true, converter = SortDescriptorConverter.class, description = "Sort description")
     private SortDescriptor sortDescription;
 
+    @Parameter(names = { "-p", "--min-ptr" }, required = false, description = "Min ptr value for clustering")
+    private Integer minPtr;
+
+    @Parameter(names = { "-d", "--cluster-distance" }, required = true, description = "Min cluster distance")
+    private double clusteringDistance;
+
     public Path getInputTable() {
         return this.inputTable;
     }
@@ -50,6 +56,18 @@ public class Settings { // NOPMD data class
 
     public SortDescriptor getSortDescription() {
         return this.sortDescription;
+    }
+
+    public int getMinPtr() {
+        if (this.minPtr == null) {
+            return 1;
+        } else {
+            return this.minPtr;
+        }
+    }
+
+    public double getClusteringDistance() {
+        return this.clusteringDistance;
     }
 
 }
