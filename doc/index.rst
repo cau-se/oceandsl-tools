@@ -17,10 +17,15 @@ architecture models and support for optimizing the architecture.
   tools/allen-upper-limit.rst
   tools/cmi.rst 
   tools/dar.rst
+  tools/delta.rst
+  tools/fxca.rst
   tools/maa.rst
+  tools/mktable.rst
   tools/mop.rst
+  tools/mt.rst
   tools/mvis.rst
   tools/pp-static-log.rst 
+  tools/relabel.rst
   tools/relabel.rst
   tools/rewrite-log-entries.rst
   tools/sar.rst
