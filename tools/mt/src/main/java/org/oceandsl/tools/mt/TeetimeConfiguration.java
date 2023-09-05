@@ -20,10 +20,11 @@ import java.util.List;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
-import kieker.analysis.generic.graph.clustering.ExtractDBScanClustersStage;
-import kieker.analysis.generic.graph.clustering.MTreeGeneratorStage;
-import kieker.analysis.generic.graph.clustering.OpticsData;
-import kieker.analysis.generic.graph.mtree.IDistanceFunction;
+import kieker.analysis.generic.clustering.ExtractDBScanClustersStage;
+import kieker.analysis.generic.clustering.mtree.IDistanceFunction;
+import kieker.analysis.generic.clustering.mtree.MTreeGeneratorStage;
+import kieker.analysis.generic.clustering.optics.OpticsData;
+import kieker.analysis.generic.clustering.optics.OpticsStage;
 
 import teetime.framework.Configuration;
 import teetime.framework.OutputPort;
@@ -37,7 +38,6 @@ import org.oceandsl.analysis.generic.stages.SingleFileTableCsvSink;
 import org.oceandsl.analysis.generic.stages.TableCsvSink;
 import org.oceandsl.tools.mt.stages.ConstructTableStage;
 import org.oceandsl.tools.mt.stages.ConvertTableToOpticsDataStage;
-import org.oceandsl.tools.mt.stages.OpticsStage;
 import org.oceandsl.tools.mt.stages.SortModelStage;
 
 /**

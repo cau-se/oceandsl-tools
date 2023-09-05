@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
+import kieker.analysis.generic.clustering.mtree.IDistanceFunction;
+import kieker.analysis.generic.clustering.optics.OpticsData;
 import kieker.analysis.generic.graph.clustering.OPTICSDataGED;
-import kieker.analysis.generic.graph.clustering.OpticsData;
-import kieker.analysis.generic.graph.mtree.IDistanceFunction;
 
 import teetime.stage.basic.AbstractTransformation;
 

@@ -15,7 +15,7 @@
  ***************************************************************************/
 package org.oceandsl.tools.mt.stages;
 
-import kieker.analysis.generic.graph.clustering.Clustering;
+import kieker.analysis.generic.clustering.Clustering;
 
 import teetime.stage.basic.AbstractTransformation;
 
