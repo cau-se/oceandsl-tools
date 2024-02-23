@@ -17,4 +17,16 @@ Short Long            Required Description
 -m    --creator-mode           Select topology generator modes: full, linear, start
 ===== =============== ======== ======================================================
 
+Lets assume you have created a architecture model with the dynamic or static architecture recovery tool, :ref:`kieker-tools-dar` and :ref:`kieker-tools-sar` respectively.
+And lets assume the model resides in the `input-model` directory. The output will be written to `output` and contain graphs and statistics.
+
+The basic setup is
+```bash
+oceandsl-tools/bin/allen-upper-limit -i input-model -o output
+```
+and will read in the input-model, create a fully interconnected graph of all operations in the model.
+
+Explain different creator modes and which one is default
+Explain what -n does
+Explain what -M does
 

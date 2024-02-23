@@ -4,7 +4,7 @@ Check Model Integrity
 =====================
 
 This is more or less a debugging tool to check whether a model is without
-technical issues.
+technical issues, i.e., containment, all references intact etc.
 
 Usage: cmi -i <model path> [-c <checks>]
 
@@ -16,3 +16,6 @@ Short Long                   Required Description
                                       statistics
 ===== ====================== ======== ======================================================
 
+List of detailed checks:
+- ...
+- 
