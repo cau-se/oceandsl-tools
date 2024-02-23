@@ -1,3 +1,5 @@
+.. _kieker-tools-mvis:
+
 Model Visualization and Statistics Tool
 =======================================
 

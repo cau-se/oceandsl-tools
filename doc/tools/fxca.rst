@@ -1,3 +1,5 @@
+.. _kieker-tools-fxca:
+
 FXTran Code Analysis
 ====================
 

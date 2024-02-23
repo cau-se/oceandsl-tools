@@ -1,3 +1,5 @@
+.. _kieker-tools-cmi:
+
 Check Model Integrity
 =====================
 

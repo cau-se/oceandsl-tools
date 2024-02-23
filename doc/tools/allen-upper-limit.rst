@@ -1,3 +1,5 @@
+.. _kieker-tools-allen-upper-limit:
+
 Allen Upper Limit
 =================
 

@@ -1,3 +1,5 @@
+.. _kieker-tools-sar:
+
 Static Architecture Recovery
 ============================
 

@@ -1,3 +1,5 @@
+.. _kieker-tools-mop:
+
 Model Operation
 ===============
 

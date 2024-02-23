@@ -1,3 +1,5 @@
+.. _kieker-tools-dar:
+
 Dynamic Architecture Analysis
 =============================
 

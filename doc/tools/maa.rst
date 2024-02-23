@@ -1,3 +1,5 @@
+.. _kieker-tools-maa:
+
 Model Architecture Analysis
 ===========================
 

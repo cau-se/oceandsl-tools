@@ -11,23 +11,31 @@ Thus, we create a growing set of tools to perform architecture recovery or
 discovery when there never was an architecture planned. Analyzes of the
 architecture models and support for optimizing the architecture.
 
-.. toctree::
-  :maxdepth: 2
+To change the logging setup you can either change that file or define
+additional options with the JAVA_OPTS environment variable, e.g.,
 
-  tools/allen-upper-limit.rst
-  tools/cmi.rst 
-  tools/dar.rst
-  tools/delta.rst
-  tools/fxca.rst
-  tools/maa.rst
-  tools/mktable.rst
-  tools/mop.rst
-  tools/mt.rst
-  tools/mvis.rst
-  tools/pp-static-log.rst 
-  tools/relabel.rst
-  tools/relabel.rst
-  tools/rewrite-log-entries.rst
-  tools/sar.rst
-  tools/static-analysis-formats.rst
+``export JAVA_OPTS="-Dlogback.configurationFile=/full/path/to/logger/config/logback-trace.groovy"``
+or use the tool specific ``_OPTS`` variable, e.g.,
+``CMI_OPTS`` for the ``cmi`` tool.
 
+Furthermore, you can use both variables to pass additional JVM
+parameters and options to a tool.
+
+-  :ref:`kieker-tools-allen-upper-limit`
+-  :ref:`kieker-tools-cmi`
+-  :ref:`kieker-tools-dar`
+-  :ref:`kieker-tools-delta`
+-  :ref:`kieker-tools-fxca`
+-  :ref:`kieker-tools-maa`
+-  :ref:`kieker-tools-mktable`
+-  :ref:`kieker-tools-mop`
+-  :ref:`kieker-tools-mt`
+-  :ref:`kieker-tools-mvis`
+-  :ref:`kieker-tools-relabel`
+-  :ref:`kieker-tools-rewrite-log-entries`
+-  :ref:`kieker-tools-sar`
+-  :ref:`kieker-tools-static-analysis-formats`
+
+Please note these tools are also integrated into the Kieker monitoring and architecture analysis framework. Thus, newer versions of the tools can be found there.
+
+https://kieker-monitoring.readthedocs.io/en/latest/
