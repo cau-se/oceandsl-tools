@@ -1,6 +1,10 @@
 # OceanDSL Tools
 
-Project containing all Java-based tools developed in OceanDSL.
+This repository contains all the JAva-based tools developed for
+OceanDSL. Detailed information on how to use these tools, file formats and
+related information can be found in the `doc` directory. 
+
+Below be describe how to build, package and execute the tools.
 
 ## Build
 
@@ -19,7 +23,7 @@ Each tool has its own set of parameters and can be found in
 `doc/tools/$TOOL_NAME.rst`.
 You may find the complete documentation under `doc/index.rst`
 
-## Current tools
+**Current tools:**
 - allen-upper-limit compute the maximal upper complexity limit for a given architecture
 - cmi check the integrity of a model
 - dar (dynamic architecture reconstruction) read Kieker log data and reconstruct the architecture
