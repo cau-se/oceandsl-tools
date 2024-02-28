@@ -28,8 +28,27 @@ Short Long                  Required Description
 Examples
 --------
 
+The following example imports a Kieker log from `kieker-log` and outputs the resulting
+model in `model-directory`. All elements will be labeled `dynamic` as specified by the
+`-l` option. The whole project will be labeled as `demo-project` and signatures will be
+interpreted based on Java signature parser. For Fortran and C programs, the option must
+be `elf`. The used modularization strategy is java-class-mode.
+
+ module-mode which uses the module information
+in signatures in Fortran.
+
+
 ```
-dar -i kieker-log -o model-directory -l dynamic -E demo-project -s java -m module-mode
+dar -i kieker-log -o model-directory -l dynamic -E demo-project -s java -m java-class-mode
+```
+
+The second exmaple addresses the use with ELF binaries. Therefore, the signature parser is
+`elf` and the module mode is `module-mode` which uses the module information
+in signatures in Fortran.
+
+
+```
+dar -i kieker-log -o model-directory -l dynamic -E demo-project -s elf -m module-mode -a /usr/bin/addr2line -e /home/user/my-model/UVicECSM
 ```
 
 Module Modes
@@ -80,7 +99,14 @@ pointer references. This is suboptimal to understand what is going on.
 Therefore, you can extract names and other information on function with dar
 utilizing addrline automatically.
 
-The executable must be compiled with -g to contain debugging symbols.
+The executable must be compiled with option `-g` to contain debugging symbols when using `gcc`.
+
+For ELF binaries which have been compiled with debug symbols can be used to resolve
+logged function pointers in the Kieker log. Therefore, `dar` relies on an executable called
+`addrline` which must be installed. The location can be provided with `-a`.
+
+As the debugging symbols are included in the executable, the executable must also be
+provided to `dar` with the option `-e`.
 
 Special Trace Cases
 -------------------
@@ -90,7 +116,7 @@ before operation increases the stack and every after operation decreases the
 call stack. Thus, when the call stack is empty again, the **dar** tool removes
 the trace metadata from memory, as the trace is considered complete. However,
 in some contexts this is not the case and the trace continues afterwards.
-Therefore, you can use the option -k. This will keep the trace metadata.
+Therefore, you can use the option `-k`. This will keep the trace metadata.
 Regardless the trace seems to be complete. In case you have many small traces
 this migh lead to a memory leak, as all trace metadata is kept until termination
 of the tool.
