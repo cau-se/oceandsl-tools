@@ -72,8 +72,6 @@ filename, function, readWrite, blockname, index
 (I did not use "caller" since that looks too much like method call coupling, but
 names of course don't really matter ;-))
 
-The fparser-based tool stores this in a file called dataflow.cvs
-
 
 
 

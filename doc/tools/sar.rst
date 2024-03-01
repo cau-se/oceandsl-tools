@@ -7,6 +7,13 @@ Recover the architecture based on static code analysis done by the fparser tool.
 The tool can currently recognize calls and data flow based on global variables,
 e.g., common blocks in Fortran.
 
+Synopsis
+--------
+::
+
+Options
+-------
+
 ===== ========================== ======== ======================================================
 Short Long                       Required Description
 ===== ========================== ======== ======================================================
@@ -28,6 +35,9 @@ Short Long                       Required Description
 -l    --source-label                      Set source label for the read data
 ===== ========================== ======== ======================================================
 
+Description
+-----------
+
 The tool reads a list of operation calls and dataflows from CSV files.
 For Fortran programs **fxtran** can be used to generate these files.
 
@@ -37,7 +47,7 @@ the option allow to set a different character for operation calls -cs, dataflows
 -ds, and names -ns from the function names CSV.
 
 Call Input File
----------------
+~~~~~~~~~~~~~~~
 
 - source-path or component identifier
 - source-module
@@ -47,7 +57,7 @@ Call Input File
 - callee operation (the called operation)
 
 Dataflow Input File
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 - module or component identifyer
 - operation accessing the data or writing to the data
@@ -55,7 +65,7 @@ Dataflow Input File
 - shared-data name of the data storage
 
 Function Names File
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 You can use multiple function names files.
 
@@ -65,6 +75,6 @@ You can use multiple function names files.
 These maps are used to rewrite the component identifiers in a component call
 in case these are set to the empty string "".
 
-
-
+Examples
+--------
 

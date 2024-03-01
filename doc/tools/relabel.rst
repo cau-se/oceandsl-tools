@@ -8,6 +8,13 @@ It is possible to specify different operations. They are applied in sequence
 from left to right. The tool searches for label sets specified as source
 and replaces them by the set of labels specified in target.
 
+Synopsis
+--------
+::
+
+Options
+-------
+
 ===== ===================== ======== ======================================================
 Short Long                  Required Description
 ===== ===================== ======== ======================================================
@@ -16,6 +23,9 @@ Short Long                  Required Description
 -r    --replacements        yes      Replacement for labels source:target
 -e    --experiment          no       Set experiment name of the model repository
 ===== ===================== ======== ======================================================
+
+Description
+-----------
 
 Examples
 --------

@@ -6,6 +6,13 @@ Restructuring
 Identify a number of operations to transform an architecture model
 into another one. Best strategy to use is kuhn
 
+Synopsis
+--------
+::
+
+Options
+-------
+
 ===== ====================== ======== ======================================================
 Short Long                   Required Description
 ===== ====================== ======== ======================================================
@@ -16,3 +23,10 @@ Short Long                   Required Description
 -s    --strategy             yes      Strategy identifier
                                       Possible Values: [NORMAL, EMPTY, RANDOM, KUHN]
 ===== ====================== ======== ======================================================
+
+Description
+-----------
+
+Examples
+--------
+

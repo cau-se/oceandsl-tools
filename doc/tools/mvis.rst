@@ -5,6 +5,15 @@ Model Visualization and Statistics Tool
 
 mvis allows to generate graphics and apply metrics to architecture models.
 
+Synopsis
+--------
+::
+  
+  mvis -i <path> -o <path> [-M <path>] [-s <selector>] [-g <graphs>] [-m <mode>] [-c] [--eol <character>]
+
+Options
+-------
+
 ===== ===================== ======== ======================================================
 Short Long                  Required Description
 ===== ===================== ======== ======================================================
@@ -19,11 +28,14 @@ Short Long                  Required Description
                                      are not selected add-nodes, only
 -c    --compute-statistics           Generate the listed statistics
       --eol                          Set end of line character for CSV files
-                                     Default: system's standard symbol                               
+                                     Default: system's standard symbol
 ===== ===================== ======== ======================================================
 
+Description
+-----------
+
 Selectors
----------
+~~~~~~~~~
 
 - **all** selects all nodes regardless of the node and edge labels
 - **diff** diff:label1,label2 
@@ -32,7 +44,7 @@ Selectors
 
  
 Outputs
--------
+~~~~~~~
  
 **Counting Metrics**
 %s/%s-%s output-directory, file-prefix, operation-calls.csv
@@ -41,5 +53,8 @@ Outputs
 
 **Allen Metric**
 %s/%s output-directory, model-complexity.csv
+
+Examples
+--------
 
 

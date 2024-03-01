@@ -7,6 +7,13 @@ This tool has 4 parameters and can be used to replace function pointer
 references by function signatures produced by kieker-lang-pack-c
 instrumentations.
 
+Synopsis
+--------
+::
+
+Options
+-------
+
 ===== ====================== ======== =============================================================
 Short Long                   Required Description
 ===== ====================== ======== =============================================================
@@ -16,8 +23,13 @@ Short Long                   Required Description
 -m                           yes      the executable to be analyzed by addr2line
 ===== ====================== ======== =============================================================
 
+Description
+-----------
+
 The dar tool can process kieker-lang-pack-c files directly, but the
 trace-analysis tools cannot resolve function names. In these cases
 rewrite-log-entries can help to add human comprehensible function and
 module/class/component descriptions.
 
+Examples
+--------
