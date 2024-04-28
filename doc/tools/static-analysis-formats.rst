@@ -1,3 +1,5 @@
+.. _kieker-tools-static-analysis-formats:
+
 File Formats
 ============
 
@@ -15,14 +17,15 @@ Containing functions calls.
 
 **Note** old format specification
 There are two supported formats with 3 and 4 column CSV files.
- - 3 columns: file, caller, callee: In this format the callee lacks the
+
+ * 3 columns: file, caller, callee: In this format the callee lacks the
    information where the operation is located. Thus, it must be inferred
    at a later point.
 
- - 4 columns: caller-file, caller, callee-file, callee
+ * 4 columns: caller-file, caller, callee-file, callee
 
 **Note** new format specification
- - 6 columns: path, module, caller, path, module, callee
+ * 6 columns: path, module, caller, path, module, callee
 
 Function call file hs comments
 ------------------------------
@@ -66,11 +69,6 @@ in the common block. We probably do not need this for the current paper, though.
 The column names from the CSV are a bit different:
 
 filename, function, readWrite, blockname, index
-
-(I did not use "caller" since that looks too much like method call coupling, but
-names of course don't really matter ;-))
-
-The fparser-based tool stores this in a file called dataflow.cvs
 
 
 
