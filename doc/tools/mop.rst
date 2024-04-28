@@ -50,9 +50,10 @@ Examples
 Here two input models in the directories `static-model` and `dynamic-model` are read and **merged**
 into a new model and stored in the `joined-model` directory.
 
-```
-mop -i static-model dynamic-model -o joined-model -e UVic-2.9.2 merge
-```
+::
+  
+  mop -i static-model dynamic-model -o joined-model -e UVic-2.9.2 merge
+
 
 **Example selection**
 
@@ -61,7 +62,8 @@ The input model `model` is read and a portion of the model is selected and store
 The selection pattern file contains Java regular expressions to select
 components that should exist in the output model.
 
-```
-mop -i model -o selected-model -e UVic-2.9.2 -s selection-pattern-file select
-```
+::
+  
+  mop -i model -o selected-model -e UVic-2.9.2 -s selection-pattern-file select
+
 

@@ -10,6 +10,8 @@ respectively.
 Synopsis
 --------
 ::
+  
+  mktable -i <path> -o <path>
 
 Options
 -------
@@ -24,5 +26,5 @@ Short Long                   Required Description
 Description
 -----------
 
-Examples
---------
+This tool only helps with producing large LaTeX tables based on the CSV files from
+the restructuring tool.

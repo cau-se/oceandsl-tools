@@ -52,7 +52,7 @@ Examples
 --------
 
 Lets assume you have created a architecture model with the dynamic or static
-architecture recovery tool, :ref:`_kieker-tools-dar` and :ref:`_kieker-tools-sar`
+architecture recovery tool, `dar` and `sar`
 respectively. And lets assume the model resides in the `input-model` directory.
 The output will be written to `output` and contain graphs and statistics.
 

@@ -11,6 +11,8 @@ and replaces them by the set of labels specified in target.
 Synopsis
 --------
 ::
+  
+  relabel -i <path> -o <path> -r <source:target> [-e <experiment>]
 
 Options
 -------
@@ -31,13 +33,16 @@ Examples
 --------
 
 Replace the two labels static and dynamic by veriant-5
-```
-relabel -i input-model -o modified-model -r static,dynamic:variant-5
-```
+::
+  
+  relabel -i input-model -o modified-model -r static,dynamic:variant-5
+
 
 Replace static by two labels and in a second step merge static-a with dynamic
 into variant-4
-```
-relabel -i input-model -o modified-model -r static:static-a,static-b static-a,dynamic:variant-4
-```
+
+::
+  
+  relabel -i input-model -o modified-model -r static:static-a,static-b static-a,dynamic:variant-4
+
 

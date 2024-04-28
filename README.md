@@ -2,7 +2,7 @@
 
 This repository contains all the JAva-based tools developed for
 OceanDSL. Detailed information on how to use these tools, file formats and
-related information can be found in the `doc` directory. 
+related information can be found in the `doc` directory.
 
 Below be describe how to build, package and execute the tools.
 

@@ -16,7 +16,7 @@ Synopsis
 --------
 ::
   
-  maa -i <path> -o <path> [-I] [-g] [-c] [-s] [-gs <seperator>] [-E <experiment name>] [--eol <character>]
+  maa -i <path> -o <path> [-I] [-g <path 1 ... path n>] [-c] [-s] [-gs <seperator>] [-E <experiment name>] [--eol <character>]
 
 Options
 -------
@@ -43,3 +43,10 @@ containing the function module mapping.
 
 Examples
 --------
+
+Process and input model, compute interfaces for that model `-I` and generate a multiple levels of
+components based on a map file.
+
+::
+  
+  maa -i input -o output -I -g map-file.csv

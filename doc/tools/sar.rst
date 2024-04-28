@@ -10,6 +10,9 @@ e.g., common blocks in Fortran.
 Synopsis
 --------
 ::
+  
+  sar -i <path> -o <path> [-E <experiment-name>] [-g <call|dataflow|both>] [-m <module-mode|file-mode|map-mode>] [-l <label>]
+
 
 Options
 -------
@@ -78,3 +81,16 @@ in case these are set to the empty string "".
 Examples
 --------
 
+In this example a previously generated set of input files from **fxtran**
+are read and a model is produced in the `output-model` directory. Each
+element of the model is marked with a label `example`. Note this label does
+not appear visually in the models, but can be used to control coloring and
+other operation on a model later when mixing models with other models.
+
+The example uses `module-mode` which means modules are derived from Fortran
+module information. If your model does not contain such information, it
+is better to use `file-mode` or `map-mode`.
+
+::
+  
+  sar -i input-data -o output-model -l example -m module-mode -g both
